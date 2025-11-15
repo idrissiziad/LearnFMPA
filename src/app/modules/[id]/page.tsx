@@ -127,7 +127,7 @@ export default function ModulePage() {
       // Get the original JSON data to extract chapters from filtered questions
       let jsonQuestions: JsonQuestion[] = [];
       switch (moduleId) {
-        case 2:
+        case 1:
           const pathologieDigestiveJson = await import('@/data/modules/Pathologie digestive.json');
           jsonQuestions = (pathologieDigestiveJson as any).default as JsonQuestion[];
           break;

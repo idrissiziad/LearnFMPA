@@ -137,7 +137,7 @@ export const getModuleQuestions = async (moduleId: number): Promise<Question[]> 
   let jsonQuestions: JsonQuestion[] = [];
   
   switch (moduleId) {
-    case 2:
+    case 1:
       const pathologieModule = await import('./Pathologie digestive.json');
       jsonQuestions = (pathologieModule as any).default as JsonQuestion[];
       break;
@@ -195,7 +195,7 @@ export const getModuleChapters = async (moduleId: number): Promise<Chapter[]> =>
   let jsonQuestions: JsonQuestion[] = [];
   
   switch (moduleId) {
-    case 2:
+    case 1:
       const pathologieModule = await import('./Pathologie digestive.json');
       jsonQuestions = (pathologieModule as any).default as JsonQuestion[];
       break;
