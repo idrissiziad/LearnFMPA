@@ -47,11 +47,11 @@ export default function Login() {
             </div>
             
             {/* Navigation */}
-            <div className="flex items-center space-x-4">
-              <Link href="/" className="text-gray-600 hover:text-gray-800 transition-colors">
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <Link href="/" className="text-gray-600 hover:text-gray-800 transition-colors text-sm sm:text-base">
                 Accueil
               </Link>
-              <Link href="/signup" className="px-4 py-2 bg-green-800 text-white rounded-lg hover:bg-green-900 transition-colors">
+              <Link href="/signup" className="px-3 sm:px-4 py-2 bg-green-800 text-white rounded-lg hover:bg-green-900 transition-colors text-sm sm:text-base">
                 S'inscrire
               </Link>
             </div>
@@ -64,7 +64,7 @@ export default function Login() {
         {/* Left Column - Background Image */}
         <div className="hidden lg:block lg:w-1/2 relative">
           <div className="absolute inset-0">
-            <img 
+            <img
               src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80"
               alt="Medical professionals studying"
               className="w-full h-full object-cover"
@@ -74,34 +74,34 @@ export default function Login() {
         </div>
 
         {/* Right Column - Login Form */}
-        <div className="w-full lg:w-1/2 bg-white flex items-center justify-center p-8 lg:p-16">
+        <div className="w-full lg:w-1/2 bg-white flex items-center justify-center p-4 sm:p-6 lg:p-16">
           <div className="max-w-md w-full">
             {/* Branding */}
-            <div className="text-center mb-8">
+            <div className="text-center mb-6 sm:mb-8">
               {/* Icon */}
-              <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <svg className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
               
               {/* Logo Text */}
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">LearnFMPA</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">LearnFMPA</h1>
               
               {/* Tagline */}
-              <p className="text-gray-600">Révisez. Pratiquez. Réussissez.</p>
+              <p className="text-sm sm:text-base text-gray-600">Révisez. Pratiquez. Réussissez.</p>
             </div>
 
             {/* Form Header */}
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-900">Se connecter</h2>
+            <div className="mb-6 sm:mb-8">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Se connecter</h2>
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
               {/* Email Field */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                   Adresse e-mail
                 </label>
                 <input
@@ -111,14 +111,14 @@ export default function Login() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="vous@email.com"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
                   required
                 />
               </div>
 
               {/* Password Field */}
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                   Mot de passe
                 </label>
                 <div className="relative">
@@ -129,7 +129,7 @@ export default function Login() {
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="Entrez votre mot de passe"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all pr-12"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all pr-12 text-sm sm:text-base"
                     required
                   />
                   <button
@@ -159,15 +159,15 @@ export default function Login() {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="w-full bg-blue-600 text-white font-bold py-2 sm:py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-sm sm:text-base"
               >
                 Se connecter
               </button>
             </form>
 
             {/* Sign Up Link */}
-            <div className="text-center mt-6">
-              <p className="text-gray-600">
+            <div className="text-center mt-4 sm:mt-6">
+              <p className="text-sm sm:text-base text-gray-600">
                 Pas encore de compte ?{' '}
                 <Link href="/signup" className="text-blue-600 hover:text-blue-800 font-medium">
                   S'inscrire

@@ -52,11 +52,11 @@ export default function SignUp() {
             </div>
             
             {/* Navigation */}
-            <div className="flex items-center space-x-4">
-              <Link href="/" className="text-gray-600 hover:text-gray-800 transition-colors">
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <Link href="/" className="text-gray-600 hover:text-gray-800 transition-colors text-sm sm:text-base">
                 Accueil
               </Link>
-              <Link href="/login" className="px-4 py-2 bg-amber-700 text-white rounded-lg hover:bg-amber-800 transition-colors">
+              <Link href="/login" className="px-3 sm:px-4 py-2 bg-amber-700 text-white rounded-lg hover:bg-amber-800 transition-colors text-sm sm:text-base">
                 Se connecter
               </Link>
             </div>
@@ -70,7 +70,7 @@ export default function SignUp() {
         <div className="hidden lg:block lg:w-1/2 p-8">
           <div className="h-full flex items-center justify-center">
             <div className="w-full max-w-md">
-              <img 
+              <img
                 src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
                 alt="Medical professionals"
                 className="w-full h-auto rounded-lg shadow-lg"
@@ -80,23 +80,23 @@ export default function SignUp() {
         </div>
 
         {/* Right Column - Sign Up Form */}
-        <div className="w-full lg:w-1/2 p-8 lg:p-16">
+        <div className="w-full lg:w-1/2 p-4 sm:p-6 lg:p-16">
           <div className="max-w-md mx-auto">
             {/* Header */}
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <div className="text-center mb-6 sm:mb-8">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
                 Créez votre compte
               </h1>
-              <p className="text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600">
                 Rejoignez LearnFMPA pour accéder aux questions d'examen passées.
               </p>
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
               {/* Full Name */}
               <div>
-                <label htmlFor="fullName" className="block text-sm font-bold text-gray-700 mb-2">
+                <label htmlFor="fullName" className="block text-sm font-bold text-gray-700 mb-1 sm:mb-2">
                   Nom complet
                 </label>
                 <input
@@ -106,14 +106,14 @@ export default function SignUp() {
                   value={formData.fullName}
                   onChange={handleChange}
                   placeholder="Entrez votre nom complet"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
                   required
                 />
               </div>
 
               {/* Email */}
               <div>
-                <label htmlFor="email" className="block text-sm font-bold text-gray-700 mb-2">
+                <label htmlFor="email" className="block text-sm font-bold text-gray-700 mb-1 sm:mb-2">
                   Adresse e-mail
                 </label>
                 <input
@@ -123,14 +123,14 @@ export default function SignUp() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="Entrez votre adresse e-mail"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm sm:text-base"
                   required
                 />
               </div>
 
               {/* Password */}
               <div>
-                <label htmlFor="password" className="block text-sm font-bold text-gray-700 mb-2">
+                <label htmlFor="password" className="block text-sm font-bold text-gray-700 mb-1 sm:mb-2">
                   Mot de passe
                 </label>
                 <div className="relative">
@@ -141,7 +141,7 @@ export default function SignUp() {
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="Créez un mot de passe"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all pr-12"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all pr-12 text-sm sm:text-base"
                     required
                   />
                   <button
@@ -163,7 +163,7 @@ export default function SignUp() {
 
               {/* Confirm Password */}
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-bold text-gray-700 mb-2">
+                <label htmlFor="confirmPassword" className="block text-sm font-bold text-gray-700 mb-1 sm:mb-2">
                   Confirmer le mot de passe
                 </label>
                 <div className="relative">
@@ -174,7 +174,7 @@ export default function SignUp() {
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     placeholder="Confirmez votre mot de passe"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all pr-12"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all pr-12 text-sm sm:text-base"
                     required
                   />
                   <button
@@ -196,7 +196,7 @@ export default function SignUp() {
 
               {/* Study Year */}
               <div>
-                <label htmlFor="studyYear" className="block text-sm font-bold text-gray-700 mb-2">
+                <label htmlFor="studyYear" className="block text-sm font-bold text-gray-700 mb-1 sm:mb-2">
                   Année d'études
                 </label>
                 <div className="relative">
@@ -205,7 +205,7 @@ export default function SignUp() {
                     name="studyYear"
                     value={formData.studyYear}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all appearance-none"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all appearance-none text-sm sm:text-base"
                   >
                     <option value="1ère année">1ère année</option>
                     <option value="2ème année">2ème année</option>
@@ -245,15 +245,15 @@ export default function SignUp() {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="w-full bg-blue-600 text-white font-bold py-2 sm:py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-sm sm:text-base"
               >
                 S'inscrire
               </button>
             </form>
 
             {/* Login Link */}
-            <div className="text-center mt-6">
-              <p className="text-gray-600">
+            <div className="text-center mt-4 sm:mt-6">
+              <p className="text-sm sm:text-base text-gray-600">
                 Déjà un compte ?{' '}
                 <Link href="/login" className="text-blue-600 hover:text-blue-800 font-medium">
                   Se connecter
