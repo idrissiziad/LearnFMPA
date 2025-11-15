@@ -7,8 +7,7 @@ export default function Home() {
       {/* Header Section */}
       <header className="fixed top-0 w-full bg-white border-b border-gray-200 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Desktop Header */}
-          <div className="hidden sm:flex justify-between items-center h-16">
+          <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex items-center">
               <div className="w-10 h-10 bg-green-800 rounded-full flex items-center justify-center mr-3">
@@ -20,51 +19,16 @@ export default function Home() {
               <span className="text-xl font-bold text-gray-800">LearnFMPA</span>
             </div>
             
-            {/* Desktop Navigation Buttons */}
-            <div className="flex space-x-4">
-              <a href="/login" className="px-4 py-2 bg-amber-700 text-white rounded-lg hover:bg-amber-800 transition-colors">
-                Se connecter
-              </a>
-              <a href="/signup" className="px-4 py-2 bg-green-800 text-white rounded-lg hover:bg-green-900 transition-colors">
-                S'inscrire
-              </a>
-            </div>
-          </div>
-          
-          {/* Mobile Header */}
-          <div className="sm:hidden">
-            {/* Top row with logo and menu */}
-            <div className="flex justify-between items-center h-16">
-              {/* Logo */}
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-green-800 rounded-full flex items-center justify-center mr-3">
-                  <div className="flex space-x-1">
-                    <div className="w-1 h-4 bg-white rounded"></div>
-                    <div className="w-1 h-4 bg-white rounded"></div>
-                  </div>
-                </div>
-                <span className="text-xl font-bold text-gray-800">LearnFMPA</span>
-              </div>
-              
-              {/* Mobile Menu Button */}
+            {/* Mobile Menu Button */}
+            <div className="sm:hidden">
               <MobileNav />
-            </div>
-            
-            {/* Bottom row with action buttons */}
-            <div className="flex justify-center space-x-3 pb-3">
-              <a href="/login" className="px-4 py-2 bg-amber-700 text-white rounded-lg hover:bg-amber-800 transition-colors text-sm font-medium">
-                Se connecter
-              </a>
-              <a href="/signup" className="px-4 py-2 bg-green-800 text-white rounded-lg hover:bg-green-900 transition-colors text-sm font-medium">
-                S'inscrire
-              </a>
             </div>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="relative sm:mt-16 mt-24">
+      <section className="relative mt-16">
         <div className="relative h-80 sm:h-96 md:h-[500px] overflow-hidden rounded-lg">
           <div className="absolute inset-0">
             <div className="w-full h-full bg-gradient-to-r from-gray-900 to-gray-700 opacity-80"></div>
@@ -78,8 +42,8 @@ export default function Home() {
               <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-200 mb-6 sm:mb-8 max-w-2xl mx-auto">
                 Accédez à des milliers de questions corrigées de la 1ère à la 7ème année, avec des explications détaillées par des experts et des outils pour suivre votre progression.
               </p>
-              <a href="/signup" className="inline-block px-6 sm:px-8 py-3 bg-green-800 text-white text-base sm:text-lg font-semibold rounded-lg hover:bg-green-900 transition-colors">
-                Créer un compte
+              <a href="/login" className="inline-block px-6 sm:px-8 py-3 bg-green-800 text-white text-base sm:text-lg font-semibold rounded-lg hover:bg-green-900 transition-colors">
+                Se connecter
               </a>
             </div>
           </div>
