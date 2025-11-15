@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { getModuleById, getModuleQuestions, getModuleChapters, Question, Chapter, JsonQuestion, extractChaptersFromQuestions } from '@/data/modules';
 
 // Lazy load the chapter navigation component
-const ChapterNavigation = lazy(() => import('../components/ChapterNavigation'));
+const ChapterNavigation = lazy(() => import('@/components/ChapterNavigation'));
 
 export interface ExtendedQuestion extends Question {
   isMultipleChoice: boolean;
