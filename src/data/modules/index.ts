@@ -1,5 +1,9 @@
 // We'll use dynamic imports for JSON files to avoid bundling issues
 
+// Cache for storing loaded module data
+const moduleQuestionsCache = new Map<number, Question[]>();
+const moduleChaptersCache = new Map<number, Chapter[]>();
+
 export interface Module {
   id: number;
   title: string;
@@ -133,6 +137,11 @@ export const extractChaptersFromQuestions = (questions: JsonQuestion[]): Chapter
 };
 
 export const getModuleQuestions = async (moduleId: number): Promise<Question[]> => {
+  // Check if data is already cached
+  if (moduleQuestionsCache.has(moduleId)) {
+    return moduleQuestionsCache.get(moduleId)!;
+  }
+
   // In a real app, this would fetch from an API
   let jsonQuestions: JsonQuestion[] = [];
   
@@ -146,7 +155,7 @@ export const getModuleQuestions = async (moduleId: number): Promise<Question[]> 
   }
   
   // Convert JSON questions to the Question interface
-  return jsonQuestions.map((q, index) => {
+  const questions = jsonQuestions.map((q, index) => {
     // Create arrays of all options, their correctness, explanations, and images
     const allOptions = [
       { text: q.Choice_A_Text, isCorrect: q.Choice_A_isCorrect, explanation: q.Choice_A_Explanation, image: q.Choice_A_Image || '' },
@@ -189,9 +198,19 @@ export const getModuleQuestions = async (moduleId: number): Promise<Question[]> 
       optionImages
     };
   });
+
+  // Cache the result
+  moduleQuestionsCache.set(moduleId, questions);
+  
+  return questions;
 };
 
 export const getModuleChapters = async (moduleId: number): Promise<Chapter[]> => {
+  // Check if data is already cached
+  if (moduleChaptersCache.has(moduleId)) {
+    return moduleChaptersCache.get(moduleId)!;
+  }
+
   let jsonQuestions: JsonQuestion[] = [];
   
   switch (moduleId) {
@@ -203,7 +222,12 @@ export const getModuleChapters = async (moduleId: number): Promise<Chapter[]> =>
       return [];
   }
   
-  return extractChaptersFromQuestions(jsonQuestions);
+  const chapters = extractChaptersFromQuestions(jsonQuestions);
+  
+  // Cache the result
+  moduleChaptersCache.set(moduleId, chapters);
+  
+  return chapters;
 };
 
 export const getAllModules = (): Module[] => {

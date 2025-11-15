@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { modules } from '@/data/modules';
 import { useRouter } from 'next/navigation';
+import { getModuleQuestions, getModuleChapters } from '@/data/modules';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -98,10 +99,15 @@ export default function Dashboard() {
           {/* Module Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
             {modules.map((module) => (
-              <Link 
-                key={module.id} 
+              <Link
+                key={module.id}
                 href={`/modules/${module.id}`}
                 className="group cursor-pointer"
+                onMouseEnter={() => {
+                  // Prefetch module data on hover
+                  getModuleQuestions(module.id);
+                  getModuleChapters(module.id);
+                }}
               >
                 <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden">
                   {/* Thumbnail Image with Gradient */}

@@ -1,9 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { getModuleById, getModuleQuestions, getModuleChapters, Question, Chapter, JsonQuestion, extractChaptersFromQuestions } from '@/data/modules';
+
+// Lazy load the chapter navigation component
+const ChapterNavigation = lazy(() => import('../components/ChapterNavigation'));
 
 export interface ExtendedQuestion extends Question {
   isMultipleChoice: boolean;
@@ -124,19 +128,45 @@ export default function ModulePage() {
       const filteredQuestions = questionsToFilter.filter(q => q.year === session);
       setQuestions(filteredQuestions);
       
-      // Get the original JSON data to extract chapters from filtered questions
-      let jsonQuestions: JsonQuestion[] = [];
-      switch (moduleId) {
-        case 1:
-          const pathologieDigestiveJson = await import('@/data/modules/Pathologie digestive.json');
-          jsonQuestions = (pathologieDigestiveJson as any).default as JsonQuestion[];
-          break;
-        default:
-          break;
-      }
+      // Use the already loaded questions from cache to avoid redundant imports
+      // Since we already have allQuestions, we can derive chapters from them
+      const filteredJsonQuestions = allQuestions
+        .filter(q => q.year === session)
+        .map(q => {
+          // Convert ExtendedQuestion back to JsonQuestion format for chapter extraction
+          return {
+            YearAsked: q.year || '',
+            Subtopic: q.chapter || '',
+            QuestionText: q.question,
+            QuestionImage: q.questionImage,
+            Choice_A_Text: q.options[0] || '',
+            Choice_A_isCorrect: q.correctAnswers?.includes(0) || false,
+            Choice_A_Explanation: q.answerExplanations?.[0] || '',
+            Choice_A_Image: q.optionImages?.[0] || '',
+            Choice_B_Text: q.options[1] || '',
+            Choice_B_isCorrect: q.correctAnswers?.includes(1) || false,
+            Choice_B_Explanation: q.answerExplanations?.[1] || '',
+            Choice_B_Image: q.optionImages?.[1] || '',
+            Choice_C_Text: q.options[2] || '',
+            Choice_C_isCorrect: q.correctAnswers?.includes(2) || false,
+            Choice_C_Explanation: q.answerExplanations?.[2] || '',
+            Choice_C_Image: q.optionImages?.[2] || '',
+            Choice_D_Text: q.options[3] || '',
+            Choice_D_isCorrect: q.correctAnswers?.includes(3) || false,
+            Choice_D_Explanation: q.answerExplanations?.[3] || '',
+            Choice_D_Image: q.optionImages?.[3] || '',
+            Choice_E_Text: q.options[4] || '',
+            Choice_E_isCorrect: q.correctAnswers?.includes(4) || false,
+            Choice_E_Explanation: q.answerExplanations?.[4] || '',
+            Choice_E_Image: q.optionImages?.[4] || '',
+            OverallExplanation: q.overallExplanation || '',
+            IsChapterStart: false,
+            ChapterName: q.chapter || '',
+            ChapterColor: '#3B82F6',
+            Confirmed: q.confirmed
+          } as JsonQuestion;
+        });
       
-      // Filter the JSON questions by session and then extract chapters
-      const filteredJsonQuestions = jsonQuestions.filter(q => q.YearAsked === session);
       const chaptersFromFiltered = extractChaptersFromQuestions(filteredJsonQuestions);
       setChapters(chaptersFromFiltered);
     }
@@ -429,44 +459,23 @@ export default function ModulePage() {
 
         {/* Chapter Navigation - Only show when "Toutes les sessions" is selected and chapters are toggled */}
         {sessionFilter === 'Toutes les sessions' && showChapters && (
-          <div className={`mb-6 p-3 sm:p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3">
-              {chapters.map((chapter) => {
-                // Count correctly answered questions in this chapter
-                const chapterQuestions = questions.slice(chapter.startPosition, chapter.startPosition + chapter.questionCount);
-                const answeredCount = chapterQuestions.filter(q => correctlyAnsweredQuestions[`${moduleId}_${q.id}`]).length;
-                
-                return (
-                  <button
-                    key={chapter.id}
-                    className={`flex items-center p-2 sm:p-3 rounded-lg border ${darkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-200 hover:bg-gray-50'} text-left transition-colors`}
-                    onClick={() => handleChapterSelect(chapter.startPosition)}
-                  >
-                    <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center mr-2 sm:mr-3 text-xs sm:text-sm font-bold ${
-                      currentQuestionIndex >= chapter.startPosition && currentQuestionIndex < chapter.startPosition + chapter.questionCount
-                        ? 'bg-blue-500 text-white'
-                        : darkMode
-                        ? 'bg-gray-700 text-gray-300'
-                        : 'bg-gray-100 text-gray-600'
-                    }`}>
-                      {chapter.startPosition + 1}
-                    </div>
-                    <div className="flex-1">
-                      <div className={`font-semibold text-sm sm:text-base ${darkMode ? 'text-white' : 'text-gray-900'}`}>Chapitre {chapter.id}: {chapter.name}</div>
-                      <div className={`text-xs sm:text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{chapter.questionCount} questions</div>
-                    </div>
-                    <div className={`ml-1 sm:ml-2 text-xs px-2 py-1 rounded-full ${
-                      answeredCount === chapter.questionCount
-                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
-                        : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
-                    }`}>
-                      {answeredCount}/{chapter.questionCount}
-                    </div>
-                  </button>
-                );
-              })}
+          <Suspense fallback={
+            <div className={`mb-6 p-3 sm:p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+              <div className="flex justify-center items-center h-32">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+              </div>
             </div>
-          </div>
+          }>
+            <ChapterNavigation
+              chapters={chapters}
+              questions={questions}
+              currentQuestionIndex={currentQuestionIndex}
+              correctlyAnsweredQuestions={correctlyAnsweredQuestions}
+              moduleId={moduleId}
+              darkMode={darkMode}
+              onChapterSelect={handleChapterSelect}
+            />
+          </Suspense>
         )}
 
         {/* Session info when not showing chapter navigation */}
@@ -498,13 +507,16 @@ export default function ModulePage() {
 
           {/* Question Image */}
           {currentQuestion?.questionImage && (
-            <div className="mb-4">
-              <img
+            <div className="mb-4 relative">
+              <Image
                 src={currentQuestion.questionImage.startsWith('http')
                   ? currentQuestion.questionImage
                   : `/images/${currentQuestion.questionImage}`}
                 alt="Question image"
-                className={`max-w-full h-auto rounded-lg ${darkMode ? 'border border-gray-600' : ''}`}
+                width={800}
+                height={600}
+                className={`rounded-lg ${darkMode ? 'border border-gray-600' : ''}`}
+                style={{ maxWidth: '100%', height: 'auto' }}
               />
             </div>
           )}
@@ -598,13 +610,16 @@ export default function ModulePage() {
                   
                   {/* Option Image (shown after answer is revealed) */}
                   {showAnswer && optionImage && (
-                    <div className="mt-3">
-                      <img
+                    <div className="mt-3 relative">
+                      <Image
                         src={optionImage.startsWith('http')
                           ? optionImage
                           : `/images/${optionImage}`}
                         alt={`Option ${String.fromCharCode(65 + index)} image`}
-                        className={`max-w-full h-auto rounded-lg ${darkMode ? 'border border-gray-600' : ''}`}
+                        width={600}
+                        height={400}
+                        className={`rounded-lg ${darkMode ? 'border border-gray-600' : ''}`}
+                        style={{ maxWidth: '100%', height: 'auto' }}
                       />
                     </div>
                   )}

@@ -27,7 +27,24 @@ export default function RootLayout({
     <html lang="fr">
       <body className={`${inter.variable} font-sans antialiased bg-gray-50`}>
         {children}
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        {process.env.NODE_ENV === 'production' && (
+          <div id="analytics-container"></div>
+        )}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if (window.location.hostname !== 'localhost') {
+                setTimeout(() => {
+                  const script = document.createElement('script');
+                  script.src = '/_vercel/insights/script.js';
+                  script.defer = true;
+                  script.id = 'vercel-analytics';
+                  document.getElementById('analytics-container')?.appendChild(script);
+                }, 3000);
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );
