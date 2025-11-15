@@ -1,0 +1,702 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { getModuleById, getModuleQuestions, getModuleChapters, Question, Chapter, JsonQuestion, extractChaptersFromQuestions } from '@/data/modules';
+
+export interface ExtendedQuestion extends Question {
+  isMultipleChoice: boolean;
+  correctAnswers: number[];
+  answerExplanations: string[];
+  overallExplanation: string;
+  questionImage?: string;
+  optionImages?: string[];
+}
+
+export default function ModulePage() {
+  const params = useParams();
+  const router = useRouter();
+  const [allQuestions, setAllQuestions] = useState<ExtendedQuestion[]>([]);
+  const [questions, setQuestions] = useState<ExtendedQuestion[]>([]);
+  const [chapters, setChapters] = useState<Chapter[]>([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [selectedAnswers, setSelectedAnswers] = useState<number[]>([]);
+  const [showAnswer, setShowAnswer] = useState(false);
+  const [score, setScore] = useState(0);
+  const [answeredQuestions, setAnsweredQuestions] = useState<Set<number>>(new Set());
+  const [showChapters, setShowChapters] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const [sessionFilter, setSessionFilter] = useState('Toutes les sessions');
+  const [availableSessions, setAvailableSessions] = useState<string[]>([]);
+  const [isCorrectlyAnswered, setIsCorrectlyAnswered] = useState(false);
+  const [correctlyAnsweredQuestions, setCorrectlyAnsweredQuestions] = useState<{ [key: string]: boolean }>({});
+  const [shuffledOptions, setShuffledOptions] = useState<string[][]>([]);
+  const [optionMapping, setOptionMapping] = useState<number[][]>([]);
+  const [shuffledCorrectAnswers, setShuffledCorrectAnswers] = useState<number[][]>([]);
+  const [shuffledAnswerExplanations, setShuffledAnswerExplanations] = useState<string[][]>([]);
+  const [shuffledOptionImages, setShuffledOptionImages] = useState<string[][]>([]);
+
+  const moduleId = parseInt(params.id as string);
+  const module = getModuleById(moduleId);
+
+  useEffect(() => {
+    if (moduleId) {
+      getModuleQuestions(moduleId).then(allQuestions => {
+        // Convert to ExtendedQuestion format
+        const extendedQuestions = allQuestions.map(q => ({
+          ...q,
+          isMultipleChoice: q.isMultipleChoice || false,
+          correctAnswers: q.correctAnswers || [q.correctAnswer],
+          answerExplanations: q.answerExplanations || Array(q.options.length).fill(''),
+          overallExplanation: q.overallExplanation || q.explanation,
+          questionImage: q.questionImage,
+          optionImages: q.optionImages || Array(q.options.length).fill('')
+        }));
+        
+        setAllQuestions(extendedQuestions);
+        
+        // Extract available sessions from questions and sort from newest to oldest
+        const sessions = [...new Set(extendedQuestions.map(q => q.year).filter(Boolean) as string[])]
+          .sort((a, b) => {
+            // Parse session names to sort them chronologically (newest first)
+            // Assuming format like "Février 2024", "Octobre 2023", etc.
+            const months = {
+              'janvier': 1, 'février': 2, 'mars': 3, 'avril': 4, 'mai': 5, 'juin': 6,
+              'juillet': 7, 'août': 8, 'septembre': 9, 'octobre': 10, 'novembre': 11, 'décembre': 12
+            };
+            
+            const parseSession = (session: string) => {
+              const parts = session.toLowerCase().split(' ');
+              if (parts.length === 2) {
+                const month = months[parts[0] as keyof typeof months];
+                const year = parseInt(parts[1]);
+                return { month, year };
+              }
+              // Fallback for other formats (e.g., just a year)
+              return { month: 0, year: parseInt(session) || 0 };
+            };
+            
+            const sessionA = parseSession(a);
+            const sessionB = parseSession(b);
+            
+            // Sort by year first (newest first), then by month (newest first)
+            if (sessionA.year !== sessionB.year) {
+              return sessionB.year - sessionA.year;
+            }
+            return sessionB.month - sessionA.month;
+          });
+        setAvailableSessions(sessions);
+        
+        // Apply initial session filter
+        filterQuestionsBySession(extendedQuestions, sessionFilter);
+      });
+    }
+  }, [moduleId]);
+
+  useEffect(() => {
+    if (allQuestions.length > 0) {
+      filterQuestionsBySession(allQuestions, sessionFilter);
+    }
+  }, [sessionFilter, allQuestions]);
+
+  // Load correctly answered questions from localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined' && moduleId) {
+      const storageKey = `learnfmpa_answered_${moduleId}`;
+      const stored = localStorage.getItem(storageKey);
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          setCorrectlyAnsweredQuestions(parsed);
+        } catch (e) {
+          console.error('Error parsing answered questions from localStorage:', e);
+        }
+      }
+    }
+  }, [moduleId]);
+
+  const filterQuestionsBySession = async (questionsToFilter: ExtendedQuestion[], session: string) => {
+    if (session === 'Toutes les sessions') {
+      setQuestions(questionsToFilter);
+      getModuleChapters(moduleId).then(setChapters);
+    } else {
+      const filteredQuestions = questionsToFilter.filter(q => q.year === session);
+      setQuestions(filteredQuestions);
+      
+      // Get the original JSON data to extract chapters from filtered questions
+      let jsonQuestions: JsonQuestion[] = [];
+      switch (moduleId) {
+        case 2:
+          const pathologieDigestiveJson = await import('@/data/modules/Pathologie digestive.json');
+          jsonQuestions = (pathologieDigestiveJson as any).default as JsonQuestion[];
+          break;
+        default:
+          break;
+      }
+      
+      // Filter the JSON questions by session and then extract chapters
+      const filteredJsonQuestions = jsonQuestions.filter(q => q.YearAsked === session);
+      const chaptersFromFiltered = extractChaptersFromQuestions(filteredJsonQuestions);
+      setChapters(chaptersFromFiltered);
+    }
+    setCurrentQuestionIndex(0);
+    setSelectedAnswers([]);
+    setShowAnswer(false);
+  };
+
+  if (!module) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Module non trouvé</h1>
+          <Link href="/dashboard" className="text-blue-600 hover:text-blue-800">
+            Retour au tableau de bord
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const currentQuestion = questions[currentQuestionIndex];
+
+  // Initialize shuffled options for the current question
+  useEffect(() => {
+    if (currentQuestion && !showAnswer) {
+      // Check if this is a two-choice question
+      const isTwoChoiceQuestion = currentQuestion.options.length === 2;
+      
+      if (isTwoChoiceQuestion) {
+        // For two-choice questions, don't shuffle and use original options
+        const originalOptions = [...currentQuestion.options];
+        const originalCorrectAnswers = [...currentQuestion.correctAnswers];
+        const originalAnswerExplanations = [...currentQuestion.answerExplanations];
+        const originalOptionImages = currentQuestion.optionImages ? [...currentQuestion.optionImages] : Array(currentQuestion.options.length).fill('');
+        
+        // Create identity mapping (no shuffling)
+        const indices = originalOptions.map((_, index) => index);
+        const newOptionMapping = indices;
+        
+        // Update the state with original data (no shuffling)
+        setShuffledOptions(prev => {
+          const newShuffled = [...prev];
+          newShuffled[currentQuestionIndex] = originalOptions;
+          return newShuffled;
+        });
+        
+        setOptionMapping(prev => {
+          const newMapping = [...prev];
+          newMapping[currentQuestionIndex] = newOptionMapping;
+          return newMapping;
+        });
+        
+        setShuffledCorrectAnswers(prev => {
+          const newCorrect = [...prev];
+          newCorrect[currentQuestionIndex] = originalCorrectAnswers;
+          return newCorrect;
+        });
+        
+        setShuffledAnswerExplanations(prev => {
+          const newExplanations = [...prev];
+          newExplanations[currentQuestionIndex] = originalAnswerExplanations;
+          return newExplanations;
+        });
+        
+        setShuffledOptionImages(prev => {
+          const newImages = [...prev];
+          newImages[currentQuestionIndex] = originalOptionImages;
+          return newImages;
+        });
+      } else {
+        // Create a shuffled version of the options for questions with more than 2 choices
+        const originalOptions = [...currentQuestion.options];
+        const originalCorrectAnswers = [...currentQuestion.correctAnswers];
+        const originalAnswerExplanations = [...currentQuestion.answerExplanations];
+        const originalOptionImages = currentQuestion.optionImages ? [...currentQuestion.optionImages] : Array(currentQuestion.options.length).fill('');
+        
+        // Create an array of indices and shuffle it
+        const indices = originalOptions.map((_, index) => index);
+        for (let i = indices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [indices[i], indices[j]] = [indices[j], indices[i]];
+        }
+        
+        // Create the shuffled arrays using the shuffled indices
+        const newShuffledOptions = indices.map(i => originalOptions[i]);
+        const newShuffledCorrectAnswers = originalCorrectAnswers.map(originalIndex =>
+          indices.indexOf(originalIndex)
+        );
+        const newShuffledAnswerExplanations = indices.map(i => originalAnswerExplanations[i]);
+        const newShuffledOptionImages = indices.map(i => originalOptionImages[i]);
+        
+        // Create the mapping from shuffled to original indices
+        const newOptionMapping = indices.map((originalIndex, shuffledIndex) => originalIndex);
+        
+        // Update the state
+        setShuffledOptions(prev => {
+          const newShuffled = [...prev];
+          newShuffled[currentQuestionIndex] = newShuffledOptions;
+          return newShuffled;
+        });
+        
+        setOptionMapping(prev => {
+          const newMapping = [...prev];
+          newMapping[currentQuestionIndex] = newOptionMapping;
+          return newMapping;
+        });
+        
+        setShuffledCorrectAnswers(prev => {
+          const newCorrect = [...prev];
+          newCorrect[currentQuestionIndex] = newShuffledCorrectAnswers;
+          return newCorrect;
+        });
+        
+        setShuffledAnswerExplanations(prev => {
+          const newExplanations = [...prev];
+          newExplanations[currentQuestionIndex] = newShuffledAnswerExplanations;
+          return newExplanations;
+        });
+        
+        setShuffledOptionImages(prev => {
+          const newImages = [...prev];
+          newImages[currentQuestionIndex] = newShuffledOptionImages;
+          return newImages;
+        });
+      }
+    }
+  }, [currentQuestionIndex, currentQuestion, showAnswer]);
+
+  const handleAnswerSelect = (answerIndex: number) => {
+    if (showAnswer) return;
+    
+    if (currentQuestion.isMultipleChoice) {
+      // Toggle selection for multiple choice questions
+      if (selectedAnswers.includes(answerIndex)) {
+        setSelectedAnswers(selectedAnswers.filter(i => i !== answerIndex));
+      } else {
+        setSelectedAnswers([...selectedAnswers, answerIndex]);
+      }
+    } else {
+      // Toggle selection for single choice questions
+      if (selectedAnswers.includes(answerIndex)) {
+        // Deselect if clicking the same option
+        setSelectedAnswers([]);
+      } else {
+        // Select the new option
+        setSelectedAnswers([answerIndex]);
+      }
+    }
+  };
+
+  const handleShowAnswer = () => {
+    if (selectedAnswers.length === 0 || !currentQuestion) return;
+
+    // Map selected answers back to original positions
+    const mapping = optionMapping[currentQuestionIndex] || [];
+    const mappedSelectedAnswers = selectedAnswers.map(selectedIndex => mapping[selectedIndex]);
+    
+    // Map correct answers to original positions for comparison
+    const correctAnswersSet = new Set(currentQuestion.correctAnswers);
+    const selectedAnswersSet = new Set(mappedSelectedAnswers);
+    
+    // Check if all selected answers are correct and all correct answers are selected
+    const allSelectedAreCorrect = mappedSelectedAnswers.every(answer => correctAnswersSet.has(answer));
+    const allCorrectAreSelected = currentQuestion.correctAnswers.every(answer => selectedAnswersSet.has(answer));
+    const isCorrect = allSelectedAreCorrect && allCorrectAreSelected;
+    
+    setIsCorrectlyAnswered(isCorrect);
+    
+    if (isCorrect) {
+      setScore(score + 1);
+    }
+
+    setShowAnswer(true);
+    setAnsweredQuestions(new Set([...answeredQuestions, currentQuestionIndex]));
+    
+    // Save correctly answered question to localStorage
+    if (isCorrect && currentQuestion && typeof window !== 'undefined') {
+      const storageKey = `learnfmpa_answered_${moduleId}`;
+      const questionKey = `${moduleId}_${currentQuestion.id}`;
+      const newAnsweredQuestions = { ...correctlyAnsweredQuestions, [questionKey]: true };
+      setCorrectlyAnsweredQuestions(newAnsweredQuestions);
+      localStorage.setItem(storageKey, JSON.stringify(newAnsweredQuestions));
+    }
+  };
+
+  const handleNextQuestion = () => {
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setSelectedAnswers([]);
+      setShowAnswer(false);
+      setIsCorrectlyAnswered(false);
+    } else {
+      // End of questions
+      router.push('/dashboard');
+    }
+  };
+
+  const handlePreviousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+      setSelectedAnswers([]);
+      setShowAnswer(false);
+      setIsCorrectlyAnswered(false);
+    }
+  };
+
+  const handleChapterSelect = (startPosition: number) => {
+    setCurrentQuestionIndex(startPosition);
+    setSelectedAnswers([]);
+    setShowAnswer(false);
+    setIsCorrectlyAnswered(false);
+  };
+
+  const handleSessionFilterChange = (newSession: string) => {
+    setSessionFilter(newSession);
+  };
+
+  return (
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+      {/* Header */}
+      <header className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b sticky top-0 z-10`}>
+        <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center space-x-3">
+            <Link
+              href="/dashboard"
+              className={`p-2 rounded-lg ${darkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'} transition-colors`}
+              aria-label="Retour au tableau de bord"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+              </svg>
+            </Link>
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-blue-500`}>
+              <span className="text-white font-bold">{module.title.charAt(0)}</span>
+            </div>
+            <h1 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{module.title}</h1>
+          </div>
+          <div className="flex items-center space-x-4">
+            <select
+              className={`px-3 py-1 rounded-lg border ${darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-700'}`}
+              value={sessionFilter}
+              onChange={(e) => handleSessionFilterChange(e.target.value)}
+            >
+              <option value="Toutes les sessions">Toutes les sessions</option>
+              {availableSessions.map(session => (
+                <option key={session} value={session}>{session}</option>
+              ))}
+            </select>
+            <button 
+              onClick={() => setDarkMode(!darkMode)}
+              className={`w-10 h-10 rounded-full flex items-center justify-center ${darkMode ? 'bg-gray-700 text-yellow-400' : 'bg-gray-200 text-gray-600'}`}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-4xl mx-auto px-4 py-6">
+        {/* Chapter Navigation Toggle Button - Only show when "Toutes les sessions" is selected */}
+        {sessionFilter === 'Toutes les sessions' && (
+          <div className="mb-4 flex justify-between items-center">
+            <button
+              onClick={() => setShowChapters(!showChapters)}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center ${
+                darkMode ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-white text-gray-900 hover:bg-gray-50'
+              } border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className={`h-5 w-5 mr-2 transform transition-transform ${showChapters ? 'rotate-180' : ''}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+              Navigation par chapitre
+            </button>
+            <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+              Session: {sessionFilter}
+            </span>
+          </div>
+        )}
+
+        {/* Chapter Navigation - Only show when "Toutes les sessions" is selected and chapters are toggled */}
+        {sessionFilter === 'Toutes les sessions' && showChapters && (
+          <div className={`mb-6 p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {chapters.map((chapter) => {
+                // Count correctly answered questions in this chapter
+                const chapterQuestions = questions.slice(chapter.startPosition, chapter.startPosition + chapter.questionCount);
+                const answeredCount = chapterQuestions.filter(q => correctlyAnsweredQuestions[`${moduleId}_${q.id}`]).length;
+                
+                return (
+                  <button
+                    key={chapter.id}
+                    className={`flex items-center p-3 rounded-lg border ${darkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-200 hover:bg-gray-50'} text-left transition-colors`}
+                    onClick={() => handleChapterSelect(chapter.startPosition)}
+                  >
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm font-bold ${
+                      currentQuestionIndex >= chapter.startPosition && currentQuestionIndex < chapter.startPosition + chapter.questionCount
+                        ? 'bg-blue-500 text-white'
+                        : darkMode
+                        ? 'bg-gray-700 text-gray-300'
+                        : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      {chapter.startPosition + 1}
+                    </div>
+                    <div className="flex-1">
+                      <div className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Chapitre {chapter.id}: {chapter.name}</div>
+                      <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{chapter.questionCount} questions</div>
+                    </div>
+                    <div className={`ml-2 text-xs px-2 py-1 rounded-full ${
+                      answeredCount === chapter.questionCount
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
+                        : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                    }`}>
+                      {answeredCount}/{chapter.questionCount}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Session info when not showing chapter navigation */}
+        {sessionFilter !== 'Toutes les sessions' && (
+          <div className="mb-4 flex justify-end">
+            <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+              Session: {sessionFilter}
+            </span>
+          </div>
+        )}
+
+        {/* Question Section */}
+        <div className={`p-6 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                Question {currentQuestionIndex + 1} / {questions.length}
+                {currentQuestion && correctlyAnsweredQuestions[`${moduleId}_${currentQuestion.id}`] && (
+                  <span className="ml-2 inline-flex items-center">
+                    <svg className="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  </span>
+                )}
+              </h2>
+            </div>
+            <p className={`text-lg ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{currentQuestion?.question}</p>
+          </div>
+
+          {/* Question Image */}
+          {currentQuestion?.questionImage && (
+            <div className="mb-4">
+              <img
+                src={currentQuestion.questionImage.startsWith('http')
+                  ? currentQuestion.questionImage
+                  : `/images/${currentQuestion.questionImage}`}
+                alt="Question image"
+                className={`max-w-full h-auto rounded-lg ${darkMode ? 'border border-gray-600' : ''}`}
+              />
+            </div>
+          )}
+
+          {/* Feedback Tags */}
+          {showAnswer && currentQuestion && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {currentQuestion.confirmed && (
+                <div className={`px-3 py-1 rounded-full text-sm font-medium flex items-center ${darkMode ? 'bg-blue-900 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  Confirmée par les sources
+                </div>
+              )}
+              {isCorrectlyAnswered && (
+                <div className={`px-3 py-1 rounded-full text-sm font-medium flex items-center ${darkMode ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-700'}`}>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  Correctement Répondu
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Answer Options */}
+          <div className="space-y-3 mb-6">
+            {(showAnswer ? currentQuestion?.options : (shuffledOptions[currentQuestionIndex] || [])).map((option, index) => {
+              // Use original data when answer is shown, otherwise use shuffled data
+              const isCorrect = showAnswer
+                ? currentQuestion.correctAnswers.includes(index)
+                : (shuffledCorrectAnswers[currentQuestionIndex] || []).includes(index);
+              const isSelected = selectedAnswers.includes(index);
+              const showCorrectFeedback = showAnswer && isCorrect;
+              const showIncorrectFeedback = showAnswer && isSelected && !isCorrect;
+              const optionImage = showAnswer
+                ? (currentQuestion.optionImages && currentQuestion.optionImages[index])
+                : (shuffledOptionImages[currentQuestionIndex] && shuffledOptionImages[currentQuestionIndex][index]);
+              const answerExplanation = showAnswer
+                ? (currentQuestion.answerExplanations && currentQuestion.answerExplanations[index])
+                : (shuffledAnswerExplanations[currentQuestionIndex] && shuffledAnswerExplanations[currentQuestionIndex][index]);
+              
+              return (
+                <div
+                  key={index}
+                  className={`w-full p-4 rounded-lg border transition-all ${
+                    showCorrectFeedback
+                      ? darkMode ? 'bg-green-900 border-green-700' : 'bg-green-50 border-green-500'
+                      : showIncorrectFeedback
+                      ? darkMode ? 'bg-red-900 border-red-700' : 'bg-red-50 border-red-500'
+                      : isSelected
+                      ? darkMode ? 'border-blue-500 bg-blue-900' : 'border-blue-500 bg-blue-50'
+                      : darkMode
+                      ? 'border-gray-600 bg-gray-700 hover:bg-gray-600'
+                      : 'border-gray-200 bg-white hover:bg-gray-50'
+                  }`}
+                >
+                  <button
+                    onClick={() => handleAnswerSelect(index)}
+                    className="w-full text-left"
+                    disabled={showAnswer}
+                  >
+                    <div className="flex items-start">
+                      <div className={`w-6 h-6 rounded border-2 mr-3 mt-0.5 flex-shrink-0 flex items-center justify-center ${
+                        currentQuestion.isMultipleChoice
+                          ? 'rounded'
+                          : 'rounded-full'
+                      } ${
+                        isSelected
+                          ? 'border-blue-500 bg-blue-500'
+                          : showCorrectFeedback
+                          ? 'border-green-500 bg-green-500'
+                          : darkMode
+                          ? 'border-gray-500'
+                          : 'border-gray-400'
+                      }`}>
+                        {isSelected && (
+                          <div className="w-2 h-2 rounded bg-white"></div>
+                        )}
+                        {showCorrectFeedback && !isSelected && (
+                          <div className="w-2 h-2 rounded bg-white"></div>
+                        )}
+                      </div>
+                      <div className={`text-left ${isSelected && !showAnswer ? (darkMode ? 'text-white' : 'text-gray-900') : (darkMode ? 'text-gray-100' : 'text-gray-900')}`}>
+                        <span className="font-semibold">{String.fromCharCode(65 + index)}. </span>
+                        {option}
+                      </div>
+                    </div>
+                  </button>
+                  
+                  {/* Option Image (shown after answer is revealed) */}
+                  {showAnswer && optionImage && (
+                    <div className="mt-3">
+                      <img
+                        src={optionImage.startsWith('http')
+                          ? optionImage
+                          : `/images/${optionImage}`}
+                        alt={`Option ${String.fromCharCode(65 + index)} image`}
+                        className={`max-w-full h-auto rounded-lg ${darkMode ? 'border border-gray-600' : ''}`}
+                      />
+                    </div>
+                  )}
+                  
+                  {/* Answer Explanation */}
+                  {showAnswer && answerExplanation && (
+                    <div className={`mt-3 pt-3 border-t ${darkMode ? 'border-gray-600' : 'border-gray-200'}`}>
+                      <div className={`text-sm ${
+                        isCorrect
+                          ? darkMode ? 'text-green-300' : 'text-green-700'
+                          : darkMode ? 'text-gray-400' : 'text-gray-600'
+                      }`}>
+                        <span className="font-semibold">{isCorrect ? 'Correct. ' : 'Incorrect. '}</span>
+                        {answerExplanation}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* General Explanation Section */}
+          {showAnswer && currentQuestion && currentQuestion.overallExplanation && (
+            <div className={`p-4 rounded-lg mb-6 ${darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'} border`}>
+              <h3 className={`font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Explication Générale</h3>
+              <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                {currentQuestion.overallExplanation}
+              </p>
+            </div>
+          )}
+
+          {/* Action Buttons */}
+          <div className="flex justify-between">
+            <button
+              onClick={handlePreviousQuestion}
+              disabled={currentQuestionIndex === 0}
+              className={`px-6 py-3 rounded-lg font-medium transition-colors flex items-center ${
+                currentQuestionIndex === 0
+                  ? darkMode ? 'bg-gray-800 text-gray-600' : 'bg-gray-100 text-gray-400'
+                  : darkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              ← Précédent
+            </button>
+            
+            <div className="flex gap-3">
+              {!showAnswer && (
+                <button
+                  onClick={handleNextQuestion}
+                  className={`px-6 py-3 rounded-lg font-medium text-white bg-gray-500 hover:bg-gray-600 transition-colors flex items-center`}
+                >
+                  {currentQuestionIndex === questions.length - 1 ? 'Terminer' : 'Suivant →'}
+                </button>
+              )}
+              
+              {!showAnswer ? (
+                <button
+                  onClick={handleShowAnswer}
+                  disabled={selectedAnswers.length === 0}
+                  className={`px-6 py-3 rounded-lg font-medium ${
+                    selectedAnswers.length === 0
+                      ? darkMode ? 'bg-gray-700 text-gray-500' : 'bg-gray-200 text-gray-400'
+                      : darkMode ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-blue-500 text-white hover:bg-blue-600'
+                  } transition-colors`}
+                >
+                  Voir la réponse
+                </button>
+              ) : (
+                <button
+                  onClick={handleNextQuestion}
+                  className={`px-6 py-3 rounded-lg font-medium text-white bg-blue-500 hover:bg-blue-600 transition-colors flex items-center`}
+                >
+                  {currentQuestionIndex === questions.length - 1 ? 'Terminer' : 'Suivant →'}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Progress Bar */}
+        <div className={`mt-6 p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+          <div className="flex justify-between items-center mb-2">
+            <span className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Progression</span>
+            <span className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{currentQuestionIndex + 1} / {questions.length}</span>
+          </div>
+          <div className={`w-full ${darkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded-full h-2`}>
+            <div 
+              className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+              style={{ width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` }}
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
