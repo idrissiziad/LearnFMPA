@@ -72,7 +72,7 @@ export interface ModuleWithQuestions extends Module {
 
 export const modules: Module[] = [
   {
-    id: 2,
+    id: 1,
     title: 'Pathologie digestive',
     subtitle: '3ème année',
     description: 'Questions d\'annales en pathologie digestive pour les étudiants en médecine',
