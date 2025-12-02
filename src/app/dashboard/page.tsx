@@ -4,9 +4,13 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { modules, moduleQuestionsCache, moduleChaptersCache, preloadModuleData } from '@/data/modules';
 import { useRouter } from 'next/navigation';
+import { useTheme } from '@/contexts/ThemeContext';
+import ThemeToggle from '@/components/ThemeToggle';
 
 export default function Dashboard() {
   const router = useRouter();
+  const { theme } = useTheme();
+  const isDarkMode = theme === 'dark';
   const [searchQuery, setSearchQuery] = useState('');
 
 
@@ -24,9 +28,9 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-blue-50 flex flex-col">
+    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-blue-50'} flex flex-col`}>
       {/* Header Section */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} shadow-sm border-b`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
@@ -41,12 +45,17 @@ export default function Dashboard() {
             
             {/* User Account Options */}
             <div className="flex items-center space-x-2 sm:space-x-4">
-              <Link href="/profile" className="text-gray-700 hover:text-gray-900 transition-colors text-sm sm:text-base">
+              <Link href="/profile" className={`${isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-700 hover:text-gray-900'} transition-colors text-sm sm:text-base`}>
                 Profil
               </Link>
+              <ThemeToggle />
               <button
                 onClick={handleLogout}
-                className="px-3 sm:px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-medium text-sm sm:text-base"
+                className={`px-3 sm:px-4 py-2 rounded-lg transition-colors font-medium text-sm sm:text-base ${
+                  isDarkMode
+                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                }`}
               >
                 Déconnexion
               </button>
@@ -59,18 +68,20 @@ export default function Dashboard() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 flex-grow">
         {/* Search Section */}
         <div className="text-center mb-8 sm:mb-12">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+          <h1 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} mb-4`}>
             Réussissez vos examens de médecine
           </h1>
-          <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 max-w-2xl mx-auto">
+          <p className={`text-base sm:text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} mb-6 sm:mb-8 max-w-2xl mx-auto`}>
             Accédez à des milliers de QCMs d'annales classés par année et par matière.
           </p>
           
           {/* Search Bar */}
           <form onSubmit={handleSearch} className="max-w-2xl mx-auto">
-            <div className="flex items-center bg-white rounded-full shadow-md border border-gray-200 overflow-hidden">
+            <div className={`flex items-center rounded-full shadow-md border overflow-hidden ${
+              isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+            }`}>
               <div className="pl-3 sm:pl-4">
-                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <svg className={`w-4 h-4 sm:w-5 sm:h-5 ${isDarkMode ? 'text-gray-400' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
@@ -79,7 +90,9 @@ export default function Dashboard() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Rechercher une question, une matière..."
-                className="flex-1 px-3 sm:px-4 py-2 sm:py-3 outline-none text-gray-700 text-sm sm:text-base"
+                className={`flex-1 px-3 sm:px-4 py-2 sm:py-3 outline-none text-sm sm:text-base ${
+                  isDarkMode ? 'text-gray-300 bg-gray-800' : 'text-gray-700 bg-white'
+                }`}
               />
               <button
                 type="submit"
@@ -93,7 +106,7 @@ export default function Dashboard() {
 
         {/* Module Exploration Section */}
         <div className="mb-12 sm:mb-16">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6 sm:mb-8">Explorer par module</h2>
+          <h2 className={`text-xl sm:text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} mb-6 sm:mb-8`}>Explorer par module</h2>
           
           {/* Module Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -109,16 +122,18 @@ export default function Dashboard() {
                   }
                 }}
               >
-                <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden">
+                <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden`}>
                   {/* Thumbnail Image with Gradient */}
                   <div className={`h-24 sm:h-32 bg-gradient-to-br ${module.gradient}`}></div>
                   
                   {/* Module Info */}
                   <div className="p-3 sm:p-4">
-                    <h3 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors text-sm sm:text-base">
+                    <h3 className={`font-bold mb-1 group-hover:text-blue-600 transition-colors text-sm sm:text-base ${
+                      isDarkMode ? 'text-gray-100' : 'text-gray-900'
+                    }`}>
                       {module.title}
                     </h3>
-                    <p className="text-xs sm:text-sm text-gray-600">
+                    <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                       {module.subtitle}
                     </p>
                   </div>
@@ -130,27 +145,27 @@ export default function Dashboard() {
       </main>
 
       {/* Footer Section */}
-      <footer className="bg-white border-t border-gray-200 py-6 sm:py-8 mt-auto">
+      <footer className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-t py-6 sm:py-8 mt-auto`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Footer Links */}
           <div className="flex flex-wrap justify-center space-x-4 sm:space-x-8 mb-4 sm:mb-6">
-            <a href="#" className="text-gray-600 hover:text-gray-800 transition-colors text-sm sm:text-base">
+            <a href="#" className={`${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors text-sm sm:text-base`}>
               Contact
             </a>
-            <a href="#" className="text-gray-600 hover:text-gray-800 transition-colors text-sm sm:text-base">
+            <a href="#" className={`${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors text-sm sm:text-base`}>
               FAQ
             </a>
-            <a href="#" className="text-gray-600 hover:text-gray-800 transition-colors text-sm sm:text-base">
+            <a href="#" className={`${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors text-sm sm:text-base`}>
               Terms of Service
             </a>
-            <a href="#" className="text-gray-600 hover:text-gray-800 transition-colors text-sm sm:text-base">
+            <a href="#" className={`${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-600 hover:text-gray-800'} transition-colors text-sm sm:text-base`}>
               Privacy Policy
             </a>
           </div>
           
           {/* Copyright Notice */}
           <div className="text-center">
-            <p className="text-xs sm:text-sm text-gray-500">
+            <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
               © 2024 LearnFMPA. Tous droits réservés.
             </p>
           </div>

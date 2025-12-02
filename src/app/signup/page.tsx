@@ -65,25 +65,10 @@ export default function SignUp() {
       </header>
 
       {/* Main Content */}
-      <div className="pt-16 min-h-screen flex">
-        {/* Left Column - Image */}
-        <div className="hidden lg:block lg:w-1/2 p-8">
-          <div className="h-full flex items-center justify-center">
-            <div className="w-full max-w-md">
-              <img
-                src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
-                alt="Medical professionals"
-                className="w-full h-auto rounded-lg shadow-lg"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column - Sign Up Form */}
-        <div className="w-full lg:w-1/2 p-4 sm:p-6 lg:p-16">
-          <div className="max-w-md mx-auto">
-            {/* Header */}
-            <div className="text-center mb-6 sm:mb-8">
+      <div className="pt-16 min-h-screen flex items-center justify-center">
+        <div className="w-full max-w-md p-4 sm:p-6 lg:p-8">
+          {/* Header */}
+          <div className="text-center mb-6 sm:mb-8">
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
                 Créez votre compte
               </h1>
@@ -260,7 +245,6 @@ export default function SignUp() {
                 </Link>
               </p>
             </div>
-          </div>
         </div>
       </div>
     </div>

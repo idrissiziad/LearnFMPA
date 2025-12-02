@@ -5,6 +5,8 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getModuleById, getModuleQuestions, getModuleChapters, preloadModuleData, Question, Chapter, JsonQuestion, extractChaptersFromQuestions } from '@/data/modules';
+import { useTheme } from '@/contexts/ThemeContext';
+import ThemeToggle from '@/components/ThemeToggle';
 
 // Lazy load the chapter navigation component
 const ChapterNavigation = lazy(() => import('@/components/ChapterNavigation'));
@@ -21,6 +23,8 @@ export interface ExtendedQuestion extends Question {
 export default function ModulePage() {
   const params = useParams();
   const router = useRouter();
+  const { theme } = useTheme();
+  const isDarkMode = theme === 'dark';
   const [allQuestions, setAllQuestions] = useState<ExtendedQuestion[]>([]);
   const [questions, setQuestions] = useState<ExtendedQuestion[]>([]);
   const [chapters, setChapters] = useState<Chapter[]>([]);
@@ -30,7 +34,6 @@ export default function ModulePage() {
   const [score, setScore] = useState(0);
   const [answeredQuestions, setAnsweredQuestions] = useState<Set<number>>(new Set());
   const [showChapters, setShowChapters] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
   const [sessionFilter, setSessionFilter] = useState('Toutes les sessions');
   const [availableSessions, setAvailableSessions] = useState<string[]>([]);
   const [isCorrectlyAnswered, setIsCorrectlyAnswered] = useState(false);
@@ -40,6 +43,8 @@ export default function ModulePage() {
   const [shuffledCorrectAnswers, setShuffledCorrectAnswers] = useState<number[][]>([]);
   const [shuffledAnswerExplanations, setShuffledAnswerExplanations] = useState<string[][]>([]);
   const [shuffledOptionImages, setShuffledOptionImages] = useState<string[][]>([]);
+  const [originalSelectedAnswers, setOriginalSelectedAnswers] = useState<number[]>([]);
+  const [strikethroughOptions, setStrikethroughOptions] = useState<{ [key: string]: Set<number> }>({});
 
   const moduleId = parseInt(params.id as string);
   const module = getModuleById(moduleId);
@@ -191,7 +196,7 @@ export default function ModulePage() {
 
   // Initialize shuffled options for the current question
   useEffect(() => {
-    if (currentQuestion && !showAnswer) {
+    if (currentQuestion) {
       // Check if this is a two-choice question
       const isTwoChoiceQuestion = currentQuestion.options.length === 2;
       
@@ -317,13 +322,35 @@ export default function ModulePage() {
     }
   };
 
+  const handleOptionRightClick = (e: React.MouseEvent, optionIndex: number) => {
+    e.preventDefault(); // Prevent context menu
+    
+    const questionKey = `${moduleId}_${currentQuestionIndex}`;
+    const currentStrikethrough = strikethroughOptions[questionKey] || new Set();
+    
+    // Toggle strikethrough for this option
+    const newStrikethrough = new Set(currentStrikethrough);
+    if (newStrikethrough.has(optionIndex)) {
+      newStrikethrough.delete(optionIndex);
+    } else {
+      newStrikethrough.add(optionIndex);
+    }
+    
+    setStrikethroughOptions(prev => ({
+      ...prev,
+      [questionKey]: newStrikethrough
+    }));
+  };
+
   const handleShowAnswer = () => {
     if (selectedAnswers.length === 0 || !currentQuestion) return;
 
-    // Map selected answers back to original positions
+    // Map selected answers back to original positions for validation
     const mapping = optionMapping[currentQuestionIndex] || [];
     const mappedSelectedAnswers = selectedAnswers.map(selectedIndex => mapping[selectedIndex]);
-    
+    // Store the original indices for display when showing answer
+    setOriginalSelectedAnswers(mappedSelectedAnswers);
+
     // Map correct answers to original positions for comparison
     const correctAnswersSet = new Set(currentQuestion.correctAnswers);
     const selectedAnswersSet = new Set(mappedSelectedAnswers);
@@ -358,6 +385,7 @@ export default function ModulePage() {
       setSelectedAnswers([]);
       setShowAnswer(false);
       setIsCorrectlyAnswered(false);
+      setOriginalSelectedAnswers([]);
     } else {
       // End of questions
       router.push('/dashboard');
@@ -370,6 +398,8 @@ export default function ModulePage() {
       setSelectedAnswers([]);
       setShowAnswer(false);
       setIsCorrectlyAnswered(false);
+      setOriginalSelectedAnswers([]);
+      // Don't reset strikethrough options when changing questions
     }
   };
 
@@ -378,6 +408,7 @@ export default function ModulePage() {
     setSelectedAnswers([]);
     setShowAnswer(false);
     setIsCorrectlyAnswered(false);
+    // Don't reset strikethrough options when changing questions
   };
 
   const handleSessionFilterChange = (newSession: string) => {
@@ -385,14 +416,14 @@ export default function ModulePage() {
   };
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Header */}
-      <header className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b sticky top-0 z-10`}>
+      <header className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b sticky top-0 z-10`}>
         <div className="max-w-4xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex justify-between items-center">
           <div className="flex items-center space-x-2 sm:space-x-3">
             <Link
               href="/dashboard"
-              className={`p-2 rounded-lg ${darkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'} transition-colors`}
+              className={`p-2 rounded-lg ${isDarkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'} transition-colors`}
               aria-label="Retour au tableau de bord"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -402,12 +433,12 @@ export default function ModulePage() {
             <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-blue-500`}>
               <span className="text-white font-bold text-sm sm:text-base">{module.title.charAt(0)}</span>
             </div>
-            <h1 className={`text-base sm:text-lg lg:text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'} hidden sm:block`}>{module.title}</h1>
-            <h1 className={`text-base sm:text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-900'} sm:hidden`}>{module.title.length > 15 ? module.title.substring(0, 15) + '...' : module.title}</h1>
+            <h1 className={`text-base sm:text-lg lg:text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} hidden sm:block`}>{module.title}</h1>
+            <h1 className={`text-base sm:text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} sm:hidden`}>{module.title.length > 15 ? module.title.substring(0, 15) + '...' : module.title}</h1>
           </div>
           <div className="flex items-center space-x-2 sm:space-x-4">
             <select
-              className={`px-2 py-1 sm:px-3 rounded-lg border text-xs sm:text-sm ${darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-700'}`}
+              className={`px-2 py-1 sm:px-3 rounded-lg border text-xs sm:text-sm ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-700'}`}
               value={sessionFilter}
               onChange={(e) => handleSessionFilterChange(e.target.value)}
             >
@@ -416,14 +447,7 @@ export default function ModulePage() {
                 <option key={session} value={session}>{session}</option>
               ))}
             </select>
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${darkMode ? 'bg-gray-700 text-yellow-400' : 'bg-gray-200 text-gray-600'}`}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-              </svg>
-            </button>
+            <ThemeToggle />
           </div>
         </div>
       </header>
@@ -435,8 +459,8 @@ export default function ModulePage() {
             <button
               onClick={() => setShowChapters(!showChapters)}
               className={`px-3 py-2 sm:px-4 rounded-lg font-medium transition-colors flex items-center text-sm sm:text-base ${
-                darkMode ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-white text-gray-900 hover:bg-gray-50'
-              } border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}
+                isDarkMode ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-white text-gray-900 hover:bg-gray-50'
+              } border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -450,7 +474,7 @@ export default function ModulePage() {
               <span className="hidden sm:inline">Navigation par chapitre</span>
               <span className="sm:hidden">Chapitres</span>
             </button>
-            <span className={`text-xs sm:text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+            <span className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
               Session: {sessionFilter}
             </span>
           </div>
@@ -459,7 +483,7 @@ export default function ModulePage() {
         {/* Chapter Navigation - Only show when "Toutes les sessions" is selected and chapters are toggled */}
         {sessionFilter === 'Toutes les sessions' && showChapters && (
           <Suspense fallback={
-            <div className={`mb-6 p-3 sm:p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+            <div className={`mb-6 p-3 sm:p-4 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
               <div className="flex justify-center items-center h-32">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
               </div>
@@ -471,7 +495,7 @@ export default function ModulePage() {
               currentQuestionIndex={currentQuestionIndex}
               correctlyAnsweredQuestions={correctlyAnsweredQuestions}
               moduleId={moduleId}
-              darkMode={darkMode}
+              darkMode={isDarkMode}
               onChapterSelect={handleChapterSelect}
             />
           </Suspense>
@@ -480,17 +504,17 @@ export default function ModulePage() {
         {/* Session info when not showing chapter navigation */}
         {sessionFilter !== 'Toutes les sessions' && (
           <div className="mb-4 flex justify-end">
-            <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+            <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
               Session: {sessionFilter}
             </span>
           </div>
         )}
 
         {/* Question Section */}
-        <div className={`p-4 sm:p-6 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+        <div className={`p-4 sm:p-6 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
           <div className="mb-4 sm:mb-6">
             <div className="flex items-center justify-between mb-3 sm:mb-4">
-              <h2 className={`text-lg sm:text-xl md:text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+              <h2 className={`text-lg sm:text-xl md:text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                 Question {currentQuestionIndex + 1} / {questions.length}
                 {currentQuestion && correctlyAnsweredQuestions[`${moduleId}_${currentQuestion.id}`] && (
                   <span className="ml-2 inline-flex items-center">
@@ -501,7 +525,10 @@ export default function ModulePage() {
                 )}
               </h2>
             </div>
-            <p className={`text-base sm:text-lg ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{currentQuestion?.question}</p>
+            <p className={`text-base sm:text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{currentQuestion?.question}</p>
+            <p className={`text-xs sm:text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} italic`}>
+              💡 Astuce : Clic droit sur une option pour la barrer
+            </p>
           </div>
 
           {/* Question Image */}
@@ -514,7 +541,7 @@ export default function ModulePage() {
                 alt="Question image"
                 width={800}
                 height={600}
-                className={`rounded-lg ${darkMode ? 'border border-gray-600' : ''}`}
+                className={`rounded-lg ${isDarkMode ? 'border border-gray-600' : ''}`}
                 style={{ maxWidth: '100%', height: 'auto' }}
               />
             </div>
@@ -524,7 +551,7 @@ export default function ModulePage() {
           {showAnswer && currentQuestion && (
             <div className="flex flex-wrap gap-2 mb-4">
               {currentQuestion.confirmed && (
-                <div className={`px-3 py-1 rounded-full text-sm font-medium flex items-center ${darkMode ? 'bg-blue-900 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
+                <div className={`px-3 py-1 rounded-full text-sm font-medium flex items-center ${isDarkMode ? 'bg-blue-900 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
@@ -532,7 +559,7 @@ export default function ModulePage() {
                 </div>
               )}
               {isCorrectlyAnswered && (
-                <div className={`px-3 py-1 rounded-full text-sm font-medium flex items-center ${darkMode ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-700'}`}>
+                <div className={`px-3 py-1 rounded-full text-sm font-medium flex items-center ${isDarkMode ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-700'}`}>
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
@@ -544,35 +571,34 @@ export default function ModulePage() {
 
           {/* Answer Options */}
           <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
-            {(showAnswer ? currentQuestion?.options : (shuffledOptions[currentQuestionIndex] || [])).map((option, index) => {
-              // Use original data when answer is shown, otherwise use shuffled data
-              const isCorrect = showAnswer
-                ? currentQuestion.correctAnswers.includes(index)
-                : (shuffledCorrectAnswers[currentQuestionIndex] || []).includes(index);
-              const isSelected = selectedAnswers.includes(index);
+            {(shuffledOptions[currentQuestionIndex] || []).map((option, index) => {
+              // Always use shuffled data for consistency
+              const isCorrect = (shuffledCorrectAnswers[currentQuestionIndex] || []).includes(index);
+              const isSelected = showAnswer ? originalSelectedAnswers.includes(optionMapping[currentQuestionIndex]?.[index] ?? -1): selectedAnswers.includes(index);
               const showCorrectFeedback = showAnswer && isCorrect;
               const showIncorrectFeedback = showAnswer && isSelected && !isCorrect;
-              const optionImage = showAnswer
-                ? (currentQuestion.optionImages && currentQuestion.optionImages[index])
-                : (shuffledOptionImages[currentQuestionIndex] && shuffledOptionImages[currentQuestionIndex][index]);
-              const answerExplanation = showAnswer
-                ? (currentQuestion.answerExplanations && currentQuestion.answerExplanations[index])
-                : (shuffledAnswerExplanations[currentQuestionIndex] && shuffledAnswerExplanations[currentQuestionIndex][index]);
+              const optionImage = (shuffledOptionImages[currentQuestionIndex] && shuffledOptionImages[currentQuestionIndex][index]);
+              const answerExplanation = (shuffledAnswerExplanations[currentQuestionIndex] && shuffledAnswerExplanations[currentQuestionIndex][index]);
+              
+              // Check if this option is marked for strikethrough
+              const questionKey = `${moduleId}_${currentQuestionIndex}`;
+              const isStrikethrough = strikethroughOptions[questionKey]?.has(index) || false;
               
               return (
                 <div
                   key={index}
                   className={`w-full p-3 sm:p-4 rounded-lg border transition-all ${
                     showCorrectFeedback
-                      ? darkMode ? 'bg-green-900 border-green-700' : 'bg-green-50 border-green-500'
+                      ? isDarkMode ? 'bg-green-900 border-green-700' : 'bg-green-50 border-green-500'
                       : showIncorrectFeedback
-                      ? darkMode ? 'bg-red-900 border-red-700' : 'bg-red-50 border-red-500'
+                      ? isDarkMode ? 'bg-red-900 border-red-700' : 'bg-red-50 border-red-500'
                       : isSelected
-                      ? darkMode ? 'border-blue-500 bg-blue-900' : 'border-blue-500 bg-blue-50'
-                      : darkMode
+                      ? isDarkMode ? 'border-blue-500 bg-blue-900' : 'border-blue-500 bg-blue-50'
+                      : isDarkMode
                       ? 'border-gray-600 bg-gray-700 hover:bg-gray-600'
                       : 'border-gray-200 bg-white hover:bg-gray-50'
                   }`}
+                  onContextMenu={(e) => handleOptionRightClick(e, index)}
                 >
                   <button
                     onClick={() => handleAnswerSelect(index)}
@@ -589,7 +615,7 @@ export default function ModulePage() {
                           ? 'border-blue-500 bg-blue-500'
                           : showCorrectFeedback
                           ? 'border-green-500 bg-green-500'
-                          : darkMode
+                          : isDarkMode
                           ? 'border-gray-500'
                           : 'border-gray-400'
                       }`}>
@@ -600,7 +626,7 @@ export default function ModulePage() {
                           <div className="w-2 h-2 rounded bg-white"></div>
                         )}
                       </div>
-                      <div className={`text-left text-sm sm:text-base ${isSelected && !showAnswer ? (darkMode ? 'text-white' : 'text-gray-900') : (darkMode ? 'text-gray-100' : 'text-gray-900')}`}>
+                      <div className={`text-left text-sm sm:text-base ${isSelected && !showAnswer ? (isDarkMode ? 'text-white' : 'text-gray-900') : (isDarkMode ? 'text-gray-100' : 'text-gray-900')} ${isStrikethrough ? 'line-through opacity-60' : ''}`}>
                         <span className="font-semibold">{String.fromCharCode(65 + index)}. </span>
                         {option}
                       </div>
@@ -617,7 +643,7 @@ export default function ModulePage() {
                         alt={`Option ${String.fromCharCode(65 + index)} image`}
                         width={600}
                         height={400}
-                        className={`rounded-lg ${darkMode ? 'border border-gray-600' : ''}`}
+                        className={`rounded-lg ${isDarkMode ? 'border border-gray-600' : ''}`}
                         style={{ maxWidth: '100%', height: 'auto' }}
                       />
                     </div>
@@ -625,14 +651,14 @@ export default function ModulePage() {
                   
                   {/* Answer Explanation */}
                   {showAnswer && answerExplanation && (
-                    <div className={`mt-2 sm:mt-3 pt-2 sm:pt-3 border-t ${darkMode ? 'border-gray-600' : 'border-gray-200'}`}>
+                    <div className={`mt-2 sm:mt-3 pt-2 sm:pt-3 border-t ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
                       <div className={`text-xs sm:text-sm ${
                         isCorrect
-                          ? darkMode ? 'text-green-300' : 'text-green-700'
-                          : darkMode ? 'text-gray-400' : 'text-gray-600'
+                          ? isDarkMode ? 'text-green-300' : 'text-green-700'
+                          : isDarkMode ? 'text-gray-400' : 'text-gray-600'
                       }`}>
                         <span className="font-semibold">{isCorrect ? 'Correct. ' : 'Incorrect. '}</span>
-                        {answerExplanation}
+                        <span dangerouslySetInnerHTML={{ __html: answerExplanation.replace(/<br\s*\/?>/gi, '\n').replace(/\n/g, '<br>') }} />
                       </div>
                     </div>
                   )}
@@ -643,10 +669,10 @@ export default function ModulePage() {
 
           {/* General Explanation Section */}
           {showAnswer && currentQuestion && currentQuestion.overallExplanation && (
-            <div className={`p-3 sm:p-4 rounded-lg mb-4 sm:mb-6 ${darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'} border`}>
-              <h3 className={`font-bold mb-2 text-sm sm:text-base ${darkMode ? 'text-white' : 'text-gray-900'}`}>Explication Générale</h3>
-              <p className={`text-xs sm:text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                {currentQuestion.overallExplanation}
+            <div className={`p-3 sm:p-4 rounded-lg mb-4 sm:mb-6 ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'} border`}>
+              <h3 className={`font-bold mb-2 text-sm sm:text-base ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Explication Générale</h3>
+              <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+                 dangerouslySetInnerHTML={{ __html: currentQuestion.overallExplanation.replace(/<br\s*\/?>/gi, '\n').replace(/\n/g, '<br>') }}>
               </p>
             </div>
           )}
@@ -658,8 +684,8 @@ export default function ModulePage() {
               disabled={currentQuestionIndex === 0}
               className={`px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-medium transition-colors flex items-center justify-center text-sm sm:text-base ${
                 currentQuestionIndex === 0
-                  ? darkMode ? 'bg-gray-800 text-gray-600' : 'bg-gray-100 text-gray-400'
-                  : darkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  ? isDarkMode ? 'bg-gray-800 text-gray-600' : 'bg-gray-100 text-gray-400'
+                  : isDarkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
             >
               ← Précédent
@@ -681,8 +707,8 @@ export default function ModulePage() {
                   disabled={selectedAnswers.length === 0}
                   className={`px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-medium text-sm sm:text-base ${
                     selectedAnswers.length === 0
-                      ? darkMode ? 'bg-gray-700 text-gray-500' : 'bg-gray-200 text-gray-400'
-                      : darkMode ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-blue-500 text-white hover:bg-blue-600'
+                      ? isDarkMode ? 'bg-gray-700 text-gray-500' : 'bg-gray-200 text-gray-400'
+                      : isDarkMode ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-blue-500 text-white hover:bg-blue-600'
                   } transition-colors`}
                 >
                   Voir la réponse
@@ -700,12 +726,12 @@ export default function ModulePage() {
         </div>
 
         {/* Progress Bar */}
-        <div className={`mt-4 sm:mt-6 p-3 sm:p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+        <div className={`mt-4 sm:mt-6 p-3 sm:p-4 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
           <div className="flex justify-between items-center mb-2">
-            <span className={`text-xs sm:text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Progression</span>
-            <span className={`text-xs sm:text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{currentQuestionIndex + 1} / {questions.length}</span>
+            <span className={`text-xs sm:text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Progression</span>
+            <span className={`text-xs sm:text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{currentQuestionIndex + 1} / {questions.length}</span>
           </div>
-          <div className={`w-full ${darkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded-full h-1.5 sm:h-2`}>
+          <div className={`w-full ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded-full h-1.5 sm:h-2`}>
             <div
               className="bg-blue-500 h-1.5 sm:h-2 rounded-full transition-all duration-300"
               style={{ width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` }}
