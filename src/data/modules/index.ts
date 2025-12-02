@@ -11,6 +11,7 @@ export interface Module {
   description: string;
   year: string;
   gradient: string;
+  json_filename?: string;
 }
 
 export interface JsonQuestion {
@@ -79,7 +80,7 @@ export const modules: Module[] = [
     id: 1,
     title: 'Pathologie digestive',
     subtitle: '3ème année',
-    description: 'Questions d\'annales en pathologie digestive pour les étudiants en médecine',
+    description: 'Questions d"annales en pathologie digestive pour les étudiants en médecine',
     year: '3ème année',
     gradient: 'from-teal-400 to-teal-600'
   }
@@ -150,6 +151,10 @@ export const getModuleQuestions = async (moduleId: number): Promise<Question[]> 
       const pathologieModule = await import('./Pathologie digestive.json');
       jsonQuestions = (pathologieModule as any).default as JsonQuestion[];
       break;
+    case 2:
+      const testModule = await import('./Pathologie digestive (Copy).json');
+      jsonQuestions = (testModule as any).default as JsonQuestion[];
+      break;
     default:
       return [];
   }
@@ -217,6 +222,10 @@ export const getModuleChapters = async (moduleId: number): Promise<Chapter[]> =>
     case 1:
       const pathologieModule = await import('./Pathologie digestive.json');
       jsonQuestions = (pathologieModule as any).default as JsonQuestion[];
+      break;
+    case 2:
+      const testModule = await import('./Pathologie digestive (Copy).json');
+      jsonQuestions = (testModule as any).default as JsonQuestion[];
       break;
     default:
       return [];

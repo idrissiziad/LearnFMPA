@@ -1,0 +1,26 @@
+[
+    {
+        "YearAsked": "Normale 2022",
+        "Subtopic": "Abcès hépatique",
+        "QuestionText": "Infections des parties molles : dans l'abcès chaud les adénopathies satellites sont :",
+        "Choice_A_Text": "Douloureuse.",
+        "Choice_A_isCorrect": false,
+        "Choice_A_Explanation": "",
+        "Choice_B_Text": "Indolore.",
+        "Choice_B_isCorrect": true,
+        "Choice_B_Explanation": "",
+        "Choice_C_Text": "Peu Mobile.",
+        "Choice_C_isCorrect": false,
+        "Choice_C_Explanation": "",
+        "Choice_D_Text": "Molles.",
+        "Choice_D_isCorrect": false,
+        "Choice_D_Explanation": "",
+        "Choice_E_Text": "Palpables.",
+        "Choice_E_isCorrect": false,
+        "Choice_E_Explanation": "",
+        "OverallExplanation": "",
+        "IsChapterStart": true,
+        "ChapterName": "Abcès hépatique",
+        "ChapterColor": "#AABFB6"
+    }
+]
