@@ -4,7 +4,7 @@ import { useState, useEffect, lazy, Suspense } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getModuleById, getModuleQuestions, getModuleChapters, Question, Chapter, JsonQuestion, extractChaptersFromQuestions } from '@/data/modules';
+import { getModuleById, getModuleQuestions, getModuleChapters, preloadModuleData, Question, Chapter, JsonQuestion, extractChaptersFromQuestions } from '@/data/modules';
 
 // Lazy load the chapter navigation component
 const ChapterNavigation = lazy(() => import('@/components/ChapterNavigation'));
@@ -46,7 +46,8 @@ export default function ModulePage() {
 
   useEffect(() => {
     if (moduleId) {
-      getModuleQuestions(moduleId).then(allQuestions => {
+      // Use optimized preload function to minimize edge requests
+      preloadModuleData(moduleId).then(({ questions: allQuestions }) => {
         // Convert to ExtendedQuestion format
         const extendedQuestions = allQuestions.map(q => ({
           ...q,
@@ -120,52 +121,50 @@ export default function ModulePage() {
     }
   }, [moduleId]);
 
-  const filterQuestionsBySession = async (questionsToFilter: ExtendedQuestion[], session: string) => {
+  const filterQuestionsBySession = (questionsToFilter: ExtendedQuestion[], session: string) => {
     if (session === 'Toutes les sessions') {
       setQuestions(questionsToFilter);
+      // Use cached chapters to avoid redundant imports
       getModuleChapters(moduleId).then(setChapters);
     } else {
       const filteredQuestions = questionsToFilter.filter(q => q.year === session);
       setQuestions(filteredQuestions);
       
-      // Use the already loaded questions from cache to avoid redundant imports
-      // Since we already have allQuestions, we can derive chapters from them
-      const filteredJsonQuestions = allQuestions
-        .filter(q => q.year === session)
-        .map(q => {
-          // Convert ExtendedQuestion back to JsonQuestion format for chapter extraction
-          return {
-            YearAsked: q.year || '',
-            Subtopic: q.chapter || '',
-            QuestionText: q.question,
-            QuestionImage: q.questionImage,
-            Choice_A_Text: q.options[0] || '',
-            Choice_A_isCorrect: q.correctAnswers?.includes(0) || false,
-            Choice_A_Explanation: q.answerExplanations?.[0] || '',
-            Choice_A_Image: q.optionImages?.[0] || '',
-            Choice_B_Text: q.options[1] || '',
-            Choice_B_isCorrect: q.correctAnswers?.includes(1) || false,
-            Choice_B_Explanation: q.answerExplanations?.[1] || '',
-            Choice_B_Image: q.optionImages?.[1] || '',
-            Choice_C_Text: q.options[2] || '',
-            Choice_C_isCorrect: q.correctAnswers?.includes(2) || false,
-            Choice_C_Explanation: q.answerExplanations?.[2] || '',
-            Choice_C_Image: q.optionImages?.[2] || '',
-            Choice_D_Text: q.options[3] || '',
-            Choice_D_isCorrect: q.correctAnswers?.includes(3) || false,
-            Choice_D_Explanation: q.answerExplanations?.[3] || '',
-            Choice_D_Image: q.optionImages?.[3] || '',
-            Choice_E_Text: q.options[4] || '',
-            Choice_E_isCorrect: q.correctAnswers?.includes(4) || false,
-            Choice_E_Explanation: q.answerExplanations?.[4] || '',
-            Choice_E_Image: q.optionImages?.[4] || '',
-            OverallExplanation: q.overallExplanation || '',
-            IsChapterStart: false,
-            ChapterName: q.chapter || '',
-            ChapterColor: '#3B82F6',
-            Confirmed: q.confirmed
-          } as JsonQuestion;
-        });
+      // Derive chapters from already loaded questions to avoid redundant imports
+      const filteredJsonQuestions = filteredQuestions.map(q => {
+        // Convert ExtendedQuestion back to JsonQuestion format for chapter extraction
+        return {
+          YearAsked: q.year || '',
+          Subtopic: q.chapter || '',
+          QuestionText: q.question,
+          QuestionImage: q.questionImage,
+          Choice_A_Text: q.options[0] || '',
+          Choice_A_isCorrect: q.correctAnswers?.includes(0) || false,
+          Choice_A_Explanation: q.answerExplanations?.[0] || '',
+          Choice_A_Image: q.optionImages?.[0] || '',
+          Choice_B_Text: q.options[1] || '',
+          Choice_B_isCorrect: q.correctAnswers?.includes(1) || false,
+          Choice_B_Explanation: q.answerExplanations?.[1] || '',
+          Choice_B_Image: q.optionImages?.[1] || '',
+          Choice_C_Text: q.options[2] || '',
+          Choice_C_isCorrect: q.correctAnswers?.includes(2) || false,
+          Choice_C_Explanation: q.answerExplanations?.[2] || '',
+          Choice_C_Image: q.optionImages?.[2] || '',
+          Choice_D_Text: q.options[3] || '',
+          Choice_D_isCorrect: q.correctAnswers?.includes(3) || false,
+          Choice_D_Explanation: q.answerExplanations?.[3] || '',
+          Choice_D_Image: q.optionImages?.[3] || '',
+          Choice_E_Text: q.options[4] || '',
+          Choice_E_isCorrect: q.correctAnswers?.includes(4) || false,
+          Choice_E_Explanation: q.answerExplanations?.[4] || '',
+          Choice_E_Image: q.optionImages?.[4] || '',
+          OverallExplanation: q.overallExplanation || '',
+          IsChapterStart: false,
+          ChapterName: q.chapter || '',
+          ChapterColor: '#3B82F6',
+          Confirmed: q.confirmed
+        } as JsonQuestion;
+      });
       
       const chaptersFromFiltered = extractChaptersFromQuestions(filteredJsonQuestions);
       setChapters(chaptersFromFiltered);

@@ -2,9 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { modules } from '@/data/modules';
+import { modules, moduleQuestionsCache, moduleChaptersCache, preloadModuleData } from '@/data/modules';
 import { useRouter } from 'next/navigation';
-import { getModuleQuestions, getModuleChapters } from '@/data/modules';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -104,9 +103,10 @@ export default function Dashboard() {
                 href={`/modules/${module.id}`}
                 className="group cursor-pointer"
                 onMouseEnter={() => {
-                  // Prefetch module data on hover
-                  getModuleQuestions(module.id);
-                  getModuleChapters(module.id);
+                  // Only prefetch if not already cached to reduce edge requests
+                  if (!moduleQuestionsCache.has(module.id) || !moduleChaptersCache.has(module.id)) {
+                    preloadModuleData(module.id);
+                  }
                 }}
               >
                 <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden">

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
@@ -11,11 +11,16 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "LearnFMPA - Révisez efficacement les annales de médecine au Maroc",
   description: "Accédez à des milliers de questions corrigées de la 1ère à la 7ème année, avec des explications détaillées par des experts et des outils pour suivre votre progression.",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
-  themeColor: "#0d4f3c",
   icons: {
     icon: "/favicon.ico",
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: "#0d4f3c",
 };
 
 export default function RootLayout({
