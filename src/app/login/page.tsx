@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function Login() {
   const router = useRouter();
@@ -64,12 +65,14 @@ export default function Login() {
         {/* Left Column - Background Image */}
         <div className="hidden lg:block lg:w-1/2 relative">
           <div className="absolute inset-0">
-            <img
+            <Image
               src="/images/Image_202512022003.jpeg"
               alt="Medical professionals studying"
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
+              priority
             />
-            <div className="absolute inset-0 bg-black bg-opacity-30"></div>
+            <div className="absolute inset-0 bg-black bg-opacity-10"></div>
           </div>
         </div>
 
