@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 
 export default function Login() {
   const router = useRouter();
@@ -62,22 +61,8 @@ export default function Login() {
 
       {/* Main Content */}
       <div className="pt-16 min-h-screen flex">
-        {/* Left Column - Background Image */}
-        <div className="hidden lg:block lg:w-1/2 relative">
-          <div className="absolute inset-0">
-            <Image
-              src="/images/Image_202512022003.jpeg"
-              alt="Medical professionals studying"
-              fill
-              className="object-cover"
-              priority
-            />
-            <div className="absolute inset-0 bg-black bg-opacity-10"></div>
-          </div>
-        </div>
-
-        {/* Right Column - Login Form */}
-        <div className="w-full lg:w-1/2 bg-white flex items-center justify-center p-4 sm:p-6 lg:p-16">
+        {/* Login Form Container */}
+        <div className="w-full max-w-md mx-auto bg-white flex items-center justify-center p-4 sm:p-6 lg:p-16">
           <div className="max-w-md w-full">
             {/* Branding */}
             <div className="text-center mb-6 sm:mb-8">

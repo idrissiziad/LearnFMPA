@@ -1,4 +1,3 @@
-import Image from "next/image";
 import MobileNav from "@/components/MobileNav";
 
 export default function Home() {
@@ -29,21 +28,8 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative mt-16">
-        <div className="relative h-80 sm:h-96 md:h-[500px] overflow-hidden rounded-lg">
-          <div className="absolute inset-0">
-            <div className="w-full h-full bg-gradient-to-r from-gray-900 to-gray-700 opacity-80"></div>
-          </div>
-          <div className="absolute inset-0">
-            <Image
-              src="/images/Medical_students_studying_202512022000.jpeg"
-              alt="Medical students studying"
-              fill
-              priority
-              sizes="100vw"
-              style={{ objectFit: 'cover' }}
-            />
-          </div>
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+        <div className="relative h-80 sm:h-96 md:h-[500px] overflow-hidden rounded-lg bg-gradient-to-r from-gray-900 to-gray-700">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
             <div className="text-center max-w-3xl mx-auto px-4">
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-4 sm:mb-6">
                 Révisez efficacement les annales de médecine au Maroc.
