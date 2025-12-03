@@ -161,8 +161,8 @@ export const getModuleQuestions = async (moduleId: number): Promise<Question[]> 
       jsonQuestions = pathologieModule.default as JsonQuestion[];
       break;
     case 2:
-      const testModule = await import('./Pathologie digestive (Copy).json', { with: { type: 'json' } });
-      jsonQuestions = testModule.default as JsonQuestion[];
+      const respiratoireModule = await import('./Pathologie respiratoire.json', { with: { type: 'json' } });
+      jsonQuestions = respiratoireModule.default as JsonQuestion[];
       break;
     default:
       return [];
@@ -233,8 +233,8 @@ export const getModuleChapters = async (moduleId: number): Promise<Chapter[]> =>
       jsonQuestions = pathologieModule.default as JsonQuestion[];
       break;
     case 2:
-      const testModule = await import('./Pathologie digestive (Copy).json', { with: { type: 'json' } });
-      jsonQuestions = testModule.default as JsonQuestion[];
+      const respiratoireModule = await import('./Pathologie respiratoire.json', { with: { type: 'json' } });
+      jsonQuestions = respiratoireModule.default as JsonQuestion[];
       break;
     default:
       return [];
