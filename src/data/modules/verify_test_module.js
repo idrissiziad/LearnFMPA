@@ -3,7 +3,7 @@ const { getModuleQuestions, getModuleChapters } = require('./index.ts');
 
 async function verifyTestModule() {
   try {
-    console.log('Testing module ID 2 (Test module)...');
+    console.log('Testing module ID 2 (Pathologie respiratoire)...');
     
     // Test loading questions
     const questions = await getModuleQuestions(2);

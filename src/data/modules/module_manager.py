@@ -365,9 +365,11 @@ class ModuleManager:
             module_id = int(module.get('id', 0))
             # Use the stored json_filename if available, otherwise use the title
             filename = module.get('json_filename', module.get('title', ''))
+            # Create a valid variable name for the module import
+            var_name = filename.replace(' ', '').replace('-', '_').replace('é', 'e').replace('è', 'e').replace('à', 'a')
             new_cases += f"    case {module_id}:\n"
-            new_cases += f"      const {module_id}Module = await import('./{filename}.json');\n"
-            new_cases += f"      jsonQuestions = ({module_id}Module as any).default as JsonQuestion[];\n"
+            new_cases += f"      const {var_name}Module = await import('./{filename}.json', {{ with: {{ type: 'json' }} }});\n"
+            new_cases += f"      jsonQuestions = {var_name}Module.default as JsonQuestion[];\n"
             new_cases += f"      break;\n"
         
         new_cases += "    default:\n      return [];\n  }"

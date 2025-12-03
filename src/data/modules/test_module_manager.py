@@ -24,15 +24,16 @@ def test_add_module():
         'subtitle': 'Test Year',
         'description': 'This is a test module for validation',
         'year': 'Test Year',
-        'gradient': 'from-blue-400 to-blue-600'
+        'gradient': 'from-blue-400 to-blue-600',
+        'json_filename': 'Test Module'
     }
     
     # Create a test JSON file using the simplified structure
     test_json_path = Path(__file__).parent / "Test Module.json"
     
-    # Copy the simplified structure from the copy file
+    # Copy the simplified structure from an existing file
     import json
-    with open(Path(__file__).parent / "Pathologie digestive (Copy).json", 'r', encoding='utf-8') as f:
+    with open(Path(__file__).parent / "Pathologie digestive.json", 'r', encoding='utf-8') as f:
         test_data = json.load(f)
     
     # Modify the test data slightly

@@ -82,7 +82,8 @@ export const modules: Module[] = [
     subtitle: '3ème année',
     description: 'Questions d"annales en pathologie digestive pour les étudiants en médecine',
     year: '3ème année',
-    gradient: 'from-teal-400 to-teal-600'
+    gradient: 'from-teal-400 to-teal-600',
+    json_filename: 'Pathologie digestive'
   },
   {
     id: 2,
