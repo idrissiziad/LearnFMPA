@@ -103,46 +103,33 @@ export const getModuleById = (id: number): Module | undefined => {
 // Function to extract chapters from JSON data
 export const extractChaptersFromQuestions = (questions: JsonQuestion[]): Chapter[] => {
   const chapters: Chapter[] = [];
-  let currentChapterId = 1;
-  let questionCount = 0;
-  let startPosition = 0;
-  let chapterName = '';
-  let chapterColor = '#3B82F6';
+  const subtopicGroups: { [subtopic: string]: { questions: JsonQuestion[], startIndex: number } } = {};
   
+  // Group questions by subtopic and track their first occurrence
   questions.forEach((question, index) => {
-    if (question.IsChapterStart) {
-      // Save the previous chapter if it exists
-      if (questionCount > 0) {
-        chapters.push({
-          id: currentChapterId,
-          name: chapterName,
-          color: chapterColor,
-          startPosition: startPosition,
-          questionCount: questionCount
-        });
-        currentChapterId++;
-      }
-      
-      // Start a new chapter
-      chapterName = question.ChapterName || 'Unknown Chapter';
-      chapterColor = question.ChapterColor || "#3B82F6";
-      startPosition = index;
-      questionCount = 1;
-    } else {
-      questionCount++;
+    const subtopic = question.Subtopic || 'Non classé';
+    if (!subtopicGroups[subtopic]) {
+      subtopicGroups[subtopic] = {
+        questions: [],
+        startIndex: index
+      };
     }
+    subtopicGroups[subtopic].questions.push(question);
   });
   
-  // Add the last chapter
-  if (questionCount > 0) {
-    chapters.push({
-      id: currentChapterId,
-      name: chapterName,
-      color: chapterColor,
-      startPosition: startPosition,
-      questionCount: questionCount
-    });
-  }
+  // Create chapters from subtopic groups
+  let chapterId = 1;
+  Object.entries(subtopicGroups).forEach(([subtopic, group]) => {
+    if (group.questions.length > 0) {
+      chapters.push({
+        id: chapterId++,
+        name: subtopic,
+        color: "#3B82F6", // Default color, could be customized per subtopic if needed
+        startPosition: group.startIndex,
+        questionCount: group.questions.length
+      });
+    }
+  });
   
   return chapters;
 };

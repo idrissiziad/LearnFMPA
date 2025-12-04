@@ -471,8 +471,8 @@ export default function ModulePage() {
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
-              <span className="hidden sm:inline">Navigation par chapitre</span>
-              <span className="sm:hidden">Chapitres</span>
+              <span className="hidden sm:inline">Navigation par sujet</span>
+              <span className="sm:hidden">Sujets</span>
             </button>
             <span className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
               Session: {sessionFilter}

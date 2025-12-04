@@ -43,7 +43,7 @@ export default function ChapterNavigation({
                 {chapter.startPosition + 1}
               </div>
               <div className="flex-1">
-                <div className={`font-semibold text-sm sm:text-base ${darkMode ? 'text-white' : 'text-gray-900'}`}>Chapitre {chapter.id}: {chapter.name}</div>
+                <div className={`font-semibold text-sm sm:text-base ${darkMode ? 'text-white' : 'text-gray-900'}`}>{chapter.name}</div>
                 <div className={`text-xs sm:text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{chapter.questionCount} questions</div>
               </div>
               <div className={`ml-1 sm:ml-2 text-xs px-2 py-1 rounded-full ${
