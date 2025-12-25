@@ -35,6 +35,7 @@ export default function ModulePage() {
   const [answeredQuestions, setAnsweredQuestions] = useState<Set<number>>(new Set());
   const [showChapters, setShowChapters] = useState(false);
   const [sessionFilter, setSessionFilter] = useState('Toutes les sessions');
+  const [chapterFilter, setChapterFilter] = useState<string | null>(null);
   const [availableSessions, setAvailableSessions] = useState<string[]>([]);
   const [isCorrectlyAnswered, setIsCorrectlyAnswered] = useState(false);
   const [correctlyAnsweredQuestions, setCorrectlyAnsweredQuestions] = useState<{ [key: string]: boolean }>({});
@@ -128,6 +129,9 @@ export default function ModulePage() {
   }, [moduleId]);
 
   const filterQuestionsBySession = (questionsToFilter: ExtendedQuestion[], session: string) => {
+    // Reset chapter filter when session changes
+    setChapterFilter(null);
+    
     if (session === 'Toutes les sessions') {
       setQuestions(questionsToFilter);
       // Use cached chapters to avoid redundant imports
@@ -419,18 +423,54 @@ export default function ModulePage() {
     }
   };
 
-  const handleChapterSelect = (startPosition: number) => {
-    setCurrentQuestionIndex(startPosition);
+  const handleChapterSelect = (chapterName: string) => {
+    // Toggle chapter filter: if clicking the same chapter, clear the filter
+    if (chapterFilter === chapterName) {
+      setChapterFilter(null);
+      // Restore all questions for the current session
+      if (sessionFilter === 'Toutes les sessions') {
+        setQuestions(allQuestions);
+        getModuleChapters(moduleId).then(setChapters);
+      } else {
+        const filteredQuestions = allQuestions.filter(q => q.year === sessionFilter);
+        setQuestions(filteredQuestions);
+      }
+      setCurrentQuestionIndex(0);
+    } else {
+      // Set the chapter filter
+      setChapterFilter(chapterName);
+      // Filter questions by chapter
+      const filteredQuestions = allQuestions.filter(q => {
+        const matchesSession = sessionFilter === 'Toutes les sessions' || q.year === sessionFilter;
+        const matchesChapter = q.chapter === chapterName;
+        return matchesSession && matchesChapter;
+      });
+      setQuestions(filteredQuestions);
+      setCurrentQuestionIndex(0);
+    }
     setSelectedAnswers([]);
     setShowAnswer(false);
     setIsCorrectlyAnswered(false);
-    // Clear strikethrough for the new question
-    const newQuestionKey = `${moduleId}_${startPosition}`;
-    setStrikethroughOptions(prev => {
-      const newStrikethrough = { ...prev };
-      delete newStrikethrough[newQuestionKey];
-      return newStrikethrough;
-    });
+    // Clear all strikethrough options when changing chapter filter
+    setStrikethroughOptions({});
+  };
+
+  const handleClearChapterFilter = () => {
+    setChapterFilter(null);
+    // Restore all questions for the current session
+    if (sessionFilter === 'Toutes les sessions') {
+      setQuestions(allQuestions);
+      getModuleChapters(moduleId).then(setChapters);
+    } else {
+      const filteredQuestions = allQuestions.filter(q => q.year === sessionFilter);
+      setQuestions(filteredQuestions);
+    }
+    setCurrentQuestionIndex(0);
+    setSelectedAnswers([]);
+    setShowAnswer(false);
+    setIsCorrectlyAnswered(false);
+    // Clear all strikethrough options when clearing chapter filter
+    setStrikethroughOptions({});
   };
 
   const handleSessionFilterChange = (newSession: string) => {
@@ -460,18 +500,18 @@ export default function ModulePage() {
     <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Reset Confirmation Modal */}
       {showResetConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg p-6 max-w-md w-full border`}>
-            <h3 className={`text-lg font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+          <div className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg p-4 sm:p-6 max-w-md w-full border`}>
+            <h3 className={`text-base sm:text-lg font-bold mb-2 sm:mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
               Réinitialiser la progression ?
             </h3>
-            <p className={`mb-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+            <p className={`mb-4 sm:mb-6 text-xs sm:text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
               Êtes-vous sûr de vouloir réinitialiser toutes les réponses correctes pour ce module ? Cette action ne peut pas être annulée.
             </p>
-            <div className="flex justify-end gap-3">
+            <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3">
               <button
                 onClick={cancelResetProgress}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                className={`px-4 py-2 rounded-lg font-medium transition-colors text-xs sm:text-sm ${
                   isDarkMode
                     ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -481,7 +521,7 @@ export default function ModulePage() {
               </button>
               <button
                 onClick={confirmResetProgress}
-                className={`px-4 py-2 rounded-lg font-medium text-white transition-colors bg-red-500 hover:bg-red-600`}
+                className={`px-4 py-2 rounded-lg font-medium text-white transition-colors bg-red-500 hover:bg-red-600 text-xs sm:text-sm`}
               >
                 Réinitialiser
               </button>
@@ -491,73 +531,98 @@ export default function ModulePage() {
       )}
       {/* Header */}
       <header className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b sticky top-0 z-10`}>
-        <div className="max-w-4xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-2 sm:space-x-3">
-            <Link
-              href="/dashboard"
-              className={`p-2 rounded-lg ${isDarkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'} transition-colors`}
-              aria-label="Retour au tableau de bord"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
-              </svg>
-            </Link>
-            <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-blue-500`}>
-              <span className="text-white font-bold text-sm sm:text-base">{module.title.charAt(0)}</span>
+        <div className="max-w-4xl mx-auto px-2 sm:px-4 py-2 sm:py-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
+            <div className="flex items-center space-x-2 sm:space-x-3 w-full sm:w-auto">
+              <Link
+                href="/dashboard"
+                className={`p-1.5 sm:p-2 rounded-lg ${isDarkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'} transition-colors flex-shrink-0`}
+                aria-label="Retour au tableau de bord"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+                </svg>
+              </Link>
+              <div className={`w-7 h-7 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-blue-500 flex-shrink-0`}>
+                <span className="text-white font-bold text-xs sm:text-base">{module.title.charAt(0)}</span>
+              </div>
+              <h1 className={`text-sm sm:text-lg lg:text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} hidden sm:block truncate`}>{module.title}</h1>
+              <h1 className={`text-sm sm:text-base font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} sm:hidden truncate`}>{module.title.length > 20 ? module.title.substring(0, 20) + '...' : module.title}</h1>
             </div>
-            <h1 className={`text-base sm:text-lg lg:text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} hidden sm:block`}>{module.title}</h1>
-            <h1 className={`text-base sm:text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} sm:hidden`}>{module.title.length > 15 ? module.title.substring(0, 15) + '...' : module.title}</h1>
-          </div>
-          <div className="flex items-center space-x-2 sm:space-x-4">
-            <select
-              className={`px-2 py-1 sm:px-3 rounded-lg border text-xs sm:text-sm ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-700'}`}
-              value={sessionFilter}
-              onChange={(e) => handleSessionFilterChange(e.target.value)}
-            >
-              <option value="Toutes les sessions">Toutes les sessions</option>
-              {availableSessions.map(session => (
-                <option key={session} value={session}>{session}</option>
-              ))}
-            </select>
-            <button
-              onClick={handleResetProgress}
-              className={`px-3 py-1 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
-                isDarkMode
-                  ? 'bg-red-900 text-red-300 hover:bg-red-800'
-                  : 'bg-red-100 text-red-700 hover:bg-red-200'
-              }`}
-              aria-label="Réinitialiser la progression"
-            >
-              Réinitialiser
-            </button>
-            <ThemeToggle />
+            <div className="flex items-center space-x-1 sm:space-x-3 w-full sm:w-auto justify-end">
+              <select
+                className={`px-2 py-1.5 sm:px-3 rounded-lg border text-[10px] sm:text-xs ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-700'} max-w-[120px] sm:max-w-none`}
+                value={sessionFilter}
+                onChange={(e) => handleSessionFilterChange(e.target.value)}
+              >
+                <option value="Toutes les sessions">Toutes</option>
+                {availableSessions.map(session => (
+                  <option key={session} value={session}>{session.length > 15 ? session.substring(0, 15) + '...' : session}</option>
+                ))}
+              </select>
+              <button
+                onClick={handleResetProgress}
+                className={`px-2 py-1.5 sm:px-3 rounded-lg text-[10px] sm:text-xs font-medium transition-colors flex-shrink-0 ${
+                  isDarkMode
+                    ? 'bg-red-900 text-red-300 hover:bg-red-800'
+                    : 'bg-red-100 text-red-700 hover:bg-red-200'
+                }`}
+                aria-label="Réinitialiser la progression"
+              >
+                <span className="hidden sm:inline">Réinitialiser</span>
+                <span className="sm:hidden">Reset</span>
+              </button>
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
+      <div className="max-w-4xl mx-auto px-2 sm:px-4 py-3 sm:py-6">
         {/* Chapter Navigation Toggle Button - Only show when "Toutes les sessions" is selected */}
         {sessionFilter === 'Toutes les sessions' && (
-          <div className="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
-            <button
-              onClick={() => setShowChapters(!showChapters)}
-              className={`px-3 py-2 sm:px-4 rounded-lg font-medium transition-colors flex items-center text-sm sm:text-base ${
-                isDarkMode ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-white text-gray-900 hover:bg-gray-50'
-              } border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className={`h-4 w-4 sm:h-5 sm:w-5 mr-2 transform transition-transform ${showChapters ? 'rotate-180' : ''}`}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+          <div className="mb-3 sm:mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
+            <div className="flex items-center space-x-2 w-full sm:w-auto">
+              <button
+                onClick={() => setShowChapters(!showChapters)}
+                className={`px-2.5 py-2 sm:px-4 rounded-lg font-medium transition-colors flex items-center text-xs sm:text-sm ${
+                  isDarkMode ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-white text-gray-900 hover:bg-gray-50'
+                } border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-              <span className="hidden sm:inline">Navigation par sujet</span>
-              <span className="sm:hidden">Sujets</span>
-            </button>
-            <span className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className={`h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2 transform transition-transform ${showChapters ? 'rotate-180' : ''}`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+                <span className="hidden sm:inline">Navigation par sujet</span>
+                <span className="sm:hidden">Sujets</span>
+              </button>
+              {chapterFilter && (
+                <button
+                  onClick={handleClearChapterFilter}
+                  className={`px-2.5 py-2 sm:px-4 rounded-lg font-medium transition-colors flex items-center text-xs sm:text-sm ${
+                    isDarkMode ? 'bg-blue-900 text-blue-300 hover:bg-blue-800' : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                  } border ${isDarkMode ? 'border-blue-700' : 'border-blue-300'}`}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  <span className="hidden sm:inline">Effacer le filtre</span>
+                  <span className="sm:hidden">Effacer</span>
+                </button>
+              )}
+            </div>
+            <span className={`text-[10px] sm:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
               Session: {sessionFilter}
             </span>
           </div>
@@ -579,6 +644,7 @@ export default function ModulePage() {
               correctlyAnsweredQuestions={correctlyAnsweredQuestions}
               moduleId={moduleId}
               darkMode={isDarkMode}
+              activeChapter={chapterFilter}
               onChapterSelect={handleChapterSelect}
             />
           </Suspense>
@@ -594,29 +660,36 @@ export default function ModulePage() {
         )}
 
         {/* Question Section */}
-        <div className={`p-4 sm:p-6 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-          <div className="mb-4 sm:mb-6">
-            <div className="flex items-center justify-between mb-3 sm:mb-4">
-              <h2 className={`text-lg sm:text-xl md:text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                Question {currentQuestionIndex + 1} / {questions.length}
+        <div className={`p-3 sm:p-6 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+          <div className="mb-3 sm:mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 sm:mb-4 gap-1 sm:gap-0">
+              <div className="flex items-center space-x-1.5 sm:space-x-2">
+                <h2 className={`text-base sm:text-xl md:text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                  Q{currentQuestionIndex + 1}/{questions.length}
+                </h2>
+                {chapterFilter && (
+                  <span className={`px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium ${isDarkMode ? 'bg-blue-900 text-blue-300' : 'bg-blue-100 text-blue-700'} truncate max-w-[100px] sm:max-w-none`}>
+                    {chapterFilter}
+                  </span>
+                )}
                 {currentQuestion && correctlyAnsweredQuestions[`${moduleId}_${currentQuestion.id}`] && (
-                  <span className="ml-2 inline-flex items-center">
-                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                  <span className="inline-flex items-center">
+                    <svg className="w-4 h-4 sm:w-6 sm:h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
                   </span>
                 )}
-              </h2>
+              </div>
             </div>
-            <p className={`text-base sm:text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{currentQuestion?.question}</p>
-            <p className={`text-xs sm:text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} italic`}>
-              💡 Astuce : Clic droit sur une option pour la barrer
+            <p className={`text-sm sm:text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{currentQuestion?.question}</p>
+            <p className={`text-[10px] sm:text-sm mt-1.5 sm:mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} italic`}>
+              💡 Clic droit pour barrer
             </p>
           </div>
 
           {/* Question Image */}
           {currentQuestion?.questionImage && (
-            <div className="mb-4 relative">
+            <div className="mb-3 sm:mb-4 relative">
               <Image
                 src={currentQuestion.questionImage.startsWith('http')
                   ? currentQuestion.questionImage
@@ -632,28 +705,29 @@ export default function ModulePage() {
 
           {/* Feedback Tags */}
           {showAnswer && currentQuestion && (
-            <div className="flex flex-wrap gap-2 mb-4">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-3 sm:mb-4">
               {currentQuestion.confirmed && (
-                <div className={`px-3 py-1 rounded-full text-sm font-medium flex items-center ${isDarkMode ? 'bg-blue-900 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                <div className={`px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-sm font-medium flex items-center ${isDarkMode ? 'bg-blue-900 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 sm:h-4 sm:w-4 mr-0.5 sm:mr-1" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  Confirmée par les sources
+                  <span className="hidden sm:inline">Confirmée</span>
+                  <span className="sm:hidden">Confirmée</span>
                 </div>
               )}
               {isCorrectlyAnswered && (
-                <div className={`px-3 py-1 rounded-full text-sm font-medium flex items-center ${isDarkMode ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-700'}`}>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                <div className={`px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-sm font-medium flex items-center ${isDarkMode ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-700'}`}>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 sm:h-4 sm:w-4 mr-0.5 sm:mr-1" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  Correctement Répondu
+                  Correct
                 </div>
               )}
             </div>
           )}
 
           {/* Answer Options */}
-          <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
+          <div className="space-y-1.5 sm:space-y-3 mb-3 sm:mb-6">
             {(showAnswer ? currentQuestion?.options : (shuffledOptions[currentQuestionIndex] || [])).map((option, index) => {
               // When showing answer, use original options and correct answers
               // When not showing answer, use shuffled options
@@ -695,7 +769,7 @@ export default function ModulePage() {
               return (
                 <div
                   key={index}
-                  className={`w-full p-3 sm:p-4 rounded-lg border transition-all ${
+                  className={`w-full p-2 sm:p-4 rounded-lg border transition-all ${
                     showCorrectFeedback
                       ? isDarkMode ? 'bg-green-900 border-green-700' : 'bg-green-50 border-green-500'
                       : showMissedCorrectFeedback
@@ -716,7 +790,7 @@ export default function ModulePage() {
                     disabled={showAnswer}
                   >
                     <div className="flex items-start">
-                      <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded border-2 mr-2 sm:mr-3 mt-0.5 flex-shrink-0 flex items-center justify-center ${
+                      <div className={`w-4 h-4 sm:w-6 sm:h-6 rounded border-2 mr-1.5 sm:mr-3 mt-0.5 flex-shrink-0 flex items-center justify-center ${
                         currentQuestion.isMultipleChoice
                           ? 'rounded'
                           : 'rounded-full'
@@ -730,13 +804,13 @@ export default function ModulePage() {
                           : 'border-gray-400'
                       }`}>
                         {isSelected && (
-                          <div className="w-2 h-2 rounded bg-white"></div>
+                          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded bg-white"></div>
                         )}
                         {showCorrectFeedback && !isSelected && (
-                          <div className="w-2 h-2 rounded bg-white"></div>
+                          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded bg-white"></div>
                         )}
                       </div>
-                      <div className={`text-left text-sm sm:text-base ${isSelected && !showAnswer ? (isDarkMode ? 'text-white' : 'text-gray-900') : (isDarkMode ? 'text-gray-100' : 'text-gray-900')} ${isStrikethrough ? 'line-through opacity-60' : ''}`}>
+                      <div className={`text-left text-xs sm:text-base ${isSelected && !showAnswer ? (isDarkMode ? 'text-white' : 'text-gray-900') : (isDarkMode ? 'text-gray-100' : 'text-gray-900')} ${isStrikethrough ? 'line-through opacity-60' : ''}`}>
                         <span className="font-semibold">{String.fromCharCode(65 + index)}. </span>
                         {option}
                       </div>
@@ -745,7 +819,7 @@ export default function ModulePage() {
                   
                   {/* Option Image (shown after answer is revealed) */}
                   {showAnswer && optionImage && (
-                    <div className="mt-3 relative">
+                    <div className="mt-2 sm:mt-3 relative">
                       <Image
                         src={optionImage.startsWith('http')
                           ? optionImage
@@ -761,8 +835,8 @@ export default function ModulePage() {
                   
                   {/* Answer Explanation */}
                   {showAnswer && answerExplanation && (
-                    <div className={`mt-2 sm:mt-3 pt-2 sm:pt-3 border-t ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
-                      <div className={`text-xs sm:text-sm ${
+                    <div className={`mt-1.5 sm:mt-3 pt-1.5 sm:pt-3 border-t ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
+                      <div className={`text-[10px] sm:text-sm ${
                         showCorrectFeedback
                           ? isDarkMode ? 'text-green-300' : 'text-green-700'
                           : showMissedCorrectFeedback
@@ -770,7 +844,7 @@ export default function ModulePage() {
                           : isDarkMode ? 'text-gray-400' : 'text-gray-600'
                       }`}>
                         <span className="font-semibold">
-                          {showCorrectFeedback ? 'Correct. ' : showMissedCorrectFeedback ? 'Réponse manquée. ' : 'Incorrect. '}
+                          {showCorrectFeedback ? 'Correct. ' : showMissedCorrectFeedback ? 'Manquée. ' : 'Incorrect. '}
                         </span>
                         <span dangerouslySetInnerHTML={{ __html: answerExplanation.replace(/<br\s*\/?>/gi, '\n').replace(/\n/g, '<br>') }} />
                       </div>
@@ -783,9 +857,9 @@ export default function ModulePage() {
 
           {/* General Explanation Section */}
           {showAnswer && currentQuestion && currentQuestion.overallExplanation && (
-            <div className={`p-3 sm:p-4 rounded-lg mb-4 sm:mb-6 ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'} border`}>
-              <h3 className={`font-bold mb-2 text-sm sm:text-base ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Explication Générale</h3>
-              <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
+            <div className={`p-2 sm:p-4 rounded-lg mb-3 sm:mb-6 ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'} border`}>
+              <h3 className={`font-bold mb-1.5 sm:mb-2 text-xs sm:text-base ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Explication Générale</h3>
+              <p className={`text-[10px] sm:text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}
                  dangerouslySetInnerHTML={{ __html: currentQuestion.overallExplanation.replace(/<br\s*\/?>/gi, '\n').replace(/\n/g, '<br>') }}>
               </p>
             </div>
@@ -796,22 +870,24 @@ export default function ModulePage() {
             <button
               onClick={handlePreviousQuestion}
               disabled={currentQuestionIndex === 0}
-              className={`px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-medium transition-colors flex items-center justify-center text-sm sm:text-base ${
+              className={`px-3 py-2 sm:px-6 sm:py-3 rounded-lg font-medium transition-colors flex items-center justify-center text-xs sm:text-base ${
                 currentQuestionIndex === 0
                   ? isDarkMode ? 'bg-gray-800 text-gray-600' : 'bg-gray-100 text-gray-400'
                   : isDarkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
             >
-              ← Précédent
+              <span className="hidden sm:inline">← Précédent</span>
+              <span className="sm:hidden">←</span>
             </button>
             
             <div className="flex gap-2 sm:gap-3">
               {!showAnswer && (
                 <button
                   onClick={handleNextQuestion}
-                  className={`px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-medium text-white bg-gray-500 hover:bg-gray-600 transition-colors flex items-center text-sm sm:text-base`}
+                  className={`px-3 py-2 sm:px-6 sm:py-3 rounded-lg font-medium text-white bg-gray-500 hover:bg-gray-600 transition-colors flex items-center text-xs sm:text-base`}
                 >
-                  {currentQuestionIndex === questions.length - 1 ? 'Terminer' : 'Suivant →'}
+                  {currentQuestionIndex === questions.length - 1 ? <span className="hidden sm:inline">Terminer</span> : <span className="hidden sm:inline">Suivant →</span>}
+                  <span className="sm:hidden">{currentQuestionIndex === questions.length - 1 ? 'Fin' : '→'}</span>
                 </button>
               )}
               
@@ -819,20 +895,22 @@ export default function ModulePage() {
                 <button
                   onClick={handleShowAnswer}
                   disabled={selectedAnswers.length === 0}
-                  className={`px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-medium text-sm sm:text-base ${
+                  className={`px-3 py-2 sm:px-6 sm:py-3 rounded-lg font-medium text-xs sm:text-base ${
                     selectedAnswers.length === 0
                       ? isDarkMode ? 'bg-gray-700 text-gray-500' : 'bg-gray-200 text-gray-400'
                       : isDarkMode ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-blue-500 text-white hover:bg-blue-600'
                   } transition-colors`}
                 >
-                  Voir la réponse
+                  <span className="hidden sm:inline">Voir la réponse</span>
+                  <span className="sm:hidden">Réponse</span>
                 </button>
               ) : (
                 <button
                   onClick={handleNextQuestion}
-                  className={`px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-medium text-white bg-blue-500 hover:bg-blue-600 transition-colors flex items-center text-sm sm:text-base`}
+                  className={`px-3 py-2 sm:px-6 sm:py-3 rounded-lg font-medium text-white bg-blue-500 hover:bg-blue-600 transition-colors flex items-center text-xs sm:text-base`}
                 >
-                  {currentQuestionIndex === questions.length - 1 ? 'Terminer' : 'Suivant →'}
+                  {currentQuestionIndex === questions.length - 1 ? <span className="hidden sm:inline">Terminer</span> : <span className="hidden sm:inline">Suivant →</span>}
+                  <span className="sm:hidden">{currentQuestionIndex === questions.length - 1 ? 'Fin' : '→'}</span>
                 </button>
               )}
             </div>
@@ -840,10 +918,10 @@ export default function ModulePage() {
         </div>
 
         {/* Progress Bar */}
-        <div className={`mt-4 sm:mt-6 p-3 sm:p-4 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-          <div className="flex justify-between items-center mb-2">
-            <span className={`text-xs sm:text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Progression</span>
-            <span className={`text-xs sm:text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{currentQuestionIndex + 1} / {questions.length}</span>
+        <div className={`mt-3 sm:mt-6 p-2 sm:p-4 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+          <div className="flex justify-between items-center mb-1.5 sm:mb-2">
+            <span className={`text-[10px] sm:text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Progression</span>
+            <span className={`text-[10px] sm:text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{currentQuestionIndex + 1} / {questions.length}</span>
           </div>
           <div className={`w-full ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded-full h-1.5 sm:h-2`}>
             <div

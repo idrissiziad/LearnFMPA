@@ -7,7 +7,8 @@ interface ChapterNavigationProps {
   correctlyAnsweredQuestions: { [key: string]: boolean };
   moduleId: number;
   darkMode: boolean;
-  onChapterSelect: (startPosition: number) => void;
+  activeChapter: string | null;
+  onChapterSelect: (chapterName: string) => void;
 }
 
 export default function ChapterNavigation({
@@ -17,24 +18,33 @@ export default function ChapterNavigation({
   correctlyAnsweredQuestions,
   moduleId,
   darkMode,
+  activeChapter,
   onChapterSelect
 }: ChapterNavigationProps) {
   return (
-    <div className={`mb-6 p-3 sm:p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3">
+    <div className={`mb-4 sm:mb-6 p-2 sm:p-4 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1.5 sm:gap-3">
         {chapters.map((chapter) => {
           // Count correctly answered questions in this chapter
-          const chapterQuestions = questions.slice(chapter.startPosition, chapter.startPosition + chapter.questionCount);
+          const chapterQuestions = questions.filter(q => q.chapter === chapter.name);
           const answeredCount = chapterQuestions.filter(q => correctlyAnsweredQuestions[`${moduleId}_${q.id}`]).length;
+          
+          // Check if the current question belongs to this chapter
+          const currentQuestion = questions[currentQuestionIndex];
+          const isCurrentChapter = currentQuestion?.chapter === chapter.name;
           
           return (
             <button
               key={chapter.id}
-              className={`flex items-center p-2 sm:p-3 rounded-lg border ${darkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-200 hover:bg-gray-50'} text-left transition-colors`}
-              onClick={() => onChapterSelect(chapter.startPosition)}
+              className={`flex items-center p-1.5 sm:p-3 rounded-lg border text-left transition-colors ${
+                activeChapter === chapter.name
+                  ? `${darkMode ? 'bg-blue-900 border-blue-700' : 'bg-blue-50 border-blue-500'}`
+                  : `${darkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-200 hover:bg-gray-50'}`
+              }`}
+              onClick={() => onChapterSelect(chapter.name)}
             >
-              <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center mr-2 sm:mr-3 text-xs sm:text-sm font-bold ${
-                currentQuestionIndex >= chapter.startPosition && currentQuestionIndex < chapter.startPosition + chapter.questionCount
+              <div className={`w-5 h-5 sm:w-8 sm:h-8 rounded-full flex items-center justify-center mr-1.5 sm:mr-3 text-[10px] sm:text-sm font-bold flex-shrink-0 ${
+                isCurrentChapter
                   ? 'bg-blue-500 text-white'
                   : darkMode
                   ? 'bg-gray-700 text-gray-300'
@@ -42,16 +52,16 @@ export default function ChapterNavigation({
               }`}>
                 {chapter.id}
               </div>
-              <div className="flex-1">
-                <div className={`font-semibold text-sm sm:text-base ${darkMode ? 'text-white' : 'text-gray-900'}`}>{chapter.name}</div>
-                <div className={`text-xs sm:text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{chapter.questionCount} questions</div>
+              <div className="flex-1 min-w-0">
+                <div className={`font-semibold text-[11px] sm:text-base ${darkMode ? 'text-white' : 'text-gray-900'} truncate`}>{chapter.name}</div>
+                <div className={`text-[10px] sm:text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{chapterQuestions.length} q</div>
               </div>
-              <div className={`ml-1 sm:ml-2 text-xs px-2 py-1 rounded-full ${
-                answeredCount === chapter.questionCount
+              <div className={`ml-0.5 sm:ml-2 text-[10px] sm:text-xs px-1 sm:px-2 py-0.5 sm:py-1 rounded-full flex-shrink-0 ${
+                answeredCount === chapterQuestions.length
                   ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
                   : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
               }`}>
-                {answeredCount}/{chapter.questionCount}
+                {answeredCount}/{chapterQuestions.length}
               </div>
             </button>
           );
