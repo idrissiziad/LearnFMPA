@@ -58,7 +58,8 @@ export default function ModulePage() {
         // Convert to ExtendedQuestion format
         const extendedQuestions = allQuestions.map(q => ({
           ...q,
-          isMultipleChoice: q.isMultipleChoice || false,
+          // Automatically enable multiple choice for questions with more than 2 options
+          isMultipleChoice: q.isMultipleChoice || q.options.length > 2,
           correctAnswers: q.correctAnswers || [q.correctAnswer],
           answerExplanations: q.answerExplanations || Array(q.options.length).fill(''),
           overallExplanation: q.overallExplanation || q.explanation,
