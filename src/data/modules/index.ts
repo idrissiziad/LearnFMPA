@@ -79,7 +79,7 @@ export const modules: Module[] = [
   {
     id: 1,
     title: 'Pathologie digestive',
-    subtitle: '3ème année',
+    subtitle: 'En Cours',
     description: 'Questions d"annales en pathologie digestive pour les étudiants en médecine',
     year: '3ème année',
     gradient: 'from-teal-400 to-teal-600',
@@ -88,7 +88,7 @@ export const modules: Module[] = [
   {
     id: 2,
     title: 'Pathologie respiratoire',
-    subtitle: '3ème année',
+    subtitle: 'En Cours',
     description: 'Questions d"annales en pathologie respiratoire pour les étudiants en médecine',
     year: '3ème année',
     gradient: 'from-green-400 to-green-600',
@@ -97,8 +97,8 @@ export const modules: Module[] = [
   {
     id: 3,
     title: 'Maladies infectieuses',
-    subtitle: 'T',
-    description: 'T',
+    subtitle: '3ème année',
+    description: 'Questions d"annales en maladies infectieuses pour les étudiants en médecine',
     year: 'T',
     gradient: 'from-green-400 to-green-600',
     json_filename: 'Maladies infectieuses'
