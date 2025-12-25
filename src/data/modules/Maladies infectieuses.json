@@ -2798,7 +2798,7 @@
     {
         "YearAsked": "Normale 2024",
         "Subtopic": "Méningites infectieuses chez l’adulte",
-        "QuestionText": "Vous réalisez une ponction lombaire. Quels sont les résultats attendus (Méningocoque) ?",
+        "QuestionText": "Vous réalisez une ponction lombaire. Quels sont les résultats attendus ?",
         "Choice_A_Text": "Liquide clair",
         "Choice_A_isCorrect": false,
         "Choice_A_Explanation": "C'est FAUX. Le liquide est trouble, opaque ou eau de riz (Purulent). (Diapositive 556)",
@@ -2818,7 +2818,7 @@
     {
         "YearAsked": "Normale 2024",
         "Subtopic": "Méningites infectieuses chez l’adulte",
-        "QuestionText": "Les résultats du LCR confirment votre suspicion (Méningocoque). Quel (s) traitement (s) administrez-vous ?",
+        "QuestionText": "Les résultats du LCR confirment votre suspicion. Quel (s) traitement (s) administrez-vous ?",
         "Choice_A_Text": "Dexaméthasone",
         "Choice_A_isCorrect": false,
         "Choice_A_Explanation": "C'est FAUX. La dexaméthasone est indiquée pour la méningite à Pneumocoque (pour limiter les séquelles), mais n'est pas listée dans le traitement spécifique du méningocoque dans ce cours. (Diapositives 572 et 583)",
