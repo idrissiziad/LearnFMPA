@@ -1886,7 +1886,7 @@
     },
     {
         "YearAsked": "Normale 2022",
-        "Subtopic": "Cryptococcose neuroméningée (CMN)",
+        "Subtopic": "Cryptococcose neuroméningée (CNM)",
         "QuestionText": "La ponction lombaire (chez le patient précédent) a retiré un liquide clair, en jet, 20 éléments, 70% de lymphocytes, une hypoglycorachie, une hyperprotéinorachie et la coloration à l'encre de chine positive. Quel est le schéma thérapeutique qu'on doit prescrire au patient ?",
         "Choice_A_Text": "Céphalosporine de troisième génération",
         "Choice_A_isCorrect": false,
