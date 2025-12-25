@@ -40,7 +40,7 @@ export default function ChapterNavigation({
                   ? 'bg-gray-700 text-gray-300'
                   : 'bg-gray-100 text-gray-600'
               }`}>
-                {chapter.startPosition + 1}
+                {chapter.id}
               </div>
               <div className="flex-1">
                 <div className={`font-semibold text-sm sm:text-base ${darkMode ? 'text-white' : 'text-gray-900'}`}>{chapter.name}</div>

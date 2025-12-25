@@ -263,6 +263,10 @@ class ModuleManager:
             with open(INDEX_FILE, 'r', encoding='utf-8') as f:
                 content = f.read()
             
+            # Update the case statements in getModuleQuestions and getModuleChapters functions first
+            content = self._update_single_case_statement(content, "getModuleQuestions")
+            content = self._update_single_case_statement(content, "getModuleChapters")
+            
             # Find the modules array and replace it
             start_marker = "export const modules: Module[] = ["
             end_marker = "];"
@@ -298,12 +302,10 @@ class ModuleManager:
             if new_modules_content.endswith(",\n"):
                 new_modules_content = new_modules_content[:-2] + "\n"
             
-            # Update the case statement in getModuleQuestions function
-            self.update_case_statements()
-            
-            # Reconstruct the file content
+            # Reconstruct the file content with updated modules array
             new_content = content[:start_idx] + new_modules_content + content[end_idx:]
             
+            # Write the updated content to the file
             with open(INDEX_FILE, 'w', encoding='utf-8') as f:
                 f.write(new_content)
             
@@ -329,38 +331,52 @@ class ModuleManager:
             with open(INDEX_FILE, 'w', encoding='utf-8') as f:
                 f.write(content)
             
+            return True
+            
         except Exception as e:
             print(f"Error updating case statements: {e}")
+            return False
     
     def _update_single_case_statement(self, content: str, function_name: str) -> str:
         """Update a single case statement in a function and return the updated content"""
         # Find the function
         func_start = content.find(f"export const {function_name} = async")
         if func_start == -1:
+            print(f"Warning: Could not find {function_name} function")
             return content
             
         # Find the switch statement
         switch_start = content.find("switch (moduleId)", func_start)
         if switch_start == -1:
+            print(f"Warning: Could not find switch statement in {function_name}")
             return content
             
-        # Find the end of the switch statement
+        # Find the opening brace of the switch statement
+        switch_open = content.find("{", switch_start)
+        if switch_open == -1:
+            print(f"Warning: Could not find opening brace of switch in {function_name}")
+            return content
+            
+        # Find the default case
         switch_end = content.find("default:", switch_start)
         if switch_end == -1:
+            print(f"Warning: Could not find default case in {function_name}")
             return content
             
         # Find the end of the default case
         default_end = content.find("return [];", switch_end)
         if default_end == -1:
+            print(f"Warning: Could not find end of default case in {function_name}")
             return content
         
         # Find the closing brace of the switch statement
         switch_close = content.find("}", default_end)
         if switch_close == -1:
+            print(f"Warning: Could not find closing brace of switch in {function_name}")
             return content
         
         # Generate new case statements
-        new_cases = ""
+        new_cases = "\n"
         for module in self.modules:
             module_id = int(module.get('id', 0))
             # Use the stored json_filename if available, otherwise use the title
@@ -374,8 +390,8 @@ class ModuleManager:
         
         new_cases += "    default:\n      return [];\n  }"
         
-        # Replace the switch content
-        new_content = content[:switch_start] + "switch (moduleId) {\n" + new_cases + content[switch_close+1:]
+        # Replace the switch content (from after the opening brace to before the closing brace)
+        new_content = content[:switch_open+1] + new_cases + content[switch_close+1:]
         
         return new_content
     
@@ -386,9 +402,10 @@ class ModuleManager:
             print("1. Display modules")
             print("2. Add module")
             print("3. Remove module")
-            print("4. Exit")
+            print("4. Update case statements")
+            print("5. Exit")
             
-            choice = input("Enter your choice (1-4): ").strip()
+            choice = input("Enter your choice (1-5): ").strip()
             
             if choice == '1':
                 self.display_modules()
@@ -397,6 +414,11 @@ class ModuleManager:
             elif choice == '3':
                 self.remove_module()
             elif choice == '4':
+                if self.update_case_statements():
+                    print("Case statements updated successfully!")
+                else:
+                    print("Failed to update case statements")
+            elif choice == '5':
                 print("Goodbye!")
                 break
             else:
@@ -412,8 +434,14 @@ if __name__ == "__main__":
             manager.add_module()
         elif command == "remove":
             manager.remove_module()
+        elif command == "update":
+            # Update case statements for all modules
+            if manager.update_case_statements():
+                print("Case statements updated successfully!")
+            else:
+                print("Failed to update case statements")
         else:
             print(f"Unknown command: {command}")
-            print("Available commands: display, add, remove")
+            print("Available commands: display, add, remove, update")
     else:
         manager.run()

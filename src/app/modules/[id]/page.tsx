@@ -38,6 +38,7 @@ export default function ModulePage() {
   const [availableSessions, setAvailableSessions] = useState<string[]>([]);
   const [isCorrectlyAnswered, setIsCorrectlyAnswered] = useState(false);
   const [correctlyAnsweredQuestions, setCorrectlyAnsweredQuestions] = useState<{ [key: string]: boolean }>({});
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [shuffledOptions, setShuffledOptions] = useState<string[][]>([]);
   const [optionMapping, setOptionMapping] = useState<number[][]>([]);
   const [shuffledCorrectAnswers, setShuffledCorrectAnswers] = useState<number[][]>([]);
@@ -177,6 +178,8 @@ export default function ModulePage() {
     setCurrentQuestionIndex(0);
     setSelectedAnswers([]);
     setShowAnswer(false);
+    // Clear all strikethrough options when changing session filter
+    setStrikethroughOptions({});
   };
 
   if (!module) {
@@ -386,6 +389,13 @@ export default function ModulePage() {
       setShowAnswer(false);
       setIsCorrectlyAnswered(false);
       setOriginalSelectedAnswers([]);
+      // Clear strikethrough for the new question
+      const newQuestionKey = `${moduleId}_${currentQuestionIndex + 1}`;
+      setStrikethroughOptions(prev => {
+        const newStrikethrough = { ...prev };
+        delete newStrikethrough[newQuestionKey];
+        return newStrikethrough;
+      });
     } else {
       // End of questions
       router.push('/dashboard');
@@ -399,7 +409,13 @@ export default function ModulePage() {
       setShowAnswer(false);
       setIsCorrectlyAnswered(false);
       setOriginalSelectedAnswers([]);
-      // Don't reset strikethrough options when changing questions
+      // Clear strikethrough for the new question
+      const newQuestionKey = `${moduleId}_${currentQuestionIndex - 1}`;
+      setStrikethroughOptions(prev => {
+        const newStrikethrough = { ...prev };
+        delete newStrikethrough[newQuestionKey];
+        return newStrikethrough;
+      });
     }
   };
 
@@ -408,15 +424,71 @@ export default function ModulePage() {
     setSelectedAnswers([]);
     setShowAnswer(false);
     setIsCorrectlyAnswered(false);
-    // Don't reset strikethrough options when changing questions
+    // Clear strikethrough for the new question
+    const newQuestionKey = `${moduleId}_${startPosition}`;
+    setStrikethroughOptions(prev => {
+      const newStrikethrough = { ...prev };
+      delete newStrikethrough[newQuestionKey];
+      return newStrikethrough;
+    });
   };
 
   const handleSessionFilterChange = (newSession: string) => {
     setSessionFilter(newSession);
   };
 
+  const handleResetProgress = () => {
+    setShowResetConfirm(true);
+  };
+
+  const confirmResetProgress = () => {
+    // Clear the correctly answered questions state
+    setCorrectlyAnsweredQuestions({});
+    // Clear from localStorage
+    if (typeof window !== 'undefined' && moduleId) {
+      const storageKey = `learnfmpa_answered_${moduleId}`;
+      localStorage.removeItem(storageKey);
+    }
+    setShowResetConfirm(false);
+  };
+
+  const cancelResetProgress = () => {
+    setShowResetConfirm(false);
+  };
+
   return (
     <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+      {/* Reset Confirmation Modal */}
+      {showResetConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg p-6 max-w-md w-full border`}>
+            <h3 className={`text-lg font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              Réinitialiser la progression ?
+            </h3>
+            <p className={`mb-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+              Êtes-vous sûr de vouloir réinitialiser toutes les réponses correctes pour ce module ? Cette action ne peut pas être annulée.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={cancelResetProgress}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  isDarkMode
+                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                Annuler
+              </button>
+              <button
+                onClick={confirmResetProgress}
+                className={`px-4 py-2 rounded-lg font-medium text-white transition-colors bg-red-500 hover:bg-red-600`}
+              >
+                Réinitialiser
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Header */}
       <header className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b sticky top-0 z-10`}>
         <div className="max-w-4xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex justify-between items-center">
@@ -447,6 +519,17 @@ export default function ModulePage() {
                 <option key={session} value={session}>{session}</option>
               ))}
             </select>
+            <button
+              onClick={handleResetProgress}
+              className={`px-3 py-1 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+                isDarkMode
+                  ? 'bg-red-900 text-red-300 hover:bg-red-800'
+                  : 'bg-red-100 text-red-700 hover:bg-red-200'
+              }`}
+              aria-label="Réinitialiser la progression"
+            >
+              Réinitialiser
+            </button>
             <ThemeToggle />
           </div>
         </div>
@@ -571,18 +654,43 @@ export default function ModulePage() {
 
           {/* Answer Options */}
           <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
-            {(shuffledOptions[currentQuestionIndex] || []).map((option, index) => {
-              // Always use shuffled data for consistency
-              const isCorrect = (shuffledCorrectAnswers[currentQuestionIndex] || []).includes(index);
-              const isSelected = showAnswer ? originalSelectedAnswers.includes(optionMapping[currentQuestionIndex]?.[index] ?? -1): selectedAnswers.includes(index);
-              const showCorrectFeedback = showAnswer && isCorrect;
-              const showIncorrectFeedback = showAnswer && isSelected && !isCorrect;
-              const optionImage = (shuffledOptionImages[currentQuestionIndex] && shuffledOptionImages[currentQuestionIndex][index]);
-              const answerExplanation = (shuffledAnswerExplanations[currentQuestionIndex] && shuffledAnswerExplanations[currentQuestionIndex][index]);
+            {(showAnswer ? currentQuestion?.options : (shuffledOptions[currentQuestionIndex] || [])).map((option, index) => {
+              // When showing answer, use original options and correct answers
+              // When not showing answer, use shuffled options
+              const isCorrect = showAnswer
+                ? (currentQuestion?.correctAnswers || []).includes(index)
+                : (shuffledCorrectAnswers[currentQuestionIndex] || []).includes(index);
+              const isSelected = showAnswer
+                ? originalSelectedAnswers.includes(index)
+                : selectedAnswers.includes(index);
+              // When answer is shown:
+              // - Correct AND selected = green (correctly chosen)
+              // - Correct AND NOT selected = red (missed correct answer)
+              // - Incorrect AND selected = red (wrongly chosen)
+              // - Incorrect AND NOT selected = white (stays white)
+              const showCorrectFeedback = showAnswer && isCorrect && isSelected;
+              const showMissedCorrectFeedback = showAnswer && isCorrect && !isSelected;
+              const showIncorrectFeedback = showAnswer && !isCorrect && isSelected;
+              const optionImage = showAnswer
+                ? (currentQuestion?.optionImages && currentQuestion.optionImages[index])
+                : (shuffledOptionImages[currentQuestionIndex] && shuffledOptionImages[currentQuestionIndex][index]);
+              const answerExplanation = showAnswer
+                ? (currentQuestion?.answerExplanations && currentQuestion.answerExplanations[index])
+                : (shuffledAnswerExplanations[currentQuestionIndex] && shuffledAnswerExplanations[currentQuestionIndex][index]);
               
               // Check if this option is marked for strikethrough
+              // When showing answer, we need to map the original index to the shuffled index for strikethrough
               const questionKey = `${moduleId}_${currentQuestionIndex}`;
-              const isStrikethrough = strikethroughOptions[questionKey]?.has(index) || false;
+              let isStrikethrough = false;
+              if (!showAnswer) {
+                isStrikethrough = strikethroughOptions[questionKey]?.has(index) || false;
+              } else {
+                // When showing answer, check if any shuffled position that maps to this original index is struck
+                const mapping = optionMapping[currentQuestionIndex] || [];
+                isStrikethrough = mapping.some((originalIndex, shuffledIndex) =>
+                  originalIndex === index && strikethroughOptions[questionKey]?.has(shuffledIndex)
+                );
+              }
               
               return (
                 <div
@@ -590,6 +698,8 @@ export default function ModulePage() {
                   className={`w-full p-3 sm:p-4 rounded-lg border transition-all ${
                     showCorrectFeedback
                       ? isDarkMode ? 'bg-green-900 border-green-700' : 'bg-green-50 border-green-500'
+                      : showMissedCorrectFeedback
+                      ? isDarkMode ? 'bg-red-900 border-red-700' : 'bg-red-50 border-red-500'
                       : showIncorrectFeedback
                       ? isDarkMode ? 'bg-red-900 border-red-700' : 'bg-red-50 border-red-500'
                       : isSelected
@@ -653,11 +763,15 @@ export default function ModulePage() {
                   {showAnswer && answerExplanation && (
                     <div className={`mt-2 sm:mt-3 pt-2 sm:pt-3 border-t ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
                       <div className={`text-xs sm:text-sm ${
-                        isCorrect
+                        showCorrectFeedback
                           ? isDarkMode ? 'text-green-300' : 'text-green-700'
+                          : showMissedCorrectFeedback
+                          ? isDarkMode ? 'text-red-300' : 'text-red-700'
                           : isDarkMode ? 'text-gray-400' : 'text-gray-600'
                       }`}>
-                        <span className="font-semibold">{isCorrect ? 'Correct. ' : 'Incorrect. '}</span>
+                        <span className="font-semibold">
+                          {showCorrectFeedback ? 'Correct. ' : showMissedCorrectFeedback ? 'Réponse manquée. ' : 'Incorrect. '}
+                        </span>
                         <span dangerouslySetInnerHTML={{ __html: answerExplanation.replace(/<br\s*\/?>/gi, '\n').replace(/\n/g, '<br>') }} />
                       </div>
                     </div>

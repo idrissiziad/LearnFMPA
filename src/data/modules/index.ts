@@ -93,6 +93,15 @@ export const modules: Module[] = [
     year: '3ème année',
     gradient: 'from-green-400 to-green-600',
     json_filename: 'Pathologie respiratoire'
+  },
+  {
+    id: 3,
+    title: 'Maladies infectieuses',
+    subtitle: 'T',
+    description: 'T',
+    year: 'T',
+    gradient: 'from-green-400 to-green-600',
+    json_filename: 'Maladies infectieuses'
   }
 ];
 
@@ -145,12 +154,16 @@ export const getModuleQuestions = async (moduleId: number): Promise<Question[]> 
   
   switch (moduleId) {
     case 1:
-      const pathologieModule = await import('./Pathologie digestive.json', { with: { type: 'json' } });
-      jsonQuestions = pathologieModule.default as JsonQuestion[];
+      const PathologiedigestiveModule = await import('./Pathologie digestive.json', { with: { type: 'json' } });
+      jsonQuestions = PathologiedigestiveModule.default as JsonQuestion[];
       break;
     case 2:
-      const respiratoireModule = await import('./Pathologie respiratoire.json', { with: { type: 'json' } });
-      jsonQuestions = respiratoireModule.default as JsonQuestion[];
+      const PathologierespiratoireModule = await import('./Pathologie respiratoire.json', { with: { type: 'json' } });
+      jsonQuestions = PathologierespiratoireModule.default as JsonQuestion[];
+      break;
+    case 3:
+      const MaladiesinfectieusesModule = await import('./Maladies infectieuses.json', { with: { type: 'json' } });
+      jsonQuestions = MaladiesinfectieusesModule.default as JsonQuestion[];
       break;
     default:
       return [];
@@ -217,12 +230,16 @@ export const getModuleChapters = async (moduleId: number): Promise<Chapter[]> =>
   
   switch (moduleId) {
     case 1:
-      const pathologieModule = await import('./Pathologie digestive.json', { with: { type: 'json' } });
-      jsonQuestions = pathologieModule.default as JsonQuestion[];
+      const PathologiedigestiveModule = await import('./Pathologie digestive.json', { with: { type: 'json' } });
+      jsonQuestions = PathologiedigestiveModule.default as JsonQuestion[];
       break;
     case 2:
-      const respiratoireModule = await import('./Pathologie respiratoire.json', { with: { type: 'json' } });
-      jsonQuestions = respiratoireModule.default as JsonQuestion[];
+      const PathologierespiratoireModule = await import('./Pathologie respiratoire.json', { with: { type: 'json' } });
+      jsonQuestions = PathologierespiratoireModule.default as JsonQuestion[];
+      break;
+    case 3:
+      const MaladiesinfectieusesModule = await import('./Maladies infectieuses.json', { with: { type: 'json' } });
+      jsonQuestions = MaladiesinfectieusesModule.default as JsonQuestion[];
       break;
     default:
       return [];
