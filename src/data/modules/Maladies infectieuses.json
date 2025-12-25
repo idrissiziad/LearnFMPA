@@ -2838,7 +2838,7 @@
     {
         "YearAsked": "Normale 2024",
         "Subtopic": "Méningites infectieuses chez l’adulte",
-        "QuestionText": "Concernant la prise en charge des sujets contacts (Méningocoque), quelle (s) est (sont) l' (les) affirmations (s) exacte (s) ?",
+        "QuestionText": "Concernant la prise en charge des sujets contacts, quelle (s) est (sont) l' (les) affirmations (s) exacte (s) ?",
         "Choice_A_Text": "Déclaration obligatoire",
         "Choice_A_isCorrect": true,
         "Choice_A_Explanation": "C'est VRAI. La déclaration est obligatoire. (Diapositive 565)",
@@ -3903,7 +3903,7 @@
     {
         "YearAsked": "Pré-rattrapage 2024",
         "Subtopic": "Méningites infectieuses chez l’adulte",
-        "QuestionText": "Vous réalisez une ponction lombaire (chez la patiente précédente). Quels sont les résultats attendus ?",
+        "QuestionText": "Vous réalisez une ponction lombaire. Quels sont les résultats attendus ?",
         "Choice_A_Text": "Liquide clair",
         "Choice_A_isCorrect": false,
         "Choice_A_Explanation": "C'est FAUX. La méningite à méningocoque est une méningite purulente (bactérienne). (Diapositive 556)",
