@@ -2,8 +2,11 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export default function MobileNav() {
+  const { theme } = useTheme();
+  const isDarkMode = theme === 'dark';
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -50,32 +53,32 @@ export default function MobileNav() {
       </button>
 
       {/* Mobile menu, show/hide based on menu state */}
-      <div className={`${isOpen ? 'block' : 'hidden'} absolute top-16 left-0 right-0 bg-white shadow-lg z-50 border-b border-gray-200`}>
+      <div className={`${isOpen ? 'block' : 'hidden'} absolute top-16 left-0 right-0 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} shadow-lg z-50 border-b`}>
         <div className="px-2 pt-2 pb-3 space-y-1">
           <Link
             href="/"
-            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+            className={`block px-3 py-2 rounded-md text-base font-medium ${isDarkMode ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'}`}
             onClick={() => setIsOpen(false)}
           >
             Accueil
           </Link>
           <Link
             href="/dashboard"
-            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+            className={`block px-3 py-2 rounded-md text-base font-medium ${isDarkMode ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'}`}
             onClick={() => setIsOpen(false)}
           >
             Tableau de bord
           </Link>
           <Link
             href="/login"
-            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+            className={`block px-3 py-2 rounded-md text-base font-medium ${isDarkMode ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'}`}
             onClick={() => setIsOpen(false)}
           >
             Se connecter
           </Link>
           <Link
             href="/signup"
-            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+            className={`block px-3 py-2 rounded-md text-base font-medium ${isDarkMode ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'}`}
             onClick={() => setIsOpen(false)}
           >
             S'inscrire
