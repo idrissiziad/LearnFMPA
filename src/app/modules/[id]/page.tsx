@@ -823,7 +823,7 @@ export default function ModulePage() {
                 >
                   <button
                     onClick={() => handleAnswerSelect(index)}
-                    className="w-full text-left focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg"
+                    className="w-full text-left focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
                     disabled={showAnswer}
                   >
                     <div className="flex items-start">
