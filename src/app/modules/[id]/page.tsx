@@ -36,6 +36,7 @@ export default function ModulePage() {
   const [showChapters, setShowChapters] = useState(false);
   const [sessionFilter, setSessionFilter] = useState('Toutes les sessions');
   const [chapterFilter, setChapterFilter] = useState<string | null>(null);
+  const [showAnsweredQuestions, setShowAnsweredQuestions] = useState(false);
   const [availableSessions, setAvailableSessions] = useState<string[]>([]);
   const [isCorrectlyAnswered, setIsCorrectlyAnswered] = useState(false);
   const [correctlyAnsweredQuestions, setCorrectlyAnsweredQuestions] = useState<{ [key: string]: boolean }>({});
@@ -113,6 +114,12 @@ export default function ModulePage() {
     }
   }, [sessionFilter, allQuestions]);
 
+  useEffect(() => {
+    if (allQuestions.length > 0) {
+      applyAnsweredQuestionsFilter();
+    }
+  }, [showAnsweredQuestions, allQuestions, sessionFilter, chapterFilter]);
+
   // Load correctly answered questions from localStorage
   useEffect(() => {
     if (typeof window !== 'undefined' && moduleId) {
@@ -134,12 +141,10 @@ export default function ModulePage() {
     setChapterFilter(null);
     
     if (session === 'Toutes les sessions') {
-      setQuestions(questionsToFilter);
       // Use cached chapters to avoid redundant imports
       getModuleChapters(moduleId).then(setChapters);
     } else {
       const filteredQuestions = questionsToFilter.filter(q => q.year === session);
-      setQuestions(filteredQuestions);
       
       // Derive chapters from already loaded questions to avoid redundant imports
       const filteredJsonQuestions = filteredQuestions.map(q => {
@@ -180,11 +185,46 @@ export default function ModulePage() {
       const chaptersFromFiltered = extractChaptersFromQuestions(filteredJsonQuestions);
       setChapters(chaptersFromFiltered);
     }
+    
+    // Apply answered questions filter
+    applyAnsweredQuestionsFilter();
+    // Clear all strikethrough options when changing session filter
+    setStrikethroughOptions({});
+  };
+
+  const applyAnsweredQuestionsFilter = () => {
+    // Get the base questions based on session filter
+    let baseQuestions: ExtendedQuestion[];
+    if (sessionFilter === 'Toutes les sessions') {
+      baseQuestions = allQuestions;
+    } else {
+      baseQuestions = allQuestions.filter(q => q.year === sessionFilter);
+    }
+
+    // Apply chapter filter if set
+    if (chapterFilter) {
+      baseQuestions = baseQuestions.filter(q => q.chapter === chapterFilter);
+    }
+
+    // Apply answered questions filter
+    if (showAnsweredQuestions) {
+      // Show all questions (no filter)
+      setQuestions(baseQuestions);
+    } else {
+      // Show only unanswered questions
+      const unansweredQuestions = baseQuestions.filter(q => {
+        const questionKey = `${moduleId}_${q.id}`;
+        return !correctlyAnsweredQuestions[questionKey];
+      });
+      setQuestions(unansweredQuestions);
+    }
+
+    // Reset current question index if needed
     setCurrentQuestionIndex(0);
     setSelectedAnswers([]);
     setShowAnswer(false);
-    // Clear all strikethrough options when changing session filter
-    setStrikethroughOptions({});
+    setIsCorrectlyAnswered(false);
+    setOriginalSelectedAnswers([]);
   };
 
   if (!module) {
@@ -428,48 +468,20 @@ export default function ModulePage() {
     // Toggle chapter filter: if clicking the same chapter, clear the filter
     if (chapterFilter === chapterName) {
       setChapterFilter(null);
-      // Restore all questions for the current session
-      if (sessionFilter === 'Toutes les sessions') {
-        setQuestions(allQuestions);
-        getModuleChapters(moduleId).then(setChapters);
-      } else {
-        const filteredQuestions = allQuestions.filter(q => q.year === sessionFilter);
-        setQuestions(filteredQuestions);
-      }
-      setCurrentQuestionIndex(0);
     } else {
       // Set the chapter filter
       setChapterFilter(chapterName);
-      // Filter questions by chapter
-      const filteredQuestions = allQuestions.filter(q => {
-        const matchesSession = sessionFilter === 'Toutes les sessions' || q.year === sessionFilter;
-        const matchesChapter = q.chapter === chapterName;
-        return matchesSession && matchesChapter;
-      });
-      setQuestions(filteredQuestions);
-      setCurrentQuestionIndex(0);
     }
-    setSelectedAnswers([]);
-    setShowAnswer(false);
-    setIsCorrectlyAnswered(false);
+    // Apply all filters including answered questions filter
+    applyAnsweredQuestionsFilter();
     // Clear all strikethrough options when changing chapter filter
     setStrikethroughOptions({});
   };
 
   const handleClearChapterFilter = () => {
     setChapterFilter(null);
-    // Restore all questions for the current session
-    if (sessionFilter === 'Toutes les sessions') {
-      setQuestions(allQuestions);
-      getModuleChapters(moduleId).then(setChapters);
-    } else {
-      const filteredQuestions = allQuestions.filter(q => q.year === sessionFilter);
-      setQuestions(filteredQuestions);
-    }
-    setCurrentQuestionIndex(0);
-    setSelectedAnswers([]);
-    setShowAnswer(false);
-    setIsCorrectlyAnswered(false);
+    // Apply all filters including answered questions filter
+    applyAnsweredQuestionsFilter();
     // Clear all strikethrough options when clearing chapter filter
     setStrikethroughOptions({});
   };
@@ -561,6 +573,22 @@ export default function ModulePage() {
                   <option key={session} value={session}>{session.length > 15 ? session.substring(0, 15) + '...' : session}</option>
                 ))}
               </select>
+              <button
+                onClick={() => setShowAnsweredQuestions(!showAnsweredQuestions)}
+                className={`px-2 py-1.5 sm:px-3 lg:px-4 lg:py-2 rounded-lg text-[10px] sm:text-xs lg:text-sm font-medium transition-all flex-shrink-0 hover:shadow-md ${
+                  showAnsweredQuestions
+                    ? isDarkMode
+                      ? 'bg-green-900 text-green-300 hover:bg-green-800 hover:-translate-y-0.5'
+                      : 'bg-green-100 text-green-700 hover:bg-green-200 hover:-translate-y-0.5'
+                    : isDarkMode
+                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:-translate-y-0.5'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300 hover:-translate-y-0.5'
+                }`}
+                aria-label={showAnsweredQuestions ? "Masquer les questions répondues" : "Afficher les questions répondues"}
+              >
+                <span className="hidden sm:inline">{showAnsweredQuestions ? 'Toutes' : 'Non répondues'}</span>
+                <span className="sm:hidden">{showAnsweredQuestions ? 'Tout' : 'Nouvelles'}</span>
+              </button>
               <button
                 onClick={handleResetProgress}
                 className={`px-2 py-1.5 sm:px-3 lg:px-4 lg:py-2 rounded-lg text-[10px] sm:text-xs lg:text-sm font-medium transition-all flex-shrink-0 hover:shadow-md ${
@@ -928,8 +956,15 @@ export default function ModulePage() {
 
         {/* Progress Bar */}
         <div className={`mt-3 sm:mt-6 lg:mt-8 p-2 sm:p-4 lg:p-6 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} shadow-sm`}>
-          <div className="flex justify-between items-center mb-1.5 sm:mb-2 lg:mb-3">
-            <span className={`text-[10px] sm:text-sm lg:text-base font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Progression</span>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1 sm:gap-0 mb-1.5 sm:mb-2 lg:mb-3">
+            <div className="flex flex-col gap-0.5">
+              <span className={`text-[10px] sm:text-sm lg:text-base font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Progression</span>
+              {!showAnsweredQuestions && (
+                <span className={`text-[9px] sm:text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                  Questions non répondues uniquement
+                </span>
+              )}
+            </div>
             <span className={`text-[10px] sm:text-sm lg:text-base font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{currentQuestionIndex + 1} / {questions.length}</span>
           </div>
           <div className={`w-full ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded-full h-1.5 sm:h-2 lg:h-3`}>
