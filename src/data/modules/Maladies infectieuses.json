@@ -4237,8 +4237,8 @@
         "Choice_D_isCorrect": false,
         "Choice_D_Explanation": "C'est FAUX. Le traitement curatif repose sur les C3G (Ceftriaxone ou Céfotaxime). La ciprofloxacine est utilisée pour la prophylaxie des sujets contacts. (cf. Diapositives 563 et 566)",
         "Choice_E_Text": "La prophylaxie des sujets contacts repose sur la vaccination",
-        "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "C'est VRAI. La prophylaxie repose sur la chimioprophylaxie orale et la vaccination (selon les sérogroupes et indications). (cf. Diapositive 565)"
+        "Choice_E_isCorrect": false,
+        "Choice_E_Explanation": "C'est FAUX. La prophylaxie repose sur la chimioprophylaxie orale en premier lieu et la vaccination en second lieu (selon les sérogroupes et indications). (cf. Diapositive 565)"
     },
     {
         "YearAsked": "Rattrapage 2019",
