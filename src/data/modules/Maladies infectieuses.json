@@ -1579,8 +1579,8 @@
         "Choice_C_isCorrect": false,
         "Choice_C_Explanation": "C'est FAUX. Le traitement est une C3G (Ceftriaxone) en monothérapie. L'association Amox+Genta est pour la Listeria. (Diapositive 563, 583)",
         "Choice_D_Text": "La prophylaxie des contacts repose sur la vaccination",
-        "Choice_D_isCorrect": true,
-        "Choice_D_Explanation": "C'est VRAI. La prophylaxie inclut la chimioprophylaxie et la vaccination. (Diapositive 565)",
+        "Choice_D_isCorrect": false,
+        "Choice_D_Explanation": "C'est FAUX. La prophylaxie inclut la chimioprophylaxie en premier et la vaccination en second lieu. (Diapositive 565)",
         "Choice_E_Text": "Elle donne des poussées épidémiques",
         "Choice_E_isCorrect": true,
         "Choice_E_Explanation": "C'est VRAI. Elle survient par cas sporadiques ou épidémies. (Diapositive 561)"
