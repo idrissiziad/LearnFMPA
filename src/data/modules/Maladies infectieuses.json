@@ -3923,7 +3923,7 @@
     {
         "YearAsked": "Pré-rattrapage 2024",
         "Subtopic": "Méningites infectieuses chez l’adulte",
-        "QuestionText": "Les résultats du LCR confirment votre suspicion (Méningocoque). Quel (s) traitement (s) administrez-vous ?",
+        "QuestionText": "Les résultats du LCR confirment votre suspicion. Quel (s) traitement (s) administrez-vous ?",
         "Choice_A_Text": "Dexaméthasone",
         "Choice_A_isCorrect": false,
         "Choice_A_Explanation": "C'est FAUX. La corticothérapie (Dexaméthasone) est indiquée pour la méningite à Pneumocoque (pour limiter les séquelles), pas spécifiquement citée pour le Méningocoque dans ce cours. (Diapositive 572)",
@@ -3943,7 +3943,7 @@
     {
         "YearAsked": "Pré-rattrapage 2024",
         "Subtopic": "Méningites infectieuses chez l’adulte",
-        "QuestionText": "Concernant la prise en charge des sujets contacts (Méningite à Méningocoque), quelle (s) est (sont) l’ (les) affirmations (s) exacte (s) ?",
+        "QuestionText": "Concernant la prise en charge des sujets contacts, quelle (s) est (sont) l’ (les) affirmations (s) exacte (s) ?",
         "Choice_A_Text": "Déclaration obligatoire",
         "Choice_A_isCorrect": true,
         "Choice_A_Explanation": "C'est VRAI. (Diapositive 565)",

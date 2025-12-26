@@ -201,6 +201,35 @@ export default function ModulePage() {
       baseQuestions = allQuestions.filter(q => q.year === sessionFilter);
     }
 
+    // Sort questions by year (newest first)
+    const months = {
+      'janvier': 1, 'février': 2, 'mars': 3, 'avril': 4, 'mai': 5, 'juin': 6,
+      'juillet': 7, 'août': 8, 'septembre': 9, 'octobre': 10, 'novembre': 11, 'décembre': 12
+    };
+    
+    const parseYear = (year: string | undefined) => {
+      if (!year) return { month: 0, year: 0 };
+      const parts = year.toLowerCase().split(' ');
+      if (parts.length === 2) {
+        const month = months[parts[0] as keyof typeof months];
+        const yearNum = parseInt(parts[1]);
+        return { month, year: yearNum };
+      }
+      // Fallback for other formats (e.g., just a year)
+      return { month: 0, year: parseInt(year) || 0 };
+    };
+    
+    baseQuestions.sort((a, b) => {
+      const yearA = parseYear(a.year);
+      const yearB = parseYear(b.year);
+      
+      // Sort by year first (newest first), then by month (newest first)
+      if (yearA.year !== yearB.year) {
+        return yearB.year - yearA.year;
+      }
+      return yearB.month - yearA.month;
+    });
+
     // Apply chapter filter if set
     if (chapterFilter) {
       baseQuestions = baseQuestions.filter(q => q.chapter === chapterFilter);
