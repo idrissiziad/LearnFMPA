@@ -6265,7 +6265,7 @@
     {
         "YearAsked": "Rattrapage 2023",
         "Subtopic": "Méningites infectieuses chez l’adulte",
-        "QuestionText": "La coexistence d’un syndrome méningé fébrile avec une réaction cellulaire lymphocytaire et des signes d’atteinte de la base du crane vous oriente vers :",
+        "QuestionText": "La coexistence d’un syndrome méningé fébrile avec une réaction cellulaire lymphocytaire et des signes d’atteinte de la base du crâne vous oriente vers :",
         "Choice_A_Text": "Une méningite à Pneumocoque",
         "Choice_A_isCorrect": false,
         "Choice_A_Explanation": "C'est FAUX. Le pneumocoque provoque une méningite purulente (PNN), pas lymphocytaire. (Diapositive 556)",
