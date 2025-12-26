@@ -405,12 +405,17 @@ export default function ModulePage() {
     const questionKey = `${moduleId}_${currentQuestionIndex}`;
     const currentStrikethrough = strikethroughOptions[questionKey] || new Set();
     
-    // Toggle strikethrough for this option
+    // Map the shuffled index to the original index for storage
+    // This ensures strikethrough is always stored based on original positions
+    const mapping = optionMapping[currentQuestionIndex] || [];
+    const originalIndex = mapping[optionIndex] !== undefined ? mapping[optionIndex] : optionIndex;
+    
+    // Toggle strikethrough for this option (using original index)
     const newStrikethrough = new Set(currentStrikethrough);
-    if (newStrikethrough.has(optionIndex)) {
-      newStrikethrough.delete(optionIndex);
+    if (newStrikethrough.has(originalIndex)) {
+      newStrikethrough.delete(originalIndex);
     } else {
-      newStrikethrough.add(optionIndex);
+      newStrikethrough.add(originalIndex);
     }
     
     setStrikethroughOptions(prev => ({
@@ -819,16 +824,18 @@ export default function ModulePage() {
                 : (shuffledAnswerExplanations[currentQuestionIndex] && shuffledAnswerExplanations[currentQuestionIndex][index]);
               
               // Check if this option is marked for strikethrough
-              // When showing answer, we need to map the original index to the shuffled index for strikethrough
+              // Strikethrough is always stored based on original option indices
               const questionKey = `${moduleId}_${currentQuestionIndex}`;
               let isStrikethrough = false;
+              
               if (!showAnswer) {
-                isStrikethrough = strikethroughOptions[questionKey]?.has(index) || false;
-              } else {
-                // When showing answer, find which shuffled index corresponds to this original index
+                // When not showing answer, map the current (shuffled) index to original index
                 const mapping = optionMapping[currentQuestionIndex] || [];
-                const shuffledIndex = mapping.indexOf(index);
-                isStrikethrough = shuffledIndex !== -1 && strikethroughOptions[questionKey]?.has(shuffledIndex) || false;
+                const originalIndex = mapping[index] !== undefined ? mapping[index] : index;
+                isStrikethrough = strikethroughOptions[questionKey]?.has(originalIndex) || false;
+              } else {
+                // When showing answer, the index is already the original index
+                isStrikethrough = strikethroughOptions[questionKey]?.has(index) || false;
               }
               
               return (
