@@ -825,11 +825,10 @@ export default function ModulePage() {
               if (!showAnswer) {
                 isStrikethrough = strikethroughOptions[questionKey]?.has(index) || false;
               } else {
-                // When showing answer, check if any shuffled position that maps to this original index is struck
+                // When showing answer, find which shuffled index corresponds to this original index
                 const mapping = optionMapping[currentQuestionIndex] || [];
-                isStrikethrough = mapping.some((originalIndex, shuffledIndex) =>
-                  originalIndex === index && strikethroughOptions[questionKey]?.has(shuffledIndex)
-                );
+                const shuffledIndex = mapping.indexOf(index);
+                isStrikethrough = shuffledIndex !== -1 && strikethroughOptions[questionKey]?.has(shuffledIndex) || false;
               }
               
               return (
