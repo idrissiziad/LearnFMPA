@@ -5217,8 +5217,8 @@
         "Choice_D_isCorrect": false,
         "Choice_D_Explanation": "C'est FAUX. On observe une Hypoglycorachie (cf. Diapositive 594).",
         "Choice_E_Text": "Aspect de miliaire à la radiographie pulmonaire",
-        "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "C'est FAUX selon les diapositives fournies. Bien que la radiographie soit demandée, le terme 'Miliaire' n'est pas explicitement cité comme critère diagnostique dans la diapositive de bilan (cf. Diapositive 596)."
+        "Choice_E_isCorrect": true,
+        "Choice_E_Explanation": "C'est VRAI. La présence d'une multitude de petits points blancs (opacités) de très petite taille (micronodules de 1 à 3 mm), semblables à des grains de mil (céréale), répartis de manière diffuse et homogène sur les deux champs pulmonaires. Elle traduit généralement une dissémination hématogène (par le sang) de l'infection. Cela signifie que la bactérie ne s'est pas propagée de proche en proche par les bronches, mais a été transportée massivement par le sang dans tout le poumon. C'est une forme grave, souvent associée à une immunodépression (comme décrit dans la section VIH/Tuberculose) ou à une septicémie sévère. (cf. Diapositive 597)"
     },
     {
         "YearAsked": "Rattrapage 2021",
