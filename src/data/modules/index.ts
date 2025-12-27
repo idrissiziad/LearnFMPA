@@ -140,6 +140,9 @@ export const extractChaptersFromQuestions = (questions: JsonQuestion[]): Chapter
     }
   });
   
+  // Sort chapters by question count (descending - most questions first)
+  chapters.sort((a, b) => b.questionCount - a.questionCount);
+  
   return chapters;
 };
 
