@@ -127,11 +127,10 @@ export const extractChaptersFromQuestions = (questions: JsonQuestion[]): Chapter
   });
   
   // Create chapters from subtopic groups
-  let chapterId = 1;
   Object.entries(subtopicGroups).forEach(([subtopic, group]) => {
     if (group.questions.length > 0) {
       chapters.push({
-        id: chapterId++,
+        id: 0, // Will be assigned after sorting
         name: subtopic,
         color: "#3B82F6", // Default color, could be customized per subtopic if needed
         startPosition: group.startIndex,
@@ -142,6 +141,11 @@ export const extractChaptersFromQuestions = (questions: JsonQuestion[]): Chapter
   
   // Sort chapters by question count (descending - most questions first)
   chapters.sort((a, b) => b.questionCount - a.questionCount);
+  
+  // Assign sequential IDs based on sorted order (subject with most questions is 1)
+  chapters.forEach((chapter, index) => {
+    chapter.id = index + 1;
+  });
   
   return chapters;
 };
