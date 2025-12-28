@@ -1148,7 +1148,7 @@
     },
     {
         "YearAsked": "Normale 2021",
-        "Subtopic": "Cryptococcose neuroméningée (CNM)",
+        "Subtopic": "Infection à VIH",
         "QuestionText": "Parmi les médicaments suivants, quels sont ceux qui sont des antiviraux antiherpétiques ?",
         "Choice_A_Text": "Ganciclovir",
         "Choice_A_isCorrect": true,
@@ -1388,7 +1388,7 @@
     },
     {
         "YearAsked": "Normale 2021",
-        "Subtopic": "Cryptococcose neuroméningée (CNM)",
+        "Subtopic": "Infection à VIH",
         "QuestionText": "La ponction lombaire a retiré un liquide clair, en jet, 15 éléments, 80% de lymphocytes, une hypoglycorachie, une hyperprotéinorachie et la coloration à l'encre de chine positive. Quel est le schéma thérapeutique qu'on doit prescrire au patient ?",
         "Choice_A_Text": "Céphalosporine de troisième génération",
         "Choice_A_isCorrect": false,
@@ -1886,7 +1886,7 @@
     },
     {
         "YearAsked": "Normale 2022",
-        "Subtopic": "Cryptococcose neuroméningée (CNM)",
+        "Subtopic": "Infection à VIH",
         "QuestionText": "La ponction lombaire (chez le patient précédent) a retiré un liquide clair, en jet, 20 éléments, 70% de lymphocytes, une hypoglycorachie, une hyperprotéinorachie et la coloration à l'encre de chine positive. Quel est le schéma thérapeutique qu'on doit prescrire au patient ?",
         "Choice_A_Text": "Céphalosporine de troisième génération",
         "Choice_A_isCorrect": false,
