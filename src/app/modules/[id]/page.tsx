@@ -48,6 +48,7 @@ export default function ModulePage() {
   const [shuffledOptionImages, setShuffledOptionImages] = useState<string[][]>([]);
   const [originalSelectedAnswers, setOriginalSelectedAnswers] = useState<number[]>([]);
   const [strikethroughOptions, setStrikethroughOptions] = useState<{ [key: string]: Set<number> }>({});
+  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
 
   const moduleId = parseInt(params.id as string);
   const module = getModuleById(moduleId);
@@ -543,6 +544,115 @@ export default function ModulePage() {
     setShowResetConfirm(false);
   };
 
+  // Show congratulations message when all questions are completed
+  if (questions.length === 0) {
+    return (
+      <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+        {/* Header */}
+        <header className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b sticky top-0 z-10 shadow-sm`}>
+          <div className="max-w-4xl lg:max-w-6xl mx-auto px-2 sm:px-4 py-2 sm:py-4 lg:py-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
+              <div className="flex items-center space-x-2 sm:space-x-3 lg:space-x-4 w-full sm:w-auto">
+                <Link
+                  href="/dashboard"
+                  className={`p-1.5 sm:p-2 lg:p-2.5 rounded-lg ${isDarkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'} transition-all hover:shadow-md flex-shrink-0`}
+                  aria-label="Retour au tableau de bord"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+                  </svg>
+                </Link>
+                <div className={`w-7 h-7 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-blue-500 flex-shrink-0`}>
+                  <span className="text-white font-bold text-xs sm:text-base">{module.title.charAt(0)}</span>
+                </div>
+                <h1 className={`text-sm sm:text-lg lg:text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} hidden sm:block truncate`}>{module.title}</h1>
+                <h1 className={`text-sm sm:text-base font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} sm:hidden truncate`}>{module.title.length > 20 ? module.title.substring(0, 20) + '...' : module.title}</h1>
+              </div>
+              <div className="flex items-center space-x-1 sm:space-x-3 lg:space-x-4 w-full sm:w-auto justify-end">
+                <select
+                  className={`px-2 py-1.5 sm:px-3 lg:px-4 lg:py-2 rounded-lg border text-[10px] sm:text-xs lg:text-sm cursor-pointer hover:border-blue-500 transition-colors ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-700'} max-w-[120px] sm:max-w-none`}
+                  value={sessionFilter}
+                  onChange={(e) => handleSessionFilterChange(e.target.value)}
+                >
+                  <option value="Toutes les sessions">Toutes</option>
+                  {availableSessions.map(session => (
+                    <option key={session} value={session}>{session.length > 15 ? session.substring(0, 15) + '...' : session}</option>
+                  ))}
+                </select>
+                <button
+                  onClick={() => setShowAnsweredQuestions(!showAnsweredQuestions)}
+                  className={`px-2 py-1.5 sm:px-3 lg:px-4 lg:py-2 rounded-lg text-[10px] sm:text-xs lg:text-sm font-medium transition-all flex-shrink-0 hover:shadow-md ${
+                    showAnsweredQuestions
+                      ? isDarkMode
+                        ? 'bg-green-900 text-green-300 hover:bg-green-800 hover:-translate-y-0.5'
+                        : 'bg-green-100 text-green-700 hover:bg-green-200 hover:-translate-y-0.5'
+                      : isDarkMode
+                        ? 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:-translate-y-0.5'
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300 hover:-translate-y-0.5'
+                  }`}
+                  aria-label={showAnsweredQuestions ? "Masquer les questions répondues" : "Afficher les questions répondues"}
+                >
+                  <span className="hidden sm:inline">{showAnsweredQuestions ? 'Toutes' : 'Non répondues'}</span>
+                  <span className="sm:hidden">{showAnsweredQuestions ? 'Tout' : 'Nouvelles'}</span>
+                </button>
+                <button
+                  onClick={handleResetProgress}
+                  className={`px-2 py-1.5 sm:px-3 lg:px-4 lg:py-2 rounded-lg text-[10px] sm:text-xs lg:text-sm font-medium transition-all flex-shrink-0 hover:shadow-md ${
+                    isDarkMode
+                      ? 'bg-red-900 text-red-300 hover:bg-red-800 hover:-translate-y-0.5'
+                      : 'bg-red-100 text-red-700 hover:bg-red-200 hover:-translate-y-0.5'
+                  }`}
+                  aria-label="Réinitialiser la progression"
+                >
+                  <span className="hidden sm:inline">Réinitialiser</span>
+                  <span className="sm:hidden">Reset</span>
+                </button>
+                <ThemeToggle />
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Congratulations Section */}
+        <div className="max-w-4xl lg:max-w-6xl mx-auto px-2 sm:px-4 py-3 sm:py-6 lg:py-8">
+          <div className={`p-6 sm:p-8 lg:p-12 rounded-lg ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border shadow-sm text-center`}>
+            <div className="flex justify-center mb-6">
+              <div className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center ${isDarkMode ? 'bg-green-900' : 'bg-green-100'}`}>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 sm:h-12 sm:w-12 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+              </div>
+            </div>
+            <h2 className={`text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              Félicitations !
+            </h2>
+            <p className={`text-base sm:text-lg lg:text-xl mb-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+              Vous avez complété toutes les questions de ce module.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+              <button
+                onClick={() => setShowAnsweredQuestions(true)}
+                className={`px-6 py-3 sm:px-8 sm:py-4 rounded-lg font-medium text-white transition-all hover:shadow-md hover:-translate-y-0.5 bg-blue-500 hover:bg-blue-600 text-sm sm:text-base lg:text-lg`}
+              >
+                Voir toutes les questions
+              </button>
+              <Link
+                href="/dashboard"
+                className={`px-6 py-3 sm:px-8 sm:py-4 rounded-lg font-medium text-center transition-all hover:shadow-md hover:-translate-y-0.5 ${
+                  isDarkMode
+                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                } text-sm sm:text-base lg:text-lg`}
+              >
+                Retour au tableau de bord
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       {/* Reset Confirmation Modal */}
@@ -750,21 +860,42 @@ export default function ModulePage() {
             </p>
           </div>
 
-          {/* Question Image */}
-          {currentQuestion?.questionImage && (
-            <div className="mb-3 sm:mb-4 relative">
-              <Image
-                src={currentQuestion.questionImage.startsWith('http')
-                  ? currentQuestion.questionImage
-                  : `/images/${currentQuestion.questionImage}`}
-                alt="Question image"
-                width={800}
-                height={600}
-                className={`rounded-lg ${isDarkMode ? 'border border-gray-600' : ''}`}
-                style={{ maxWidth: '100%', height: 'auto' }}
-              />
-            </div>
-          )}
+          {/* Question Images */}
+          {currentQuestion?.questionImage && (() => {
+            // Parse comma-separated image paths
+            const imagePaths = currentQuestion.questionImage.split(',').map(img => img.trim()).filter(img => img);
+            
+            if (imagePaths.length === 0) return null;
+            
+            return (
+              <div className={`mb-3 sm:mb-4 ${imagePaths.length > 1 ? 'grid grid-cols-2 gap-2' : 'relative'} max-h-[600px]`}>
+                {imagePaths.map((imgPath, imgIndex) => (
+                  <div key={imgIndex} className={`relative ${imagePaths.length > 1 ? 'max-h-[300px]' : 'max-h-[300px]'}`}>
+                    <button
+                      onClick={() => {
+                        const imageUrl = imgPath.startsWith('http')
+                          ? imgPath
+                          : `/images/${imgPath}`;
+                        setZoomedImage(imageUrl);
+                      }}
+                      className="w-full text-left focus:outline-none"
+                    >
+                      <Image
+                        src={imgPath.startsWith('http')
+                          ? imgPath
+                          : `/images/${imgPath}`}
+                        alt={`Question image ${imgIndex + 1}`}
+                        width={800}
+                        height={600}
+                        className={`rounded-lg cursor-pointer hover:opacity-90 transition-opacity ${isDarkMode ? 'border border-gray-600' : ''}`}
+                        style={{ maxWidth: '100%', height: 'auto', maxHeight: imagePaths.length > 1 ? '300px' : '300px', objectFit: 'contain' }}
+                      />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
 
           {/* Feedback Tags */}
           {showAnswer && currentQuestion && (
@@ -889,21 +1020,42 @@ export default function ModulePage() {
                     </div>
                   </button>
                   
-                  {/* Option Image (shown after answer is revealed) */}
-                  {showAnswer && optionImage && (
-                    <div className="mt-2 sm:mt-3 relative">
-                      <Image
-                        src={optionImage.startsWith('http')
-                          ? optionImage
-                          : `/images/${optionImage}`}
-                        alt={`Option ${String.fromCharCode(65 + index)} image`}
-                        width={600}
-                        height={400}
-                        className={`rounded-lg ${isDarkMode ? 'border border-gray-600' : ''}`}
-                        style={{ maxWidth: '100%', height: 'auto' }}
-                      />
-                    </div>
-                  )}
+                  {/* Option Images (shown after answer is revealed) */}
+                  {showAnswer && optionImage && (() => {
+                    // Parse comma-separated image paths
+                    const imagePaths = optionImage.split(',').map(img => img.trim()).filter(img => img);
+                    
+                    if (imagePaths.length === 0) return null;
+                    
+                    return (
+                      <div className={`mt-2 sm:mt-3 ${imagePaths.length > 1 ? 'grid grid-cols-2 gap-2' : 'relative'} max-h-[400px]`}>
+                        {imagePaths.map((imgPath, imgIndex) => (
+                          <div key={imgIndex} className={`relative ${imagePaths.length > 1 ? 'max-h-[200px]' : 'max-h-[200px]'}`}>
+                            <button
+                              onClick={() => {
+                                const imageUrl = imgPath.startsWith('http')
+                                  ? imgPath
+                                  : `/images/${imgPath}`;
+                                setZoomedImage(imageUrl);
+                              }}
+                              className="w-full text-left focus:outline-none"
+                            >
+                              <Image
+                                src={imgPath.startsWith('http')
+                                  ? imgPath
+                                  : `/images/${imgPath}`}
+                                alt={`Option ${String.fromCharCode(65 + index)} image ${imgIndex + 1}`}
+                                width={600}
+                                height={400}
+                                className={`rounded-lg cursor-pointer hover:opacity-90 transition-opacity ${isDarkMode ? 'border border-gray-600' : ''}`}
+                                style={{ maxWidth: '100%', height: 'auto', maxHeight: imagePaths.length > 1 ? '200px' : '200px', objectFit: 'contain' }}
+                              />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })()}
                   
                   {/* Answer Explanation */}
                   {showAnswer && answerExplanation && (
@@ -1010,6 +1162,37 @@ export default function ModulePage() {
           </div>
         </div>
       </div>
+
+      {/* Image Zoom Modal */}
+      {zoomedImage && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4"
+          onClick={() => setZoomedImage(null)}
+        >
+          <div className="relative max-w-full max-h-full">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setZoomedImage(null);
+              }}
+              className={`absolute -top-12 right-0 p-2 rounded-lg ${isDarkMode ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-white text-gray-900 hover:bg-gray-200'} transition-colors`}
+              aria-label="Close zoomed image"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <Image
+              src={zoomedImage}
+              alt="Zoomed image"
+              width={1920}
+              height={1080}
+              className="max-w-full max-h-[90vh] object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

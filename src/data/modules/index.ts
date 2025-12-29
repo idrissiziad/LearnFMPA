@@ -102,6 +102,15 @@ export const modules: Module[] = [
     year: 'T',
     gradient: 'from-green-400 to-green-600',
     json_filename: 'Maladies infectieuses'
+  },
+  {
+    id: 7,
+    title: 'CHAPITRE2',
+    subtitle: 'T',
+    description: 'T',
+    year: 'T',
+    gradient: 'from-blue-400 to-blue-600',
+    json_filename: 'CHAPITRE2'
   }
 ];
 
@@ -171,6 +180,10 @@ export const getModuleQuestions = async (moduleId: number): Promise<Question[]> 
     case 3:
       const MaladiesinfectieusesModule = await import('./Maladies infectieuses.json', { with: { type: 'json' } });
       jsonQuestions = MaladiesinfectieusesModule.default as JsonQuestion[];
+      break;
+    case 7:
+      const CHAPITRE2Module = await import('./CHAPITRE2.json', { with: { type: 'json' } });
+      jsonQuestions = CHAPITRE2Module.default as JsonQuestion[];
       break;
     default:
       return [];
@@ -247,6 +260,10 @@ export const getModuleChapters = async (moduleId: number): Promise<Chapter[]> =>
     case 3:
       const MaladiesinfectieusesModule = await import('./Maladies infectieuses.json', { with: { type: 'json' } });
       jsonQuestions = MaladiesinfectieusesModule.default as JsonQuestion[];
+      break;
+    case 7:
+      const CHAPITRE2Module = await import('./CHAPITRE2.json', { with: { type: 'json' } });
+      jsonQuestions = CHAPITRE2Module.default as JsonQuestion[];
       break;
     default:
       return [];
