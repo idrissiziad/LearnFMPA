@@ -55,7 +55,7 @@
         "QuestionText": "Les résultats du LCR confirment votre suspicion. Quel(s) traitement(s) administrez-vous ?",
         "Choice_A_Text": "Dexaméthasone",
         "Choice_A_isCorrect": true,
-        "Choice_A_Explanation": "C'est VRAI. La dexaméthasone est indiquée aussi pour la méningite à Méningocoque. (Diapositive 612)",
+        "Choice_A_Explanation": "C'est VRAI. La dexaméthasone est indiquée aussi pour la méningite à Méningocoque. (Diapositive 613)",
         "Choice_B_Text": "Aciclovir",
         "Choice_B_isCorrect": false,
         "Choice_B_Explanation": "C'est FAUX. L'aciclovir est le traitement de la méningo-encéphalite herpétique. (Diapositive 609)",
