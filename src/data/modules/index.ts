@@ -111,6 +111,15 @@ export const modules: Module[] = [
     year: 'Test',
     gradient: 'from-blue-400 to-blue-600',
     json_filename: 'Anatomie 4'
+  },
+  {
+    id: 7,
+    title: 'Parasitologie Mycologie',
+    subtitle: '3A',
+    description: '',
+    year: '',
+    gradient: 'from-blue-400 to-blue-600',
+    json_filename: 'Parasitologie Mycologie'
   }
 ];
 
@@ -184,6 +193,10 @@ export const getModuleQuestions = async (moduleId: number): Promise<Question[]> 
     case 4:
       const Anatomie4Module = await import('./Anatomie 4.json', { with: { type: 'json' } });
       jsonQuestions = Anatomie4Module.default as JsonQuestion[];
+      break;
+    case 7:
+      const ParasitologieMycologieModule = await import('./Parasitologie Mycologie.json', { with: { type: 'json' } });
+      jsonQuestions = ParasitologieMycologieModule.default as JsonQuestion[];
       break;
     default:
       return [];
@@ -264,6 +277,10 @@ export const getModuleChapters = async (moduleId: number): Promise<Chapter[]> =>
     case 4:
       const Anatomie4Module = await import('./Anatomie 4.json', { with: { type: 'json' } });
       jsonQuestions = Anatomie4Module.default as JsonQuestion[];
+      break;
+    case 7:
+      const ParasitologieMycologieModule = await import('./Parasitologie Mycologie.json', { with: { type: 'json' } });
+      jsonQuestions = ParasitologieMycologieModule.default as JsonQuestion[];
       break;
     default:
       return [];
