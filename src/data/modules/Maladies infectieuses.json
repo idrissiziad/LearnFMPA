@@ -7180,7 +7180,7 @@
         "Choice_B_isCorrect": true,
         "Choice_B_Explanation": "C'est VRAI (sur la molécule). La Rifampicine est l'antibioprophylaxie de choix. Note : Le cours indique 600 mg x 2/j pendant 2 jours pour l'adulte (Diapositive 566), mais c'est la seule molécule correcte listée.",
         "Choice_C_Text": "Vaccination antiméningococcique",
-        "Choice_C_isCorrect": false,
+        "Choice_C_isCorrect": true,
         "Choice_C_Explanation": "C'est FAUX. La vaccination en urgence dépend du sérogroupe et n'est pas la chimioprophylaxie immédiate de première intention décrite pour tous les cas (surtout pour le B avec les anciens vaccins).",
         "Choice_D_Text": "Gamma globulines 0,3 ml/kg IM, une seule injection",
         "Choice_D_isCorrect": false,
