@@ -4167,11 +4167,11 @@
         "Choice_E_Text": "Méningite Listérienne",
         "Choice_E_isCorrect": false,
         "Choice_E_Explanation": "C'est FAUX. La listériose touche préférentiellement les sujets âgés ou immunodéprimés et se manifeste souvent par une rhombencéphalite (cf. Diapositive 578 et 579).",
-        "Choice_A_Image": null,
-        "Choice_B_Image": null,
-        "Choice_C_Image": null,
-        "Choice_D_Image": null,
-        "Choice_E_Image": null
+        "Choice_A_Image": "MI-562.avif",
+        "Choice_B_Image": "MI-532.avif, MI-562.avif",
+        "Choice_C_Image": "MI-562.avif",
+        "Choice_D_Image": "MI-590.avif",
+        "Choice_E_Image": "MI-578.avif, MI-579.avif"
     },
     {
         "YearAsked": "Pré-normale 2024",
@@ -4192,18 +4192,18 @@
         "Choice_E_Text": "Il est possible de rechercher le germe par PCR",
         "Choice_E_isCorrect": true,
         "Choice_E_Explanation": "C'est VRAI. La PCR et la recherche d'antigènes solubles dans le LCR sont des méthodes de diagnostic (cf. Diapositive 554).",
-        "Choice_A_Image": null,
-        "Choice_B_Image": null,
-        "Choice_C_Image": null,
-        "Choice_D_Image": null,
-        "Choice_E_Image": null
+        "Choice_A_Image": "MI-556.avif",
+        "Choice_B_Image": "MI-556.avif",
+        "Choice_C_Image": "MI-556.avif",
+        "Choice_D_Image": "MI-556.avif",
+        "Choice_E_Image": "MI-554.avif"
     },
     {
         "YearAsked": "Pré-normale 2024",
         "Subtopic": "Méningites infectieuses chez l’adulte",
         "QuestionText": "Les résultats du LCR confirment votre suspicion. Quel (s) traitement (s) administrez-vous ?",
         "Choice_A_Text": "Dexamethasone",
-        "Choice_A_isCorrect": false,
+        "Choice_A_isCorrect": true,
         "Choice_A_Explanation": "C'est FAUX. La corticothérapie (Dexaméthasone) est indiquée principalement dans la méningite à Pneumocoque pour limiter les séquelles, pas systématiquement pour le Méningocoque selon ce cours (cf. Diapositive 572).",
         "Choice_B_Text": "Aciclovir",
         "Choice_B_isCorrect": false,
@@ -4217,11 +4217,11 @@
         "Choice_E_Text": "Gentamicine",
         "Choice_E_isCorrect": false,
         "Choice_E_Explanation": "C'est FAUX. La gentamicine est utilisée en association avec l'amoxicilline pour la Listériose (cf. Diapositive 581).",
-        "Choice_A_Image": null,
-        "Choice_B_Image": null,
+        "Choice_A_Image": "MI-572.avif",
+        "Choice_B_Image": "MI-609.avif",
         "Choice_C_Image": null,
-        "Choice_D_Image": null,
-        "Choice_E_Image": null
+        "Choice_D_Image": "MI-563.avif, MI-583.avif",
+        "Choice_E_Image": "MI-581.avif"
     },
     {
         "YearAsked": "Pré-normale 2024",
@@ -4242,11 +4242,11 @@
         "Choice_E_Text": "Pas de traitement de prophylaxie",
         "Choice_E_isCorrect": false,
         "Choice_E_Explanation": "C'est FAUX. Une chimioprophylaxie est nécessaire pour les contacts étroits (cf. Diapositive 565).",
-        "Choice_A_Image": null,
-        "Choice_B_Image": null,
-        "Choice_C_Image": null,
-        "Choice_D_Image": null,
-        "Choice_E_Image": null
+        "Choice_A_Image": "MI-565.avif",
+        "Choice_B_Image": "MI-565.avif",
+        "Choice_C_Image": "MI-566.avif",
+        "Choice_D_Image": "MI-566.avif",
+        "Choice_E_Image": "MI-565.avif"
     },
     {
         "YearAsked": "Pré-normale 2024",
