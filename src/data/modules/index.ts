@@ -120,15 +120,6 @@ export const modules: Module[] = [
     year: '',
     gradient: 'from-blue-400 to-blue-600',
     json_filename: 'Parasitologie Mycologie'
-  },
-  {
-    id: 9,
-    title: 'MI UPSSA',
-    subtitle: '3A',
-    description: '',
-    year: '',
-    gradient: 'from-blue-400 to-blue-600',
-    json_filename: 'P UPSSA'
   }
 ];
 
@@ -206,10 +197,6 @@ export const getModuleQuestions = async (moduleId: number): Promise<Question[]> 
     case 7:
       const ParasitologieMycologieModule = await import('./Parasitologie Mycologie.json', { with: { type: 'json' } });
       jsonQuestions = ParasitologieMycologieModule.default as JsonQuestion[];
-      break;
-    case 9:
-      const PUPSSAModule = await import('./P UPSSA.json', { with: { type: 'json' } });
-      jsonQuestions = PUPSSAModule.default as JsonQuestion[];
       break;
     default:
       return [];
@@ -294,10 +281,6 @@ export const getModuleChapters = async (moduleId: number): Promise<Chapter[]> =>
     case 7:
       const ParasitologieMycologieModule = await import('./Parasitologie Mycologie.json', { with: { type: 'json' } });
       jsonQuestions = ParasitologieMycologieModule.default as JsonQuestion[];
-      break;
-    case 9:
-      const PUPSSAModule = await import('./P UPSSA.json', { with: { type: 'json' } });
-      jsonQuestions = PUPSSAModule.default as JsonQuestion[];
       break;
     default:
       return [];
