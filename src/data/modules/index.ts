@@ -122,15 +122,6 @@ export const modules: Module[] = [
     json_filename: 'Parasitologie Mycologie'
   },
   {
-    id: 8,
-    title: 'P UPSSA',
-    subtitle: '3A',
-    description: '',
-    year: '',
-    gradient: 'from-blue-400 to-blue-600',
-    json_filename: 'P UPSSA'
-  },
-  {
     id: 9,
     title: 'MI UPSSA',
     subtitle: '3A',
@@ -138,6 +129,15 @@ export const modules: Module[] = [
     year: '',
     gradient: 'from-blue-400 to-blue-600',
     json_filename: 'P UPSSA'
+  },
+  {
+    id: 10,
+    title: 'PUPSSA',
+    subtitle: '3A',
+    description: '',
+    year: '',
+    gradient: 'from-blue-400 to-blue-600',
+    json_filename: 'PUPSSA'
   }
 ];
 
@@ -216,12 +216,12 @@ export const getModuleQuestions = async (moduleId: number): Promise<Question[]> 
       const ParasitologieMycologieModule = await import('./Parasitologie Mycologie.json', { with: { type: 'json' } });
       jsonQuestions = ParasitologieMycologieModule.default as JsonQuestion[];
       break;
-    case 8:
+    case 9:
       const PUPSSAModule = await import('./P UPSSA.json', { with: { type: 'json' } });
       jsonQuestions = PUPSSAModule.default as JsonQuestion[];
       break;
-    case 9:
-      const PUPSSAModule = await import('./P UPSSA.json', { with: { type: 'json' } });
+    case 10:
+      const PUPSSAModule = await import('./PUPSSA.json', { with: { type: 'json' } });
       jsonQuestions = PUPSSAModule.default as JsonQuestion[];
       break;
     default:
@@ -308,12 +308,12 @@ export const getModuleChapters = async (moduleId: number): Promise<Chapter[]> =>
       const ParasitologieMycologieModule = await import('./Parasitologie Mycologie.json', { with: { type: 'json' } });
       jsonQuestions = ParasitologieMycologieModule.default as JsonQuestion[];
       break;
-    case 8:
+    case 9:
       const PUPSSAModule = await import('./P UPSSA.json', { with: { type: 'json' } });
       jsonQuestions = PUPSSAModule.default as JsonQuestion[];
       break;
-    case 9:
-      const PUPSSAModule = await import('./P UPSSA.json', { with: { type: 'json' } });
+    case 10:
+      const PUPSSAModule = await import('./PUPSSA.json', { with: { type: 'json' } });
       jsonQuestions = PUPSSAModule.default as JsonQuestion[];
       break;
     default:
