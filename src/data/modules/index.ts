@@ -129,15 +129,6 @@ export const modules: Module[] = [
     year: '',
     gradient: 'from-blue-400 to-blue-600',
     json_filename: 'P UPSSA'
-  },
-  {
-    id: 10,
-    title: 'PUPSSA',
-    subtitle: '3A',
-    description: '',
-    year: '',
-    gradient: 'from-blue-400 to-blue-600',
-    json_filename: 'PUPSSA'
   }
 ];
 
@@ -218,10 +209,6 @@ export const getModuleQuestions = async (moduleId: number): Promise<Question[]> 
       break;
     case 9:
       const PUPSSAModule = await import('./P UPSSA.json', { with: { type: 'json' } });
-      jsonQuestions = PUPSSAModule.default as JsonQuestion[];
-      break;
-    case 10:
-      const PUPSSAModule = await import('./PUPSSA.json', { with: { type: 'json' } });
       jsonQuestions = PUPSSAModule.default as JsonQuestion[];
       break;
     default:
@@ -310,10 +297,6 @@ export const getModuleChapters = async (moduleId: number): Promise<Chapter[]> =>
       break;
     case 9:
       const PUPSSAModule = await import('./P UPSSA.json', { with: { type: 'json' } });
-      jsonQuestions = PUPSSAModule.default as JsonQuestion[];
-      break;
-    case 10:
-      const PUPSSAModule = await import('./PUPSSA.json', { with: { type: 'json' } });
       jsonQuestions = PUPSSAModule.default as JsonQuestion[];
       break;
     default:
