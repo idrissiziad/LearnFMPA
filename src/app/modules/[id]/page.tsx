@@ -158,6 +158,100 @@ export default function ModulePage() {
     loadProgress();
   }, [moduleId, user, getProgress]);
 
+  const currentQuestion = questions[currentQuestionIndex];
+
+  useEffect(() => {
+    if (currentQuestion) {
+      const isTwoChoiceQuestion = currentQuestion.options.length === 2;
+      
+      if (isTwoChoiceQuestion) {
+        const originalOptions = [...currentQuestion.options];
+        const originalCorrectAnswers = [...currentQuestion.correctAnswers];
+        const originalAnswerExplanations = [...currentQuestion.answerExplanations];
+        const originalOptionImages = currentQuestion.optionImages ? [...currentQuestion.optionImages] : Array(currentQuestion.options.length).fill('');
+        
+        const indices = originalOptions.map((_, index) => index);
+        
+        setShuffledOptions(prev => {
+          const newShuffled = [...prev];
+          newShuffled[currentQuestionIndex] = originalOptions;
+          return newShuffled;
+        });
+        
+        setOptionMapping(prev => {
+          const newMapping = [...prev];
+          newMapping[currentQuestionIndex] = indices;
+          return newMapping;
+        });
+        
+        setShuffledCorrectAnswers(prev => {
+          const newCorrect = [...prev];
+          newCorrect[currentQuestionIndex] = originalCorrectAnswers;
+          return newCorrect;
+        });
+        
+        setShuffledAnswerExplanations(prev => {
+          const newExplanations = [...prev];
+          newExplanations[currentQuestionIndex] = originalAnswerExplanations;
+          return newExplanations;
+        });
+        
+        setShuffledOptionImages(prev => {
+          const newImages = [...prev];
+          newImages[currentQuestionIndex] = originalOptionImages;
+          return newImages;
+        });
+      } else {
+        const originalOptions = [...currentQuestion.options];
+        const originalCorrectAnswers = [...currentQuestion.correctAnswers];
+        const originalAnswerExplanations = [...currentQuestion.answerExplanations];
+        const originalOptionImages = currentQuestion.optionImages ? [...currentQuestion.optionImages] : Array(currentQuestion.options.length).fill('');
+        
+        const indices = originalOptions.map((_, index) => index);
+        for (let i = indices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [indices[i], indices[j]] = [indices[j], indices[i]];
+        }
+        
+        const newShuffledOptions = indices.map(i => originalOptions[i]);
+        const newShuffledCorrectAnswers = originalCorrectAnswers.map(originalIndex => indices.indexOf(originalIndex));
+        const newShuffledAnswerExplanations = indices.map(i => originalAnswerExplanations[i]);
+        const newShuffledOptionImages = indices.map(i => originalOptionImages[i]);
+        const newOptionMapping = indices.map((originalIndex) => originalIndex);
+        
+        setShuffledOptions(prev => {
+          const newShuffled = [...prev];
+          newShuffled[currentQuestionIndex] = newShuffledOptions;
+          return newShuffled;
+        });
+        
+        setOptionMapping(prev => {
+          const newMapping = [...prev];
+          newMapping[currentQuestionIndex] = newOptionMapping;
+          return newMapping;
+        });
+        
+        setShuffledCorrectAnswers(prev => {
+          const newCorrect = [...prev];
+          newCorrect[currentQuestionIndex] = newShuffledCorrectAnswers;
+          return newCorrect;
+        });
+        
+        setShuffledAnswerExplanations(prev => {
+          const newExplanations = [...prev];
+          newExplanations[currentQuestionIndex] = newShuffledAnswerExplanations;
+          return newExplanations;
+        });
+        
+        setShuffledOptionImages(prev => {
+          const newImages = [...prev];
+          newImages[currentQuestionIndex] = newShuffledOptionImages;
+          return newImages;
+        });
+      }
+    }
+  }, [currentQuestionIndex, currentQuestion, showAnswer]);
+
   const filterQuestionsBySession = (questionsToFilter: ExtendedQuestion[], session: string) => {
     setChapterFilter(null);
     
@@ -295,100 +389,6 @@ export default function ModulePage() {
       </div>
     );
   }
-
-  const currentQuestion = questions[currentQuestionIndex];
-
-  useEffect(() => {
-    if (currentQuestion) {
-      const isTwoChoiceQuestion = currentQuestion.options.length === 2;
-      
-      if (isTwoChoiceQuestion) {
-        const originalOptions = [...currentQuestion.options];
-        const originalCorrectAnswers = [...currentQuestion.correctAnswers];
-        const originalAnswerExplanations = [...currentQuestion.answerExplanations];
-        const originalOptionImages = currentQuestion.optionImages ? [...currentQuestion.optionImages] : Array(currentQuestion.options.length).fill('');
-        
-        const indices = originalOptions.map((_, index) => index);
-        
-        setShuffledOptions(prev => {
-          const newShuffled = [...prev];
-          newShuffled[currentQuestionIndex] = originalOptions;
-          return newShuffled;
-        });
-        
-        setOptionMapping(prev => {
-          const newMapping = [...prev];
-          newMapping[currentQuestionIndex] = indices;
-          return newMapping;
-        });
-        
-        setShuffledCorrectAnswers(prev => {
-          const newCorrect = [...prev];
-          newCorrect[currentQuestionIndex] = originalCorrectAnswers;
-          return newCorrect;
-        });
-        
-        setShuffledAnswerExplanations(prev => {
-          const newExplanations = [...prev];
-          newExplanations[currentQuestionIndex] = originalAnswerExplanations;
-          return newExplanations;
-        });
-        
-        setShuffledOptionImages(prev => {
-          const newImages = [...prev];
-          newImages[currentQuestionIndex] = originalOptionImages;
-          return newImages;
-        });
-      } else {
-        const originalOptions = [...currentQuestion.options];
-        const originalCorrectAnswers = [...currentQuestion.correctAnswers];
-        const originalAnswerExplanations = [...currentQuestion.answerExplanations];
-        const originalOptionImages = currentQuestion.optionImages ? [...currentQuestion.optionImages] : Array(currentQuestion.options.length).fill('');
-        
-        const indices = originalOptions.map((_, index) => index);
-        for (let i = indices.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [indices[i], indices[j]] = [indices[j], indices[i]];
-        }
-        
-        const newShuffledOptions = indices.map(i => originalOptions[i]);
-        const newShuffledCorrectAnswers = originalCorrectAnswers.map(originalIndex => indices.indexOf(originalIndex));
-        const newShuffledAnswerExplanations = indices.map(i => originalAnswerExplanations[i]);
-        const newShuffledOptionImages = indices.map(i => originalOptionImages[i]);
-        const newOptionMapping = indices.map((originalIndex) => originalIndex);
-        
-        setShuffledOptions(prev => {
-          const newShuffled = [...prev];
-          newShuffled[currentQuestionIndex] = newShuffledOptions;
-          return newShuffled;
-        });
-        
-        setOptionMapping(prev => {
-          const newMapping = [...prev];
-          newMapping[currentQuestionIndex] = newOptionMapping;
-          return newMapping;
-        });
-        
-        setShuffledCorrectAnswers(prev => {
-          const newCorrect = [...prev];
-          newCorrect[currentQuestionIndex] = newShuffledCorrectAnswers;
-          return newCorrect;
-        });
-        
-        setShuffledAnswerExplanations(prev => {
-          const newExplanations = [...prev];
-          newExplanations[currentQuestionIndex] = newShuffledAnswerExplanations;
-          return newExplanations;
-        });
-        
-        setShuffledOptionImages(prev => {
-          const newImages = [...prev];
-          newImages[currentQuestionIndex] = newShuffledOptionImages;
-          return newImages;
-        });
-      }
-    }
-  }, [currentQuestionIndex, currentQuestion, showAnswer]);
 
   const handleAnswerSelect = (answerIndex: number) => {
     if (showAnswer) return;
