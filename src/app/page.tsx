@@ -105,7 +105,7 @@ export default function Home() {
                       </p>
                     </div>
                     <div className="space-y-2">
-                      {['A. Dyspnée deffort', 'B. Œdème des membres inférieurs', 'C. Toux nocturne', 'D. Orthopnée'].map((option, i) => (
+                      {['A. Dyspnée d\'effort', 'B. Œdème des membres inférieurs', 'C. Toux nocturne', 'D. Orthopnée'].map((option, i) => (
                         <div key={i} className={`flex items-center p-3 rounded-lg ${i === 0 || i === 2 || i === 3 ? (isDarkMode ? 'bg-green-900/30 border border-green-700' : 'bg-green-50 border border-green-200') : (isDarkMode ? 'bg-gray-700' : 'bg-white border border-gray-200')}`}>
                           <div className={`w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center ${i === 0 || i === 2 || i === 3 ? 'border-green-500 bg-green-500' : 'border-gray-300'}`}>
                             {(i === 0 || i === 2 || i === 3) && (
