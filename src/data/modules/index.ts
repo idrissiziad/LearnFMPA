@@ -78,57 +78,21 @@ export interface ModuleWithQuestions extends Module {
 export const modules: Module[] = [
   {
     id: 1,
-    title: 'Pathologie digestive',
-    subtitle: 'En Cours',
-    description: 'Questions d"annales en pathologie digestive pour les étudiants en médecine',
-    year: '3ème année',
-    gradient: 'from-teal-400 to-teal-600',
-    json_filename: 'Pathologie digestive'
+    title: 'Pharmacologie',
+    subtitle: '2/3A',
+    description: 'Pharmacologie',
+    year: '3A',
+    gradient: 'from-blue-400 to-blue-600',
+    json_filename: 'Pharmacologie'
   },
   {
     id: 2,
-    title: 'Pathologie respiratoire',
-    subtitle: 'En Cours',
-    description: 'Questions d"annales en pathologie respiratoire pour les étudiants en médecine',
-    year: '3ème année',
-    gradient: 'from-green-400 to-green-600',
-    json_filename: 'Pathologie respiratoire'
-  },
-  {
-    id: 3,
-    title: 'Maladies infectieuses',
-    subtitle: '3ème année',
-    description: 'Questions d"annales en maladies infectieuses pour les étudiants en médecine',
-    year: 'T',
-    gradient: 'from-green-400 to-green-600',
-    json_filename: 'Maladies infectieuses'
-  },
-  {
-    id: 4,
-    title: 'Anatomie 4',
-    subtitle: '2ème année',
-    description: 'Test',
-    year: 'Test',
+    title: 'TestMode',
+    subtitle: '9',
+    description: 'XXX',
+    year: '9999',
     gradient: 'from-blue-400 to-blue-600',
-    json_filename: 'Anatomie 4'
-  },
-  {
-    id: 7,
-    title: 'Parasitologie Mycologie',
-    subtitle: '3A',
-    description: '',
-    year: '',
-    gradient: 'from-blue-400 to-blue-600',
-    json_filename: 'Parasitologie Mycologie'
-  },
-  {
-    id: 8,
-    title: 'Q&A',
-    subtitle: '3A',
-    description: '',
-    year: '',
-    gradient: 'from-blue-400 to-blue-600',
-    json_filename: 'Q&A'
+    json_filename: 'TestSample'
   }
 ];
 
@@ -188,28 +152,12 @@ export const getModuleQuestions = async (moduleId: number): Promise<Question[]> 
   
   switch (moduleId) {
     case 1:
-      const PathologiedigestiveModule = await import('./Pathologie digestive.json', { with: { type: 'json' } });
-      jsonQuestions = PathologiedigestiveModule.default as JsonQuestion[];
+      const PharmacologieModule = await import('./Pharmacologie.json', { with: { type: 'json' } });
+      jsonQuestions = PharmacologieModule.default as JsonQuestion[];
       break;
     case 2:
-      const PathologierespiratoireModule = await import('./Pathologie respiratoire.json', { with: { type: 'json' } });
-      jsonQuestions = PathologierespiratoireModule.default as JsonQuestion[];
-      break;
-    case 3:
-      const MaladiesinfectieusesModule = await import('./Maladies infectieuses.json', { with: { type: 'json' } });
-      jsonQuestions = MaladiesinfectieusesModule.default as JsonQuestion[];
-      break;
-    case 4:
-      const Anatomie4Module = await import('./Anatomie 4.json', { with: { type: 'json' } });
-      jsonQuestions = Anatomie4Module.default as JsonQuestion[];
-      break;
-    case 7:
-      const ParasitologieMycologieModule = await import('./Parasitologie Mycologie.json', { with: { type: 'json' } });
-      jsonQuestions = ParasitologieMycologieModule.default as JsonQuestion[];
-      break;
-    case 8:
-      const QAModule = await import('./Q&A.json', { with: { type: 'json' } });
-      jsonQuestions = QAModule.default as JsonQuestion[];
+      const TestSampleModule = await import('./TestSample.json', { with: { type: 'json' } });
+      jsonQuestions = TestSampleModule.default as JsonQuestion[];
       break;
     default:
       return [];
@@ -276,28 +224,12 @@ export const getModuleChapters = async (moduleId: number): Promise<Chapter[]> =>
   
   switch (moduleId) {
     case 1:
-      const PathologiedigestiveModule = await import('./Pathologie digestive.json', { with: { type: 'json' } });
-      jsonQuestions = PathologiedigestiveModule.default as JsonQuestion[];
+      const PharmacologieModule = await import('./Pharmacologie.json', { with: { type: 'json' } });
+      jsonQuestions = PharmacologieModule.default as JsonQuestion[];
       break;
     case 2:
-      const PathologierespiratoireModule = await import('./Pathologie respiratoire.json', { with: { type: 'json' } });
-      jsonQuestions = PathologierespiratoireModule.default as JsonQuestion[];
-      break;
-    case 3:
-      const MaladiesinfectieusesModule = await import('./Maladies infectieuses.json', { with: { type: 'json' } });
-      jsonQuestions = MaladiesinfectieusesModule.default as JsonQuestion[];
-      break;
-    case 4:
-      const Anatomie4Module = await import('./Anatomie 4.json', { with: { type: 'json' } });
-      jsonQuestions = Anatomie4Module.default as JsonQuestion[];
-      break;
-    case 7:
-      const ParasitologieMycologieModule = await import('./Parasitologie Mycologie.json', { with: { type: 'json' } });
-      jsonQuestions = ParasitologieMycologieModule.default as JsonQuestion[];
-      break;
-    case 8:
-      const QAModule = await import('./Q&A.json', { with: { type: 'json' } });
-      jsonQuestions = QAModule.default as JsonQuestion[];
+      const TestSampleModule = await import('./TestSample.json', { with: { type: 'json' } });
+      jsonQuestions = TestSampleModule.default as JsonQuestion[];
       break;
     default:
       return [];

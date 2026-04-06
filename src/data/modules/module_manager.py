@@ -6,6 +6,7 @@ This script allows adding, removing, and displaying modules in the data/modules 
 
 import json
 import os
+import re
 import sys
 from typing import Dict, List, Optional, Any
 from pathlib import Path
@@ -382,7 +383,9 @@ class ModuleManager:
             # Use the stored json_filename if available, otherwise use the title
             filename = module.get('json_filename', module.get('title', ''))
             # Create a valid variable name for the module import
-            var_name = filename.replace(' ', '').replace('-', '_').replace('é', 'e').replace('è', 'e').replace('à', 'a')
+            # Remove any characters that aren't alphanumeric or underscore
+            clean_filename = filename.replace('é', 'e').replace('è', 'e').replace('à', 'a')
+            var_name = re.sub(r'[^a-zA-Z0-9_]', '', clean_filename)
             new_cases += f"    case {module_id}:\n"
             new_cases += f"      const {var_name}Module = await import('./{filename}.json', {{ with: {{ type: 'json' }} }});\n"
             new_cases += f"      jsonQuestions = {var_name}Module.default as JsonQuestion[];\n"
