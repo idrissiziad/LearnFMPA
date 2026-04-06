@@ -47,16 +47,16 @@ export default function Home() {
       </header>
 
       <section className="relative mt-16 overflow-hidden">
-        <div className={`absolute inset-0 ${isDarkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'}`}></div>
+        <div className={`absolute inset-0 ${isDarkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'} pointer-events-none`}></div>
         
-        <div className="absolute top-20 left-10 w-72 h-72 bg-green-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-green-600/10 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-green-500/5 to-transparent rounded-full"></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-green-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-green-600/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-green-500/5 to-transparent rounded-full pointer-events-none"></div>
         
-        <div className="relative h-[85vh] min-h-[600px] max-h-[900px] flex items-center">
+        <div className="relative h-[85vh] min-h-[600px] max-h-[900px] flex items-center z-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-              <div className="text-center lg:text-left">
+              <div className="text-center lg:text-left relative z-20">
                 <div className={`inline-flex items-center px-4 py-2 rounded-full ${isDarkMode ? 'bg-green-900/30 text-green-400' : 'bg-green-100 text-green-700'} text-sm font-medium mb-6`}>
                   <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
                   Plateforme #1 pour les étudiants en médecine
@@ -74,20 +74,20 @@ export default function Home() {
                   Accédez à des milliers de questions corrigées de la 1ère à la 7ème année, avec des explications détaillées et un suivi personnalisé de votre progression.
                 </p>
                 
-                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                  <a href="/login" className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-green-600 to-green-700 text-white text-lg font-semibold rounded-xl hover:from-green-700 hover:to-green-800 transition-all shadow-lg shadow-green-800/25 hover:shadow-xl hover:shadow-green-800/30 hover:-translate-y-0.5">
+                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start relative z-30">
+                  <a href="/login" className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-green-600 to-green-700 text-white text-lg font-semibold rounded-xl hover:from-green-700 hover:to-green-800 transition-all shadow-lg shadow-green-800/25 hover:shadow-xl hover:shadow-green-800/30 hover:-translate-y-0.5 cursor-pointer">
                     Commencer gratuitement
                     <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
                   </a>
-                  <a href="/login" className={`inline-flex items-center justify-center px-8 py-4 ${isDarkMode ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-white text-gray-800 hover:bg-gray-50'} text-lg font-semibold rounded-xl border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} transition-all hover:-translate-y-0.5`}>
+                  <a href="/login" className={`inline-flex items-center justify-center px-8 py-4 ${isDarkMode ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-white text-gray-800 hover:bg-gray-50'} text-lg font-semibold rounded-xl border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} transition-all hover:-translate-y-0.5 cursor-pointer`}>
                     Se connecter
                   </a>
                 </div>
               </div>
               
-              <div className="hidden lg:block relative">
+              <div className="hidden lg:block relative z-10">
                 <div className="relative w-full max-w-lg mx-auto">
                   <div className={`absolute inset-0 ${isDarkMode ? 'bg-gradient-to-br from-green-900/40 to-green-800/20' : 'bg-gradient-to-br from-green-100 to-green-50'} rounded-3xl transform rotate-3`}></div>
                   <div className={`relative ${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-3xl shadow-2xl p-6 transform -rotate-1`}>
@@ -212,20 +212,20 @@ export default function Home() {
       </section>
 
       <section className={`py-20 ${isDarkMode ? 'bg-gray-800' : 'bg-gradient-to-br from-green-700 via-green-800 to-green-900'} relative overflow-hidden`}>
-        <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
           <div className="absolute top-10 left-10 w-40 h-40 border border-white rounded-full"></div>
           <div className="absolute bottom-10 right-10 w-60 h-60 border border-white rounded-full"></div>
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 border border-white rounded-full"></div>
         </div>
         
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
             Prêt à exceller dans vos études ?
           </h2>
           <p className="text-lg sm:text-xl text-green-100 mb-10 max-w-2xl mx-auto">
             Rejoignez des milliers d'étudiants qui utilisent LearnFMPA pour réussir leurs examens de médecine.
           </p>
-          <a href="/login" className="inline-flex items-center justify-center px-10 py-5 bg-white text-green-800 text-lg font-bold rounded-xl hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1">
+          <a href="/login" className="inline-flex items-center justify-center px-10 py-5 bg-white text-green-800 text-lg font-bold rounded-xl hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 cursor-pointer relative z-20">
             Commencer gratuitement
             <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
