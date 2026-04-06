@@ -180,7 +180,7 @@ export default function Dashboard() {
               </h2>
               <form onSubmit={handleSearch}>
                 <div className={`flex flex-col sm:flex-row items-stretch sm:items-center rounded-lg sm:rounded-xl border ${isDarkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-200 bg-gray-50'} overflow-hidden`}>
-                  <div className="flex items-center px-3 sm:px-4 py-3 border-b sm:border-b-0 sm:border-r ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
+                  <div className={`flex items-center px-3 sm:px-4 py-3 border-b sm:border-b-0 sm:border-r ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
                     <svg className={`w-5 h-5 ${isDarkMode ? 'text-gray-400' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
