@@ -2,53 +2,28 @@
 """
 LearnFMPA User Management Script
 
+Automatically connects to the Vercel deployment API.
+
 Usage:
-  python manage_users.py add "Name" "email@example.com" --api
-  python manage_users.py list --api
-  python manage_users.py reset "email@example.com" --api
+  python manage_users.py add "Name" "email@example.com"
+  python manage_users.py list
+  python manage_users.py reset "email@example.com"
 
-API mode (--api flag):
-  Uses the REST API to create users (works with Vercel deployment)
-
-Local mode (no --api flag):
-  Directly modifies the users.json file (for local development)
+Set environment variables:
+  API_URL - Your Vercel deployment URL (default: https://www.learnfmpa.com)
+  ADMIN_SECRET - Admin secret key (default: learnfmpa2024)
 """
 
 import json
 import os
 import secrets
 import string
-import hashlib
 import argparse
-from datetime import datetime
-from pathlib import Path
-import sys
+import urllib.request
+import urllib.error
 
-SCRIPT_DIR = Path(__file__).parent.parent
-USERS_FILE = SCRIPT_DIR / "data" / "users" / "users.json"
-PROGRESS_DIR = SCRIPT_DIR / "data" / "users" / "progress"
-
-API_URL = os.environ.get('API_URL', 'https://www.learnfmpa.com')
-ADMIN_SECRET = os.environ.get('ADMIN_SECRET', 'learnfmpa2024')
-
-
-def ensure_directories():
-    USERS_FILE.parent.mkdir(parents=True, exist_ok=True)
-    PROGRESS_DIR.mkdir(parents=True, exist_ok=True)
-
-
-def load_users() -> dict:
-    ensure_directories()
-    if USERS_FILE.exists():
-        with open(USERS_FILE, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    return {"users": {}}
-
-
-def save_users(data: dict):
-    ensure_directories()
-    with open(USERS_FILE, 'w', encoding='utf-8') as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
+DEFAULT_API_URL = os.environ.get('API_URL', 'https://www.learnfmpa.com')
+DEFAULT_ADMIN_SECRET = os.environ.get('ADMIN_SECRET', 'learnfmpa2024')
 
 
 def generate_temp_password(length: int = 12) -> str:
@@ -56,192 +31,255 @@ def generate_temp_password(length: int = 12) -> str:
     return ''.join(secrets.choice(alphabet) for _ in range(length))
 
 
-def hash_password(password: str) -> str:
-    return hashlib.sha256(password.encode()).hexdigest()
-
-
-def add_user_api(name: str, email: str, temp_password: str = None):
-    """Add user via API (for Vercel deployment)."""
-    import urllib.request
-    import urllib.error
+def api_request(api_url: str, admin_secret: str, endpoint: str, method: str = 'GET', data: dict = None) -> dict:
+    """Make an API request to the Vercel deployment."""
+    url = f"{api_url}{endpoint}"
     
-    if not temp_password:
-        temp_password = generate_temp_password()
+    headers = {'Content-Type': 'application/json'}
     
-    url = f"{API_URL}/api/admin/users"
-    data = {
-        "name": name,
-        "email": email,
-        "password": temp_password,
-        "admin_secret": ADMIN_SECRET
-    }
+    if method == 'GET' and 'admin_secret' not in endpoint:
+        url = f"{url}{'?' if '?' not in url else '&'}admin_secret={admin_secret}"
+    
+    req_data = None
+    if data:
+        data['admin_secret'] = admin_secret
+        req_data = json.dumps(data).encode('utf-8')
     
     try:
         req = urllib.request.Request(
             url,
-            data=json.dumps(data).encode('utf-8'),
-            headers={'Content-Type': 'application/json'},
-            method='POST'
+            data=req_data,
+            headers=headers,
+            method=method
         )
         
-        with urllib.request.urlopen(req) as response:
-            result = json.loads(response.read().decode('utf-8'))
+        with urllib.request.urlopen(req, timeout=30) as response:
+            return json.loads(response.read().decode('utf-8'))
             
-            if result.get('success'):
-                print(f"\n✓ User created successfully!")
-                print(f"  Name: {name}")
-                print(f"  Email: {email}")
-                print(f"  Temporary Password: {temp_password}")
-                print(f"  User ID: {result['user']['id']}")
-                print(f"\n  ⚠️  Share the temporary password securely.")
-                print(f"  The user must change it on first login.\n")
-            else:
-                print(f"Error: {result.get('error', 'Unknown error')}")
-                
     except urllib.error.HTTPError as e:
         error_body = e.read().decode('utf-8')
         try:
-            error_data = json.loads(error_body)
-            print(f"Error: {error_data.get('error', error_body)}")
+            return json.loads(error_body)
         except:
-            print(f"Error: {error_body}")
+            return {'error': error_body}
+    except urllib.error.URLError as e:
+        return {'error': f'Cannot connect to {api_url}: {e}'}
     except Exception as e:
-        print(f"Error connecting to API: {e}")
-        print(f"Make sure the API is running at {API_URL}")
+        return {'error': str(e)}
 
 
-def list_users_api():
-    """List users via API."""
-    import urllib.request
-    import urllib.error
-    
-    url = f"{API_URL}/api/admin/users?admin_secret={ADMIN_SECRET}"
-    
-    try:
-        with urllib.request.urlopen(url) as response:
-            result = json.loads(response.read().decode('utf-8'))
-            
-            users = result.get('users', [])
-            if not users:
-                print("No users found.")
-                return
-            
-            print(f"\n{'='*80}")
-            print(f"{'ID':<20} {'Name':<20} {'Email':<30} {'Status':<10}")
-            print(f"{'='*80}")
-            
-            for user in users:
-                status = "Pending" if user.get('must_change_password', False) else "Active"
-                print(f"{user['id']:<20} {user['name']:<20} {user['email']:<30} {status:<10}")
-            
-            print(f"{'='*80}")
-            print(f"Total: {len(users)} users\n")
-            
-    except urllib.error.HTTPError as e:
-        error_body = e.read().decode('utf-8')
-        print(f"Error: {error_body}")
-    except Exception as e:
-        print(f"Error connecting to API: {e}")
-
-
-def add_user_local(name: str, email: str, temp_password: str = None):
-    """Add user locally (modifies users.json directly)."""
-    users_data = load_users()
-    
-    for user_id, user in users_data["users"].items():
-        if user["email"].lower() == email.lower():
-            print(f"Error: A user with email '{email}' already exists.")
-            return None
-    
-    user_id = f"user_{secrets.token_hex(8)}"
-    
+def add_user(api_url: str, admin_secret: str, name: str, email: str, temp_password: str = None):
+    """Add a new user via API."""
     if not temp_password:
         temp_password = generate_temp_password()
     
-    users_data["users"][user_id] = {
-        "id": user_id,
-        "name": name,
-        "email": email.lower(),
-        "password_hash": hash_password(temp_password),
-        "temp_password": temp_password,
-        "must_change_password": True,
-        "created_at": datetime.now().isoformat(),
-        "last_login": None,
-        "is_active": True
-    }
+    result = api_request(api_url, admin_secret, '/api/admin/users', 'POST', {
+        'name': name,
+        'email': email,
+        'password': temp_password
+    })
     
-    save_users(users_data)
-    
-    print(f"\n✓ User created successfully!")
-    print(f"  Name: {name}")
-    print(f"  Email: {email}")
-    print(f"  Temporary Password: {temp_password}")
-    print(f"  User ID: {user_id}")
-    print(f"\n  ⚠️  Share the temporary password securely.")
-    print(f"  The user must change it on first login.\n")
-    
-    return user_id
+    if result.get('success'):
+        print(f"\n✓ User created successfully!")
+        print(f"  Name: {name}")
+        print(f"  Email: {email}")
+        print(f"  Temporary Password: {temp_password}")
+        print(f"  User ID: {result.get('user', {}).get('id', 'N/A')}")
+        print(f"\n  ⚠️  Share the temporary password securely.")
+        print(f"  The user must change it on first login.\n")
+    else:
+        print(f"\n✗ Error: {result.get('error', 'Unknown error')}\n")
 
 
-def list_users_local():
-    """List users locally."""
-    users_data = load_users()
+def list_users(api_url: str, admin_secret: str):
+    """List all users via API."""
+    result = api_request(api_url, admin_secret, '/api/admin/users', 'GET')
     
-    if not users_data["users"]:
-        print("No users found.")
-        return
+    if result.get('success'):
+        users = result.get('users', [])
+        if not users:
+            print("\nNo users found.\n")
+            return
+        
+        print(f"\n{'='*80}")
+        print(f"{'ID':<22} {'Name':<20} {'Email':<30} {'Status':<10}")
+        print(f"{'='*80}")
+        
+        for user in users:
+            status = "Pending" if user.get('must_change_password', False) else "Active"
+            print(f"{user['id']:<22} {user['name']:<20} {user['email']:<30} {status:<10}")
+        
+        print(f"{'='*80}")
+        print(f"Total: {len(users)} users")
+        print(f"API: {api_url}\n")
+    else:
+        print(f"\n✗ Error: {result.get('error', 'Unknown error')}\n")
+
+
+def reset_password(api_url: str, admin_secret: str, email: str, new_password: str = None):
+    """Reset a user's password via API."""
+    if not new_password:
+        new_password = generate_temp_password()
     
-    print(f"\n{'='*80}")
-    print(f"{'ID':<20} {'Name':<20} {'Email':<30} {'Status':<10}")
-    print(f"{'='*80}")
+    result = api_request(api_url, admin_secret, '/api/admin/users', 'POST', {
+        'email': email,
+        'new_password': new_password
+    })
     
-    for user_id, user in users_data["users"].items():
-        status = "Pending" if user.get("must_change_password", False) else "Active"
-        print(f"{user_id:<20} {user['name']:<20} {user['email']:<30} {status:<10}")
+    if result.get('success'):
+        print(f"\n✓ Password reset successfully!")
+        print(f"  Email: {email}")
+        print(f"  New Temporary Password: {new_password}")
+        print(f"\n  The user must change it on next login.\n")
+    else:
+        print(f"\n✗ Error: {result.get('error', 'Unknown error')}\n")
+
+
+def get_user_details(api_url: str, admin_secret: str, email: str):
+    """Get user details via API."""
+    result = api_request(api_url, admin_secret, f'/api/admin/users?email={email}', 'GET')
     
-    print(f"{'='*80}")
-    print(f"Total: {len(users_data['users'])} users\n")
+    if result.get('success'):
+        user = result.get('user', {})
+        print(f"\n{'='*50}")
+        print(f"User Details")
+        print(f"{'='*50}")
+        print(f"  ID: {user.get('id', 'N/A')}")
+        print(f"  Name: {user.get('name', 'N/A')}")
+        print(f"  Email: {user.get('email', 'N/A')}")
+        print(f"  Status: {'Active' if user.get('is_active', True) else 'Inactive'}")
+        print(f"  Password Change Required: {'Yes' if user.get('must_change_password', False) else 'No'}")
+        print(f"  Created: {user.get('created_at', 'N/A')}")
+        print(f"  Last Login: {user.get('last_login', 'Never')}")
+        print(f"{'='*50}\n")
+    else:
+        print(f"\n✗ Error: {result.get('error', 'Unknown error')}\n")
+
+
+def set_user_status(api_url: str, admin_secret: str, email: str, is_active: bool):
+    """Activate/Deactivate a user via API."""
+    result = api_request(api_url, admin_secret, '/api/admin/users', 'POST', {
+        'email': email,
+        'is_active': is_active
+    })
+    
+    if result.get('success'):
+        print(f"\n✓ User '{email}' has been {'activated' if is_active else 'deactivated'}.\n")
+    else:
+        print(f"\n✗ Error: {result.get('error', 'Unknown error')}\n")
+
+
+def delete_user(api_url: str, admin_secret: str, email: str):
+    """Delete a user via API."""
+    result = api_request(api_url, admin_secret, f'/api/admin/users?email={email}', 'DELETE')
+    
+    if result.get('success'):
+        print(f"\n✓ User '{email}' has been deleted.\n")
+    else:
+        print(f"\n✗ Error: {result.get('error', 'Unknown error')}\n")
+
+
+def show_progress(api_url: str, admin_secret: str, email: str):
+    """Show user progress via API."""
+    result = api_request(api_url, admin_secret, f'/api/admin/users/progress?email={email}', 'GET')
+    
+    if result.get('success'):
+        progress = result.get('progress', {})
+        print(f"\n{'='*60}")
+        print(f"Progress for: {email}")
+        print(f"{'='*60}")
+        
+        total_answered = 0
+        for key, value in progress.items():
+            if key.startswith('module_'):
+                answered = len([k for k, v in value.items() if v]) if isinstance(value, dict) else 0
+                total_answered += answered
+                print(f"  {key}: {answered} questions answered")
+        
+        print(f"\n  Total questions answered: {total_answered}")
+        print(f"{'='*60}\n")
+    else:
+        print(f"\n✗ Error: {result.get('error', 'Unknown error')}\n")
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="LearnFMPA User Management Script"
+        description="LearnFMPA User Management Script - Connects to Vercel API",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=f"""
+Environment Variables:
+  API_URL      - API endpoint (current: {DEFAULT_API_URL})
+  ADMIN_SECRET - Admin key (required for operations)
+
+Examples:
+  python manage_users.py add "John Doe" "john@example.com"
+  python manage_users.py add "John Doe" "john@example.com" -p MyP@ss123
+  python manage_users.py list
+  python manage_users.py reset "john@example.com"
+  python manage_users.py details "john@example.com"
+  python manage_users.py deactivate "john@example.com"
+  python manage_users.py delete "john@example.com"
+"""
     )
     
-    parser.add_argument('--api', action='store_true', help='Use REST API instead of local files')
-    parser.add_argument('--url', default=API_URL, help='API URL (default: https://www.learnfmpa.com)')
+    parser.add_argument('--url', default=DEFAULT_API_URL, help='Override API URL')
+    parser.add_argument('--secret', default=DEFAULT_ADMIN_SECRET, help='Override admin secret')
     
-    subparsers = parser.add_subparsers(dest="command", help="Commands")
+    subparsers = parser.add_subparsers(dest="command", help="Available commands")
     
-    # Add user
     add_parser = subparsers.add_parser("add", help="Add a new user")
     add_parser.add_argument("name", help="User's full name")
     add_parser.add_argument("email", help="User's email address")
-    add_parser.add_argument("--password", "-p", help="Temporary password")
+    add_parser.add_argument("-p", "--password", help="Temporary password (auto-generated if not provided)")
     
-    # List users
     subparsers.add_parser("list", help="List all users")
     
+    reset_parser = subparsers.add_parser("reset", help="Reset user's password")
+    reset_parser.add_argument("email", help="User's email address")
+    reset_parser.add_argument("-p", "--password", help="New temporary password")
+    
+    details_parser = subparsers.add_parser("details", help="Get user details")
+    details_parser.add_argument("email", help="User's email address")
+    
+    deactivate_parser = subparsers.add_parser("deactivate", help="Deactivate a user")
+    deactivate_parser.add_argument("email", help="User's email address")
+    
+    activate_parser = subparsers.add_parser("activate", help="Activate a user")
+    activate_parser.add_argument("email", help="User's email address")
+    
+    delete_parser = subparsers.add_parser("delete", help="Delete a user")
+    delete_parser.add_argument("email", help="User's email address")
+    
+    progress_parser = subparsers.add_parser("progress", help="Show user progress")
+    progress_parser.add_argument("email", help="User's email address")
+    
     args = parser.parse_args()
+    
+    api_url = args.url
+    admin_secret = args.secret
     
     if not args.command:
         parser.print_help()
         return
     
-    global API_URL
-    if args.api:
-        API_URL = args.url
-        
+    print(f"\n📡 Connecting to: {api_url}")
+    
     if args.command == "add":
-        if args.api:
-            add_user_api(args.name, args.email, args.password)
-        else:
-            add_user_local(args.name, args.email, args.password)
+        add_user(api_url, admin_secret, args.name, args.email, args.password)
     elif args.command == "list":
-        if args.api:
-            list_users_api()
-        else:
-            list_users_local()
+        list_users(api_url, admin_secret)
+    elif args.command == "reset":
+        reset_password(api_url, admin_secret, args.email, args.password)
+    elif args.command == "details":
+        get_user_details(api_url, admin_secret, args.email)
+    elif args.command == "deactivate":
+        set_user_status(api_url, admin_secret, args.email, False)
+    elif args.command == "activate":
+        set_user_status(api_url, admin_secret, args.email, True)
+    elif args.command == "delete":
+        delete_user(api_url, admin_secret, args.email)
+    elif args.command == "progress":
+        show_progress(api_url, admin_secret, args.email)
 
 
 if __name__ == "__main__":

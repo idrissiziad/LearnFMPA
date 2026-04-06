@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { loadUsers, saveUsers } from '@/lib/user-store';
+import { loadUserProgress } from '@/lib/user-store';
 
 function hashPassword(password: string): string {
   return crypto.createHash('sha256').update(password).digest('hex');
@@ -10,18 +11,63 @@ function generateId(): string {
   return `user_${crypto.randomBytes(4).toString('hex')}`;
 }
 
+function validateAdmin(secret: string): boolean {
+  return secret === process.env.ADMIN_SECRET || secret === 'learnfmpa2024';
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, password, admin_secret } = body;
+    const { name, email, password, admin_secret, new_password, is_active } = body;
 
-    if (admin_secret !== process.env.ADMIN_SECRET && admin_secret !== 'learnfmpa2024') {
-      return NextResponse.json(
-        { error: 'Non autorisé' },
-        { status: 403 }
-      );
+    if (!validateAdmin(admin_secret)) {
+      return NextResponse.json({ error: 'Non autorisé' }, { status: 403 });
     }
 
+    // Reset password
+    if (email && new_password && !name) {
+      const usersData = await loadUsers();
+      let found = false;
+      
+      for (const [userId, user] of Object.entries(usersData.users)) {
+        if (user.email.toLowerCase() === email.toLowerCase()) {
+          usersData.users[userId].password_hash = hashPassword(new_password);
+          usersData.users[userId].must_change_password = true;
+          found = true;
+          break;
+        }
+      }
+      
+      if (!found) {
+        return NextResponse.json({ error: 'Utilisateur non trouvé' }, { status: 404 });
+      }
+      
+      await saveUsers(usersData);
+      return NextResponse.json({ success: true, message: 'Mot de passe réinitialisé' });
+    }
+
+    // Activate/Deactivate user
+    if (email && is_active !== undefined && !name) {
+      const usersData = await loadUsers();
+      let found = false;
+      
+      for (const [userId, user] of Object.entries(usersData.users)) {
+        if (user.email.toLowerCase() === email.toLowerCase()) {
+          usersData.users[userId].is_active = is_active;
+          found = true;
+          break;
+        }
+      }
+      
+      if (!found) {
+        return NextResponse.json({ error: 'Utilisateur non trouvé' }, { status: 404 });
+      }
+      
+      await saveUsers(usersData);
+      return NextResponse.json({ success: true, message: `Utilisateur ${is_active ? 'activé' : 'désactivé'}` });
+    }
+
+    // Create user
     if (!name || !email || !password) {
       return NextResponse.json(
         { error: 'Nom, email et mot de passe requis' },
@@ -66,11 +112,8 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Create user error:', error);
-    return NextResponse.json(
-      { error: 'Erreur serveur' },
-      { status: 500 }
-    );
+    console.error('Admin POST error:', error);
+    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
   }
 }
 
@@ -78,15 +121,36 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const adminSecret = searchParams.get('admin_secret');
+    const email = searchParams.get('email');
 
-    if (adminSecret !== process.env.ADMIN_SECRET && adminSecret !== 'learnfmpa2024') {
-      return NextResponse.json(
-        { error: 'Non autorisé' },
-        { status: 403 }
-      );
+    if (!validateAdmin(adminSecret || '')) {
+      return NextResponse.json({ error: 'Non autorisé' }, { status: 403 });
     }
 
     const usersData = await loadUsers();
+
+    // Get user details
+    if (email) {
+      for (const user of Object.values(usersData.users)) {
+        if (user.email.toLowerCase() === email.toLowerCase()) {
+          return NextResponse.json({
+            success: true,
+            user: {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              must_change_password: user.must_change_password,
+              created_at: user.created_at,
+              last_login: user.last_login,
+              is_active: user.is_active
+            }
+          });
+        }
+      }
+      return NextResponse.json({ error: 'Utilisateur non trouvé' }, { status: 404 });
+    }
+
+    // List all users
     const users = Object.values(usersData.users).map(user => ({
       id: user.id,
       name: user.name,
@@ -104,10 +168,45 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('List users error:', error);
-    return NextResponse.json(
-      { error: 'Erreur serveur' },
-      { status: 500 }
-    );
+    console.error('Admin GET error:', error);
+    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const adminSecret = searchParams.get('admin_secret');
+    const email = searchParams.get('email');
+
+    if (!validateAdmin(adminSecret || '')) {
+      return NextResponse.json({ error: 'Non autorisé' }, { status: 403 });
+    }
+
+    if (!email) {
+      return NextResponse.json({ error: 'Email requis' }, { status: 400 });
+    }
+
+    const usersData = await loadUsers();
+    let found = false;
+
+    for (const [userId, user] of Object.entries(usersData.users)) {
+      if (user.email.toLowerCase() === email.toLowerCase()) {
+        delete usersData.users[userId];
+        found = true;
+        break;
+      }
+    }
+
+    if (!found) {
+      return NextResponse.json({ error: 'Utilisateur non trouvé' }, { status: 404 });
+    }
+
+    await saveUsers(usersData);
+    return NextResponse.json({ success: true, message: 'Utilisateur supprimé' });
+
+  } catch (error) {
+    console.error('Admin DELETE error:', error);
+    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
   }
 }
