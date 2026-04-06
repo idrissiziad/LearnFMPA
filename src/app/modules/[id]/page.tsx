@@ -511,18 +511,32 @@ export default function ModulePage() {
   if (questions.length === 0) {
     return (
       <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
-        <header className={`${isDarkMode ? 'bg-gray-800/80' : 'bg-white/80'} backdrop-blur-lg border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-100'} sticky top-0 z-10`}>
-          <div className="max-w-4xl mx-auto px-4 h-12 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Link href="/dashboard" className={`p-1.5 rounded-lg ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
-                <svg className={`w-5 h-5 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </Link>
-              <div className={`w-8 h-8 bg-gradient-to-br ${module.gradient} rounded-lg flex items-center justify-center`}>
-                <span className="text-white font-bold text-sm">{module.title.charAt(0)}</span>
+        <header className={`${isDarkMode ? 'bg-gray-800/95 backdrop-blur-sm border-gray-700' : 'bg-white/95 backdrop-blur-sm border-gray-200'} border-b sticky top-0 z-10`}>
+          <div className="max-w-4xl mx-auto px-4 py-4">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center space-x-3">
+                <Link
+                  href="/dashboard"
+                  className={`p-2 rounded-xl ${isDarkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'} transition-all`}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  </svg>
+                </Link>
+                <div className={`w-10 h-10 bg-gradient-to-br ${module.gradient} rounded-xl flex items-center justify-center`}>
+                  <span className="text-white font-bold">{module.title.charAt(0)}</span>
+                </div>
+                <h1 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{module.title}</h1>
               </div>
-              <span className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{module.title}</span>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => setShowAnsweredQuestions(!showAnsweredQuestions)}
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${showAnsweredQuestions ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}
+                >
+                  {showAnsweredQuestions ? 'Masquer répondues' : 'Voir répondues'}
+                </button>
+                <ThemeToggle />
+              </div>
             </div>
           </div>
         </header>
@@ -594,36 +608,51 @@ export default function ModulePage() {
         </div>
       )}
 
-      <header className={`${isDarkMode ? 'bg-gray-800/80' : 'bg-white/80'} backdrop-blur-lg border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-100'} sticky top-0 z-10`}>
-        <div className="max-w-4xl mx-auto px-4 h-12 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Link href="/dashboard" className={`p-1.5 rounded-lg ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
-              <svg className={`w-5 h-5 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </Link>
-            <div className={`w-8 h-8 bg-gradient-to-br ${module.gradient} rounded-lg flex items-center justify-center`}>
-              <span className="text-white font-bold text-sm">{module.title.charAt(0)}</span>
+      <header className={`${isDarkMode ? 'bg-gray-800/95 backdrop-blur-sm border-gray-700' : 'bg-white/95 backdrop-blur-sm border-gray-200'} border-b sticky top-0 z-10`}>
+        <div className="max-w-4xl mx-auto px-4 py-3">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-3">
+              <Link
+                href="/dashboard"
+                className={`p-2 rounded-xl ${isDarkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'} transition-all`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+              </Link>
+              <div className={`w-10 h-10 bg-gradient-to-br ${module.gradient} rounded-xl flex items-center justify-center shadow-lg`}>
+                <span className="text-white font-bold">{module.title.charAt(0)}</span>
+              </div>
+              <div>
+                <h1 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{module.title}</h1>
+                <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{questions.length} questions</p>
+              </div>
             </div>
-            <span className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{module.title}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <select
-              className={`px-2 py-1 rounded-lg border text-xs ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-200 text-gray-700'} cursor-pointer`}
-              value={sessionFilter}
-              onChange={(e) => handleSessionFilterChange(e.target.value)}
-            >
-              <option value="Toutes les sessions">Toutes</option>
-              {availableSessions.map(session => (
-                <option key={session} value={session}>{session}</option>
-              ))}
-            </select>
-            <button
-              onClick={() => setShowAnsweredQuestions(!showAnsweredQuestions)}
-              className={`px-2 py-1 rounded-lg text-xs font-medium ${showAnsweredQuestions ? 'bg-green-100 text-green-700' : isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-700'}`}
-            >
-              {showAnsweredQuestions ? 'Répondues' : 'À faire'}
-            </button>
+            <div className="flex items-center space-x-2">
+              <select
+                className={`px-3 py-2 rounded-xl border text-sm ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-200 text-gray-700'} cursor-pointer`}
+                value={sessionFilter}
+                onChange={(e) => handleSessionFilterChange(e.target.value)}
+              >
+                <option value="Toutes les sessions">Toutes les sessions</option>
+                {availableSessions.map(session => (
+                  <option key={session} value={session}>{session}</option>
+                ))}
+              </select>
+              <button
+                onClick={() => setShowAnsweredQuestions(!showAnsweredQuestions)}
+                className={`px-3 py-2 rounded-xl text-sm font-medium transition-all ${showAnsweredQuestions ? 'bg-green-100 text-green-700' : isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-700'}`}
+              >
+                {showAnsweredQuestions ? 'Répondues' : 'Non répondues'}
+              </button>
+              <button
+                onClick={handleResetProgress}
+                className="px-3 py-2 rounded-xl text-sm font-medium bg-red-100 text-red-700 hover:bg-red-200 transition-all"
+              >
+                Reset
+              </button>
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       </header>
