@@ -21,6 +21,7 @@ import string
 import argparse
 import urllib.request
 import urllib.error
+import urllib.parse
 
 DEFAULT_API_URL = os.environ.get('API_URL', 'https://www.learnfmpa.com')
 DEFAULT_ADMIN_SECRET = os.environ.get('ADMIN_SECRET', 'learnfmpa2024')
@@ -80,12 +81,36 @@ def add_user(api_url: str, admin_secret: str, name: str, email: str, temp_passwo
     })
     
     if result.get('success'):
+        subject = f"Bienvenue sur LearnFMPA - Vos identifiants de connexion"
+        body = f"""Bonjour {name},
+
+Votre compte LearnFMPA a été créé avec succès.
+
+Voici vos identifiants de connexion :
+
+📧 Email : {email}
+🔑 Mot de passe temporaire : {temp_password}
+
+⚠️ IMPORTANT : Vous devrez changer ce mot de passe lors de votre première connexion.
+
+Pour vous connecter, rendez-vous sur :
+{api_url}/login
+
+Cordialement,
+L'équipe LearnFMPA"""
+        
+        encoded_subject = urllib.parse.quote(subject)
+        encoded_body = urllib.parse.quote(body)
+        mailto_link = f"mailto:{email}?subject={encoded_subject}&body={encoded_body}"
+        
         print(f"\n✓ User created successfully!")
         print(f"  Name: {name}")
         print(f"  Email: {email}")
         print(f"  Temporary Password: {temp_password}")
         print(f"  User ID: {result.get('user', {}).get('id', 'N/A')}")
-        print(f"\n  ⚠️  Share the temporary password securely.")
+        print(f"\n📧 Send email to user:")
+        print(f"  {mailto_link}")
+        print(f"\n  ⚠️  Or share the temporary password securely.")
         print(f"  The user must change it on first login.\n")
     else:
         print(f"\n✗ Error: {result.get('error', 'Unknown error')}\n")
@@ -127,9 +152,33 @@ def reset_password(api_url: str, admin_secret: str, email: str, new_password: st
     })
     
     if result.get('success'):
+        subject = "LearnFMPA - Réinitialisation de votre mot de passe"
+        body = f"""Bonjour,
+
+Votre mot de passe LearnFMPA a été réinitialisé.
+
+Voici vos nouveaux identifiants de connexion :
+
+📧 Email : {email}
+🔑 Nouveau mot de passe temporaire : {new_password}
+
+⚠️ IMPORTANT : Vous devrez changer ce mot de passe lors de votre prochaine connexion.
+
+Pour vous connecter, rendez-vous sur :
+{api_url}/login
+
+Cordialement,
+L'équipe LearnFMPA"""
+        
+        encoded_subject = urllib.parse.quote(subject)
+        encoded_body = urllib.parse.quote(body)
+        mailto_link = f"mailto:{email}?subject={encoded_subject}&body={encoded_body}"
+        
         print(f"\n✓ Password reset successfully!")
         print(f"  Email: {email}")
         print(f"  New Temporary Password: {new_password}")
+        print(f"\n📧 Send email to user:")
+        print(f"  {mailto_link}")
         print(f"\n  The user must change it on next login.\n")
     else:
         print(f"\n✗ Error: {result.get('error', 'Unknown error')}\n")
