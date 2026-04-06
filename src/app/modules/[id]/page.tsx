@@ -557,6 +557,7 @@ export default function ModulePage() {
           <div className="max-w-4xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-2 sm:space-x-3">
+                <ThemeToggle />
                 <Link
                   href="/dashboard"
                   className={`p-1.5 sm:p-2.5 rounded-xl ${isDarkMode ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50' : 'bg-gray-100/80 text-gray-700 hover:bg-gray-200/80'} transition-all shadow-sm`}
@@ -570,15 +571,12 @@ export default function ModulePage() {
                 </div>
                 <h1 className={`text-base sm:text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{module.title}</h1>
               </div>
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => setShowAnsweredQuestions(!showAnsweredQuestions)}
-                  className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all shadow-sm ${showAnsweredQuestions ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-green-500/25' : isDarkMode ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50' : 'bg-gray-100/80 text-gray-700 hover:bg-gray-200/80'}`}
-                >
-                  {showAnsweredQuestions ? 'Masquer' : 'Voir répondues'}
-                </button>
-                <ThemeToggle />
-              </div>
+              <button
+                onClick={() => setShowAnsweredQuestions(!showAnsweredQuestions)}
+                className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all shadow-sm ${showAnsweredQuestions ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-green-500/25' : isDarkMode ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50' : 'bg-gray-100/80 text-gray-700 hover:bg-gray-200/80'}`}
+              >
+                {showAnsweredQuestions ? 'Masquer' : 'Voir répondues'}
+              </button>
             </div>
           </div>
         </header>
@@ -660,6 +658,7 @@ export default function ModulePage() {
           <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center">
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-2 sm:space-x-3">
+                <ThemeToggle />
                 <Link
                   href="/dashboard"
                   className={`p-1.5 sm:p-2.5 rounded-xl ${isDarkMode ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50' : 'bg-gray-100/80 text-gray-700 hover:bg-gray-200/80'} transition-all shadow-sm`}
@@ -676,7 +675,6 @@ export default function ModulePage() {
                   <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{questions.length} questions</p>
                 </div>
               </div>
-              <ThemeToggle />
             </div>
             <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 sm:pb-0">
               <select
