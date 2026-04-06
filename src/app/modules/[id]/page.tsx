@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { getModuleById, getModuleQuestions, getModuleChapters, preloadModuleData, Question, Chapter, JsonQuestion, extractChaptersFromQuestions } from '@/data/modules';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useAuth } from '@/contexts/AuthContext';
 import ThemeToggle from '@/components/ThemeToggle';
 
 const ChapterNavigation = lazy(() => import('@/components/ChapterNavigation'));
@@ -23,6 +24,7 @@ export default function ModulePage() {
   const params = useParams();
   const router = useRouter();
   const { theme } = useTheme();
+  const { user, isLoading: authLoading } = useAuth();
   const isDarkMode = theme === 'dark';
   const [allQuestions, setAllQuestions] = useState<ExtendedQuestion[]>([]);
   const [questions, setQuestions] = useState<ExtendedQuestion[]>([]);
@@ -52,6 +54,12 @@ export default function ModulePage() {
 
   const moduleId = parseInt(params.id as string);
   const module = getModuleById(moduleId);
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, authLoading, router]);
 
   useEffect(() => {
     if (moduleId) {
@@ -225,6 +233,17 @@ export default function ModulePage() {
     setIsCorrectlyAnswered(false);
     setOriginalSelectedAnswers([]);
   };
+
+  if (authLoading || !user) {
+    return (
+      <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'} flex items-center justify-center`}>
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Chargement...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!module) {
     return (

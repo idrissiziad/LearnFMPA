@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { modules, getModuleQuestions, getModuleChapters, Module, Question, Chapter } from '@/data/modules';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useAuth } from '@/contexts/AuthContext';
 import ThemeToggle from '@/components/ThemeToggle';
 
 interface ModuleStats {
@@ -16,10 +17,17 @@ interface ModuleStats {
 export default function Dashboard() {
   const router = useRouter();
   const { theme } = useTheme();
+  const { user, isLoading: authLoading, logout } = useAuth();
   const isDarkMode = theme === 'dark';
   const [searchQuery, setSearchQuery] = useState('');
   const [moduleStats, setModuleStats] = useState<Map<number, ModuleStats>>(new Map());
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, authLoading, router]);
 
   useEffect(() => {
     const loadModuleStats = async () => {
@@ -61,8 +69,7 @@ export default function Dashboard() {
   };
 
   const handleLogout = () => {
-    console.log('Logging out...');
-    router.push('/login');
+    logout();
   };
 
   const quickStats = [
@@ -84,6 +91,17 @@ export default function Dashboard() {
     };
     return colors[year] || 'bg-gray-100 text-gray-700';
   };
+
+  if (authLoading || !user) {
+    return (
+      <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'} flex items-center justify-center`}>
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Chargement...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>

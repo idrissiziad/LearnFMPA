@@ -1,6 +1,5 @@
 'use client';
 
-import Link from "next/link";
 import MobileNav from "@/components/MobileNav";
 import DesktopNav from "@/components/DesktopNav";
 import { useTheme } from '@/contexts/ThemeContext';
@@ -76,15 +75,15 @@ export default function Home() {
                 </p>
                 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                  <Link href="/login" className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-green-600 to-green-700 text-white text-lg font-semibold rounded-xl hover:from-green-700 hover:to-green-800 transition-all shadow-lg shadow-green-800/25 hover:shadow-xl hover:shadow-green-800/30 hover:-translate-y-0.5">
+                  <a href="/login" className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-green-600 to-green-700 text-white text-lg font-semibold rounded-xl hover:from-green-700 hover:to-green-800 transition-all shadow-lg shadow-green-800/25 hover:shadow-xl hover:shadow-green-800/30 hover:-translate-y-0.5">
                     Commencer gratuitement
                     <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
-                  </Link>
-                  <Link href="/login" className={`inline-flex items-center justify-center px-8 py-4 ${isDarkMode ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-white text-gray-800 hover:bg-gray-50'} text-lg font-semibold rounded-xl border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} transition-all hover:-translate-y-0.5`}>
+                  </a>
+                  <a href="/login" className={`inline-flex items-center justify-center px-8 py-4 ${isDarkMode ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-white text-gray-800 hover:bg-gray-50'} text-lg font-semibold rounded-xl border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} transition-all hover:-translate-y-0.5`}>
                     Se connecter
-                  </Link>
+                  </a>
                 </div>
               </div>
               
@@ -226,12 +225,12 @@ export default function Home() {
           <p className="text-lg sm:text-xl text-green-100 mb-10 max-w-2xl mx-auto">
             Rejoignez des milliers d'étudiants qui utilisent LearnFMPA pour réussir leurs examens de médecine.
           </p>
-          <Link href="/login" className="inline-flex items-center justify-center px-10 py-5 bg-white text-green-800 text-lg font-bold rounded-xl hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1">
+          <a href="/login" className="inline-flex items-center justify-center px-10 py-5 bg-white text-green-800 text-lg font-bold rounded-xl hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1">
             Commencer gratuitement
             <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
             </svg>
-          </Link>
+          </a>
         </div>
       </section>
 
@@ -256,9 +255,9 @@ export default function Home() {
             <div>
               <h4 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-4`}>Navigation</h4>
               <ul className="space-y-2">
-                <li><Link href="/login" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>Connexion</Link></li>
-                <li><Link href="/signup" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>Inscription</Link></li>
-                <li><Link href="/dashboard" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>Tableau de bord</Link></li>
+                <li><a href="/login" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>Connexion</a></li>
+                <li><a href="/signup" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>Inscription</a></li>
+                <li><a href="/dashboard" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>Tableau de bord</a></li>
               </ul>
             </div>
             
