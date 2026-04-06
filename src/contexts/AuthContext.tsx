@@ -18,6 +18,7 @@ interface AuthContextType {
   changePassword: (email: string, currentPassword: string, newPassword: string) => Promise<{ success: boolean; error?: string }>;
   syncProgress: (moduleId: number, questionId: string, isCorrect: boolean) => Promise<void>;
   getProgress: (moduleId: number) => Promise<{ [key: string]: any }>;
+  getAllProgress: () => Promise<{ [key: string]: any }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -156,6 +157,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const getAllProgress = async () => {
+    if (!user) return {};
+
+    try {
+      const response = await fetch(`${API_BASE}/progress?user_id=${user.id}`);
+      const data = await response.json();
+      
+      if (data.success && data.progress) {
+        return data.progress;
+      }
+      return {};
+    } catch (error) {
+      console.error('Failed to get all progress:', error);
+      return {};
+    }
+  };
+
   return (
     <AuthContext.Provider value={{ 
       user, 
@@ -164,7 +182,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       logout, 
       changePassword,
       syncProgress,
-      getProgress 
+      getProgress,
+      getAllProgress 
     }}>
       {children}
     </AuthContext.Provider>

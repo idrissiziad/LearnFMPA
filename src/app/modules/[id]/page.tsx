@@ -24,7 +24,7 @@ export default function ModulePage() {
   const params = useParams();
   const router = useRouter();
   const { theme } = useTheme();
-  const { user, isLoading: authLoading } = useAuth();
+  const { user, isLoading: authLoading, syncProgress, getProgress } = useAuth();
   const isDarkMode = theme === 'dark';
   const [allQuestions, setAllQuestions] = useState<ExtendedQuestion[]>([]);
   const [questions, setQuestions] = useState<ExtendedQuestion[]>([]);
@@ -119,19 +119,44 @@ export default function ModulePage() {
   }, [showAnsweredQuestions, allQuestions, sessionFilter, chapterFilter]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && moduleId) {
-      const storageKey = `learnfmpa_answered_${moduleId}`;
-      const stored = localStorage.getItem(storageKey);
-      if (stored) {
+    const loadProgress = async () => {
+      if (typeof window !== 'undefined' && moduleId && user) {
+        const storageKey = `learnfmpa_answered_${moduleId}`;
+        
+        // Load from localStorage
+        let localProgress: { [key: string]: boolean } = {};
+        const stored = localStorage.getItem(storageKey);
+        if (stored) {
+          try {
+            localProgress = JSON.parse(stored);
+          } catch (e) {
+            console.error('Error parsing answered questions from localStorage:', e);
+          }
+        }
+        
+        // Load from database
         try {
-          const parsed = JSON.parse(stored);
-          setCorrectlyAnsweredQuestions(parsed);
+          const dbProgress = await getProgress(moduleId);
+          const mergedProgress = { ...localProgress };
+          
+          // Merge database progress
+          Object.entries(dbProgress).forEach(([key, value]: [string, any]) => {
+            if (value?.is_correct) {
+              mergedProgress[key] = true;
+            }
+          });
+          
+          setCorrectlyAnsweredQuestions(mergedProgress);
+          localStorage.setItem(storageKey, JSON.stringify(mergedProgress));
         } catch (e) {
-          console.error('Error parsing answered questions from localStorage:', e);
+          // If database fails, use local progress
+          setCorrectlyAnsweredQuestions(localProgress);
         }
       }
-    }
-  }, [moduleId]);
+    };
+    
+    loadProgress();
+  }, [moduleId, user, getProgress]);
 
   const filterQuestionsBySession = (questionsToFilter: ExtendedQuestion[], session: string) => {
     setChapterFilter(null);
@@ -420,12 +445,17 @@ export default function ModulePage() {
     setShowAnswer(true);
     setAnsweredQuestions(new Set([...answeredQuestions, currentQuestionIndex]));
     
-    if (isCorrect && currentQuestion && typeof window !== 'undefined') {
+    if (currentQuestion && typeof window !== 'undefined') {
       const storageKey = `learnfmpa_answered_${moduleId}`;
       const questionKey = `${moduleId}_${currentQuestion.id}`;
-      const newAnsweredQuestions = { ...correctlyAnsweredQuestions, [questionKey]: true };
+      const newAnsweredQuestions = { ...correctlyAnsweredQuestions, [questionKey]: isCorrect };
       setCorrectlyAnsweredQuestions(newAnsweredQuestions);
       localStorage.setItem(storageKey, JSON.stringify(newAnsweredQuestions));
+      
+      // Sync progress to database
+      if (user) {
+        syncProgress(moduleId, currentQuestion.id.toString(), isCorrect);
+      }
     }
   };
 
