@@ -228,8 +228,8 @@ def main():
         parser.print_help()
         return
     
+    global API_URL
     if args.api:
-        global API_URL
         API_URL = args.url
         
     if args.command == "add":
