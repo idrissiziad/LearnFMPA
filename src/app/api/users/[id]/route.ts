@@ -1,31 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-const USERS_DIR = path.join(process.cwd(), 'data', 'users');
-const USERS_FILE = path.join(USERS_DIR, 'users.json');
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  must_change_password: boolean;
-  created_at: string;
-  last_login: string | null;
-  is_active: boolean;
-}
-
-interface UsersData {
-  users: { [key: string]: User };
-}
-
-function loadUsers(): UsersData {
-  if (!fs.existsSync(USERS_FILE)) {
-    return { users: {} };
-  }
-  const data = fs.readFileSync(USERS_FILE, 'utf-8');
-  return JSON.parse(data);
-}
+import { loadUsers } from '@/lib/user-store';
 
 export async function GET(request: NextRequest) {
   try {
@@ -34,39 +8,36 @@ export async function GET(request: NextRequest) {
 
     if (!userId) {
       return NextResponse.json(
-        { error: 'User ID is required' },
+        { error: 'ID utilisateur requis' },
         { status: 400 }
       );
     }
 
-    const usersData = loadUsers();
+    const usersData = await loadUsers();
     const user = usersData.users[userId];
 
     if (!user) {
       return NextResponse.json(
-        { error: 'User not found' },
+        { error: 'Utilisateur non trouvé' },
         { status: 404 }
       );
     }
 
-    // Return user info without sensitive data
-    const userInfo = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      must_change_password: user.must_change_password,
-      last_login: user.last_login
-    };
-
     return NextResponse.json({
       success: true,
-      user: userInfo
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        must_change_password: user.must_change_password,
+        last_login: user.last_login
+      }
     });
 
   } catch (error) {
     console.error('Get user error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Erreur serveur' },
       { status: 500 }
     );
   }

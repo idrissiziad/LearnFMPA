@@ -1,15 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-const USERS_DIR = path.join(process.cwd(), 'data', 'users');
-const PROGRESS_DIR = path.join(USERS_DIR, 'progress');
-
-function ensureProgressDir() {
-  if (!fs.existsSync(PROGRESS_DIR)) {
-    fs.mkdirSync(PROGRESS_DIR, { recursive: true });
-  }
-}
+import { loadUserProgress, saveUserProgress } from '@/lib/user-store';
 
 export async function GET(request: NextRequest) {
   try {
@@ -18,22 +8,12 @@ export async function GET(request: NextRequest) {
 
     if (!userId) {
       return NextResponse.json(
-        { error: 'User ID is required' },
+        { error: 'ID utilisateur requis' },
         { status: 400 }
       );
     }
 
-    ensureProgressDir();
-    const progressFile = path.join(PROGRESS_DIR, `${userId}.json`);
-
-    if (!fs.existsSync(progressFile)) {
-      return NextResponse.json({
-        success: true,
-        progress: {}
-      });
-    }
-
-    const progress = JSON.parse(fs.readFileSync(progressFile, 'utf-8'));
+    const progress = await loadUserProgress(userId);
 
     return NextResponse.json({
       success: true,
@@ -43,7 +23,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Get progress error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Erreur serveur' },
       { status: 500 }
     );
   }
@@ -54,38 +34,27 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { user_id, module_id, question_id, is_correct } = body;
 
-    if (!user_id || !module_id || question_id === undefined || is_correct === undefined) {
+    if (!user_id || module_id === undefined || question_id === undefined || is_correct === undefined) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Champs requis manquants' },
         { status: 400 }
       );
     }
 
-    ensureProgressDir();
-    const progressFile = path.join(PROGRESS_DIR, `${user_id}.json`);
+    let progress = await loadUserProgress(user_id);
 
-    // Load existing progress or create new
-    let progress: any = {};
-    if (fs.existsSync(progressFile)) {
-      progress = JSON.parse(fs.readFileSync(progressFile, 'utf-8'));
-    }
-
-    // Update progress for the module
     const moduleKey = `module_${module_id}`;
     if (!progress[moduleKey]) {
       progress[moduleKey] = {};
     }
 
-    // Only mark as answered if correct, or track both
     progress[moduleKey][question_id] = {
       is_correct,
       answered_at: new Date().toISOString()
     };
 
-    // Save progress
-    fs.writeFileSync(progressFile, JSON.stringify(progress, null, 2));
+    await saveUserProgress(user_id, progress);
 
-    // Calculate stats
     const moduleProgress = progress[moduleKey] || {};
     const totalAnswered = Object.keys(moduleProgress).length;
     const totalCorrect = Object.values(moduleProgress).filter(
@@ -104,7 +73,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Save progress error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Erreur serveur' },
       { status: 500 }
     );
   }
@@ -118,29 +87,17 @@ export async function DELETE(request: NextRequest) {
 
     if (!userId) {
       return NextResponse.json(
-        { error: 'User ID is required' },
+        { error: 'ID utilisateur requis' },
         { status: 400 }
       );
     }
 
-    ensureProgressDir();
-    const progressFile = path.join(PROGRESS_DIR, `${userId}.json`);
-
-    if (!fs.existsSync(progressFile)) {
-      return NextResponse.json({
-        success: true,
-        message: 'No progress to reset'
-      });
-    }
-
-    const progress = JSON.parse(fs.readFileSync(progressFile, 'utf-8'));
+    let progress = await loadUserProgress(userId);
 
     if (moduleId) {
-      // Reset specific module
       const moduleKey = `module_${moduleId}`;
       delete progress[moduleKey];
     } else {
-      // Reset all progress
       Object.keys(progress).forEach(key => {
         if (key.startsWith('module_')) {
           delete progress[key];
@@ -148,17 +105,17 @@ export async function DELETE(request: NextRequest) {
       });
     }
 
-    fs.writeFileSync(progressFile, JSON.stringify(progress, null, 2));
+    await saveUserProgress(userId, progress);
 
     return NextResponse.json({
       success: true,
-      message: moduleId ? 'Module progress reset' : 'All progress reset'
+      message: moduleId ? 'Progression du module réinitialisée' : 'Toute la progression réinitialisée'
     });
 
   } catch (error) {
     console.error('Reset progress error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Erreur serveur' },
       { status: 500 }
     );
   }
