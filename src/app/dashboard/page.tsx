@@ -33,19 +33,19 @@ export default function Dashboard() {
     const loadModuleStats = async () => {
       const statsMap = new Map<number, ModuleStats>();
       
-      for (const module of modules) {
+      for (const mod of modules) {
         try {
           const [questions, chapters] = await Promise.all([
-            getModuleQuestions(module.id),
-            getModuleChapters(module.id)
+            getModuleQuestions(mod.id),
+            getModuleChapters(mod.id)
           ]);
-          statsMap.set(module.id, {
+          statsMap.set(mod.id, {
             questionCount: questions.length,
             chapterCount: chapters.length,
             loaded: true
           });
         } catch {
-          statsMap.set(module.id, {
+          statsMap.set(mod.id, {
             questionCount: 0,
             chapterCount: 0,
             loaded: false
@@ -73,11 +73,18 @@ export default function Dashboard() {
   };
 
   const quickStats = [
-    { label: 'Modules', value: modules.length, icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10' },
-    { label: 'Questions', value: totalQuestions || '...', icon: 'M8.228 9c.549-1.165 2.36-2 4.272-2C14.528 7 16 8.153 16 9.5c0 1.657-1.623 2.417-3.176 3.01-.842.326-1.475.77-1.475 1.49v.5M12 17h.01M9 12h6' },
-    { label: 'Chapitres', value: totalChapters || '...', icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' },
-    { label: 'Années', value: '7', icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' },
+    { label: 'Modules', value: modules.length, icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10', gradient: 'from-blue-500 to-blue-600', bgLight: 'bg-blue-50', bgDark: 'bg-blue-900/30' },
+    { label: 'Questions', value: totalQuestions || '...', icon: 'M8.228 9c.549-1.165 2.36-2 4.272-2C14.528 7 16 8.153 16 9.5c0 1.657-1.623 2.417-3.176 3.01-.842.326-1.475.77-1.475 1.49v.5M12 17h.01M9 12h6', gradient: 'from-emerald-500 to-emerald-600', bgLight: 'bg-emerald-50', bgDark: 'bg-emerald-900/30' },
+    { label: 'Chapitres', value: totalChapters || '...', icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253', gradient: 'from-purple-500 to-purple-600', bgLight: 'bg-purple-50', bgDark: 'bg-purple-900/30' },
+    { label: 'Années', value: '7', icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z', gradient: 'from-amber-500 to-orange-500', bgLight: 'bg-amber-50', bgDark: 'bg-amber-900/30' },
   ];
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Bonjour';
+    if (hour < 18) return 'Bon après-midi';
+    return 'Bonsoir';
+  };
 
   if (authLoading || !user) {
     return (
@@ -92,11 +99,11 @@ export default function Dashboard() {
 
   return (
     <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      <header className={`${isDarkMode ? 'bg-gray-800/95 backdrop-blur-sm border-gray-700' : 'bg-white/95 backdrop-blur-sm border-gray-200'} border-b sticky top-0 z-50`}>
+      <header className={`${isDarkMode ? 'bg-gray-800/95 backdrop-blur-md border-gray-700' : 'bg-white/95 backdrop-blur-md border-gray-200'} border-b sticky top-0 z-50`}>
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between items-center h-14 sm:h-16">
-            <Link href="/dashboard" className="flex items-center min-w-0">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-green-600 to-green-800 rounded-lg sm:rounded-xl flex items-center justify-center mr-2 sm:mr-3 shadow-lg shadow-green-800/20 flex-shrink-0">
+            <Link href="/dashboard" className="flex items-center min-w-0 group">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg sm:rounded-xl flex items-center justify-center mr-2 sm:mr-3 shadow-lg shadow-green-500/25 group-hover:shadow-green-500/40 transition-shadow flex-shrink-0">
                 <div className="flex space-x-0.5 sm:space-x-1">
                   <div className="w-0.5 sm:w-1 h-3 sm:h-4 bg-white rounded"></div>
                   <div className="w-0.5 sm:w-1 h-3 sm:h-4 bg-white rounded"></div>
@@ -106,13 +113,13 @@ export default function Dashboard() {
             </Link>
 
             <nav className="hidden md:flex items-center space-x-8">
-              <Link href="/dashboard" className={`${isDarkMode ? 'text-green-400' : 'text-green-600'} font-medium text-sm`}>
+              <Link href="/dashboard" className={`${isDarkMode ? 'text-green-400' : 'text-green-600'} font-medium text-sm relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-0.5 after:bg-green-500 after:rounded-full`}>
                 Tableau de bord
               </Link>
-              <Link href="/modules" className={`${isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors font-medium text-sm`}>
+              <Link href="/modules" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors font-medium text-sm`}>
                 Modules
               </Link>
-              <Link href="/progress" className={`${isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors font-medium text-sm`}>
+              <Link href="/progress" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors font-medium text-sm`}>
                 Progression
               </Link>
             </nav>
@@ -130,7 +137,7 @@ export default function Dashboard() {
               </button>
               <Link
                 href="/modules"
-                className="md:hidden flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-r from-green-600 to-green-700 text-white"
+                className="md:hidden flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 text-white"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -141,28 +148,32 @@ export default function Dashboard() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-4 sm:py-6 lg:py-8">
-        <div className="mb-6">
-          <h1 className={`text-xl sm:text-2xl lg:text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} mb-1`}>
-            Bonjour, {user?.name?.replace(/_/g, ' ') || 'Étudiant'}
-          </h1>
-          <p className={`text-sm sm:text-base ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-            Continuez votre progression vers l'excellence.
-          </p>
+      <main className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
+        <div className={`relative overflow-hidden rounded-2xl mb-8 ${isDarkMode ? 'bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600' : 'bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500'} p-6 sm:p-8`}>
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIyIi8+PC9nPjwvZz48L3N2Zz4=')] opacity-30"></div>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+          <div className="relative z-10">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">
+              {getGreeting()}, {user?.name?.replace(/_/g, ' ') || 'Étudiant'}
+            </h1>
+            <p className="text-green-100 text-sm sm:text-base lg:text-lg max-w-xl">
+              Continuez votre progression vers l&apos;excellence. Explorez les modules et testez vos connaissances.
+            </p>
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5 mb-8">
           {quickStats.map((stat, index) => (
             <div
               key={index}
-              className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg sm:rounded-xl p-3 sm:p-4 shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}
+              className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-4 sm:p-5 shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'} hover:shadow-md hover:-translate-y-0.5 transition-all duration-300`}
             >
-              <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center mb-2 sm:mb-3 ${isDarkMode ? 'bg-green-900/30' : 'bg-green-100'}`}>
-                <svg className={`w-4 h-4 sm:w-5 sm:h-5 ${isDarkMode ? 'text-green-400' : 'text-green-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-3 bg-gradient-to-br ${stat.gradient} shadow-lg`}>
+                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={stat.icon} />
                 </svg>
               </div>
-              <div className={`text-xl sm:text-2xl lg:text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} mb-0.5 sm:mb-1`}>
+              <div className={`text-2xl sm:text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} mb-0.5`}>
                 {isLoading ? '...' : stat.value}
               </div>
               <div className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
@@ -172,16 +183,23 @@ export default function Dashboard() {
           ))}
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-6">
+        <div className="grid lg:grid-cols-3 gap-6 mb-8">
           <div className="lg:col-span-2">
-            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
-              <h2 className={`text-base sm:text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'} mb-4`}>
-                Recherche rapide
-              </h2>
+            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-5 sm:p-6 shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+              <div className="flex items-center gap-3 mb-5">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isDarkMode ? 'bg-blue-900/30' : 'bg-blue-50'}`}>
+                  <svg className={`w-5 h-5 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <h2 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                  Recherche rapide
+                </h2>
+              </div>
               <form onSubmit={handleSearch}>
-                <div className={`flex flex-col sm:flex-row items-stretch sm:items-center rounded-lg sm:rounded-xl border ${isDarkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-200 bg-gray-50'} overflow-hidden`}>
-                  <div className={`flex items-center px-3 sm:px-4 py-3 border-b sm:border-b-0 sm:border-r ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
-                    <svg className={`w-5 h-5 ${isDarkMode ? 'text-gray-400' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className={`flex flex-col sm:flex-row items-stretch sm:items-center rounded-xl border ${isDarkMode ? 'border-gray-600 bg-gray-700/50' : 'border-gray-200 bg-gray-50'} overflow-hidden focus-within:ring-2 focus-within:ring-green-500 focus-within:border-transparent transition-all`}>
+                  <div className={`flex items-center px-4 py-3 border-b sm:border-b-0 sm:border-r ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
+                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                   </div>
@@ -189,100 +207,100 @@ export default function Dashboard() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Rechercher..."
-                    className={`flex-1 px-3 sm:px-4 py-3 outline-none text-sm sm:text-base ${isDarkMode ? 'text-white bg-gray-700 placeholder-gray-400' : 'text-gray-800 bg-gray-50 placeholder-gray-500'}`}
+                    placeholder="Rechercher un module, chapitre ou question..."
+                    className={`flex-1 px-4 py-3 outline-none text-sm sm:text-base ${isDarkMode ? 'text-white bg-transparent placeholder-gray-400' : 'text-gray-800 bg-transparent placeholder-gray-500'}`}
                   />
                   <button
                     type="submit"
-                    className="px-4 sm:px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-medium text-sm sm:text-base hover:from-green-700 hover:to-green-800 transition-all"
+                    className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium text-sm hover:from-green-600 hover:to-emerald-700 transition-all shadow-sm"
                   >
                     Rechercher
                   </button>
                 </div>
               </form>
 
-              <div className="mt-4 sm:mt-6">
-                <h3 className={`text-xs sm:text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} mb-2 sm:mb-3`}>Accès rapide</h3>
-                <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                  {modules.slice(0, 6).map((mod) => (
+              <div className="mt-6">
+                <h3 className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} mb-3`}>Accès rapide</h3>
+                <div className="flex flex-wrap gap-2">
+                  {modules.slice(0, 5).map((mod) => (
                     <Link
                       key={mod.id}
                       href={`/modules/${mod.id}`}
-                      className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg text-xs sm:text-sm ${isDarkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-100 text-gray-600'} hover:bg-green-100 hover:text-green-700 cursor-pointer transition-colors`}
+                      className={`px-3 py-1.5 rounded-lg text-sm ${isDarkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-green-50 hover:text-green-700'} cursor-pointer transition-all`}
                     >
                       {mod.title}
                     </Link>
                   ))}
                   <Link
                     href="/modules"
-                    className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-md sm:rounded-lg text-xs sm:text-sm bg-green-600 text-white hover:bg-green-700 cursor-pointer transition-colors`}
+                    className="px-3 py-1.5 rounded-lg text-sm bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 cursor-pointer transition-all shadow-sm"
                   >
-                    +{modules.length - 6}
+                    +{modules.length - 5} plus
                   </Link>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
-            <h2 className={`text-base sm:text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'} mb-3 sm:mb-4`}>
-              Actions
+          <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-5 sm:p-6 shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+            <h2 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'} mb-4`}>
+              Actions rapides
             </h2>
-            <div className="space-y-2 sm:space-y-3">
+            <div className="space-y-3">
               <Link
                 href="/modules"
-                className={`flex items-center justify-between p-2.5 sm:p-3 rounded-lg ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:bg-gray-100'} transition-colors cursor-pointer`}
+                className={`flex items-center justify-between p-3 rounded-xl ${isDarkMode ? 'bg-gray-700/50 hover:bg-gray-700' : 'bg-gray-50 hover:bg-green-50'} transition-all cursor-pointer group`}
               >
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center bg-gradient-to-br from-green-500 to-green-600`}>
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg shadow-green-500/25">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                     </svg>
                   </div>
                   <div>
-                    <p className={`font-medium text-sm sm:text-base ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Modules</p>
-                    <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} hidden sm:inline`}>
+                    <p className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Modules</p>
+                    <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                       Parcourir les annales
                     </span>
                   </div>
                 </div>
-                <svg className={`w-4 h-4 sm:w-5 sm:h-5 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className={`w-5 h-5 ${isDarkMode ? 'text-gray-500 group-hover:text-gray-400' : 'text-gray-400 group-hover:text-green-600'} transition-colors`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </Link>
               <Link
                 href="/progress"
-                className={`flex items-center justify-between p-2.5 sm:p-3 rounded-lg ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:bg-gray-100'} transition-colors cursor-pointer`}
+                className={`flex items-center justify-between p-3 rounded-xl ${isDarkMode ? 'bg-gray-700/50 hover:bg-gray-700' : 'bg-gray-50 hover:bg-purple-50'} transition-all cursor-pointer group`}
               >
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center bg-gradient-to-br from-purple-500 to-purple-600`}>
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-purple-500 to-violet-600 shadow-lg shadow-purple-500/25">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                     </svg>
                   </div>
                   <div>
-                    <p className={`font-medium text-sm sm:text-base ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Progression</p>
-                    <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} hidden sm:inline`}>
+                    <p className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Progression</p>
+                    <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                       Voir vos statistiques
                     </span>
                   </div>
                 </div>
-                <svg className={`w-4 h-4 sm:w-5 sm:h-5 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className={`w-5 h-5 ${isDarkMode ? 'text-gray-500 group-hover:text-gray-400' : 'text-gray-400 group-hover:text-purple-600'} transition-colors`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </Link>
               <button
                 onClick={handleLogout}
-                className={`sm:hidden w-full flex items-center justify-between p-2.5 sm:p-3 rounded-lg ${isDarkMode ? 'bg-red-900/30 hover:bg-red-900/50' : 'bg-red-50 hover:bg-red-100'} transition-colors cursor-pointer`}
+                className={`sm:hidden w-full flex items-center justify-between p-3 rounded-xl ${isDarkMode ? 'bg-red-900/30 hover:bg-red-900/50' : 'bg-red-50 hover:bg-red-100'} transition-all cursor-pointer group`}
               >
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center bg-gradient-to-br from-red-500 to-red-600`}>
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-red-500 to-rose-600 shadow-lg shadow-red-500/25">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                     </svg>
                   </div>
                   <div>
-                    <p className={`font-medium text-sm sm:text-base ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>Déconnexion</p>
+                    <p className={`font-medium ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>Déconnexion</p>
                   </div>
                 </div>
               </button>
@@ -290,31 +308,82 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className={`rounded-lg sm:rounded-xl p-4 sm:p-6 bg-gradient-to-r from-green-600 to-green-700 text-white`}>
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-center sm:text-left">
-            <div>
-              <h2 className="text-lg sm:text-xl font-bold mb-1">Prêt à commencer ?</h2>
-              <p className="text-sm sm:text-base text-green-100">Explorez les modules et testez vos connaissances.</p>
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className={`text-lg sm:text-xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              Modules populaires
+            </h2>
+            <Link href="/modules" className={`text-sm font-medium ${isDarkMode ? 'text-green-400 hover:text-green-300' : 'text-green-600 hover:text-green-700'} transition-colors flex items-center gap-1`}>
+              Voir tout
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {modules.slice(0, 4).map((module) => {
+              const stats = moduleStats.get(module.id);
+              return (
+                <Link
+                  key={module.id}
+                  href={`/modules/${module.id}`}
+                  className="group"
+                >
+                  <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+                    <div className={`h-24 bg-gradient-to-br ${module.gradient} relative overflow-hidden flex items-center justify-center`}>
+                      <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors"></div>
+                      <div className="relative z-10 text-white text-center">
+                        <div className="text-2xl font-bold">{stats?.questionCount || '...'}</div>
+                        <div className="text-xs text-white/80">questions</div>
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <h3 className={`font-semibold text-sm group-hover:text-green-600 transition-colors ${isDarkMode ? 'text-white' : 'text-gray-900'} truncate`}>
+                        {module.title}
+                      </h3>
+                      <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} mt-1`}>
+                        {module.year} · {stats ? `${stats.chapterCount} chapitres` : '...'}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className={`rounded-xl overflow-hidden bg-gradient-to-r ${isDarkMode ? 'from-green-600 via-emerald-600 to-teal-600' : 'from-green-500 via-emerald-500 to-teal-500'} shadow-lg`}>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 sm:p-8 text-center sm:text-left">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-white">Prêt à commencer ?</h2>
+                <p className="text-green-100 text-sm">Explorez les modules et testez vos connaissances.</p>
+              </div>
             </div>
             <Link
               href="/modules"
-              className="px-5 sm:px-6 py-2.5 sm:py-3 bg-white text-green-700 font-semibold text-sm sm:text-base rounded-lg sm:rounded-xl hover:bg-gray-100 transition-colors shadow-lg whitespace-nowrap"
+              className="px-6 py-3 bg-white text-green-600 font-semibold text-sm rounded-xl hover:bg-gray-100 transition-colors shadow-lg whitespace-nowrap"
             >
-              Explorer
+              Explorer les modules
             </Link>
           </div>
         </div>
       </main>
 
-      <footer className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-t py-4 sm:py-6 mt-4 sm:mt-8`}>
+      <footer className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-t py-6 mt-8`}>
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
-            <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p className={`text-sm ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
               © 2024 LearnFMPA
             </p>
-            <div className="flex space-x-4 sm:space-x-6">
-              <a href="#" className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'}`}>Contact</a>
-              <a href="#" className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'}`}>FAQ</a>
+            <div className="flex space-x-6">
+              <a href="#" className={`text-sm ${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'} transition-colors`}>Contact</a>
+              <a href="#" className={`text-sm ${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'} transition-colors`}>FAQ</a>
             </div>
           </div>
         </div>
