@@ -53,6 +53,7 @@ export default function ModulePage() {
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [initialQuestionSet, setInitialQuestionSet] = useState(false);
+  const [collapsedChoices, setCollapsedChoices] = useState<Set<number>>(new Set());
 
   const moduleId = parseInt(params.id as string);
   const module = getModuleById(moduleId);
@@ -364,6 +365,7 @@ export default function ModulePage() {
     setShowAnswer(false);
     setIsCorrectlyAnswered(false);
     setOriginalSelectedAnswers([]);
+    setCollapsedChoices(new Set());
   };
 
   if (authLoading || !user) {
@@ -489,6 +491,7 @@ export default function ModulePage() {
         setShowAnswer(false);
         setIsCorrectlyAnswered(false);
         setOriginalSelectedAnswers([]);
+        setCollapsedChoices(new Set());
         setIsTransitioning(false);
         const newQuestionKey = `${moduleId}_${currentQuestionIndex + 1}`;
         setStrikethroughOptions(prev => {
@@ -511,6 +514,7 @@ export default function ModulePage() {
         setShowAnswer(false);
         setIsCorrectlyAnswered(false);
         setOriginalSelectedAnswers([]);
+        setCollapsedChoices(new Set());
         setIsTransitioning(false);
         const newQuestionKey = `${moduleId}_${currentQuestionIndex - 1}`;
         setStrikethroughOptions(prev => {
@@ -892,14 +896,26 @@ export default function ModulePage() {
                 return isDarkMode ? 'bg-gray-700/50 text-gray-200 border-gray-600/50 hover:border-gray-500/50 hover:bg-gray-700/70' : 'bg-white/80 text-gray-800 border-gray-200/50 hover:border-gray-300/50 hover:bg-white';
               };
 
+              const isCollapsed = showAnswer && collapsedChoices.has(index);
+              const toggleCollapse = (e: React.MouseEvent) => {
+                if (!showAnswer) return;
+                e.stopPropagation();
+                setCollapsedChoices(prev => {
+                  const next = new Set(prev);
+                  if (next.has(index)) next.delete(index);
+                  else next.add(index);
+                  return next;
+                });
+              };
+
               return (
                 <div
                   key={index}
-                  className={`rounded-xl sm:rounded-2xl border-2 transition-all duration-200 ${getOptionStyle()} ${!showAnswer && 'cursor-pointer hover:scale-[1.01] active:scale-[0.99]'} ${isStrikethrough ? 'opacity-40' : ''}`}
+                  className={`rounded-xl sm:rounded-2xl border-2 transition-all duration-200 ${getOptionStyle()} ${!showAnswer && 'cursor-pointer hover:scale-[1.01] active:scale-[0.99]'} ${isStrikethrough ? 'opacity-40' : ''} ${isCollapsed ? 'opacity-70' : ''}`}
                   onContextMenu={(e) => handleOptionRightClick(e, index)}
                   onClick={() => !showAnswer && handleAnswerSelect(index)}
                 >
-                  <div className="p-4 sm:p-5 flex items-start gap-3 sm:gap-4">
+                  <div className="p-4 sm:p-5 flex items-center gap-3 sm:gap-4">
                     <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm sm:text-base ${
                       showCorrectFeedback ? 'bg-white/20' :
                       showMissedCorrectFeedback ? 'bg-red-200' :
@@ -910,7 +926,7 @@ export default function ModulePage() {
                       {String.fromCharCode(65 + index)}
                     </div>
                     <div className={`flex-1 min-w-0 ${isStrikethrough ? 'line-through' : ''}`}>
-                      <p className="text-sm sm:text-base leading-relaxed break-words">{option}</p>
+                      <p className={`text-sm sm:text-base leading-relaxed break-words ${isCollapsed ? 'line-clamp-1' : ''}`}>{option}</p>
                     </div>
                     {(showCorrectFeedback || showMissedCorrectFeedback) && (
                       <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
@@ -926,9 +942,16 @@ export default function ModulePage() {
                         </svg>
                       </div>
                     )}
+                    {showAnswer && (
+                      <button onClick={toggleCollapse} className="flex-shrink-0 p-1 rounded-lg hover:bg-black/10 transition-colors">
+                        <svg className={`w-5 h-5 transition-transform duration-200 ${isCollapsed ? '' : 'rotate-180'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                    )}
                   </div>
                   
-                  {showAnswer && optionImage && (() => {
+                  {!isCollapsed && showAnswer && optionImage && (() => {
                     const imagePaths = optionImage.split(',').map(img => img.trim()).filter(img => img);
                     if (imagePaths.length === 0) return null;
                     return (
@@ -952,9 +975,9 @@ export default function ModulePage() {
                     );
                   })()}
 
-                  {showAnswer && answerExplanation && (
-                    <div className={`px-4 sm:px-5 pb-4 sm:pb-5 pt-3 border-t ${showCorrectFeedback ? 'border-white/20' : showIncorrectFeedback || showMissedCorrectFeedback ? 'border-red-200' : isDarkMode ? 'border-gray-600/50' : 'border-gray-100'}`}>
-                      <p className={`text-xs sm:text-sm leading-relaxed ${showCorrectFeedback ? 'text-white/90' : showMissedCorrectFeedback ? 'text-red-700' : showIncorrectFeedback ? 'text-white/90' : isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  {!isCollapsed && showAnswer && answerExplanation && (showIncorrectFeedback || showMissedCorrectFeedback) && (
+                    <div className={`px-4 sm:px-5 pb-4 sm:pb-5 pt-3 border-t ${showMissedCorrectFeedback ? 'border-red-200' : 'border-white/20'}`}>
+                      <p className={`text-xs sm:text-sm leading-relaxed ${showMissedCorrectFeedback ? 'text-red-700' : 'text-white/90'}`}>
                         {answerExplanation}
                       </p>
                     </div>
