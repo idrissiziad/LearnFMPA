@@ -120,7 +120,7 @@ export default function ModulePage() {
     if (allQuestions.length > 0) {
       applyAnsweredQuestionsFilter();
     }
-  }, [showAnsweredQuestions, allQuestions, sessionFilter, chapterFilter]);
+  }, [showAnsweredQuestions, allQuestions, sessionFilter, chapterFilter, correctlyAnsweredQuestions]);
 
   useEffect(() => {
     if (questions.length > 0 && questionParam && !initialQuestionSet) {
