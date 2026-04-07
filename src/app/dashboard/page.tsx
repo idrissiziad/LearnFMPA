@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { modules, getModuleQuestions, getModuleChapters } from '@/data/modules';
+import { modules, getModuleQuestions, getModuleChapters, Question } from '@/data/modules';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -14,12 +14,27 @@ interface ModuleStats {
   loaded: boolean;
 }
 
+interface SearchResult {
+  type: 'module' | 'question';
+  moduleId: number;
+  moduleTitle: string;
+  questionId?: string;
+  questionText?: string;
+  chapter?: string;
+  year?: string;
+  questionIndex?: number;
+}
+
 export default function Dashboard() {
   const router = useRouter();
   const { theme } = useTheme();
   const { user, isLoading: authLoading, logout } = useAuth();
   const isDarkMode = theme === 'dark';
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+  const [allModuleQuestions, setAllModuleQuestions] = useState<Map<number, Question[]>>(new Map());
   const [moduleStats, setModuleStats] = useState<Map<number, ModuleStats>>(new Map());
   const [isLoading, setIsLoading] = useState(true);
 
@@ -32,6 +47,7 @@ export default function Dashboard() {
   useEffect(() => {
     const loadModuleStats = async () => {
       const statsMap = new Map<number, ModuleStats>();
+      const questionsMap = new Map<number, Question[]>();
       
       for (const mod of modules) {
         try {
@@ -44,6 +60,7 @@ export default function Dashboard() {
             chapterCount: chapters.length,
             loaded: true
           });
+          questionsMap.set(mod.id, questions);
         } catch {
           statsMap.set(mod.id, {
             questionCount: 0,
@@ -54,6 +71,7 @@ export default function Dashboard() {
       }
       
       setModuleStats(statsMap);
+      setAllModuleQuestions(questionsMap);
       setIsLoading(false);
     };
 
@@ -63,9 +81,82 @@ export default function Dashboard() {
   const totalQuestions = Array.from(moduleStats.values()).reduce((sum, s) => sum + s.questionCount, 0);
   const totalChapters = Array.from(moduleStats.values()).reduce((sum, s) => sum + s.chapterCount, 0);
 
+  const performSearch = useCallback((query: string) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      setShowResults(false);
+      return;
+    }
+
+    setIsSearching(true);
+    const results: SearchResult[] = [];
+    const lowerQuery = query.toLowerCase().trim();
+
+    for (const mod of modules) {
+      if (mod.title.toLowerCase().includes(lowerQuery) || 
+          mod.description.toLowerCase().includes(lowerQuery)) {
+        results.push({
+          type: 'module',
+          moduleId: mod.id,
+          moduleTitle: mod.title
+        });
+      }
+
+      const questions = allModuleQuestions.get(mod.id) || [];
+      for (let i = 0; i < questions.length; i++) {
+        const q = questions[i];
+        if (q.question.toLowerCase().includes(lowerQuery) ||
+            (q.chapter && q.chapter.toLowerCase().includes(lowerQuery)) ||
+            (q.year && q.year.toLowerCase().includes(lowerQuery)) ||
+            q.options.some(opt => opt.toLowerCase().includes(lowerQuery))) {
+          results.push({
+            type: 'question',
+            moduleId: mod.id,
+            moduleTitle: mod.title,
+            questionId: q.id,
+            questionText: q.question,
+            chapter: q.chapter,
+            year: q.year,
+            questionIndex: i
+          });
+        }
+      }
+    }
+
+    const moduleResults = results.filter(r => r.type === 'module');
+    const questionResults = results.filter(r => r.type === 'question').slice(0, 20);
+    setSearchResults([...moduleResults, ...questionResults]);
+    setShowResults(true);
+    setIsSearching(false);
+  }, [allModuleQuestions]);
+
+  useEffect(() => {
+    const debounceTimer = setTimeout(() => {
+      if (searchQuery) {
+        performSearch(searchQuery);
+      } else {
+        setSearchResults([]);
+        setShowResults(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(debounceTimer);
+  }, [searchQuery, performSearch]);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Searching for:', searchQuery);
+    performSearch(searchQuery);
+  };
+
+  const handleResultClick = (result: SearchResult) => {
+    if (result.type === 'module') {
+      router.push(`/modules/${result.moduleId}`);
+    } else {
+      router.push(`/modules/${result.moduleId}?q=${result.questionIndex}`);
+    }
+    setSearchQuery('');
+    setShowResults(false);
+    setSearchResults([]);
   };
 
   const handleLogout = () => {
@@ -218,6 +309,75 @@ export default function Dashboard() {
                   </button>
                 </div>
               </form>
+
+              {showResults && (
+                <div className={`mt-4 rounded-xl border ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'} shadow-lg max-h-96 overflow-y-auto`}>
+                  {isSearching ? (
+                    <div className="p-4 text-center">
+                      <div className="w-6 h-6 border-2 border-green-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                    </div>
+                  ) : searchResults.length > 0 ? (
+                    <div className="divide-y divide-gray-200 dark:divide-gray-600">
+                      {searchResults.map((result, index) => (
+                        <button
+                          key={`${result.type}-${result.moduleId}-${result.questionId || index}`}
+                          onClick={() => handleResultClick(result)}
+                          className={`w-full text-left p-4 hover:${isDarkMode ? 'bg-gray-600' : 'bg-gray-50'} transition-colors`}
+                        >
+                          {result.type === 'module' ? (
+                            <div className="flex items-center gap-3">
+                              <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isDarkMode ? 'bg-blue-900/30' : 'bg-blue-50'}`}>
+                                <svg className={`w-5 h-5 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                </svg>
+                              </div>
+                              <div>
+                                <p className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{result.moduleTitle}</p>
+                                <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Module</p>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex items-start gap-3">
+                              <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${isDarkMode ? 'bg-green-900/30' : 'bg-green-50'}`}>
+                                <svg className={`w-5 h-5 ${isDarkMode ? 'text-green-400' : 'text-green-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.36-2 4.272-2C14.528 7 16 8.153 16 9.5c0 1.657-1.623 2.417-3.176 3.01-.842.326-1.475.77-1.475 1.49v.5M12 17h.01M9 12h6" />
+                                </svg>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'} truncate`}>
+                                  {result.questionText?.substring(0, 80)}...
+                                </p>
+                                <div className="flex items-center gap-2 mt-1">
+                                  <span className={`text-xs px-2 py-0.5 rounded ${isDarkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-100 text-gray-600'}`}>
+                                    {result.moduleTitle}
+                                  </span>
+                                  {result.chapter && (
+                                    <span className={`text-xs px-2 py-0.5 rounded ${isDarkMode ? 'bg-purple-900/30 text-purple-300' : 'bg-purple-50 text-purple-600'}`}>
+                                      {result.chapter}
+                                    </span>
+                                  )}
+                                  {result.year && (
+                                    <span className={`text-xs px-2 py-0.5 rounded ${isDarkMode ? 'bg-amber-900/30 text-amber-300' : 'bg-amber-50 text-amber-600'}`}>
+                                      {result.year}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className={`p-4 text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <svg className="w-8 h-8 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <p>Aucun résultat trouvé</p>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="mt-6">
                 <h3 className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} mb-3`}>Accès rapide</h3>

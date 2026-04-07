@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, lazy, Suspense } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getModuleById, getModuleQuestions, getModuleChapters, preloadModuleData, Question, Chapter, JsonQuestion, extractChaptersFromQuestions } from '@/data/modules';
@@ -23,6 +23,7 @@ export interface ExtendedQuestion extends Question {
 export default function ModulePage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { theme } = useTheme();
   const { user, isLoading: authLoading, syncProgress, getProgress } = useAuth();
   const isDarkMode = theme === 'dark';
@@ -51,9 +52,11 @@ export default function ModulePage() {
   const [strikethroughOptions, setStrikethroughOptions] = useState<{ [key: string]: Set<number> }>({});
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [initialQuestionSet, setInitialQuestionSet] = useState(false);
 
   const moduleId = parseInt(params.id as string);
   const module = getModuleById(moduleId);
+  const questionParam = searchParams.get('q');
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -117,6 +120,16 @@ export default function ModulePage() {
       applyAnsweredQuestionsFilter();
     }
   }, [showAnsweredQuestions, allQuestions, sessionFilter, chapterFilter]);
+
+  useEffect(() => {
+    if (questions.length > 0 && questionParam && !initialQuestionSet) {
+      const questionIndex = parseInt(questionParam, 10);
+      if (!isNaN(questionIndex) && questionIndex >= 0 && questionIndex < questions.length) {
+        setCurrentQuestionIndex(questionIndex);
+      }
+      setInitialQuestionSet(true);
+    }
+  }, [questions, questionParam, initialQuestionSet]);
 
   useEffect(() => {
     const loadProgress = async () => {
