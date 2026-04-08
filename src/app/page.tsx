@@ -274,6 +274,7 @@ export default function Home() {
                  <li><a href="/login" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>Connexion</a></li>
                  <li><a href="/signup" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>Inscription</a></li>
                  <li><a href="/pricing" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>Tarifs</a></li>
+                 <li><a href="/faq" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>FAQ</a></li>
                  <li><a href="/dashboard" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>Tableau de bord</a></li>
                </ul>
              </div>

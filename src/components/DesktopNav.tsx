@@ -26,6 +26,14 @@ export default function DesktopNav() {
         Tarifs
       </Link>
       <Link
+        href="/faq"
+        className={`text-sm font-medium transition-colors hover:text-blue-600 ${
+          isDarkMode ? 'text-gray-300' : 'text-gray-700'
+        }`}
+      >
+        FAQ
+      </Link>
+      <Link
         href="/dashboard"
         className={`text-sm font-medium transition-colors hover:text-blue-600 ${
           isDarkMode ? 'text-gray-300' : 'text-gray-700'
