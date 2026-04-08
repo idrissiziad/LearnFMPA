@@ -25,7 +25,7 @@ export default function Contact() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const mailtoLink = `mailto:contact@learnfmpa.com?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(`Nom : ${formData.name}\nEmail : ${formData.email}\n\n${formData.message}`)}`;
+    const mailtoLink = `mailto:admin@learnfmpa.com?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(`Nom : ${formData.name}\nEmail : ${formData.email}\n\n${formData.message}`)}`;
     window.location.href = mailtoLink;
     setSubmitted(true);
   };
@@ -181,8 +181,8 @@ export default function Contact() {
                     </svg>
                   </div>
                   <h3 className={`font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} mb-2`}>Email</h3>
-                  <a href="mailto:contact@learnfmpa.com" className="text-green-600 hover:text-green-700 transition-colors">
-                    contact@learnfmpa.com
+                  <a href="mailto:admin@learnfmpa.com" className="text-green-600 hover:text-green-700 transition-colors">
+                    admin@learnfmpa.com
                   </a>
                 </div>
 
