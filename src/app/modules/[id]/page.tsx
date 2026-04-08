@@ -54,6 +54,11 @@ export default function ModulePage() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [initialQuestionSet, setInitialQuestionSet] = useState(false);
   const [collapsedChoices, setCollapsedChoices] = useState<Set<number>>(new Set());
+  const [questionStats, setQuestionStats] = useState<{
+    total_answers: number;
+    correct_answers: number;
+    option_counts: { [optionIndex: string]: number };
+  } | null>(null);
 
   const moduleId = parseInt(params.id as string);
   const module = getModuleById(moduleId);
@@ -452,7 +457,7 @@ export default function ModulePage() {
     }));
   };
 
-  const handleShowAnswer = () => {
+  const handleShowAnswer = async () => {
     if (selectedAnswers.length === 0 || !currentQuestion) return;
 
     const mapping = optionMapping[currentQuestionIndex] || [];
@@ -494,6 +499,31 @@ export default function ModulePage() {
       if (user) {
         syncProgress(moduleId, currentQuestion.id.toString(), isCorrect);
       }
+
+      // Record answer statistics
+      try {
+        const statsResponse = await fetch('/api/statistics', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            module_id: moduleId,
+            question_id: currentQuestion.id.toString(),
+            selected_options: mappedSelectedAnswers,
+            is_correct: isCorrect,
+          }),
+        });
+        const statsData = await statsResponse.json();
+        if (statsData.success && statsData.statistics) {
+          const totalAnswers = statsData.statistics.total_answers;
+          if (totalAnswers > 1) {
+            setQuestionStats(statsData.statistics);
+          } else {
+            setQuestionStats(null);
+          }
+        }
+      } catch (e) {
+        console.error('Failed to record statistics:', e);
+      }
     }
   };
 
@@ -507,6 +537,7 @@ export default function ModulePage() {
         setIsCorrectlyAnswered(false);
         setOriginalSelectedAnswers([]);
         setCollapsedChoices(new Set());
+        setQuestionStats(null);
         setIsTransitioning(false);
         const newQuestionKey = `${moduleId}_${currentQuestionIndex + 1}`;
         setStrikethroughOptions(prev => {
@@ -530,6 +561,7 @@ export default function ModulePage() {
         setIsCorrectlyAnswered(false);
         setOriginalSelectedAnswers([]);
         setCollapsedChoices(new Set());
+        setQuestionStats(null);
         setIsTransitioning(false);
         const newQuestionKey = `${moduleId}_${currentQuestionIndex - 1}`;
         setStrikethroughOptions(prev => {
@@ -1013,6 +1045,45 @@ export default function ModulePage() {
               <p className={`text-xs sm:text-sm leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}
                 dangerouslySetInnerHTML={{ __html: currentQuestion.overallExplanation.replace(/<br\s*\/?>/gi, '\n').replace(/\n/g, '<br>') }}
               />
+            </div>
+          )}
+
+          {showAnswer && questionStats && questionStats.total_answers > 1 && (
+            <div className={`mx-4 sm:mx-6 sm:mx-8 mb-4 sm:mb-6 p-4 sm:p-5 rounded-xl sm:rounded-2xl ${isDarkMode ? 'bg-indigo-900/30' : 'bg-gradient-to-r from-indigo-50 to-blue-50'} border ${isDarkMode ? 'border-indigo-700/30' : 'border-indigo-200/50'}`}>
+              <h4 className={`font-semibold mb-3 text-sm sm:text-base ${isDarkMode ? 'text-indigo-300' : 'text-indigo-900'} flex items-center gap-2`}>
+                <svg className="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                Statistiques ({questionStats.total_answers} réponses)
+              </h4>
+              <div className="space-y-2">
+                <div className={`flex items-center gap-2 text-xs sm:text-sm ${isDarkMode ? 'text-indigo-200' : 'text-indigo-700'}`}>
+                  <span className="font-medium">Taux de réussite :</span>
+                  <span className="font-bold">{Math.round((questionStats.correct_answers / questionStats.total_answers) * 100)}%</span>
+                  <div className={`flex-1 h-2 rounded-full ${isDarkMode ? 'bg-indigo-800/50' : 'bg-indigo-100'} overflow-hidden`}>
+                    <div
+                      className="h-2 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-500"
+                      style={{ width: `${(questionStats.correct_answers / questionStats.total_answers) * 100}%` }}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
+                  {currentQuestion?.options.map((_, index) => {
+                    const count = questionStats.option_counts[index] || 0;
+                    const pct = questionStats.total_answers > 0 ? Math.round((count / questionStats.total_answers) * 100) : 0;
+                    const isCorrectOption = (currentQuestion?.correctAnswers || []).includes(index);
+                    return (
+                      <div key={index} className={`text-center p-1.5 sm:p-2 rounded-lg ${isCorrectOption ? (isDarkMode ? 'bg-green-800/40 border border-green-600/40' : 'bg-green-100 border border-green-300') : (isDarkMode ? 'bg-gray-700/40' : 'bg-white/60')}`}>
+                        <div className={`text-xs font-bold ${isCorrectOption ? (isDarkMode ? 'text-green-400' : 'text-green-700') : (isDarkMode ? 'text-gray-400' : 'text-gray-500')}`}>
+                          {String.fromCharCode(65 + index)}
+                        </div>
+                        <div className={`text-sm sm:text-base font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{pct}%</div>
+                        <div className={`text-[10px] sm:text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>({count})</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           )}
 

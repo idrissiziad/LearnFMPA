@@ -67,3 +67,62 @@ export async function saveUserProgress(userId: string, progress: any): Promise<v
     console.error('Redis save progress error:', error);
   }
 }
+
+export interface QuestionStats {
+  total_answers: number;
+  correct_answers: number;
+  option_counts: { [optionIndex: string]: number };
+}
+
+export interface ModuleStats {
+  [questionId: string]: QuestionStats;
+}
+
+export async function loadQuestionStats(moduleId: number): Promise<ModuleStats> {
+  try {
+    const client = await getRedis();
+    const data = await client.get(`stats:module_${moduleId}`);
+    return data ? JSON.parse(data) : {};
+  } catch (error) {
+    console.error('Redis load stats error:', error);
+    return {};
+  }
+}
+
+export async function saveQuestionStats(moduleId: number, stats: ModuleStats): Promise<void> {
+  try {
+    const client = await getRedis();
+    await client.set(`stats:module_${moduleId}`, JSON.stringify(stats));
+  } catch (error) {
+    console.error('Redis save stats error:', error);
+  }
+}
+
+export async function recordAnswerStat(
+  moduleId: number,
+  questionId: string,
+  selectedOptions: number[],
+  isCorrect: boolean
+): Promise<QuestionStats> {
+  const stats = await loadQuestionStats(moduleId);
+
+  if (!stats[questionId]) {
+    stats[questionId] = {
+      total_answers: 0,
+      correct_answers: 0,
+      option_counts: {},
+    };
+  }
+
+  stats[questionId].total_answers += 1;
+  if (isCorrect) {
+    stats[questionId].correct_answers += 1;
+  }
+  for (const opt of selectedOptions) {
+    stats[questionId].option_counts[opt] =
+      (stats[questionId].option_counts[opt] || 0) + 1;
+  }
+
+  await saveQuestionStats(moduleId, stats);
+  return stats[questionId];
+}
