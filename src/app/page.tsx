@@ -234,6 +234,22 @@ export default function Home() {
         </div>
       </section>
 
+      <section className={`py-6 ${isDarkMode ? 'bg-amber-900/30 border-amber-700/50' : 'bg-amber-50 border-amber-200'} border-y`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-start gap-3">
+            <svg className={`w-6 h-6 mt-0.5 flex-shrink-0 ${isDarkMode ? 'text-amber-400' : 'text-amber-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+            <div>
+              <p className={`font-semibold ${isDarkMode ? 'text-amber-300' : 'text-amber-800'} mb-1`}>Avertissement — Disclosus</p>
+              <p className={`text-sm ${isDarkMode ? 'text-amber-200/80' : 'text-amber-700'} leading-relaxed`}>
+                Ce site n&apos;est pas affilié, associé ou approuvé par la Faculté de Médecine et de Pharmacie d&apos;Agadir (FMPA). Le contenu est fourni à des fins purement éducatives et ne doit pas être utilisé à des fins médicales, diagnostiques ou thérapeutiques. Des erreurs pouvant s&apos;y glisser, il convient de toujours vérifier les informations auprès de sources officielles.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <footer className={`${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'} py-16`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
