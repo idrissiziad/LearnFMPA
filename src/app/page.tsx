@@ -252,14 +252,15 @@ export default function Home() {
               </p>
             </div>
             
-            <div>
-              <h4 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-4`}>Navigation</h4>
-              <ul className="space-y-2">
-                <li><a href="/login" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>Connexion</a></li>
-                <li><a href="/signup" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>Inscription</a></li>
-                <li><a href="/dashboard" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>Tableau de bord</a></li>
-              </ul>
-            </div>
+             <div>
+               <h4 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-4`}>Navigation</h4>
+               <ul className="space-y-2">
+                 <li><a href="/login" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>Connexion</a></li>
+                 <li><a href="/signup" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>Inscription</a></li>
+                 <li><a href="/pricing" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>Tarifs</a></li>
+                 <li><a href="/dashboard" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>Tableau de bord</a></li>
+               </ul>
+             </div>
             
             <div>
               <h4 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-4`}>Légal</h4>

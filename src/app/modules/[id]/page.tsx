@@ -120,7 +120,7 @@ export default function ModulePage() {
     if (allQuestions.length > 0) {
       applyAnsweredQuestionsFilter();
     }
-  }, [showAnsweredQuestions, allQuestions, sessionFilter, chapterFilter, correctlyAnsweredQuestions]);
+  }, [showAnsweredQuestions, allQuestions, sessionFilter, chapterFilter]);
 
   useEffect(() => {
     if (questions.length > 0 && questionParam && !initialQuestionSet) {
@@ -162,9 +162,15 @@ export default function ModulePage() {
           
           setCorrectlyAnsweredQuestions(mergedProgress);
           localStorage.setItem(storageKey, JSON.stringify(mergedProgress));
+          if (allQuestions.length > 0) {
+            applyAnsweredQuestionsFilter(mergedProgress);
+          }
         } catch (e) {
           // If database fails, use local progress
           setCorrectlyAnsweredQuestions(localProgress);
+          if (allQuestions.length > 0) {
+            applyAnsweredQuestionsFilter(localProgress);
+          }
         }
       }
     };
@@ -314,7 +320,8 @@ export default function ModulePage() {
     setStrikethroughOptions({});
   };
 
-  const applyAnsweredQuestionsFilter = () => {
+  const applyAnsweredQuestionsFilter = (answeredProgress?: { [key: string]: boolean }) => {
+    const answered = answeredProgress || correctlyAnsweredQuestions;
     let baseQuestions: ExtendedQuestion[];
     if (sessionFilter === 'Toutes les sessions') {
       baseQuestions = allQuestions;
@@ -355,7 +362,7 @@ export default function ModulePage() {
     } else {
       const unansweredQuestions = baseQuestions.filter(q => {
         const questionKey = `${moduleId}_${q.id}`;
-        return !correctlyAnsweredQuestions[questionKey];
+        return !answered[questionKey];
       });
       setQuestions(unansweredQuestions);
     }
