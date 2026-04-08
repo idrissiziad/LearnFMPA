@@ -542,8 +542,8 @@ export default function Dashboard() {
               © 2024 LearnFMPA
             </p>
             <div className="flex space-x-6">
-              <a href="#" className={`text-sm ${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'} transition-colors`}>Contact</a>
-              <a href="#" className={`text-sm ${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'} transition-colors`}>FAQ</a>
+              <a href="/contact" className={`text-sm ${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'} transition-colors`}>Contact</a>
+              <a href="/faq" className={`text-sm ${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'} transition-colors`}>FAQ</a>
             </div>
           </div>
         </div>

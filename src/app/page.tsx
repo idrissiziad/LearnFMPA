@@ -282,9 +282,9 @@ export default function Home() {
             <div>
               <h4 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-4`}>Légal</h4>
               <ul className="space-y-2">
-                <li><a href="#" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>Conditions d'utilisation</a></li>
-                <li><a href="#" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>Politique de confidentialité</a></li>
-                <li><a href="#" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>Contact</a></li>
+                 <li><a href="/terms" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>Conditions d'utilisation</a></li>
+                 <li><a href="/privacy" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>Politique de confidentialité</a></li>
+                 <li><a href="/contact" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>Contact</a></li>
               </ul>
             </div>
           </div>
