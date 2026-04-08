@@ -18,6 +18,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       progress
+    }, {
+      headers: { 'Cache-Control': 'private, max-age=0, s-maxage=10, stale-while-revalidate=30' }
     });
 
   } catch (error) {

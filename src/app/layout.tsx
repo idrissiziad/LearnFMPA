@@ -1,7 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import "./globals.css";
@@ -38,25 +36,7 @@ export default function RootLayout({
           <AuthProvider>
             {children}
           </AuthProvider>
-        </ThemeProvider><SpeedInsights />
-        {process.env.NODE_ENV === 'production' && (
-          <div id="analytics-container"></div>
-        )}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if (window.location.hostname !== 'localhost') {
-                setTimeout(() => {
-                  const script = document.createElement('script');
-                  script.src = '/_vercel/insights/script.js';
-                  script.defer = true;
-                  script.id = 'vercel-analytics';
-                  document.getElementById('analytics-container')?.appendChild(script);
-                }, 3000);
-              }
-            `,
-          }}
-        />
+        </ThemeProvider>
       </body>
     </html>
   );

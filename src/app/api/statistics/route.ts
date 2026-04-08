@@ -21,12 +21,16 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         success: true,
         statistics: questionStats,
+      }, {
+        headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' }
       });
     }
 
     return NextResponse.json({
       success: true,
       statistics: stats,
+    }, {
+      headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' }
     });
   } catch (error) {
     console.error('Get statistics error:', error);

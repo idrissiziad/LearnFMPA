@@ -25,7 +25,7 @@ export default function ModulePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { theme } = useTheme();
-  const { user, isLoading: authLoading, syncProgress, getProgress } = useAuth();
+  const { user, isLoading: authLoading, submitAnswer, getProgress } = useAuth();
   const isDarkMode = theme === 'dark';
   const [allQuestions, setAllQuestions] = useState<ExtendedQuestion[]>([]);
   const [questions, setQuestions] = useState<ExtendedQuestion[]>([]);
@@ -441,8 +441,9 @@ export default function ModulePage() {
     const questionKey = `${moduleId}_${currentQuestionIndex}`;
     const currentStrikethrough = strikethroughOptions[questionKey] || new Set();
     
-    const mapping = optionMapping[currentQuestionIndex] || [];
-    const originalIndex = mapping[optionIndex] !== undefined ? mapping[optionIndex] : optionIndex;
+    const originalIndex = showAnswer
+      ? optionIndex
+      : (optionMapping[currentQuestionIndex]?.[optionIndex] ?? optionIndex);
     
     const newStrikethrough = new Set(currentStrikethrough);
     if (newStrikethrough.has(originalIndex)) {
@@ -495,34 +496,13 @@ export default function ModulePage() {
       setCorrectlyAnsweredQuestions(newAnsweredQuestions);
       localStorage.setItem(storageKey, JSON.stringify(newAnsweredQuestions));
       
-      // Sync progress to database
       if (user) {
-        syncProgress(moduleId, currentQuestion.id.toString(), isCorrect);
-      }
-
-      // Record answer statistics
-      try {
-        const statsResponse = await fetch('/api/statistics', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            module_id: moduleId,
-            question_id: currentQuestion.id.toString(),
-            selected_options: mappedSelectedAnswers,
-            is_correct: isCorrect,
-          }),
-        });
-        const statsData = await statsResponse.json();
-        if (statsData.success && statsData.statistics) {
-          const totalAnswers = statsData.statistics.total_answers;
-          if (totalAnswers > 1) {
-            setQuestionStats(statsData.statistics);
-          } else {
-            setQuestionStats(null);
-          }
+        const result = await submitAnswer(moduleId, currentQuestion.id.toString(), isCorrect, mappedSelectedAnswers);
+        if (result?.statistics) {
+          setQuestionStats(result.statistics);
+        } else {
+          setQuestionStats(null);
         }
-      } catch (e) {
-        console.error('Failed to record statistics:', e);
       }
     }
   };

@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface User {
@@ -10,13 +10,19 @@ interface User {
   must_change_password: boolean;
 }
 
+interface QuestionStats {
+  total_answers: number;
+  correct_answers: number;
+  option_counts: { [optionIndex: string]: number };
+}
+
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string; mustChangePassword?: boolean }>;
   logout: () => void;
   changePassword: (email: string, currentPassword: string, newPassword: string) => Promise<{ success: boolean; error?: string }>;
-  syncProgress: (moduleId: number, questionId: string, isCorrect: boolean) => Promise<void>;
+  submitAnswer: (moduleId: number, questionId: string, isCorrect: boolean, selectedOptions: number[]) => Promise<{ statistics: QuestionStats | null } | null>;
   getProgress: (moduleId: number) => Promise<{ [key: string]: any }>;
   getAllProgress: () => Promise<{ [key: string]: any }>;
 }
@@ -24,14 +30,21 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const API_BASE = '/api';
+const PROGRESS_CACHE_TTL = 30000;
+const FLUSH_INTERVAL = 3000;
+const MAX_BATCH_SIZE = 5;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
+  const progressCacheRef = useRef<{ data: any | null; timestamp: number }>({ data: null, timestamp: 0 });
+  const pendingAnswersRef = useRef<any[]>([]);
+  const flushTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const flushPromiseRef = useRef<Promise<any> | null>(null);
+
   useEffect(() => {
-    // Check for stored session on mount
     const storedUser = localStorage.getItem('learnfmpa_user');
     if (storedUser) {
       try {
@@ -43,6 +56,61 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     setIsLoading(false);
   }, []);
+
+  useEffect(() => {
+    return () => {
+      if (flushTimerRef.current) {
+        clearTimeout(flushTimerRef.current);
+      }
+    };
+  }, []);
+
+  const invalidateProgressCache = useCallback(() => {
+    progressCacheRef.current = { data: null, timestamp: 0 };
+  }, []);
+
+  const flushPendingAnswers = useCallback(async (): Promise<any> => {
+    if (pendingAnswersRef.current.length === 0) return null;
+
+    if (flushPromiseRef.current) return flushPromiseRef.current;
+
+    const answersToFlush = [...pendingAnswersRef.current];
+    pendingAnswersRef.current = [];
+
+    if (flushTimerRef.current) {
+      clearTimeout(flushTimerRef.current);
+      flushTimerRef.current = null;
+    }
+
+    flushPromiseRef.current = (async () => {
+      try {
+        const response = await fetch(`${API_BASE}/answer`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: user?.id, answers: answersToFlush })
+        });
+
+        const data = await response.json();
+        invalidateProgressCache();
+        return data;
+      } catch (error) {
+        console.error('Failed to flush answers:', error);
+        pendingAnswersRef.current = [...answersToFlush, ...pendingAnswersRef.current];
+        return null;
+      } finally {
+        flushPromiseRef.current = null;
+      }
+    })();
+
+    return flushPromiseRef.current;
+  }, [user, invalidateProgressCache]);
+
+  const scheduleFlush = useCallback(() => {
+    if (flushTimerRef.current) {
+      clearTimeout(flushTimerRef.current);
+    }
+    flushTimerRef.current = setTimeout(flushPendingAnswers, FLUSH_INTERVAL);
+  }, [flushPendingAnswers]);
 
   const login = async (email: string, password: string) => {
     try {
@@ -69,20 +137,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('learnfmpa_user', JSON.stringify(userInfo));
       localStorage.setItem('learnfmpa_token', data.user.token);
 
-      return { 
-        success: true, 
-        mustChangePassword: data.user.must_change_password 
+      return {
+        success: true,
+        mustChangePassword: data.user.must_change_password
       };
     } catch (error) {
       return { success: false, error: 'Network error. Please try again.' };
     }
   };
 
-  const logout = () => {
+  const logout = useCallback(() => {
+    if (pendingAnswersRef.current.length > 0) {
+      flushPendingAnswers();
+    }
     setUser(null);
     localStorage.removeItem('learnfmpa_user');
     localStorage.removeItem('learnfmpa_token');
-    // Clear progress cache
+    invalidateProgressCache();
     const keysToRemove = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
@@ -92,7 +163,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     keysToRemove.forEach(key => localStorage.removeItem(key));
     router.push('/login');
-  };
+  }, [router, flushPendingAnswers, invalidateProgressCache]);
 
   const changePassword = async (email: string, currentPassword: string, newPassword: string) => {
     try {
@@ -108,7 +179,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { success: false, error: data.error || 'Failed to change password' };
       }
 
-      // Update user state
       if (user) {
         const updatedUser = { ...user, must_change_password: false };
         setUser(updatedUser);
@@ -121,33 +191,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const syncProgress = async (moduleId: number, questionId: string, isCorrect: boolean) => {
-    if (!user) return;
+  const submitAnswer = useCallback(async (
+    moduleId: number,
+    questionId: string,
+    isCorrect: boolean,
+    selectedOptions: number[]
+  ): Promise<{ statistics: QuestionStats | null } | null> => {
+    if (!user) return null;
 
-    try {
-      await fetch(`${API_BASE}/progress`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          user_id: user.id,
-          module_id: moduleId,
-          question_id: questionId,
-          is_correct: isCorrect
-        })
-      });
-    } catch (error) {
-      console.error('Failed to sync progress:', error);
+    const answer = {
+      module_id: moduleId,
+      question_id: questionId,
+      is_correct: isCorrect,
+      selected_options: selectedOptions
+    };
+
+    pendingAnswersRef.current.push(answer);
+
+    if (pendingAnswersRef.current.length >= MAX_BATCH_SIZE) {
+      const result = await flushPendingAnswers();
+      if (result?.success) {
+        return { statistics: result.statistics };
+      }
+      return null;
     }
-  };
 
-  const getProgress = async (moduleId: number) => {
+    scheduleFlush();
+    return null;
+  }, [user, flushPendingAnswers, scheduleFlush]);
+
+  const getProgress = useCallback(async (moduleId: number) => {
     if (!user) return {};
+
+    const cache = progressCacheRef.current;
+    if (cache.data && Date.now() - cache.timestamp < PROGRESS_CACHE_TTL) {
+      return cache.data[`module_${moduleId}`] || {};
+    }
 
     try {
       const response = await fetch(`${API_BASE}/progress?user_id=${user.id}`);
       const data = await response.json();
-      
+
       if (data.success && data.progress) {
+        progressCacheRef.current = { data: data.progress, timestamp: Date.now() };
         return data.progress[`module_${moduleId}`] || {};
       }
       return {};
@@ -155,16 +241,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error('Failed to get progress:', error);
       return {};
     }
-  };
+  }, [user]);
 
-  const getAllProgress = async () => {
+  const getAllProgress = useCallback(async () => {
     if (!user) return {};
+
+    const cache = progressCacheRef.current;
+    if (cache.data && Date.now() - cache.timestamp < PROGRESS_CACHE_TTL) {
+      return cache.data;
+    }
 
     try {
       const response = await fetch(`${API_BASE}/progress?user_id=${user.id}`);
       const data = await response.json();
-      
+
       if (data.success && data.progress) {
+        progressCacheRef.current = { data: data.progress, timestamp: Date.now() };
         return data.progress;
       }
       return {};
@@ -172,18 +264,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error('Failed to get all progress:', error);
       return {};
     }
-  };
+  }, [user]);
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      isLoading, 
-      login, 
-      logout, 
+    <AuthContext.Provider value={{
+      user,
+      isLoading,
+      login,
+      logout,
       changePassword,
-      syncProgress,
+      submitAnswer,
       getProgress,
-      getAllProgress 
+      getAllProgress
     }}>
       {children}
     </AuthContext.Provider>
