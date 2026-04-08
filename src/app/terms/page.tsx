@@ -13,7 +13,7 @@ const sections = [
   },
   {
     title: '2. Respect du travail du créateur',
-    content: `LearnFMPA est le fruit d'un travail considérable en termes de temps, d'effort et de dévouement. Chaque question, correction et explication a été rédigée, vérifiée et mise en forme avec soin pour offrir un outil de qualité aux étudiants en médecine. Nous demandons à chaque utilisateur de respecter ce travail et de ne pas : copier, reproduire, distribuer, revendre ou partager de quelque manière que ce soit le contenu de la Plateforme sans autorisation écrite préalable. Toute utilisation non autorisée du contenu constitue une violation des droits de propriété intellectuelle du créateur.`,
+    content: `LearnFMPA est le fruit d'un travail considérable en termes de temps, d'effort et de dévouement. Les corrections, explications et la mise en forme du contenu ont été réalisées avec soin pour offrir un outil de qualité aux étudiants en médecine. Les questions d'examen sont la propriété intellectuelle de leurs professeurs d'origine des différentes facultés de médecine, sauf mention contraire explicite. Nous demandons à chaque utilisateur de respecter ce travail et de ne pas : copier, reproduire, distribuer, revendre ou partager de quelque manière que ce soit le contenu de la Plateforme sans autorisation écrite préalable. Toute utilisation non autorisée du contenu constitue une violation des droits de propriété intellectuelle de leurs auteurs respectifs.`,
   },
   {
     title: '3. Compte utilisateur',
@@ -25,7 +25,7 @@ const sections = [
   },
   {
     title: '5. Propriété intellectuelle',
-    content: `L'ensemble du contenu de la Plateforme — incluant mais non limité aux textes, questions, corrections, explications, graphismes, logos et éléments de design — est la propriété exclusive du créateur de LearnFMPA. Toute reproduction, représentation, modification ou distribution, même partielle, est strictement interdite sans autorisation écrite préalable.`,
+    content: `Le contenu de la Plateforme se compose d'éléments dont les droits appartiennent à des titulaires différents. Les questions d'examen sont la propriété intellectuelle de leurs professeurs d'origine des facultés de médecine, sauf mention contraire explicite. Les corrections, explications détaillées, graphismes, logos et éléments de design sont la propriété du créateur de LearnFMPA. Le recueil, la mise en forme et l'organisation du contenu sur la Plateforme sont également la propriété du créateur. Toute reproduction, représentation, modification ou distribution, même partielle, est strictement interdite sans autorisation écrite préalable du titulaire des droits concerné.`,
   },
   {
     title: '6. Limitation de responsabilité',
