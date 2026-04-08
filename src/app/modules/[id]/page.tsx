@@ -996,6 +996,17 @@ export default function ModulePage() {
                         </svg>
                       </button>
                     )}
+                    {showAnswer && questionStats && questionStats.total_answers > 1 && (() => {
+                      const statCount = questionStats.option_counts[index] || 0;
+                      const statPct = questionStats.total_answers > 0 ? Math.round((statCount / questionStats.total_answers) * 100) : 0;
+                      const statTextColor = showCorrectFeedback ? 'text-white/80' : showIncorrectFeedback ? 'text-white/80' : showMissedCorrectFeedback ? 'text-red-600' : isDarkMode ? 'text-gray-400' : 'text-gray-500';
+                      const statBgColor = showCorrectFeedback ? 'bg-white/15' : showIncorrectFeedback ? 'bg-white/15' : showMissedCorrectFeedback ? 'bg-red-200/60' : isDarkMode ? 'bg-gray-600/50' : 'bg-gray-100';
+                      return (
+                        <span className={`flex-shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold ${statTextColor} ${statBgColor}`}>
+                          {statPct}%
+                        </span>
+                      );
+                    })()}
                   </div>
                   
                   {!isCollapsed && showAnswer && optionImage && (() => {
@@ -1048,44 +1059,6 @@ export default function ModulePage() {
             </div>
           )}
 
-          {showAnswer && questionStats && questionStats.total_answers > 1 && (
-            <div className={`mx-4 sm:mx-6 sm:mx-8 mb-4 sm:mb-6 p-4 sm:p-5 rounded-xl sm:rounded-2xl ${isDarkMode ? 'bg-indigo-900/30' : 'bg-gradient-to-r from-indigo-50 to-blue-50'} border ${isDarkMode ? 'border-indigo-700/30' : 'border-indigo-200/50'}`}>
-              <h4 className={`font-semibold mb-3 text-sm sm:text-base ${isDarkMode ? 'text-indigo-300' : 'text-indigo-900'} flex items-center gap-2`}>
-                <svg className="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-                Statistiques ({questionStats.total_answers} réponses)
-              </h4>
-              <div className="space-y-2">
-                <div className={`flex items-center gap-2 text-xs sm:text-sm ${isDarkMode ? 'text-indigo-200' : 'text-indigo-700'}`}>
-                  <span className="font-medium">Taux de réussite :</span>
-                  <span className="font-bold">{Math.round((questionStats.correct_answers / questionStats.total_answers) * 100)}%</span>
-                  <div className={`flex-1 h-2 rounded-full ${isDarkMode ? 'bg-indigo-800/50' : 'bg-indigo-100'} overflow-hidden`}>
-                    <div
-                      className="h-2 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-500"
-                      style={{ width: `${(questionStats.correct_answers / questionStats.total_answers) * 100}%` }}
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
-                  {currentQuestion?.options.map((_, index) => {
-                    const count = questionStats.option_counts[index] || 0;
-                    const pct = questionStats.total_answers > 0 ? Math.round((count / questionStats.total_answers) * 100) : 0;
-                    const isCorrectOption = (currentQuestion?.correctAnswers || []).includes(index);
-                    return (
-                      <div key={index} className={`text-center p-1.5 sm:p-2 rounded-lg ${isCorrectOption ? (isDarkMode ? 'bg-green-800/40 border border-green-600/40' : 'bg-green-100 border border-green-300') : (isDarkMode ? 'bg-gray-700/40' : 'bg-white/60')}`}>
-                        <div className={`text-xs font-bold ${isCorrectOption ? (isDarkMode ? 'text-green-400' : 'text-green-700') : (isDarkMode ? 'text-gray-400' : 'text-gray-500')}`}>
-                          {String.fromCharCode(65 + index)}
-                        </div>
-                        <div className={`text-sm sm:text-base font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{pct}%</div>
-                        <div className={`text-[10px] sm:text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>({count})</div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          )}
 
           <div className={`p-4 sm:p-5 sm:p-6 border-t ${isDarkMode ? 'border-gray-700/50' : 'border-gray-100'} flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-6`}>
             <div className="w-full sm:w-auto flex justify-between sm:justify-start gap-3 sm:gap-4">
