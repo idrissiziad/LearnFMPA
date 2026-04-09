@@ -942,7 +942,7 @@ export default function ModulePage() {
                   onContextMenu={(e) => handleOptionRightClick(e, index)}
                   onClick={() => !showAnswer && handleAnswerSelect(index)}
                 >
-                  <div className="p-4 sm:p-5 flex items-center gap-3 sm:gap-4">
+                  <div className="p-4 sm:p-5 flex flex-wrap items-center gap-3 sm:gap-4">
                     <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm sm:text-base ${
                       showCorrectFeedback ? 'bg-white/20' :
                       showMissedCorrectFeedback ? 'bg-red-200' :
@@ -982,25 +982,12 @@ export default function ModulePage() {
                       const statTextColor = showCorrectFeedback ? 'text-white/80' : showIncorrectFeedback ? 'text-white/80' : showMissedCorrectFeedback ? 'text-red-600' : isDarkMode ? 'text-gray-400' : 'text-gray-500';
                       const statBgColor = showCorrectFeedback ? 'bg-white/15' : showIncorrectFeedback ? 'bg-white/15' : showMissedCorrectFeedback ? 'bg-red-200/60' : isDarkMode ? 'bg-gray-600/50' : 'bg-gray-100';
                       return (
-                        <span className={`hidden sm:inline-flex flex-shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold ${statTextColor} ${statBgColor}`}>
-                          {statPct}%
+                        <span className={`basis-full sm:basis-auto flex-shrink-0 px-2.5 py-1 rounded-md text-xs font-semibold ${statTextColor} ${statBgColor}`}>
+                          {statPct}% des réponses
                         </span>
                       );
                     })()}
                   </div>
-                  {showAnswer && questionStats && questionStats.total_answers > 1 && (() => {
-                    const statCount = questionStats.option_counts[index] || 0;
-                    const statPct = questionStats.total_answers > 0 ? Math.round((statCount / questionStats.total_answers) * 100) : 0;
-                    const statTextColor = showCorrectFeedback ? 'text-white/80' : showIncorrectFeedback ? 'text-white/80' : showMissedCorrectFeedback ? 'text-red-600' : isDarkMode ? 'text-gray-400' : 'text-gray-500';
-                    const statBgColor = showCorrectFeedback ? 'bg-white/15' : showIncorrectFeedback ? 'bg-white/15' : showMissedCorrectFeedback ? 'bg-red-200/60' : isDarkMode ? 'bg-gray-600/50' : 'bg-gray-100';
-                    return (
-                      <div className="sm:hidden px-4 pb-2 flex items-center gap-2">
-                        <span className={`px-2.5 py-1 rounded-lg text-xs font-semibold ${statTextColor} ${statBgColor}`}>
-                          {statPct}% des réponses
-                        </span>
-                      </div>
-                    );
-                  })()}
                   
                   {!isCollapsed && showAnswer && optionImage && (() => {
                     const imagePaths = optionImage.split(',').map(img => img.trim()).filter(img => img);
