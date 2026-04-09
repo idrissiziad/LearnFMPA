@@ -13,7 +13,12 @@ export const metadata: Metadata = {
   title: "LearnFMPA - Révisez efficacement les annales de médecine au Maroc",
   description: "Accédez à des milliers de questions corrigées de la 1ère à la 7ème année, avec des explications détaillées par des experts et des outils pour suivre votre progression.",
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/favicon/favicon.ico" },
+      { url: "/favicon/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: "/favicon/apple-touch-icon.png",
   },
 };
 
