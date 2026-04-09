@@ -208,15 +208,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     pendingAnswersRef.current.push(answer);
 
-    if (pendingAnswersRef.current.length >= MAX_BATCH_SIZE) {
-      const result = await flushPendingAnswers();
-      if (result?.success) {
-        return { statistics: result.statistics };
-      }
-      return null;
+    const result = await flushPendingAnswers();
+    if (result?.success) {
+      return { statistics: result.statistics };
     }
-
-    scheduleFlush();
     return null;
   }, [user, flushPendingAnswers, scheduleFlush]);
 

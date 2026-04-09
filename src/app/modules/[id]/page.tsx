@@ -976,7 +976,7 @@ export default function ModulePage() {
                         </svg>
                       </button>
                     )}
-                    {showAnswer && questionStats && questionStats.total_answers > 1 && (() => {
+                    {showAnswer && questionStats && questionStats.total_answers > 0 && (() => {
                       const statCount = questionStats.option_counts[index] || 0;
                       const statPct = questionStats.total_answers > 0 ? Math.round((statCount / questionStats.total_answers) * 100) : 0;
                       const statTextColor = showCorrectFeedback ? 'text-white/80' : showIncorrectFeedback ? 'text-white/80' : showMissedCorrectFeedback ? 'text-red-600' : isDarkMode ? 'text-gray-400' : 'text-gray-500';

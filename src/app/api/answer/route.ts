@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      statistics: totalAnswers > 1 ? lastStats : null,
+      statistics: lastStats,
       progress,
     });
   } catch (error) {
