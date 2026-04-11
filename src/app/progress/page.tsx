@@ -3,15 +3,26 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { modules } from '@/data/modules';
+import { modules, getModuleQuestions, Question } from '@/data/modules';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
 import ThemeToggle from '@/components/ThemeToggle';
 
-interface ModuleProgress {
-  total: number;
+interface ChapterProgress {
+  name: string;
+  totalQuestions: number;
   correct: number;
-  rate: number;
+  wrong: number;
+  blank: number;
+}
+
+interface ModuleProgressDetail {
+  totalQuestions: number;
+  correct: number;
+  wrong: number;
+  blank: number;
+  chapters: ChapterProgress[];
+  chaptersWithMistakes: ChapterProgress[];
 }
 
 export default function ProgressPage() {
@@ -20,7 +31,9 @@ export default function ProgressPage() {
   const { user, isLoading: authLoading, logout, getAllProgress } = useAuth();
   const isDarkMode = theme === 'dark';
   const [progress, setProgress] = useState<{ [key: string]: any }>({});
+  const [moduleData, setModuleData] = useState<{ [moduleId: number]: Question[] }>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [expandedModules, setExpandedModules] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -33,6 +46,16 @@ export default function ProgressPage() {
       if (user) {
         const allProgress = await getAllProgress();
         setProgress(allProgress);
+
+        const data: { [moduleId: number]: Question[] } = {};
+        for (const module of modules) {
+          const moduleKey = `module_${module.id}`;
+          if (allProgress[moduleKey] && Object.keys(allProgress[moduleKey]).length > 0) {
+            const questions = await getModuleQuestions(module.id);
+            data[module.id] = questions;
+          }
+        }
+        setModuleData(data);
         setIsLoading(false);
       }
     };
@@ -43,43 +66,85 @@ export default function ProgressPage() {
     logout();
   };
 
-  const getModuleProgress = (moduleId: number): ModuleProgress => {
+  const toggleModule = (moduleId: number) => {
+    setExpandedModules(prev => {
+      const next = new Set(prev);
+      if (next.has(moduleId)) {
+        next.delete(moduleId);
+      } else {
+        next.add(moduleId);
+      }
+      return next;
+    });
+  };
+
+  const getModuleProgressDetail = (moduleId: number): ModuleProgressDetail => {
     const moduleKey = `module_${moduleId}`;
     const moduleProgress = progress[moduleKey] || {};
-    const entries = Object.entries(moduleProgress);
-    const total = entries.length;
-    const correct = entries.filter(([_, v]: [string, any]) => v?.is_correct).length;
-    const rate = total > 0 ? Math.round((correct / total) * 100) : 0;
-    return { total, correct, rate };
-  };
+    const questions = moduleData[moduleId];
 
-  const totalAnswered = Object.values(progress).reduce((sum: number, moduleProgress: any) => {
-    if (typeof moduleProgress === 'object') {
-      return sum + Object.keys(moduleProgress).length;
+    if (!questions) {
+      return { totalQuestions: 0, correct: 0, wrong: 0, blank: 0, chapters: [], chaptersWithMistakes: [] };
     }
-    return sum;
-  }, 0);
 
-  const totalCorrect = Object.values(progress).reduce((sum: number, moduleProgress: any) => {
-    if (typeof moduleProgress === 'object') {
-      return sum + Object.values(moduleProgress).filter((v: any) => v?.is_correct).length;
-    }
-    return sum;
-  }, 0);
+    const totalQuestions = questions.length;
+    const chapterMap: { [name: string]: { total: number; correct: number; wrong: number } } = {};
 
-  const overallRate = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
+    questions.forEach((question) => {
+      const chapterName = question.chapter || 'Non classé';
+      if (!chapterMap[chapterName]) {
+        chapterMap[chapterName] = { total: 0, correct: 0, wrong: 0 };
+      }
+      chapterMap[chapterName].total++;
 
-  const getProgressColor = (rate: number) => {
-    if (rate >= 80) return 'text-green-500';
-    if (rate >= 60) return 'text-amber-500';
-    return 'text-red-500';
+      const answer = moduleProgress[question.id];
+      if (answer) {
+        if (answer.is_correct) {
+          chapterMap[chapterName].correct++;
+        } else {
+          chapterMap[chapterName].wrong++;
+        }
+      }
+    });
+
+    let correct = 0;
+    let wrong = 0;
+    Object.values(chapterMap).forEach(c => {
+      correct += c.correct;
+      wrong += c.wrong;
+    });
+    const blank = totalQuestions - correct - wrong;
+
+    const chapterProgress: ChapterProgress[] = Object.entries(chapterMap).map(([name, data]) => ({
+      name,
+      totalQuestions: data.total,
+      correct: data.correct,
+      wrong: data.wrong,
+      blank: data.total - data.correct - data.wrong
+    }));
+
+    chapterProgress.sort((a, b) => {
+      if (a.wrong > 0 && b.wrong === 0) return -1;
+      if (a.wrong === 0 && b.wrong > 0) return 1;
+      return b.wrong - a.wrong;
+    });
+
+    const chaptersWithMistakes = chapterProgress.filter(c => c.wrong > 0);
+
+    return { totalQuestions, correct, wrong, blank, chapters: chapterProgress, chaptersWithMistakes };
   };
 
-  const getProgressBgColor = (rate: number) => {
-    if (rate >= 80) return 'bg-green-500';
-    if (rate >= 60) return 'bg-amber-500';
-    return 'bg-red-500';
-  };
+  const allModuleDetails = modules
+    .map(m => ({ module: m, detail: getModuleProgressDetail(m.id) }))
+    .filter(({ detail }) => detail.totalQuestions > 0);
+
+  const grandTotal = allModuleDetails.reduce((s, { detail }) => s + detail.totalQuestions, 0);
+  const grandCorrect = allModuleDetails.reduce((s, { detail }) => s + detail.correct, 0);
+  const grandWrong = allModuleDetails.reduce((s, { detail }) => s + detail.wrong, 0);
+  const grandBlank = allModuleDetails.reduce((s, { detail }) => s + detail.blank, 0);
+
+  const totalAnswered = grandCorrect + grandWrong;
+  const overallRate = totalAnswered > 0 ? Math.round((grandCorrect / totalAnswered) * 100) : 0;
 
   if (authLoading || !user) {
     return (
@@ -145,137 +210,324 @@ export default function ProgressPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-          <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-6 shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
-            <div className="flex items-center justify-between mb-4">
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isDarkMode ? 'bg-blue-900/30' : 'bg-blue-100'}`}>
-                <svg className={`w-6 h-6 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+        {isLoading ? (
+          <div className="p-12 text-center">
+            <div className="w-16 h-16 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Chargement de votre progression...</p>
+          </div>
+        ) : totalAnswered === 0 ? (
+          <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'} p-12 text-center`}>
+            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 className={`text-lg font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'} mb-2`}>
+              Aucune progression enregistrée
+            </h3>
+            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-6`}>
+              Commencez à répondre aux questions pour voir votre progression.
+            </p>
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold rounded-xl hover:from-green-700 hover:to-green-800 transition-all"
+            >
+              Explorer les modules
+            </Link>
+          </div>
+        ) : (
+          <>
+            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-6 shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'} mb-8`}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                  Vue d&apos;ensemble
+                </h2>
+                <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                  {overallRate}% de réussite
+                </span>
+              </div>
+
+              <div className="flex items-center gap-3 mb-4">
+                <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  {grandTotal} questions disponibles
+                </span>
+              </div>
+
+              <div className={`w-full h-5 rounded-full overflow-hidden flex ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                {grandCorrect > 0 && (
+                  <div
+                    className="bg-green-500 transition-all duration-500"
+                    style={{ width: `${(grandCorrect / grandTotal) * 100}%` }}
+                    title={`${grandCorrect} correctes`}
+                  />
+                )}
+                {grandWrong > 0 && (
+                  <div
+                    className="bg-red-500 transition-all duration-500"
+                    style={{ width: `${(grandWrong / grandTotal) * 100}%` }}
+                    title={`${grandWrong} incorrectes`}
+                  />
+                )}
+                {grandBlank > 0 && (
+                  <div
+                    className={isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}
+                    style={{ width: `${(grandBlank / grandTotal) * 100}%` }}
+                    title={`${grandBlank} non répondues`}
+                  />
+                )}
+              </div>
+
+              <div className="flex items-center gap-6 mt-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <span className="font-semibold text-green-500">{grandCorrect}</span> correctes
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                  <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <span className="font-semibold text-red-500">{grandWrong}</span> incorrectes
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className={`w-3 h-3 rounded-full ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`}></div>
+                  <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <span className={`font-semibold ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{grandBlank}</span> non répondues
+                  </span>
+                </div>
               </div>
             </div>
-            <div className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} mb-1`}>
-              {isLoading ? '...' : totalAnswered}
-            </div>
-            <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-              Questions répondues
-            </div>
-          </div>
 
-          <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-6 shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
-            <div className="flex items-center justify-between mb-4">
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isDarkMode ? 'bg-green-900/30' : 'bg-green-100'}`}>
-                <svg className={`w-6 h-6 ${isDarkMode ? 'text-green-400' : 'text-green-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'} overflow-hidden`}>
+              <div className={`px-6 py-4 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+                <h2 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                  Progression par module
+                </h2>
               </div>
-            </div>
-            <div className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} mb-1`}>
-              {isLoading ? '...' : totalCorrect}
-            </div>
-            <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-              Réponses correctes
-            </div>
-          </div>
 
-          <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-6 shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
-            <div className="flex items-center justify-between mb-4">
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isDarkMode ? 'bg-purple-900/30' : 'bg-purple-100'}`}>
-                <svg className={`w-6 h-6 ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-              </div>
-            </div>
-            <div className={`text-3xl font-bold ${getProgressColor(overallRate)} mb-1`}>
-              {isLoading ? '...' : `${overallRate}%`}
-            </div>
-            <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-              Taux de réussite
-            </div>
-          </div>
-        </div>
+              <div className="divide-y divide-gray-100">
+                {allModuleDetails.map(({ module, detail }) => {
+                  const isExpanded = expandedModules.has(module.id);
+                  const correctPct = detail.totalQuestions > 0 ? (detail.correct / detail.totalQuestions) * 100 : 0;
+                  const wrongPct = detail.totalQuestions > 0 ? (detail.wrong / detail.totalQuestions) * 100 : 0;
+                  const blankPct = detail.totalQuestions > 0 ? (detail.blank / detail.totalQuestions) * 100 : 0;
+                  const hasMistakes = detail.chaptersWithMistakes.length > 0;
 
-        <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'} overflow-hidden`}>
-          <div className={`px-6 py-4 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
-            <h2 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-              Progression par module
-            </h2>
-          </div>
+                  return (
+                    <div key={module.id}>
+                      <div
+                        className={`p-6 cursor-pointer transition-colors ${isDarkMode ? 'hover:bg-gray-700/50' : 'hover:bg-gray-50'}`}
+                        onClick={() => toggleModule(module.id)}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4 flex-1 min-w-0">
+                            <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${module.gradient} flex items-center justify-center shrink-0`}>
+                              <span className="text-white font-bold text-lg">{module.title.charAt(0)}</span>
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-2">
+                                <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'} truncate`}>
+                                  {module.title}
+                                </h3>
+                                {hasMistakes && (
+                                  <span className="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
+                                    {detail.chaptersWithMistakes.length} chapitre{detail.chaptersWithMistakes.length > 1 ? 's' : ''} avec erreurs
+                                  </span>
+                                )}
+                              </div>
+                              <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                {detail.totalQuestions} questions disponibles
+                              </p>
+                            </div>
+                          </div>
 
-          {isLoading ? (
-            <div className="p-8 text-center">
-              <div className="w-10 h-10 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-              <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Chargement...</p>
-            </div>
-          ) : totalAnswered === 0 ? (
-            <div className="p-12 text-center">
-              <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className={`text-lg font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'} mb-2`}>
-                Aucune progression enregistrée
-              </h3>
-              <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mb-6`}>
-                Commencez à répondre aux questions pour voir votre progression.
-              </p>
-              <Link
-                href="/dashboard"
-                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold rounded-xl hover:from-green-700 hover:to-green-800 transition-all"
-              >
-                Explorer les modules
-              </Link>
-            </div>
-          ) : (
-            <div className="divide-y divide-gray-100">
-              {modules.map((module) => {
-                const moduleProgress = getModuleProgress(module.id);
-                if (moduleProgress.total === 0) return null;
+                          <div className="flex items-center gap-5 shrink-0 ml-4">
+                            <div className="hidden sm:block w-40">
+                              <div className={`w-full h-3 rounded-full overflow-hidden flex ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                                {correctPct > 0 && (
+                                  <div className="bg-green-500 h-full" style={{ width: `${correctPct}%` }} />
+                                )}
+                                {wrongPct > 0 && (
+                                  <div className="bg-red-500 h-full" style={{ width: `${wrongPct}%` }} />
+                                )}
+                                {blankPct > 0 && (
+                                  <div className={`${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'} h-full`} style={{ width: `${blankPct}%` }} />
+                                )}
+                              </div>
+                            </div>
 
-                return (
-                  <Link
-                    key={module.id}
-                    href={`/modules/${module.id}`}
-                    className={`block p-6 hover:${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} transition-colors`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${module.gradient} flex items-center justify-center`}>
-                          <span className="text-white font-bold text-lg">{module.title.charAt(0)}</span>
+                            <div className="flex items-center gap-3 text-sm">
+                              <span className="font-semibold text-green-500">{detail.correct}</span>
+                              <span className="font-semibold text-red-500">{detail.wrong}</span>
+                              <span className={`font-semibold ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>{detail.blank}</span>
+                            </div>
+
+                            <svg
+                              className={`w-5 h-5 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                              fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </div>
                         </div>
-                        <div>
-                          <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                            {module.title}
-                          </h3>
-                          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                            {moduleProgress.total} questions répondues
-                          </p>
+
+                        <div className="sm:hidden mt-3">
+                          <div className={`w-full h-3 rounded-full overflow-hidden flex ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                            {correctPct > 0 && (
+                              <div className="bg-green-500 h-full" style={{ width: `${correctPct}%` }} />
+                            )}
+                            {wrongPct > 0 && (
+                              <div className="bg-red-500 h-full" style={{ width: `${wrongPct}%` }} />
+                            )}
+                            {blankPct > 0 && (
+                              <div className={`${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'} h-full`} style={{ width: `${blankPct}%` }} />
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="sm:hidden flex items-center gap-4 mt-2">
+                          <div className="flex items-center gap-1.5">
+                            <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+                            <span className="text-xs text-green-500 font-medium">{detail.correct}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <div className="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+                            <span className="text-xs text-red-500 font-medium">{detail.wrong}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <div className={`w-2.5 h-2.5 rounded-full ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`}></div>
+                            <span className={`text-xs font-medium ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>{detail.blank}</span>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-6">
-                        <div className="text-right">
-                          <div className={`text-lg font-bold ${getProgressColor(moduleProgress.rate)}`}>
-                            {moduleProgress.rate}%
+
+                      {isExpanded && (
+                        <div className={`${isDarkMode ? 'bg-gray-800/50' : 'bg-gray-50/50'} px-6 pb-6`}>
+                          <div className={`pt-2 border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}></div>
+
+                          {hasMistakes && (
+                            <div className="mt-4 mb-4">
+                              <div className="flex items-center gap-2 mb-3">
+                                <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                                </svg>
+                                <h4 className="text-sm font-semibold text-red-500">
+                                  Chapitres avec erreurs
+                                </h4>
+                              </div>
+                              <div className="space-y-2">
+                                {detail.chaptersWithMistakes.map((chapter) => {
+                                  const cPct = (chapter.correct / chapter.totalQuestions) * 100;
+                                  const wPct = (chapter.wrong / chapter.totalQuestions) * 100;
+                                  const bPct = (chapter.blank / chapter.totalQuestions) * 100;
+
+                                  return (
+                                    <Link
+                                      key={chapter.name}
+                                      href={`/modules/${module.id}`}
+                                      className={`block rounded-lg p-3 transition-colors ${isDarkMode ? 'bg-red-900/20 hover:bg-red-900/30 border border-red-800/30' : 'bg-red-50 hover:bg-red-100 border border-red-200'}`}
+                                    >
+                                      <div className="flex items-center justify-between mb-2">
+                                        <span className={`text-sm font-medium ${isDarkMode ? 'text-red-300' : 'text-red-800'} truncate`}>
+                                          {chapter.name}
+                                        </span>
+                                        <span className="text-xs font-semibold text-red-500 shrink-0 ml-2">
+                                          {chapter.wrong} erreur{chapter.wrong > 1 ? 's' : ''}
+                                        </span>
+                                      </div>
+                                      <div className={`w-full h-2 rounded-full overflow-hidden flex ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                                        {cPct > 0 && <div className="bg-green-500 h-full" style={{ width: `${cPct}%` }} />}
+                                        {wPct > 0 && <div className="bg-red-500 h-full" style={{ width: `${wPct}%` }} />}
+                                        {bPct > 0 && <div className={`${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'} h-full`} style={{ width: `${bPct}%` }} />}
+                                      </div>
+                                      <div className="flex items-center gap-3 mt-1.5">
+                                        <span className="text-xs text-green-500 font-medium">{chapter.correct} correctes</span>
+                                        <span className="text-xs text-red-500 font-medium">{chapter.wrong} incorrectes</span>
+                                        <span className={`text-xs font-medium ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>{chapter.blank} non répondues</span>
+                                      </div>
+                                    </Link>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="mt-4">
+                            <h4 className={`text-sm font-semibold mb-3 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                              Tous les chapitres
+                            </h4>
+                            <div className="space-y-1.5">
+                              {detail.chapters.map((chapter) => {
+                                const cPct = (chapter.correct / chapter.totalQuestions) * 100;
+                                const wPct = (chapter.wrong / chapter.totalQuestions) * 100;
+                                const bPct = (chapter.blank / chapter.totalQuestions) * 100;
+                                const hasError = chapter.wrong > 0;
+
+                                return (
+                                  <Link
+                                    key={chapter.name}
+                                    href={`/modules/${module.id}`}
+                                    className={`block rounded-lg p-3 transition-colors ${hasError
+                                      ? isDarkMode ? 'hover:bg-gray-700/50' : 'hover:bg-gray-100'
+                                      : isDarkMode ? 'hover:bg-gray-700/50' : 'hover:bg-gray-100'
+                                    }`}
+                                  >
+                                    <div className="flex items-center justify-between mb-1.5">
+                                      <span className={`text-sm ${hasError ? 'font-medium' : ''} ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} truncate`}>
+                                        {chapter.name}
+                                      </span>
+                                      <div className="flex items-center gap-2 shrink-0 ml-2">
+                                        <span className="text-xs text-green-500 font-medium">{chapter.correct}</span>
+                                        <span className="text-xs text-red-500 font-medium">{chapter.wrong}</span>
+                                        <span className={`text-xs font-medium ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>{chapter.blank}</span>
+                                      </div>
+                                    </div>
+                                    <div className={`w-full h-1.5 rounded-full overflow-hidden flex ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                                      {cPct > 0 && <div className="bg-green-500 h-full" style={{ width: `${cPct}%` }} />}
+                                      {wPct > 0 && <div className="bg-red-500 h-full" style={{ width: `${wPct}%` }} />}
+                                      {bPct > 0 && <div className={`${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'} h-full`} style={{ width: `${bPct}%` }} />}
+                                    </div>
+                                  </Link>
+                                );
+                              })}
+                            </div>
                           </div>
-                          <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                            {moduleProgress.correct}/{moduleProgress.total} correctes
+
+                          <div className="mt-4 pt-4 border-t flex justify-between items-center" style={{ borderColor: isDarkMode ? '#374151' : '#e5e7eb' }}>
+                            <div className="flex items-center gap-4">
+                              <div className="flex items-center gap-1.5">
+                                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                                <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Correctes</span>
+                              </div>
+                              <div className="flex items-center gap-1.5">
+                                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                                <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Incorrectes</span>
+                              </div>
+                              <div className="flex items-center gap-1.5">
+                                <div className={`w-3 h-3 rounded-full ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`}></div>
+                                <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Non répondues</span>
+                              </div>
+                            </div>
+                            <Link
+                              href={`/modules/${module.id}`}
+                              className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white text-sm font-semibold rounded-xl hover:from-green-700 hover:to-green-800 transition-all"
+                            >
+                              Pratiquer
+                              <svg className="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                            </Link>
                           </div>
                         </div>
-                        <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
-                          <div
-                            className={`h-full ${getProgressBgColor(moduleProgress.rate)} transition-all`}
-                            style={{ width: `${moduleProgress.rate}%` }}
-                          />
-                        </div>
-                      </div>
+                      )}
                     </div>
-                  </Link>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          )}
-        </div>
+          </>
+        )}
 
         {totalAnswered > 0 && (
           <div className="mt-8 flex justify-center">
@@ -285,6 +537,7 @@ export default function ProgressPage() {
                   try {
                     await fetch(`/api/progress?user_id=${user.id}`, { method: 'DELETE' });
                     setProgress({});
+                    setModuleData({});
                   } catch (error) {
                     console.error('Failed to reset progress:', error);
                   }
