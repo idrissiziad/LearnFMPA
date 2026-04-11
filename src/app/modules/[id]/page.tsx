@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -59,6 +59,20 @@ export default function ModulePage() {
     correct_answers: number;
     option_counts: { [optionIndex: string]: number };
   } | null>(null);
+
+  const [timerEnabled, setTimerEnabled] = useState(false);
+  const [timerSeconds, setTimerSeconds] = useState(60);
+  const [randomizerEnabled, setRandomizerEnabled] = useState(false);
+  const [examMode, setExamMode] = useState(false);
+  const [examTimeLeft, setExamTimeLeft] = useState(3600);
+  const [examAnswers, setExamAnswers] = useState<Record<number, number[]>>({});
+  const [examFinished, setExamFinished] = useState(false);
+  const [examQuestions, setExamQuestions] = useState<ExtendedQuestion[]>([]);
+  const [examCorrectCount, setExamCorrectCount] = useState(0);
+  const [examIncorrectCount, setExamIncorrectCount] = useState(0);
+  const [examUnansweredCount, setExamUnansweredCount] = useState(0);
+  const examTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const handleShowAnswerRef = useRef<() => void>(() => {});
 
   const moduleId = parseInt(params.id as string);
   const module = getModuleById(moduleId);
@@ -195,7 +209,8 @@ export default function ModulePage() {
     loadProgress();
   }, [moduleId, user, getProgress]);
 
-  const currentQuestion = questions[currentQuestionIndex];
+  const activeQuestions = examMode ? examQuestions : questions;
+  const currentQuestion = activeQuestions[currentQuestionIndex];
 
   useEffect(() => {
     if (currentQuestion) {
@@ -288,6 +303,162 @@ export default function ModulePage() {
       }
     }
   }, [currentQuestionIndex, currentQuestion, showAnswer]);
+
+  const shuffleArray = <T,>(array: T[]): T[] => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  useEffect(() => {
+    if (!timerEnabled || showAnswer || examMode) return;
+    setTimerSeconds(60);
+  }, [currentQuestionIndex, timerEnabled, examMode]);
+
+  useEffect(() => {
+    if (!timerEnabled || showAnswer || examMode) return;
+    if (timerSeconds <= 0) {
+      handleShowAnswerRef.current();
+      return;
+    }
+    const timeout = setTimeout(() => setTimerSeconds(s => s - 1), 1000);
+    return () => clearTimeout(timeout);
+  }, [timerEnabled, showAnswer, timerSeconds, currentQuestionIndex, examMode]);
+
+  useEffect(() => {
+    if (!examMode || examFinished) {
+      if (examTimerRef.current) {
+        clearInterval(examTimerRef.current);
+        examTimerRef.current = null;
+      }
+      return;
+    }
+    examTimerRef.current = setInterval(() => {
+      setExamTimeLeft(prev => {
+        if (prev <= 1) {
+          if (examTimerRef.current) clearInterval(examTimerRef.current);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => {
+      if (examTimerRef.current) {
+        clearInterval(examTimerRef.current);
+        examTimerRef.current = null;
+      }
+    };
+  }, [examMode, examFinished]);
+
+  const finishExam = useCallback(() => {
+    if (examTimerRef.current) {
+      clearInterval(examTimerRef.current);
+      examTimerRef.current = null;
+    }
+    const eq = examQuestions;
+    let correct = 0;
+    let incorrect = 0;
+    let unanswered = 0;
+    eq.forEach((q, i) => {
+      const userAnswers = examAnswers[i];
+      if (!userAnswers || userAnswers.length === 0) {
+        unanswered++;
+      } else {
+        const correctSet = new Set(q.correctAnswers);
+        const allCorrect = q.correctAnswers.every(a => userAnswers.includes(a));
+        const allSelected = userAnswers.every(a => correctSet.has(a));
+        if (allCorrect && allSelected) {
+          correct++;
+        } else {
+          incorrect++;
+        }
+      }
+    });
+    setExamCorrectCount(correct);
+    setExamIncorrectCount(incorrect);
+    setExamUnansweredCount(unanswered);
+    setExamFinished(true);
+  }, [examQuestions, examAnswers]);
+
+  useEffect(() => {
+    if (examMode && examTimeLeft === 0 && !examFinished) {
+      finishExam();
+    }
+  }, [examTimeLeft, examMode, examFinished, finishExam]);
+
+  const handleToggleTimer = () => {
+    if (examMode) return;
+    setTimerEnabled(prev => !prev);
+    setTimerSeconds(60);
+  };
+
+  const handleToggleRandomizer = () => {
+    if (examMode) return;
+    if (!randomizerEnabled) {
+      setRandomizerEnabled(true);
+      setQuestions(prev => shuffleArray(prev));
+      setCurrentQuestionIndex(0);
+      setSelectedAnswers([]);
+      setShowAnswer(false);
+      setIsCorrectlyAnswered(false);
+      setOriginalSelectedAnswers([]);
+      setCollapsedChoices(new Set());
+      setQuestionStats(null);
+    } else {
+      setRandomizerEnabled(false);
+      applyAnsweredQuestionsFilter();
+    }
+  };
+
+  const handleToggleExam = () => {
+    if (examMode) {
+      setExamMode(false);
+      setExamFinished(false);
+      setExamAnswers({});
+      setExamQuestions([]);
+      setExamTimeLeft(3600);
+      setCurrentQuestionIndex(0);
+      setSelectedAnswers([]);
+      setShowAnswer(false);
+      setIsCorrectlyAnswered(false);
+      setOriginalSelectedAnswers([]);
+      setCollapsedChoices(new Set());
+      setQuestionStats(null);
+      applyAnsweredQuestionsFilter();
+      return;
+    }
+    const pool = allQuestions.length >= 50 ? shuffleArray(allQuestions).slice(0, 50) : shuffleArray(allQuestions);
+    setExamQuestions(pool);
+    setExamMode(true);
+    setExamFinished(false);
+    setExamAnswers({});
+    setExamTimeLeft(3600);
+    setTimerEnabled(false);
+    setRandomizerEnabled(false);
+    setCurrentQuestionIndex(0);
+    setSelectedAnswers([]);
+    setShowAnswer(false);
+    setIsCorrectlyAnswered(false);
+    setOriginalSelectedAnswers([]);
+    setCollapsedChoices(new Set());
+    setQuestionStats(null);
+  };
+
+  const formatExamTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
+
+  const formatExamTimeTaken = () => {
+    const elapsed = 3600 - examTimeLeft;
+    const m = Math.floor(elapsed / 60);
+    const s = elapsed % 60;
+    return `${m} min ${s} sec`;
+  };
 
   const filterQuestionsBySession = (questionsToFilter: ExtendedQuestion[], session: string, answeredProgress?: { [key: string]: boolean }) => {
     setChapterFilter(null);
@@ -471,7 +642,29 @@ export default function ModulePage() {
   };
 
   const handleShowAnswer = async () => {
-    if (selectedAnswers.length === 0 || !currentQuestion) return;
+    if (!currentQuestion) return;
+
+    if (examMode) {
+      const mapping = optionMapping[currentQuestionIndex] || [];
+      const mappedSelectedAnswers = selectedAnswers.map(selectedIndex => mapping[selectedIndex] ?? selectedIndex);
+      setExamAnswers(prev => ({ ...prev, [currentQuestionIndex]: mappedSelectedAnswers }));
+      if (currentQuestionIndex < examQuestions.length - 1) {
+        setIsTransitioning(true);
+        setTimeout(() => {
+          setCurrentQuestionIndex(prev => prev + 1);
+          setSelectedAnswers([]);
+          setShowAnswer(false);
+          setIsCorrectlyAnswered(false);
+          setOriginalSelectedAnswers([]);
+          setCollapsedChoices(new Set());
+          setQuestionStats(null);
+          setIsTransitioning(false);
+        }, 150);
+      } else {
+        finishExam();
+      }
+      return;
+    }
 
     const mapping = optionMapping[currentQuestionIndex] || [];
     const mappedSelectedAnswers = selectedAnswers.map(selectedIndex => mapping[selectedIndex]);
@@ -519,11 +712,14 @@ export default function ModulePage() {
     }
   };
 
+  handleShowAnswerRef.current = handleShowAnswer;
+
   const handleNextQuestion = () => {
-    if (currentQuestionIndex < questions.length - 1) {
+    const totalQ = examMode ? examQuestions.length : questions.length;
+    if (currentQuestionIndex < totalQ - 1) {
       setIsTransitioning(true);
       setTimeout(() => {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setCurrentQuestionIndex(prev => prev + 1);
         setSelectedAnswers([]);
         setShowAnswer(false);
         setIsCorrectlyAnswered(false);
@@ -538,6 +734,8 @@ export default function ModulePage() {
           return newStrikethrough;
         });
       }, 150);
+    } else if (examMode) {
+      finishExam();
     } else {
       router.push('/dashboard');
     }
@@ -602,7 +800,7 @@ export default function ModulePage() {
     setShowResetConfirm(false);
   };
 
-  if (questions.length === 0) {
+  if (activeQuestions.length === 0) {
     return (
       <div className={`min-h-screen relative overflow-hidden ${isDarkMode ? 'bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800' : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'}`}>
         <div className={`absolute inset-0 ${isDarkMode ? 'opacity-30' : 'opacity-50'}`}>
@@ -610,7 +808,7 @@ export default function ModulePage() {
           <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
         </div>
         <header className={`${isDarkMode ? 'bg-gray-800/80 border-gray-700/50' : 'bg-white/80 border-gray-200/50'} backdrop-blur-xl border-b sticky top-0 z-10 shadow-sm`}>
-          <div className="max-w-4xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
+          <div className="px-3 sm:px-4 py-3 sm:py-4">
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-2 sm:space-x-3">
                 <ThemeToggle />
@@ -710,7 +908,7 @@ export default function ModulePage() {
       )}
 
       <header className={`${isDarkMode ? 'bg-gray-800/80 border-gray-700/50' : 'bg-white/80 border-gray-200/50'} backdrop-blur-xl border-b sticky top-0 z-10 shadow-sm`}>
-        <div className="max-w-4xl mx-auto px-3 sm:px-4 py-2 sm:py-3">
+        <div className="px-3 sm:px-4 py-2 sm:py-3">
           <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center">
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-2 sm:space-x-3">
@@ -728,27 +926,69 @@ export default function ModulePage() {
                 </div>
                 <div className="min-w-0">
                   <h1 className={`text-base sm:text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} truncate`}>{module.title}</h1>
-                  <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{questions.length} questions</p>
+                  <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{examMode ? `${examQuestions.length} questions` : `${questions.length} questions`}</p>
                 </div>
               </div>
             </div>
             <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 sm:pb-0">
-              <select
-                className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl border text-xs sm:text-sm flex-shrink-0 ${isDarkMode ? 'bg-gray-700/50 border-gray-600/50 text-white' : 'bg-white/80 border-gray-200/50 text-gray-700'} cursor-pointer shadow-sm backdrop-blur-sm`}
-                value={sessionFilter}
-                onChange={(e) => handleSessionFilterChange(e.target.value)}
-              >
-                <option value="Toutes les sessions">Toutes</option>
-                {availableSessions.map(session => (
-                  <option key={session} value={session}>{session}</option>
-                ))}
-              </select>
+              {examMode && (
+                <div className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-sm sm:text-base font-bold flex items-center gap-1.5 flex-shrink-0 ${examTimeLeft <= 300 ? 'bg-gradient-to-r from-red-500 to-red-600 text-white animate-pulse shadow-lg shadow-red-500/25' : isDarkMode ? 'bg-gradient-to-r from-amber-700/60 to-amber-600/60 text-amber-200' : 'bg-gradient-to-r from-amber-100 to-amber-200 text-amber-800'} shadow-sm`}>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  {formatExamTime(examTimeLeft)}
+                </div>
+              )}
               <button
-                onClick={() => setShowAnsweredQuestions(!showAnsweredQuestions)}
-                className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex-shrink-0 shadow-sm ${showAnsweredQuestions ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-green-500/25' : isDarkMode ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50' : 'bg-white/80 text-gray-700 hover:bg-gray-200/80'}`}
+                onClick={handleToggleTimer}
+                title="Chronomètre 60s"
+                className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex-shrink-0 shadow-sm flex items-center gap-1 ${timerEnabled ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-blue-500/25' : isDarkMode ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50' : 'bg-white/80 text-gray-700 hover:bg-gray-200/80'}`}
               >
-                {showAnsweredQuestions ? 'Répondues' : 'Non répondues'}
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="hidden sm:inline">60s</span>
               </button>
+              <button
+                onClick={handleToggleRandomizer}
+                title="Aléatoire"
+                className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex-shrink-0 shadow-sm flex items-center gap-1 ${randomizerEnabled ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-purple-500/25' : isDarkMode ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50' : 'bg-white/80 text-gray-700 hover:bg-gray-200/80'}`}
+              >
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span className="hidden sm:inline">Aléatoire</span>
+              </button>
+              <button
+                onClick={handleToggleExam}
+                title="Mode Examen"
+                className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex-shrink-0 shadow-sm flex items-center gap-1 ${examMode ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-amber-500/25' : isDarkMode ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50' : 'bg-white/80 text-gray-700 hover:bg-gray-200/80'}`}
+              >
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span className="hidden sm:inline">Examen</span>
+              </button>
+              {!examMode && (
+                <>
+                  <select
+                    className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl border text-xs sm:text-sm flex-shrink-0 ${isDarkMode ? 'bg-gray-700/50 border-gray-600/50 text-white' : 'bg-white/80 border-gray-200/50 text-gray-700'} cursor-pointer shadow-sm backdrop-blur-sm`}
+                    value={sessionFilter}
+                    onChange={(e) => handleSessionFilterChange(e.target.value)}
+                  >
+                    <option value="Toutes les sessions">Toutes</option>
+                    {availableSessions.map(session => (
+                      <option key={session} value={session}>{session}</option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={() => setShowAnsweredQuestions(!showAnsweredQuestions)}
+                    className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex-shrink-0 shadow-sm ${showAnsweredQuestions ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-green-500/25' : isDarkMode ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50' : 'bg-white/80 text-gray-700 hover:bg-gray-200/80'}`}
+                  >
+                    {showAnsweredQuestions ? 'Répondues' : 'Non répondues'}
+                  </button>
+                </>
+              )}
               <button
                 onClick={handleResetProgress}
                 className="px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 transition-all flex-shrink-0 shadow-sm shadow-red-500/25"
@@ -761,7 +1001,7 @@ export default function ModulePage() {
       </header>
 
       <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6 relative z-10">
-        {sessionFilter === 'Toutes les sessions' && (
+        {!examMode && sessionFilter === 'Toutes les sessions' && (
           <div className="mb-3 sm:mb-4">
             <button
               onClick={() => setShowChapters(!showChapters)}
@@ -797,7 +1037,7 @@ export default function ModulePage() {
           </div>
         )}
 
-        {sessionFilter === 'Toutes les sessions' && showChapters && (
+        {!examMode && sessionFilter === 'Toutes les sessions' && showChapters && (
           <Suspense fallback={<div className={`mb-6 p-6 rounded-2xl ${isDarkMode ? 'bg-gray-800/50' : 'bg-white/70'} animate-pulse h-32 border ${isDarkMode ? 'border-gray-700/50' : 'border-gray-200/50'}`} />}>
             <ChapterNavigation
               chapters={chapters}
@@ -812,13 +1052,78 @@ export default function ModulePage() {
           </Suspense>
         )}
 
+        {examFinished ? (
+          <div className={`${isDarkMode ? 'bg-gray-800/60' : 'bg-white/80'} backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl border ${isDarkMode ? 'border-gray-700/50' : 'border-gray-200/50'} overflow-hidden`}>
+            <div className="p-6 sm:p-10 text-center">
+              <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 rounded-3xl flex items-center justify-center mx-auto mb-6 sm:mb-8 shadow-2xl shadow-amber-500/30">
+                <svg className="w-12 h-12 sm:w-16 sm:h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <h2 className={`text-3xl sm:text-4xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} mb-3`}>
+                Examen terminé
+              </h2>
+              <p className={`text-base sm:text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} mb-8`}>
+                Temps: {formatExamTimeTaken()}
+              </p>
+              
+              <div className="grid grid-cols-3 gap-3 sm:gap-5 mb-8 sm:mb-10 max-w-lg mx-auto">
+                <div className={`${isDarkMode ? 'bg-green-900/30 border-green-700/30' : 'bg-green-50 border-green-200'} border rounded-2xl p-4 sm:p-5`}>
+                  <p className="text-2xl sm:text-3xl font-bold text-green-500">{examCorrectCount}</p>
+                  <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-green-400' : 'text-green-700'} mt-1`}>Correctes</p>
+                </div>
+                <div className={`${isDarkMode ? 'bg-red-900/30 border-red-700/30' : 'bg-red-50 border-red-200'} border rounded-2xl p-4 sm:p-5`}>
+                  <p className="text-2xl sm:text-3xl font-bold text-red-500">{examIncorrectCount}</p>
+                  <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-red-400' : 'text-red-700'} mt-1`}>Incorrectes</p>
+                </div>
+                <div className={`${isDarkMode ? 'bg-gray-700/30 border-gray-600/30' : 'bg-gray-50 border-gray-200'} border rounded-2xl p-4 sm:p-5`}>
+                  <p className="text-2xl sm:text-3xl font-bold text-gray-500">{examUnansweredCount}</p>
+                  <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mt-1`}>Non répondues</p>
+                </div>
+              </div>
+
+              <div className={`${isDarkMode ? 'bg-gradient-to-r from-gray-700/50 to-gray-600/50' : 'bg-gradient-to-r from-gray-100 to-gray-50'} rounded-2xl p-5 sm:p-6 mb-8`}>
+                <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Score</p>
+                <p className={`text-4xl sm:text-5xl font-bold ${examCorrectCount / examQuestions.length >= 0.5 ? 'text-green-500' : 'text-red-500'} mt-2`}>
+                  {Math.round((examCorrectCount / examQuestions.length) * 100)}%
+                </p>
+                <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} mt-1`}>
+                  {examCorrectCount}/{examQuestions.length} questions
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+                <button
+                  onClick={handleToggleExam}
+                  className="px-6 sm:px-8 py-3.5 sm:py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all shadow-xl shadow-green-500/25 text-sm sm:text-base"
+                >
+                  Retour au mode normal
+                </button>
+                <Link
+                  href="/dashboard"
+                  className={`px-6 sm:px-8 py-3.5 sm:py-4 ${isDarkMode ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50' : 'bg-white text-gray-700 hover:bg-gray-50'} font-semibold rounded-xl transition-all shadow-lg border ${isDarkMode ? 'border-gray-600/50' : 'border-gray-200'} text-sm sm:text-base`}
+                >
+                  Tableau de bord
+                </Link>
+               </div>
+             </div>
+           </div>
+        ) : (
         <div className={`${isDarkMode ? 'bg-gray-800/60' : 'bg-white/80'} backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl border ${isDarkMode ? 'border-gray-700/50' : 'border-gray-200/50'} overflow-hidden transition-all duration-300 ${isTransitioning ? 'opacity-0 scale-[0.98]' : 'opacity-100 scale-100'}`}>
           <div className={`p-5 sm:p-8 border-b ${isDarkMode ? 'border-gray-700/50' : 'border-gray-100'}`}>
             <div className="flex items-center justify-between mb-4 sm:mb-6">
               <div className="flex items-center gap-2.5 sm:gap-4">
                 <span className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-base sm:text-lg font-bold ${isDarkMode ? 'bg-gradient-to-r from-gray-700 to-gray-600 text-white' : 'bg-gradient-to-r from-gray-100 to-gray-50 text-gray-900'} shadow-sm`}>
-                  {currentQuestionIndex + 1}/{questions.length}
+                  {currentQuestionIndex + 1}/{activeQuestions.length}
                 </span>
+                {timerEnabled && !examMode && (
+                  <span className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-sm sm:text-base font-bold flex items-center gap-1.5 ${timerSeconds <= 10 ? 'bg-gradient-to-r from-red-500 to-red-600 text-white animate-pulse shadow-lg shadow-red-500/25' : isDarkMode ? 'bg-gradient-to-r from-blue-700/60 to-blue-600/60 text-blue-200' : 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800'} shadow-sm`}>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {timerSeconds}s
+                  </span>
+                )}
                 {currentQuestion && correctlyAnsweredQuestions[`${moduleId}_${currentQuestion.id}`] && (
                   <span className="w-7 h-7 sm:w-9 sm:h-9 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/30">
                     <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -1087,7 +1392,7 @@ export default function ModulePage() {
                         : 'bg-gradient-to-r from-gray-500 to-gray-600 text-white hover:from-gray-600 hover:to-gray-700'
                     }`}
                   >
-                    {currentQuestionIndex === questions.length - 1 ? 'Terminer' : 'Passer'}
+                    {currentQuestionIndex === activeQuestions.length - 1 ? 'Terminer' : 'Passer'}
                     <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
@@ -1098,7 +1403,7 @@ export default function ModulePage() {
                   onClick={handleNextQuestion}
                   className="px-5 sm:px-7 py-2.5 sm:py-3.5 rounded-xl font-semibold bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg shadow-green-500/30 flex items-center gap-2 sm:gap-2.5 text-sm sm:text-base"
                 >
-                  {currentQuestionIndex === questions.length - 1 ? 'Terminer' : 'Suivant'}
+                  {currentQuestionIndex === activeQuestions.length - 1 ? 'Terminer' : 'Suivant'}
                   <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
@@ -1110,15 +1415,16 @@ export default function ModulePage() {
               <div className={`h-2.5 rounded-full ${isDarkMode ? 'bg-gray-700/50' : 'bg-gray-200/80'} overflow-hidden`}>
                 <div
                   className="h-2.5 rounded-full bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 transition-all duration-500 ease-out"
-                  style={{ width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` }}
+                  style={{ width: `${((currentQuestionIndex + 1) / activeQuestions.length) * 100}%` }}
                 />
               </div>
               <p className={`text-center text-xs sm:text-sm mt-2 sm:mt-2.5 font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                {Math.round(((currentQuestionIndex + 1) / questions.length) * 100)}% complété
+                {Math.round(((currentQuestionIndex + 1) / activeQuestions.length) * 100)}% complété
               </p>
-            </div>
-          </div>
-        </div>
+             </div>
+           </div>
+         </div>
+        )}
       </div>
 
       {zoomedImage && (
