@@ -83,6 +83,18 @@ export default function ModulePage() {
           optionImages: q.optionImages || Array(q.options.length).fill('')
         }));
         
+        let localProgress: { [key: string]: boolean } = {};
+        if (typeof window !== 'undefined') {
+          const storageKey = `learnfmpa_answered_${moduleId}`;
+          const stored = localStorage.getItem(storageKey);
+          if (stored) {
+            try {
+              localProgress = JSON.parse(stored);
+            } catch (e) {}
+          }
+        }
+        setCorrectlyAnsweredQuestions(localProgress);
+
         setAllQuestions(extendedQuestions);
         
         const sessions = [...new Set(extendedQuestions.map(q => q.year).filter(Boolean) as string[])]
@@ -110,7 +122,7 @@ export default function ModulePage() {
           });
         setAvailableSessions(sessions);
         
-        filterQuestionsBySession(extendedQuestions, sessionFilter);
+        filterQuestionsBySession(extendedQuestions, sessionFilter, localProgress);
       });
     }
   }, [moduleId]);
@@ -277,7 +289,7 @@ export default function ModulePage() {
     }
   }, [currentQuestionIndex, currentQuestion, showAnswer]);
 
-  const filterQuestionsBySession = (questionsToFilter: ExtendedQuestion[], session: string) => {
+  const filterQuestionsBySession = (questionsToFilter: ExtendedQuestion[], session: string, answeredProgress?: { [key: string]: boolean }) => {
     setChapterFilter(null);
     
     if (session === 'Toutes les sessions') {
@@ -321,7 +333,7 @@ export default function ModulePage() {
       setChapters(chaptersFromFiltered);
     }
     
-    applyAnsweredQuestionsFilter();
+    applyAnsweredQuestionsFilter(answeredProgress);
     setStrikethroughOptions({});
   };
 
