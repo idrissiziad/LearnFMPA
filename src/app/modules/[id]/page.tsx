@@ -1333,7 +1333,7 @@ export default function ModulePage() {
                   {!isCollapsed && showAnswer && answerExplanation && (
                     <div className={`px-4 sm:px-5 pb-4 sm:pb-5 pt-3 border-t ${showCorrectFeedback ? 'border-white/20' : showIncorrectFeedback || showMissedCorrectFeedback ? 'border-red-200' : isDarkMode ? 'border-gray-600/50' : 'border-gray-100'}`}>
                       <p className={`text-xs sm:text-sm leading-relaxed ${showCorrectFeedback ? 'text-white/90' : showMissedCorrectFeedback ? 'text-red-700' : showIncorrectFeedback ? 'text-white/90' : isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                        {answerExplanation}
+                        {answerExplanation.replace(/\s*\([^)]*\)/g, '')}
                       </p>
                     </div>
                   )}
