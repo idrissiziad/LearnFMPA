@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { loadUserProgress, saveUserProgress, loadQuestionStats, saveQuestionStats } from '@/lib/user-store';
+import { requireAuth } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
+  const authResult = await requireAuth(request);
+  if (authResult instanceof NextResponse) return authResult;
+
   try {
     const body = await request.json();
     const { user_id, answers } = body;

@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { loadUsers } from '@/lib/user-store';
+import { requireAuth } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
+  const authResult = await requireAuth(request);
+  if (authResult instanceof NextResponse) return authResult;
+
   try {
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('user_id');

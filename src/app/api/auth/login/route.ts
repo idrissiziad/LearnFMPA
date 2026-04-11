@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { loadUsers, saveUsers, User } from '@/lib/user-store';
+import { createSession } from '@/lib/session-store';
 
 function hashPassword(password: string): string {
   return crypto.createHash('sha256').update(password).digest('hex');
@@ -61,6 +62,7 @@ export async function POST(request: NextRequest) {
     await saveUsers(usersData);
 
     const token = generateToken();
+    await createSession(foundUserId, token);
 
     return NextResponse.json({
       success: true,

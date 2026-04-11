@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { loadUserProgress, saveUserProgress } from '@/lib/user-store';
+import { requireAuth } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
+  const authResult = await requireAuth(request);
+  if (authResult instanceof NextResponse) return authResult;
+
   try {
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('user_id');
@@ -32,6 +36,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const authResult = await requireAuth(request);
+  if (authResult instanceof NextResponse) return authResult;
+
   try {
     const body = await request.json();
     const { user_id, module_id, question_id, is_correct } = body;
@@ -82,6 +89,9 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  const authResult = await requireAuth(request);
+  if (authResult instanceof NextResponse) return authResult;
+
   try {
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('user_id');

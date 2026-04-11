@@ -17,9 +17,11 @@ export default function Login() {
     email: '',
     password: ''
   });
-  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const initialKicked = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('kicked') === '1';
+  const [error, setError] = useState(initialKicked ? 'Vous avez été déconnecté car un autre appareil s\'est connecté avec votre compte.' : '');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
