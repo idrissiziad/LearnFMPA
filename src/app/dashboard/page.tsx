@@ -297,99 +297,101 @@ export default function Dashboard() {
                   Recherche rapide
                 </h2>
               </div>
-              <form onSubmit={handleSearch}>
-                <div className={`group flex flex-col sm:flex-row items-stretch sm:items-center rounded-xl border-2 overflow-hidden min-w-0 ${isDarkMode ? 'border-gray-600 bg-gray-700/50 focus-within:border-green-500' : 'border-gray-200 bg-gray-50 focus-within:border-green-500'} transition-all`}>
-                  <div className={`flex items-center px-4 py-3 border-b sm:border-b-0 sm:border-r ${isDarkMode ? 'border-gray-600 group-focus-within:border-green-500' : 'border-gray-200 group-focus-within:border-green-500'} transition-colors`}>
-                    <svg className="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                  </div>
-                  <div className="flex-1 min-w-0 sm:min-w-0">
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Rechercher un module, chapitre ou question..."
-                      className={`w-full px-4 py-3 outline-none ring-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 text-sm sm:text-base ${isDarkMode ? 'text-white bg-transparent placeholder-gray-400' : 'text-gray-800 bg-transparent placeholder-gray-500'}`}
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium text-sm hover:from-green-600 hover:to-emerald-700 transition-all shadow-sm flex-shrink-0"
-                  >
-                    Rechercher
-                  </button>
-                </div>
-              </form>
-
-              {showResults && (
-                <div className={`mt-4 rounded-xl border overflow-hidden ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'} shadow-lg max-h-96 overflow-y-auto`}>
-                  {isSearching ? (
-                    <div className="p-4 text-center">
-                      <div className="w-6 h-6 border-2 border-green-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+              <div className="relative">
+                <form onSubmit={handleSearch}>
+                  <div className={`group flex flex-col sm:flex-row items-stretch sm:items-center rounded-xl border-2 overflow-hidden min-w-0 ${isDarkMode ? 'border-gray-600 bg-gray-700/50 focus-within:border-green-500' : 'border-gray-200 bg-gray-50 focus-within:border-green-500'} transition-all`}>
+                    <div className={`flex items-center px-4 py-3 border-b sm:border-b-0 sm:border-r ${isDarkMode ? 'border-gray-600 group-focus-within:border-green-500' : 'border-gray-200 group-focus-within:border-green-500'} transition-colors`}>
+                      <svg className="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
                     </div>
-                  ) : searchResults.length > 0 ? (
-                    <div className="divide-y divide-gray-200 dark:divide-gray-600">
-                      {searchResults.map((result, index) => (
-                        <button
-                          key={`${result.type}-${result.moduleId}-${result.questionId || index}`}
-                          onClick={() => handleResultClick(result)}
-                          className={`w-full text-left p-4 ${isDarkMode ? 'hover:bg-gray-600' : 'hover:bg-gray-50'} transition-colors`}
-                        >
-                          {result.type === 'module' ? (
-                            <div className="flex items-center gap-3 min-w-0">
-                              <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${isDarkMode ? 'bg-blue-900/30' : 'bg-blue-50'}`}>
-                                <svg className={`w-5 h-5 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                                </svg>
-                              </div>
-                              <div className="min-w-0">
-                                <p className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'} truncate`}>{result.moduleTitle}</p>
-                                <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Module</p>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="flex items-start gap-3">
-                              <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${isDarkMode ? 'bg-green-900/30' : 'bg-green-50'}`}>
-                                <svg className={`w-5 h-5 ${isDarkMode ? 'text-green-400' : 'text-green-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.36-2 4.272-2C14.528 7 16 8.153 16 9.5c0 1.657-1.623 2.417-3.176 3.01-.842.326-1.475.77-1.475 1.49v.5M12 17h.01M9 12h6" />
-                                </svg>
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'} truncate`}>
-                                  {(result.questionText && result.questionText.length > 80 ? result.questionText.substring(0, 80) + '...' : result.questionText)}
-                                </p>
-                                <div className="flex flex-wrap items-center gap-1.5 mt-1">
-                                  <span className={`text-xs px-2 py-0.5 rounded truncate max-w-[120px] ${isDarkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-100 text-gray-600'}`}>
-                                    {result.moduleTitle}
-                                  </span>
-                                  {result.chapter && (
-                                    <span className={`text-xs px-2 py-0.5 rounded truncate max-w-[100px] ${isDarkMode ? 'bg-purple-900/30 text-purple-300' : 'bg-purple-50 text-purple-600'}`}>
-                                      {result.chapter}
-                                    </span>
-                                  )}
-                                  {result.year && (
-                                    <span className={`text-xs px-2 py-0.5 rounded truncate max-w-[80px] ${isDarkMode ? 'bg-amber-900/30 text-amber-300' : 'bg-amber-50 text-amber-600'}`}>
-                                      {result.year}
-                                    </span>
-                                  )}
+                    <div className="flex-1 min-w-0">
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Rechercher un module, chapitre ou question..."
+                        className={`w-full px-4 py-3 outline-none ring-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 text-sm sm:text-base ${isDarkMode ? 'text-white bg-transparent placeholder-gray-400' : 'text-gray-800 bg-transparent placeholder-gray-500'}`}
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium text-sm hover:from-green-600 hover:to-emerald-700 transition-all shadow-sm flex-shrink-0"
+                    >
+                      Rechercher
+                    </button>
+                  </div>
+                </form>
+
+                {showResults && (
+                  <div className={`absolute left-0 right-0 mt-2 rounded-xl border overflow-hidden z-40 ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'} shadow-lg max-h-64 sm:max-h-96 overflow-y-auto`}>
+                    {isSearching ? (
+                      <div className="p-4 text-center">
+                        <div className="w-6 h-6 border-2 border-green-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                      </div>
+                    ) : searchResults.length > 0 ? (
+                      <div className="divide-y divide-gray-200 dark:divide-gray-600">
+                        {searchResults.map((result, index) => (
+                          <button
+                            key={`${result.type}-${result.moduleId}-${result.questionId || index}`}
+                            onClick={() => handleResultClick(result)}
+                            className={`w-full text-left p-3 sm:p-4 ${isDarkMode ? 'hover:bg-gray-600' : 'hover:bg-gray-50'} transition-colors`}
+                          >
+                            {result.type === 'module' ? (
+                              <div className="flex items-center gap-3 min-w-0">
+                                <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${isDarkMode ? 'bg-blue-900/30' : 'bg-blue-50'}`}>
+                                  <svg className={`w-4 h-4 sm:w-5 sm:h-5 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                  </svg>
+                                </div>
+                                <div className="min-w-0">
+                                  <p className={`font-medium text-sm sm:text-base ${isDarkMode ? 'text-white' : 'text-gray-900'} truncate`}>{result.moduleTitle}</p>
+                                  <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Module</p>
                                 </div>
                               </div>
-                            </div>
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className={`p-4 text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                      <svg className="w-8 h-8 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <p>Aucun résultat trouvé</p>
-                    </div>
-                  )}
-                </div>
-              )}
+                            ) : (
+                              <div className="flex items-start gap-3 min-w-0">
+                                <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${isDarkMode ? 'bg-green-900/30' : 'bg-green-50'}`}>
+                                  <svg className={`w-4 h-4 sm:w-5 sm:h-5 ${isDarkMode ? 'text-green-400' : 'text-green-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.36-2 4.272-2C14.528 7 16 8.153 16 9.5c0 1.657-1.623 2.417-3.176 3.01-.842.326-1.475.77-1.475 1.49v.5M12 17h.01M9 12h6" />
+                                  </svg>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className={`font-medium text-sm sm:text-base ${isDarkMode ? 'text-white' : 'text-gray-900'} truncate`}>
+                                    {(result.questionText && result.questionText.length > 60 ? result.questionText.substring(0, 60) + '...' : result.questionText)}
+                                  </p>
+                                  <div className="flex flex-wrap items-center gap-1 mt-1">
+                                    <span className={`text-xs px-1.5 py-0.5 rounded truncate max-w-[100px] sm:max-w-[120px] ${isDarkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-100 text-gray-600'}`}>
+                                      {result.moduleTitle}
+                                    </span>
+                                    {result.chapter && (
+                                      <span className={`text-xs px-1.5 py-0.5 rounded truncate max-w-[80px] sm:max-w-[100px] ${isDarkMode ? 'bg-purple-900/30 text-purple-300' : 'bg-purple-50 text-purple-600'}`}>
+                                        {result.chapter}
+                                      </span>
+                                    )}
+                                    {result.year && (
+                                      <span className={`text-xs px-1.5 py-0.5 rounded truncate max-w-[60px] sm:max-w-[80px] ${isDarkMode ? 'bg-amber-900/30 text-amber-300' : 'bg-amber-50 text-amber-600'}`}>
+                                        {result.year}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className={`p-4 text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                        <svg className="w-8 h-8 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p className="text-sm">Aucun résultat trouvé</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
 
               <div className="mt-6">
                 <h3 className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} mb-3`}>Accès rapide</h3>
