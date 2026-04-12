@@ -22,18 +22,20 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string; mustChangePassword?: boolean }>;
   logout: () => void;
   changePassword: (email: string, currentPassword: string, newPassword: string) => Promise<{ success: boolean; error?: string }>;
-  submitAnswer: (moduleId: number, questionId: string, isCorrect: boolean, selectedOptions: number[]) => Promise<{ statistics: QuestionStats | null } | null>;
+  submitAnswer: (moduleId: number, questionId: string, isCorrect: boolean, selectedOptions: number[]) => void;
   getProgress: (moduleId: number) => Promise<{ [key: string]: any }>;
   getAllProgress: () => Promise<{ [key: string]: any }>;
+  getQuestionStats: (moduleId: number, questionId: string) => Promise<QuestionStats | null>;
   kickedOut: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const API_BASE = '/api';
-const PROGRESS_CACHE_TTL = 30000;
+const PROGRESS_CACHE_TTL = 120000;
 const FLUSH_INTERVAL = 3000;
 const MAX_BATCH_SIZE = 5;
+const STATS_CACHE_TTL = 60000;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -42,6 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   const progressCacheRef = useRef<{ data: any | null; timestamp: number }>({ data: null, timestamp: 0 });
+  const statsCacheRef = useRef<Map<string, { stats: QuestionStats; timestamp: number }>>(new Map());
   const pendingAnswersRef = useRef<any[]>([]);
   const flushTimerRef = useRef<NodeJS.Timeout | null>(null);
   const flushPromiseRef = useRef<Promise<any> | null>(null);
@@ -82,12 +85,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (pendingAnswersRef.current.length > 0) {
+        const answers = [...pendingAnswersRef.current];
+        pendingAnswersRef.current = [];
+        const token = localStorage.getItem('learnfmpa_token');
+        if (user?.id && token) {
+          const blob = new Blob(
+            [JSON.stringify({ user_id: user.id, answers })],
+            { type: 'application/json' }
+          );
+          navigator.sendBeacon(`${API_BASE}/answer`, blob);
+        }
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
     return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
       if (flushTimerRef.current) {
         clearTimeout(flushTimerRef.current);
       }
     };
-  }, []);
+  }, [user]);
 
   const flushPendingAnswers = useCallback(async (): Promise<any> => {
     if (pendingAnswersRef.current.length === 0) return null;
@@ -117,6 +137,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         const data = await response.json();
         invalidateProgressCache();
+
+        if (data.success && data.statistics) {
+          const lastAnswer = answersToFlush[answersToFlush.length - 1];
+          if (lastAnswer) {
+            const statsKey = `${lastAnswer.module_id}_${lastAnswer.question_id}`;
+            statsCacheRef.current.set(statsKey, { stats: data.statistics, timestamp: Date.now() });
+          }
+        }
+
         return data;
       } catch (error) {
         console.error('Failed to flush answers:', error);
@@ -230,13 +259,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const submitAnswer = useCallback(async (
+  const submitAnswer = useCallback((
     moduleId: number,
     questionId: string,
     isCorrect: boolean,
     selectedOptions: number[]
-  ): Promise<{ statistics: QuestionStats | null } | null> => {
-    if (!user) return null;
+  ): void => {
+    if (!user) return;
 
     const answer = {
       module_id: moduleId,
@@ -247,11 +276,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     pendingAnswersRef.current.push(answer);
 
-    const result = await flushPendingAnswers();
-    if (result?.success) {
-      return { statistics: result.statistics };
+    if (pendingAnswersRef.current.length >= MAX_BATCH_SIZE) {
+      flushPendingAnswers();
+    } else {
+      scheduleFlush();
     }
-    return null;
   }, [user, flushPendingAnswers, scheduleFlush]);
 
   const getProgress = useCallback(async (moduleId: number) => {
@@ -316,6 +345,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [user, getAuthHeaders, handleUnauthorized]);
 
+  const getQuestionStats = useCallback(async (moduleId: number, questionId: string): Promise<QuestionStats | null> => {
+    const statsKey = `${moduleId}_${questionId}`;
+    const cached = statsCacheRef.current.get(statsKey);
+    if (cached && Date.now() - cached.timestamp < STATS_CACHE_TTL) {
+      return cached.stats;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE}/statistics?module_id=${moduleId}&question_id=${questionId}`, {
+        headers: getAuthHeaders(),
+      });
+
+      if (response.status === 401) {
+        handleUnauthorized();
+        return null;
+      }
+
+      const data = await response.json();
+
+      if (data.success && data.statistics) {
+        statsCacheRef.current.set(statsKey, { stats: data.statistics, timestamp: Date.now() });
+        return data.statistics;
+      }
+      return null;
+    } catch (error) {
+      if (cached) return cached.stats;
+      return null;
+    }
+  }, [getAuthHeaders, handleUnauthorized]);
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -326,6 +385,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       submitAnswer,
       getProgress,
       getAllProgress,
+      getQuestionStats,
       kickedOut
     }}>
       {children}

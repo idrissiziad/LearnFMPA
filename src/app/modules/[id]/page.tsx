@@ -26,7 +26,7 @@ export default function ModulePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { theme } = useTheme();
-  const { user, isLoading: authLoading, submitAnswer, getProgress } = useAuth();
+  const { user, isLoading: authLoading, submitAnswer, getProgress, getQuestionStats } = useAuth();
   const isDarkMode = theme === 'dark';
   const [allQuestions, setAllQuestions] = useState<ExtendedQuestion[]>([]);
   const [questions, setQuestions] = useState<ExtendedQuestion[]>([]);
@@ -94,7 +94,7 @@ export default function ModulePage() {
 
   useEffect(() => {
     if (moduleId) {
-      preloadModuleData(moduleId).then(({ questions: allQuestions }) => {
+      preloadModuleData(moduleId).then(async ({ questions: allQuestions }) => {
         const extendedQuestions = allQuestions.map(q => ({
           ...q,
           isMultipleChoice: q.isMultipleChoice || q.options.length > 2,
@@ -115,7 +115,26 @@ export default function ModulePage() {
             } catch (e) {}
           }
         }
-        setCorrectlyAnsweredQuestions(localProgress);
+
+        if (user && typeof window !== 'undefined') {
+          try {
+            const dbProgress = await getProgress(moduleId);
+            const mergedProgress = { ...localProgress };
+            Object.entries(dbProgress).forEach(([key, value]: [string, any]) => {
+              if (value?.is_correct) {
+                mergedProgress[key] = true;
+              }
+            });
+            setCorrectlyAnsweredQuestions(mergedProgress);
+            const storageKey = `learnfmpa_answered_${moduleId}`;
+            localStorage.setItem(storageKey, JSON.stringify(mergedProgress));
+            localProgress = mergedProgress;
+          } catch (e) {
+            setCorrectlyAnsweredQuestions(localProgress);
+          }
+        } else {
+          setCorrectlyAnsweredQuestions(localProgress);
+        }
 
         setAllQuestions(extendedQuestions);
         
@@ -147,7 +166,7 @@ export default function ModulePage() {
         filterQuestionsBySession(extendedQuestions, sessionFilter, localProgress);
       });
     }
-  }, [moduleId]);
+  }, [moduleId, user]);
 
   useEffect(() => {
     if (allQuestions.length > 0) {
@@ -170,52 +189,6 @@ export default function ModulePage() {
       setInitialQuestionSet(true);
     }
   }, [questions, questionParam, initialQuestionSet]);
-
-  useEffect(() => {
-    const loadProgress = async () => {
-      if (typeof window !== 'undefined' && moduleId && user) {
-        const storageKey = `learnfmpa_answered_${moduleId}`;
-        
-        // Load from localStorage
-        let localProgress: { [key: string]: boolean } = {};
-        const stored = localStorage.getItem(storageKey);
-        if (stored) {
-          try {
-            localProgress = JSON.parse(stored);
-          } catch (e) {
-            console.error('Error parsing answered questions from localStorage:', e);
-          }
-        }
-        
-        // Load from database
-        try {
-          const dbProgress = await getProgress(moduleId);
-          const mergedProgress = { ...localProgress };
-          
-          // Merge database progress
-          Object.entries(dbProgress).forEach(([key, value]: [string, any]) => {
-            if (value?.is_correct) {
-              mergedProgress[key] = true;
-            }
-          });
-          
-          setCorrectlyAnsweredQuestions(mergedProgress);
-          localStorage.setItem(storageKey, JSON.stringify(mergedProgress));
-          if (allQuestions.length > 0) {
-            applyAnsweredQuestionsFilter(mergedProgress);
-          }
-        } catch (e) {
-          // If database fails, use local progress
-          setCorrectlyAnsweredQuestions(localProgress);
-          if (allQuestions.length > 0) {
-            applyAnsweredQuestionsFilter(localProgress);
-          }
-        }
-      }
-    };
-    
-    loadProgress();
-  }, [moduleId, user, getProgress]);
 
   const activeQuestions = examMode ? examQuestions : questions;
   const currentQuestion = activeQuestions[currentQuestionIndex];
@@ -475,7 +448,9 @@ export default function ModulePage() {
     setChapterFilter(null);
     
     if (session === 'Toutes les sessions') {
-      getModuleChapters(moduleId).then(setChapters);
+      if (chapters.length === 0) {
+        getModuleChapters(moduleId).then(setChapters);
+      }
     } else {
       const filteredQuestions = questionsToFilter.filter(q => q.year === session);
       
@@ -713,9 +688,10 @@ export default function ModulePage() {
       localStorage.setItem(storageKey, JSON.stringify(newAnsweredQuestions));
       
       if (user) {
-        const result = await submitAnswer(moduleId, currentQuestion.id.toString(), isCorrect, mappedSelectedAnswers);
-        if (result?.statistics) {
-          setQuestionStats(result.statistics);
+        submitAnswer(moduleId, currentQuestion.id.toString(), isCorrect, mappedSelectedAnswers);
+        const stats = await getQuestionStats(moduleId, currentQuestion.id.toString());
+        if (stats) {
+          setQuestionStats(stats);
         } else {
           setQuestionStats(null);
         }
