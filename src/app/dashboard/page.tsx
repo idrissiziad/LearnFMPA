@@ -502,7 +502,7 @@ export default function Dashboard() {
                         {module.title}
                       </h3>
                       <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} mt-1`}>
-                        {module.year} · {stats ? `${stats.chapterCount} chapitres` : '...'}
+                        {module.level} · {stats ? `${stats.chapterCount} chapitres` : '...'}
                       </p>
                     </div>
                   </div>
