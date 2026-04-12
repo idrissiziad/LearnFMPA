@@ -22,6 +22,10 @@ export interface User {
   created_at: string;
   last_login: string | null;
   is_active: boolean;
+  year: string;
+  activation_days: number;
+  activated_at: string | null;
+  has_paid: boolean;
 }
 
 export interface UsersData {

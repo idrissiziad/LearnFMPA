@@ -11,6 +11,13 @@ function generateToken(): string {
   return crypto.randomBytes(32).toString('hex');
 }
 
+function isAccountExpired(user: User): boolean {
+  if (!user.activated_at) return false;
+  const activatedDate = new Date(user.activated_at);
+  const expirationDate = new Date(activatedDate.getTime() + user.activation_days * 24 * 60 * 60 * 1000);
+  return new Date() > expirationDate;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -50,6 +57,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (isAccountExpired(foundUser)) {
+      return NextResponse.json(
+        { error: 'Compte expiré. Contactez l\'administrateur pour renouveler votre accès.' },
+        { status: 403 }
+      );
+    }
+
     const passwordHash = hashPassword(password);
     if (foundUser.password_hash !== passwordHash) {
       return NextResponse.json(
@@ -59,6 +73,10 @@ export async function POST(request: NextRequest) {
     }
 
     usersData.users[foundUserId].last_login = new Date().toISOString();
+    if (!usersData.users[foundUserId].year) usersData.users[foundUserId].year = '3ème année';
+    if (usersData.users[foundUserId].activation_days === undefined || usersData.users[foundUserId].activation_days === null) usersData.users[foundUserId].activation_days = 150;
+    if (!usersData.users[foundUserId].activated_at) usersData.users[foundUserId].activated_at = usersData.users[foundUserId].created_at;
+    if (usersData.users[foundUserId].has_paid === undefined || usersData.users[foundUserId].has_paid === null) usersData.users[foundUserId].has_paid = false;
     await saveUsers(usersData);
 
     const token = generateToken();
@@ -71,6 +89,7 @@ export async function POST(request: NextRequest) {
         name: foundUser.name,
         email: foundUser.email,
         must_change_password: foundUser.must_change_password,
+        year: foundUser.year || '3ème année',
         token
       }
     });

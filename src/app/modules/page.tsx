@@ -22,6 +22,9 @@ export default function ModulesPage() {
   const [moduleStats, setModuleStats] = useState<Map<number, ModuleStats>>(new Map());
   const [isLoading, setIsLoading] = useState(true);
 
+  const userYear = user?.year || '3ème année';
+  const filteredModules = modules.filter(m => m.level === userYear);
+
   useEffect(() => {
     if (!authLoading && !user) {
       router.push('/login');
@@ -32,7 +35,7 @@ export default function ModulesPage() {
     const loadModuleStats = async () => {
       const statsMap = new Map<number, ModuleStats>();
       
-      for (const module of modules) {
+      for (const module of filteredModules) {
         try {
           const [questions, chapters] = await Promise.all([
             getModuleQuestions(module.id),
@@ -57,7 +60,7 @@ export default function ModulesPage() {
     };
 
     loadModuleStats();
-  }, []);
+  }, [userYear]);
 
   const handleLogout = () => {
     logout();
@@ -135,12 +138,12 @@ export default function ModulesPage() {
             Modules
           </h1>
           <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-            Choisissez un module pour commencer à réviser les annales.
+            Choisissez un module pour commencer à réviser les annales — {userYear}
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {modules.map((module) => {
+          {filteredModules.map((module) => {
             const stats = moduleStats.get(module.id);
             return (
               <Link

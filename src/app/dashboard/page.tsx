@@ -39,6 +39,9 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
+  const userYear = user?.year || '3ème année';
+  const filteredModules = modules.filter(m => m.level === userYear);
+
   useEffect(() => {
     if (!authLoading && !user) {
       router.push('/login');
@@ -51,7 +54,7 @@ export default function Dashboard() {
       const questionsMap = new Map<number, Question[]>();
 
       const results = await Promise.all(
-        modules.map(async (mod) => {
+        filteredModules.map(async (mod) => {
           try {
             const { questions, chapters } = await preloadModuleData(mod.id);
             return {
@@ -80,7 +83,7 @@ export default function Dashboard() {
     };
 
     loadModuleStats();
-  }, []);
+  }, [userYear]);
 
   const totalQuestions = Array.from(moduleStats.values()).reduce((sum, s) => sum + s.questionCount, 0);
   const totalChapters = Array.from(moduleStats.values()).reduce((sum, s) => sum + s.chapterCount, 0);
@@ -96,7 +99,7 @@ export default function Dashboard() {
     const results: SearchResult[] = [];
     const lowerQuery = query.toLowerCase().trim();
 
-    for (const mod of modules) {
+    for (const mod of filteredModules) {
       if (mod.title.toLowerCase().includes(lowerQuery) || 
           mod.description.toLowerCase().includes(lowerQuery)) {
         results.push({
@@ -171,7 +174,7 @@ export default function Dashboard() {
   };
 
   const quickStats = [
-    { label: 'Modules', value: modules.length, icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10', gradient: 'from-blue-500 to-blue-600', bgLight: 'bg-blue-50', bgDark: 'bg-blue-900/30' },
+    { label: 'Modules', value: filteredModules.length, icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10', gradient: 'from-blue-500 to-blue-600', bgLight: 'bg-blue-50', bgDark: 'bg-blue-900/30' },
     { label: 'Questions', value: totalQuestions || '...', icon: 'M8.228 9c.549-1.165 2.36-2 4.272-2C14.528 7 16 8.153 16 9.5c0 1.657-1.623 2.417-3.176 3.01-.842.326-1.475.77-1.475 1.49v.5M12 17h.01M9 12h6', gradient: 'from-emerald-500 to-emerald-600', bgLight: 'bg-emerald-50', bgDark: 'bg-emerald-900/30' },
     { label: 'Chapitres', value: totalChapters || '...', icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253', gradient: 'from-purple-500 to-purple-600', bgLight: 'bg-purple-50', bgDark: 'bg-purple-900/30' },
     { label: 'Années', value: '7', icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z', gradient: 'from-amber-500 to-orange-500', bgLight: 'bg-amber-50', bgDark: 'bg-amber-900/30' },
@@ -389,7 +392,7 @@ export default function Dashboard() {
               <div className="mt-6">
                 <h3 className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} mb-3`}>Accès rapide</h3>
                 <div className="flex flex-wrap gap-2">
-                  {modules.slice(0, 5).map((mod) => (
+                  {filteredModules.slice(0, 5).map((mod) => (
                     <Link
                       key={mod.id}
                       href={`/modules/${mod.id}`}
@@ -402,7 +405,7 @@ export default function Dashboard() {
                     href="/modules"
                     className="px-3 py-1.5 rounded-lg text-sm bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 cursor-pointer transition-all shadow-sm"
                   >
-                    +{modules.length - 5} plus
+                    +{filteredModules.length - 5} plus
                   </Link>
                 </div>
               </div>
@@ -488,7 +491,7 @@ export default function Dashboard() {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {modules.slice(0, 4).map((module) => {
+            {filteredModules.slice(0, 4).map((module) => {
               const stats = moduleStats.get(module.id);
               return (
                 <Link

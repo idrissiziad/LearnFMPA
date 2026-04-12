@@ -6,8 +6,13 @@ Automatically connects to the Vercel deployment API.
 
 Usage:
   python manage_users.py add "Name" "email@example.com"
+  python manage_users.py add "Name" "email@example.com" -y "3ème année" -d 150 --paid
   python manage_users.py list
   python manage_users.py reset "email@example.com"
+  python manage_users.py set-year "email@example.com" "3ème année"
+  python manage_users.py set-days "email@example.com" 300
+  python manage_users.py set-paid "email@example.com" true
+  python manage_users.py migrate
 
 Set environment variables:
   API_URL - Your Vercel deployment URL (default: https://www.learnfmpa.com)
@@ -22,9 +27,19 @@ import argparse
 import urllib.request
 import urllib.error
 import urllib.parse
+from datetime import datetime, timedelta
 
 DEFAULT_API_URL = os.environ.get('API_URL', 'https://www.learnfmpa.com')
 DEFAULT_ADMIN_SECRET = os.environ.get('ADMIN_SECRET', 'learnfmpa2024')
+
+VALID_YEARS = [
+    '1ère année',
+    '2ème année',
+    '3ème année',
+    '4ème année',
+    '5ème année',
+    '6ème année',
+]
 
 
 def generate_temp_password(length: int = 12) -> str:
@@ -69,16 +84,25 @@ def api_request(api_url: str, admin_secret: str, endpoint: str, method: str = 'G
         return {'error': str(e)}
 
 
-def add_user(api_url: str, admin_secret: str, name: str, email: str, temp_password: str = None):
+def add_user(api_url: str, admin_secret: str, name: str, email: str,
+             temp_password: str = None, year: str = None,
+             activation_days: int = None, has_paid: bool = False):
     """Add a new user via API."""
     if not temp_password:
         temp_password = generate_temp_password()
     
-    result = api_request(api_url, admin_secret, '/api/admin/users', 'POST', {
+    payload = {
         'name': name,
         'email': email,
-        'password': temp_password
-    })
+        'password': temp_password,
+        'has_paid': has_paid,
+    }
+    if year:
+        payload['year'] = year
+    if activation_days is not None:
+        payload['activation_days'] = activation_days
+    
+    result = api_request(api_url, admin_secret, '/api/admin/users', 'POST', payload)
     
     if result.get('success'):
         subject = f"Bienvenue sur LearnFMPA - Vos identifiants de connexion"
@@ -90,6 +114,9 @@ Voici vos identifiants de connexion :
 
 📧 Email : {email}
 🔑 Mot de passe temporaire : {temp_password}
+🎓 Année : {year or '3ème année'}
+⏳ Durée d'accès : {activation_days or 150} jours
+💰 Paiement : {'Oui' if has_paid else 'Non'}
 
 ⚠️ IMPORTANT : Vous devrez changer ce mot de passe lors de votre première connexion.
 
@@ -107,6 +134,9 @@ L'équipe LearnFMPA"""
         print(f"  Name: {name}")
         print(f"  Email: {email}")
         print(f"  Temporary Password: {temp_password}")
+        print(f"  Year: {year or '3ème année'}")
+        print(f"  Activation Days: {activation_days or 150}")
+        print(f"  Has Paid: {'Yes' if has_paid else 'No'}")
         print(f"  User ID: {result.get('user', {}).get('id', 'N/A')}")
         print(f"\n📧 Send email to user:")
         print(f"  {mailto_link}")
@@ -126,15 +156,31 @@ def list_users(api_url: str, admin_secret: str):
             print("\nNo users found.\n")
             return
         
-        print(f"\n{'='*80}")
-        print(f"{'ID':<22} {'Name':<20} {'Email':<30} {'Status':<10}")
-        print(f"{'='*80}")
+        print(f"\n{'='*120}")
+        print(f"{'ID':<22} {'Name':<18} {'Email':<28} {'Year':<14} {'Days':<6} {'Paid':<6} {'Status':<10}")
+        print(f"{'='*120}")
         
         for user in users:
             status = "Pending" if user.get('must_change_password', False) else "Active"
-            print(f"{user['id']:<22} {user['name']:<20} {user['email']:<30} {status:<10}")
+            if not user.get('is_active', True):
+                status = "Inactive"
+            year = user.get('year', '3ème année')
+            days = str(user.get('activation_days', 150))
+            paid = "Yes" if user.get('has_paid', False) else "No"
+            
+            activated_at = user.get('activated_at')
+            if activated_at and user.get('is_active', True):
+                try:
+                    activated_date = datetime.fromisoformat(activated_at.replace('Z', '+00:00'))
+                    expiration = activated_date + timedelta(days=user.get('activation_days', 150))
+                    if datetime.now(expiration.tzinfo) > expiration:
+                        status = "Expired"
+                except:
+                    pass
+            
+            print(f"{user['id']:<22} {user['name']:<18} {user['email']:<28} {year:<14} {days:<6} {paid:<6} {status:<10}")
         
-        print(f"{'='*80}")
+        print(f"{'='*120}")
         print(f"Total: {len(users)} users")
         print(f"API: {api_url}\n")
     else:
@@ -147,6 +193,7 @@ def reset_password(api_url: str, admin_secret: str, email: str, new_password: st
         new_password = generate_temp_password()
     
     result = api_request(api_url, admin_secret, '/api/admin/users', 'POST', {
+        'action': 'reset_password',
         'email': email,
         'new_password': new_password
     })
@@ -190,6 +237,18 @@ def get_user_details(api_url: str, admin_secret: str, email: str):
     
     if result.get('success'):
         user = result.get('user', {})
+        activated_at = user.get('activated_at')
+        activation_days = user.get('activation_days', 150)
+        expiration_str = 'N/A'
+        
+        if activated_at:
+            try:
+                activated_date = datetime.fromisoformat(activated_at.replace('Z', '+00:00'))
+                expiration = activated_date + timedelta(days=activation_days)
+                expiration_str = expiration.strftime('%Y-%m-%d')
+            except:
+                pass
+        
         print(f"\n{'='*50}")
         print(f"User Details")
         print(f"{'='*50}")
@@ -198,6 +257,11 @@ def get_user_details(api_url: str, admin_secret: str, email: str):
         print(f"  Email: {user.get('email', 'N/A')}")
         print(f"  Status: {'Active' if user.get('is_active', True) else 'Inactive'}")
         print(f"  Password Change Required: {'Yes' if user.get('must_change_password', False) else 'No'}")
+        print(f"  Year: {user.get('year', '3ème année')}")
+        print(f"  Activation Days: {activation_days}")
+        print(f"  Activated At: {activated_at or 'N/A'}")
+        print(f"  Expires On: {expiration_str}")
+        print(f"  Has Paid: {'Yes' if user.get('has_paid', False) else 'No'}")
         print(f"  Created: {user.get('created_at', 'N/A')}")
         print(f"  Last Login: {user.get('last_login', 'Never')}")
         print(f"{'='*50}\n")
@@ -208,12 +272,91 @@ def get_user_details(api_url: str, admin_secret: str, email: str):
 def set_user_status(api_url: str, admin_secret: str, email: str, is_active: bool):
     """Activate/Deactivate a user via API."""
     result = api_request(api_url, admin_secret, '/api/admin/users', 'POST', {
+        'action': 'set_active',
         'email': email,
         'is_active': is_active
     })
     
     if result.get('success'):
         print(f"\n✓ User '{email}' has been {'activated' if is_active else 'deactivated'}.\n")
+    else:
+        print(f"\n✗ Error: {result.get('error', 'Unknown error')}\n")
+
+
+def set_user_year(api_url: str, admin_secret: str, email: str, year: str):
+    """Set a user's study year via API."""
+    if year not in VALID_YEARS:
+        print(f"\n✗ Invalid year '{year}'. Valid options: {', '.join(VALID_YEARS)}\n")
+        return
+    
+    result = api_request(api_url, admin_secret, '/api/admin/users', 'POST', {
+        'action': 'update_user',
+        'email': email,
+        'year': year
+    })
+    
+    if result.get('success'):
+        print(f"\n✓ User '{email}' year set to '{year}'.\n")
+    else:
+        print(f"\n✗ Error: {result.get('error', 'Unknown error')}\n")
+
+
+def set_user_activation_days(api_url: str, admin_secret: str, email: str, days: int):
+    """Set a user's activation days via API."""
+    if days <= 0:
+        print(f"\n✗ Activation days must be a positive number.\n")
+        return
+    
+    result = api_request(api_url, admin_secret, '/api/admin/users', 'POST', {
+        'action': 'update_user',
+        'email': email,
+        'activation_days': days
+    })
+    
+    if result.get('success'):
+        print(f"\n✓ User '{email}' activation days set to {days}.\n")
+    else:
+        print(f"\n✗ Error: {result.get('error', 'Unknown error')}\n")
+
+
+def set_user_paid(api_url: str, admin_secret: str, email: str, has_paid: bool):
+    """Set a user's payment status via API."""
+    result = api_request(api_url, admin_secret, '/api/admin/users', 'POST', {
+        'action': 'update_user',
+        'email': email,
+        'has_paid': has_paid
+    })
+    
+    if result.get('success'):
+        print(f"\n✓ User '{email}' payment status set to {'paid' if has_paid else 'unpaid'}.\n")
+    else:
+        print(f"\n✗ Error: {result.get('error', 'Unknown error')}\n")
+
+
+def renew_user(api_url: str, admin_secret: str, email: str, days: int = None):
+    """Renew a user's account by resetting activation from today."""
+    result_get = api_request(api_url, admin_secret, f'/api/admin/users?email={email}', 'GET')
+    
+    if not result_get.get('success'):
+        print(f"\n✗ Error: {result_get.get('error', 'Unknown error')}\n")
+        return
+    
+    user = result_get.get('user', {})
+    current_days = days or user.get('activation_days', 150)
+    
+    payload = {
+        'action': 'update_user',
+        'email': email,
+        'activation_days': current_days,
+    }
+    
+    result = api_request(api_url, admin_secret, '/api/admin/users', 'POST', payload)
+    
+    if result.get('success'):
+        expiration = datetime.now() + timedelta(days=current_days)
+        print(f"\n✓ User '{email}' account renewed.")
+        print(f"  Activation days: {current_days}")
+        print(f"  New expiration: {expiration.strftime('%Y-%m-%d')}\n")
     else:
         print(f"\n✗ Error: {result.get('error', 'Unknown error')}\n")
 
@@ -251,6 +394,49 @@ def show_progress(api_url: str, admin_secret: str, email: str):
         print(f"\n✗ Error: {result.get('error', 'Unknown error')}\n")
 
 
+def migrate_users(api_url: str, admin_secret: str, target_year: str = '3ème année'):
+    """Migrate all existing users to the specified year (default: 3rd year)."""
+    if target_year not in VALID_YEARS:
+        print(f"\n✗ Invalid year '{target_year}'. Valid options: {', '.join(VALID_YEARS)}\n")
+        return
+    
+    result = api_request(api_url, admin_secret, '/api/admin/users', 'GET')
+    
+    if not result.get('success'):
+        print(f"\n✗ Error: {result.get('error', 'Unknown error')}\n")
+        return
+    
+    users = result.get('users', [])
+    if not users:
+        print("\nNo users to migrate.\n")
+        return
+    
+    migrated = 0
+    skipped = 0
+    
+    for user in users:
+        email = user.get('email', '')
+        current_year = user.get('year')
+        
+        if current_year == target_year:
+            skipped += 1
+            continue
+        
+        set_result = api_request(api_url, admin_secret, '/api/admin/users', 'POST', {
+            'action': 'update_user',
+            'email': email,
+            'year': target_year
+        })
+        
+        if set_result.get('success'):
+            migrated += 1
+            print(f"  ✓ {email}: '{current_year or 'N/A'}' → '{target_year}'")
+        else:
+            print(f"  ✗ {email}: {set_result.get('error', 'Failed')}")
+    
+    print(f"\nMigration complete: {migrated} users migrated, {skipped} already on '{target_year}'.\n")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="LearnFMPA User Management Script - Connects to Vercel API",
@@ -260,12 +446,23 @@ Environment Variables:
   API_URL      - API endpoint (current: {DEFAULT_API_URL})
   ADMIN_SECRET - Admin key (required for operations)
 
+Valid Years:
+  {', '.join(VALID_YEARS)}
+
 Examples:
   python manage_users.py add "John Doe" "john@example.com"
-  python manage_users.py add "John Doe" "john@example.com" -p MyP@ss123
+  python manage_users.py add "John Doe" "john@example.com" -y "3ème année" -d 150 --paid
+  python manage_users.py add "John Doe" "john@example.com" -y "2ème année" -d 300
   python manage_users.py list
-  python manage_users.py reset "john@example.com"
   python manage_users.py details "john@example.com"
+  python manage_users.py set-year "john@example.com" "3ème année"
+  python manage_users.py set-days "john@example.com" 300
+  python manage_users.py set-paid "john@example.com" true
+  python manage_users.py renew "john@example.com"
+  python manage_users.py renew "john@example.com" -d 300
+  python manage_users.py migrate
+  python manage_users.py migrate -y "2ème année"
+  python manage_users.py reset "john@example.com"
   python manage_users.py deactivate "john@example.com"
   python manage_users.py delete "john@example.com"
 """
@@ -280,6 +477,9 @@ Examples:
     add_parser.add_argument("name", help="User's full name")
     add_parser.add_argument("email", help="User's email address")
     add_parser.add_argument("-p", "--password", help="Temporary password (auto-generated if not provided)")
+    add_parser.add_argument("-y", "--year", choices=VALID_YEARS, default=None, help="Study year (default: 3ème année)")
+    add_parser.add_argument("-d", "--days", type=int, default=None, help="Activation days (default: 150)")
+    add_parser.add_argument("--paid", action="store_true", help="Mark user as paid")
     
     subparsers.add_parser("list", help="List all users")
     
@@ -302,6 +502,25 @@ Examples:
     progress_parser = subparsers.add_parser("progress", help="Show user progress")
     progress_parser.add_argument("email", help="User's email address")
     
+    set_year_parser = subparsers.add_parser("set-year", help="Set user's study year")
+    set_year_parser.add_argument("email", help="User's email address")
+    set_year_parser.add_argument("year", choices=VALID_YEARS, help="Study year to set")
+    
+    set_days_parser = subparsers.add_parser("set-days", help="Set user's activation days")
+    set_days_parser.add_argument("email", help="User's email address")
+    set_days_parser.add_argument("days", type=int, help="Number of activation days")
+    
+    set_paid_parser = subparsers.add_parser("set-paid", help="Set user's payment status")
+    set_paid_parser.add_argument("email", help="User's email address")
+    set_paid_parser.add_argument("paid", choices=["true", "false"], help="Payment status (true/false)")
+    
+    renew_parser = subparsers.add_parser("renew", help="Renew user's account activation")
+    renew_parser.add_argument("email", help="User's email address")
+    renew_parser.add_argument("-d", "--days", type=int, default=None, help="New activation days (keeps current if not set)")
+    
+    migrate_parser = subparsers.add_parser("migrate", help="Migrate all existing users to a specific year (default: 3ème année)")
+    migrate_parser.add_argument("-y", "--year", choices=VALID_YEARS, default='3ème année', help="Target year")
+    
     args = parser.parse_args()
     
     api_url = args.url
@@ -314,7 +533,8 @@ Examples:
     print(f"\n📡 Connecting to: {api_url}")
     
     if args.command == "add":
-        add_user(api_url, admin_secret, args.name, args.email, args.password)
+        add_user(api_url, admin_secret, args.name, args.email, args.password,
+                 year=args.year, activation_days=args.days, has_paid=args.paid)
     elif args.command == "list":
         list_users(api_url, admin_secret)
     elif args.command == "reset":
@@ -329,6 +549,16 @@ Examples:
         delete_user(api_url, admin_secret, args.email)
     elif args.command == "progress":
         show_progress(api_url, admin_secret, args.email)
+    elif args.command == "set-year":
+        set_user_year(api_url, admin_secret, args.email, args.year)
+    elif args.command == "set-days":
+        set_user_activation_days(api_url, admin_secret, args.email, args.days)
+    elif args.command == "set-paid":
+        set_user_paid(api_url, admin_secret, args.email, args.paid == "true")
+    elif args.command == "renew":
+        renew_user(api_url, admin_secret, args.email, args.days)
+    elif args.command == "migrate":
+        migrate_users(api_url, admin_secret, args.year)
 
 
 if __name__ == "__main__":

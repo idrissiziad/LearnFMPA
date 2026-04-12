@@ -15,17 +15,67 @@ function validateAdmin(secret: string): boolean {
   return secret === process.env.ADMIN_SECRET || secret === 'learnfmpa2024';
 }
 
+const VALID_YEARS = [
+  '1ère année',
+  '2ème année',
+  '3ème année',
+  '4ème année',
+  '5ème année',
+  '6ème année',
+];
+
+function migrateUser(user: any): any {
+  if (!user.year) user.year = '3ème année';
+  if (user.activation_days === undefined || user.activation_days === null) user.activation_days = 150;
+  if (!user.activated_at) user.activated_at = user.created_at || new Date().toISOString();
+  if (user.has_paid === undefined || user.has_paid === null) user.has_paid = false;
+  return user;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, password, admin_secret, new_password, is_active } = body;
+    const { action, name, email, password, admin_secret, new_password, is_active, year, activation_days, has_paid } = body;
 
     if (!validateAdmin(admin_secret)) {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 403 });
     }
 
+    // Update user properties (year, activation_days, has_paid)
+    if (action === 'update_user' || (!action && email && !name && !password && !new_password && is_active === undefined && (year !== undefined || activation_days !== undefined || has_paid !== undefined))) {
+      const usersData = await loadUsers();
+      let found = false;
+      
+      for (const [userId, user] of Object.entries(usersData.users)) {
+        if (user.email.toLowerCase() === email.toLowerCase()) {
+          const migrated = migrateUser(usersData.users[userId]);
+          if (year !== undefined && VALID_YEARS.includes(year)) {
+            migrated.year = year;
+          }
+          if (activation_days !== undefined && typeof activation_days === 'number' && activation_days > 0) {
+            migrated.activation_days = activation_days;
+          }
+          if (has_paid !== undefined && typeof has_paid === 'boolean') {
+            migrated.has_paid = has_paid;
+            if (has_paid && !migrated.activated_at) {
+              migrated.activated_at = new Date().toISOString();
+            }
+          }
+          found = true;
+          break;
+        }
+      }
+      
+      if (!found) {
+        return NextResponse.json({ error: 'Utilisateur non trouvé' }, { status: 404 });
+      }
+      
+      await saveUsers(usersData);
+      return NextResponse.json({ success: true, message: 'Utilisateur mis à jour' });
+    }
+
     // Reset password
-    if (email && new_password && !name) {
+    if (action === 'reset_password' || (!action && email && new_password && !name)) {
       const usersData = await loadUsers();
       let found = false;
       
@@ -47,7 +97,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Activate/Deactivate user
-    if (email && is_active !== undefined && !name) {
+    if (action === 'set_active' || (!action && email && is_active !== undefined && !name)) {
       const usersData = await loadUsers();
       let found = false;
       
@@ -67,13 +117,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, message: `Utilisateur ${is_active ? 'activé' : 'désactivé'}` });
     }
 
-    // Create user
+    // Create user (default when action is 'create' or no action specified with name+email+password)
     if (!name || !email || !password) {
       return NextResponse.json(
         { error: 'Nom, email et mot de passe requis' },
         { status: 400 }
       );
     }
+
+    const userYear = (year && VALID_YEARS.includes(year)) ? year : '3ème année';
+    const userActivationDays = (activation_days && typeof activation_days === 'number' && activation_days > 0) ? activation_days : 150;
 
     const usersData = await loadUsers();
     
@@ -87,6 +140,7 @@ export async function POST(request: NextRequest) {
     }
 
     const userId = generateId();
+    const now = new Date().toISOString();
     
     usersData.users[userId] = {
       id: userId,
@@ -94,9 +148,13 @@ export async function POST(request: NextRequest) {
       email: email.toLowerCase(),
       password_hash: hashPassword(password),
       must_change_password: true,
-      created_at: new Date().toISOString(),
+      created_at: now,
       last_login: null,
-      is_active: true
+      is_active: true,
+      year: userYear,
+      activation_days: userActivationDays,
+      activated_at: now,
+      has_paid: has_paid === true
     };
 
     await saveUsers(usersData);
@@ -106,7 +164,10 @@ export async function POST(request: NextRequest) {
       user: {
         id: userId,
         name,
-        email: email.toLowerCase()
+        email: email.toLowerCase(),
+        year: userYear,
+        activation_days: userActivationDays,
+        has_paid: has_paid === true
       },
       temp_password: password
     });
@@ -128,6 +189,18 @@ export async function GET(request: NextRequest) {
     }
 
     const usersData = await loadUsers();
+    let needsMigration = false;
+
+    for (const [userId, user] of Object.entries(usersData.users)) {
+      if (!user.year || user.activation_days === undefined || user.has_paid === undefined) {
+        migrateUser(usersData.users[userId]);
+        needsMigration = true;
+      }
+    }
+
+    if (needsMigration) {
+      await saveUsers(usersData);
+    }
 
     // Get user details
     if (email) {
@@ -142,7 +215,11 @@ export async function GET(request: NextRequest) {
               must_change_password: user.must_change_password,
               created_at: user.created_at,
               last_login: user.last_login,
-              is_active: user.is_active
+              is_active: user.is_active,
+              year: user.year,
+              activation_days: user.activation_days,
+              activated_at: user.activated_at,
+              has_paid: user.has_paid
             }
           });
         }
@@ -158,7 +235,11 @@ export async function GET(request: NextRequest) {
       must_change_password: user.must_change_password,
       created_at: user.created_at,
       last_login: user.last_login,
-      is_active: user.is_active
+      is_active: user.is_active,
+      year: user.year,
+      activation_days: user.activation_days,
+      activated_at: user.activated_at,
+      has_paid: user.has_paid
     }));
 
     return NextResponse.json({
