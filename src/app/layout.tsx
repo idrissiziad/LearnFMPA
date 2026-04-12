@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar";
 import "./globals.css";
 
 const inter = Inter({
@@ -12,6 +13,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "LearnFMPA - Révisez efficacement les annales de médecine au Maroc",
   description: "Accédez à des milliers de questions corrigées de la 1ère à la 7ème année, avec des explications détaillées par des experts et des outils pour suivre votre progression.",
+  manifest: "/favicon/site.webmanifest",
   icons: {
     icon: [
       { url: "/favicon/favicon.ico" },
@@ -39,6 +41,7 @@ export default function RootLayout({
       <body className={`${inter.variable} font-sans antialiased bg-gray-50`}>
         <ThemeProvider>
           <AuthProvider>
+            <ServiceWorkerRegistrar />
             {children}
           </AuthProvider>
         </ThemeProvider>
