@@ -291,7 +291,7 @@ export default function Home() {
           
           <div className={`border-t ${isDarkMode ? 'border-gray-800' : 'border-gray-200'} pt-8 flex flex-col sm:flex-row justify-between items-center`}>
             <p className={`text-sm ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
-              © 2024 LearnFMPA. Tous droits réservés.
+              © 2026 LearnFMPA. Tous droits réservés.
             </p>
             <p className={`text-sm ${isDarkMode ? 'text-gray-500' : 'text-gray-500'} mt-2 sm:mt-0`}>
               Fait avec ♥ pour les étudiants en médecine

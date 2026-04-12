@@ -139,7 +139,7 @@ export default function Terms() {
               <span className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>LearnFMPA</span>
             </div>
             <p className={`text-sm ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
-              © 2024 LearnFMPA. Tous droits réservés.
+              © 2026 LearnFMPA. Tous droits réservés.
             </p>
           </div>
         </div>
