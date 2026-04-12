@@ -199,7 +199,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+    <div className={`min-h-screen overflow-x-hidden ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <header className={`${isDarkMode ? 'bg-gray-800/95 backdrop-blur-md border-gray-700' : 'bg-white/95 backdrop-blur-md border-gray-200'} border-b sticky top-0 z-50`}>
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between items-center h-14 sm:h-16">
@@ -286,7 +286,7 @@ export default function Dashboard() {
 
         <div className="grid lg:grid-cols-3 gap-6 mb-8">
           <div className="lg:col-span-2">
-            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-5 sm:p-6 shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-5 sm:p-6 shadow-sm border overflow-hidden ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
               <div className="flex items-center gap-3 mb-5">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isDarkMode ? 'bg-blue-900/30' : 'bg-blue-50'}`}>
                   <svg className={`w-5 h-5 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -323,7 +323,7 @@ export default function Dashboard() {
               </form>
 
               {showResults && (
-                <div className={`mt-4 rounded-xl border ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'} shadow-lg max-h-96 overflow-y-auto`}>
+                <div className={`mt-4 rounded-xl border overflow-hidden ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'} shadow-lg max-h-96 overflow-y-auto`}>
                   {isSearching ? (
                     <div className="p-4 text-center">
                       <div className="w-6 h-6 border-2 border-green-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
@@ -337,14 +337,14 @@ export default function Dashboard() {
                           className={`w-full text-left p-4 ${isDarkMode ? 'hover:bg-gray-600' : 'hover:bg-gray-50'} transition-colors`}
                         >
                           {result.type === 'module' ? (
-                            <div className="flex items-center gap-3">
-                              <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isDarkMode ? 'bg-blue-900/30' : 'bg-blue-50'}`}>
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${isDarkMode ? 'bg-blue-900/30' : 'bg-blue-50'}`}>
                                 <svg className={`w-5 h-5 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                                 </svg>
                               </div>
-                              <div>
-                                <p className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{result.moduleTitle}</p>
+                              <div className="min-w-0">
+                                <p className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'} truncate`}>{result.moduleTitle}</p>
                                 <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Module</p>
                               </div>
                             </div>
@@ -359,17 +359,17 @@ export default function Dashboard() {
                                 <p className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'} truncate`}>
                                   {(result.questionText && result.questionText.length > 80 ? result.questionText.substring(0, 80) + '...' : result.questionText)}
                                 </p>
-                                <div className="flex items-center gap-2 mt-1">
-                                  <span className={`text-xs px-2 py-0.5 rounded ${isDarkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-100 text-gray-600'}`}>
+                                <div className="flex flex-wrap items-center gap-1.5 mt-1">
+                                  <span className={`text-xs px-2 py-0.5 rounded truncate max-w-[120px] ${isDarkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-100 text-gray-600'}`}>
                                     {result.moduleTitle}
                                   </span>
                                   {result.chapter && (
-                                    <span className={`text-xs px-2 py-0.5 rounded ${isDarkMode ? 'bg-purple-900/30 text-purple-300' : 'bg-purple-50 text-purple-600'}`}>
+                                    <span className={`text-xs px-2 py-0.5 rounded truncate max-w-[100px] ${isDarkMode ? 'bg-purple-900/30 text-purple-300' : 'bg-purple-50 text-purple-600'}`}>
                                       {result.chapter}
                                     </span>
                                   )}
                                   {result.year && (
-                                    <span className={`text-xs px-2 py-0.5 rounded ${isDarkMode ? 'bg-amber-900/30 text-amber-300' : 'bg-amber-50 text-amber-600'}`}>
+                                    <span className={`text-xs px-2 py-0.5 rounded truncate max-w-[80px] ${isDarkMode ? 'bg-amber-900/30 text-amber-300' : 'bg-amber-50 text-amber-600'}`}>
                                       {result.year}
                                     </span>
                                   )}
