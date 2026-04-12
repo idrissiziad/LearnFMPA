@@ -323,18 +323,21 @@ export default function ModulePage() {
 
   useEffect(() => {
     if (!timerEnabled || showAnswer || examMode) return;
-    setTimerSeconds(60);
-  }, [currentQuestionIndex, timerEnabled, examMode]);
 
-  useEffect(() => {
-    if (!timerEnabled || showAnswer || examMode) return;
-    if (timerSeconds <= 0) {
-      handleShowAnswerRef.current();
-      return;
-    }
-    const timeout = setTimeout(() => setTimerSeconds(s => s - 1), 1000);
-    return () => clearTimeout(timeout);
-  }, [timerEnabled, showAnswer, timerSeconds, currentQuestionIndex, examMode]);
+    let seconds = 60;
+    setTimerSeconds(seconds);
+
+    const interval = setInterval(() => {
+      seconds -= 1;
+      setTimerSeconds(seconds);
+      if (seconds <= 0) {
+        clearInterval(interval);
+        handleShowAnswerRef.current();
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [currentQuestionIndex, timerEnabled, showAnswer, examMode]);
 
   useEffect(() => {
     if (!examMode || examFinished) {
