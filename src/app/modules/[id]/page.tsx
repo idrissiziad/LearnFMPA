@@ -1133,6 +1133,14 @@ export default function ModulePage() {
                 </p>
               </div>
 
+              {examCorrectCount / examQuestions.length >= 0.5 && (
+                <div className={`${isDarkMode ? 'bg-green-900/20 border-green-700/30' : 'bg-green-50 border-green-200'} border rounded-2xl p-5 sm:p-6 mb-8`}>
+                  <p className="text-lg sm:text-xl font-bold text-green-500">
+                    Félicitations ! Vous avez validé votre module.
+                  </p>
+                </div>
+              )}
+
               <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
                 <button
                   onClick={handleToggleExam}
