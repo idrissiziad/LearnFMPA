@@ -324,7 +324,7 @@ export default function Dashboard() {
                 </form>
 
                 {showResults && (
-                  <div className={`absolute left-0 right-0 mt-2 rounded-xl border overflow-hidden z-40 ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'} shadow-lg max-h-64 sm:max-h-96 overflow-y-auto`}>
+                  <div className={`absolute left-0 right-0 mt-2 rounded-xl border overflow-hidden z-40 ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'} shadow-lg max-h-80 sm:max-h-96 overflow-y-auto`}>
                     {isSearching ? (
                       <div className="p-4 text-center">
                         <div className="w-6 h-6 border-2 border-green-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
