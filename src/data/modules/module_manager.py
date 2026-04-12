@@ -16,12 +16,12 @@ MODULES_DIR = Path(__file__).parent
 INDEX_FILE = MODULES_DIR / "index.ts"
 
 LEVELS = [
-    {"label": "1st year", "year": "1ème année"},
-    {"label": "2nd year", "year": "2ème année"},
-    {"label": "3rd year", "year": "3ème année"},
-    {"label": "4th year", "year": "4ème année"},
-    {"label": "5th year", "year": "5ème année"},
-    {"label": "6th year", "year": "6ème année"},
+    "1ère année",
+    "2ème année",
+    "3ème année",
+    "4ème année",
+    "5ème année",
+    "6ème année",
 ]
 
 class ModuleManager:
@@ -118,7 +118,6 @@ class ModuleManager:
             print(f"Subtitle: {module.get('subtitle', 'N/A')}")
             print(f"Description: {module.get('description', 'N/A')}")
             print(f"Level: {module.get('level', 'N/A')}")
-            print(f"Year: {module.get('year', 'N/A')}")
             print(f"Gradient: {module.get('gradient', 'N/A')}")
     
     def get_next_id(self) -> int:
@@ -142,16 +141,13 @@ class ModuleManager:
 
         print("\nAvailable levels:")
         for i, level in enumerate(LEVELS, 1):
-            print(f"{i}. {level['label']} (year: {level['year']})")
+            print(f"{i}. {level}")
 
         level_choice = input(f"Select level (1-{len(LEVELS)}): ").strip()
         if level_choice.isdigit() and 1 <= int(level_choice) <= len(LEVELS):
-            selected_level = LEVELS[int(level_choice) - 1]
-            level = selected_level["label"]
-            year = selected_level["year"]
+            level = LEVELS[int(level_choice) - 1]
         else:
-            level = LEVELS[0]["label"]
-            year = LEVELS[0]["year"]
+            level = LEVELS[0]
         
         # Available gradients (you can extend this list)
         gradients = [
@@ -199,7 +195,6 @@ class ModuleManager:
             'subtitle': subtitle,
             'description': description,
             'level': level,
-            'year': year,
             'gradient': gradient,
             'json_filename': json_filename
         }
@@ -316,7 +311,6 @@ class ModuleManager:
                 new_modules_content += f"    subtitle: '{module.get('subtitle', '')}',\n"
                 new_modules_content += f"    description: '{module.get('description', '')}',\n"
                 new_modules_content += f"    level: '{module.get('level', '')}',\n"
-                new_modules_content += f"    year: '{module.get('year', '')}',\n"
                 new_modules_content += f"    gradient: '{module.get('gradient', '')}'"
                 # Add json_filename if it exists
                 if module.get('json_filename'):

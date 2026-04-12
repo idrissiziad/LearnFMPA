@@ -65,7 +65,7 @@ export default function ModulesPage() {
 
   const getYearBadgeColor = (year: string) => {
     const colors: { [key: string]: string } = {
-      '1ème année': 'bg-blue-100 text-blue-700',
+      '1ère année': 'bg-blue-100 text-blue-700',
       '2ème année': 'bg-purple-100 text-purple-700',
       '3ème année': 'bg-green-100 text-green-700',
       '4ème année': 'bg-amber-100 text-amber-700',
@@ -161,7 +161,7 @@ export default function ModulesPage() {
                       <h3 className={`font-bold text-lg group-hover:text-green-600 transition-colors ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                         {module.title}
                       </h3>
-                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${getYearBadgeColor(module.year)}`}>
+                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${getYearBadgeColor(module.level)}`}>
                         {module.level}
                       </span>
                     </div>

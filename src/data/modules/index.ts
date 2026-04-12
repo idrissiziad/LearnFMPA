@@ -10,7 +10,6 @@ export interface Module {
   subtitle: string;
   description: string;
   level: string;
-  year: string;
   gradient: string;
   json_filename?: string;
 }
@@ -82,8 +81,7 @@ export const modules: Module[] = [
     title: 'Pharmacologie',
     subtitle: '2/3A',
     description: 'Pharmacologie',
-    level: '3rd year',
-    year: '3ème année',
+    level: '3ème année',
     gradient: 'from-blue-400 to-blue-600',
     json_filename: 'Pharmacologie'
   },
@@ -92,8 +90,7 @@ export const modules: Module[] = [
     title: 'TestMode',
     subtitle: '9',
     description: 'XXX',
-    level: '6th year',
-    year: '6ème année',
+    level: '6ème année',
     gradient: 'from-blue-400 to-blue-600',
     json_filename: 'TestSample'
   }
