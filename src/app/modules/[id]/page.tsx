@@ -8,6 +8,7 @@ import { getModuleById, getModuleQuestions, getModuleChapters, preloadModuleData
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
 import ThemeToggle from '@/components/ThemeToggle';
+import { Warp } from '@paper-design/shaders-react';
 
 const ChapterNavigation = lazy(() => import('@/components/ChapterNavigation'));
 
@@ -36,6 +37,13 @@ export default function ModulePage() {
   const [score, setScore] = useState(0);
   const [answeredQuestions, setAnsweredQuestions] = useState<Set<number>>(new Set());
   const [showChapters, setShowChapters] = useState(false);
+  const [shaderEnabled, setShaderEnabled] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('shaderEnabled');
+      return saved !== null ? saved === 'true' : true;
+    }
+    return true;
+  });
   const [sessionFilter, setSessionFilter] = useState('Toutes les sessions');
   const [chapterFilter, setChapterFilter] = useState<string | null>(null);
   const [showAnsweredQuestions, setShowAnsweredQuestions] = useState(false);
@@ -870,6 +878,26 @@ export default function ModulePage() {
 
   return (
     <div className={`min-h-screen relative overflow-hidden ${isDarkMode ? 'bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800' : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'}`}>
+      {shaderEnabled && (
+        <div className="absolute inset-0 z-0">
+          <Warp
+            width={1920}
+            height={1080}
+            colors={["#a7e58b", "#324471", "#0b190e"]}
+            proportion={0.64}
+            softness={1}
+            distortion={0.2}
+            swirl={0.86}
+            swirlIterations={7}
+            shape="edge"
+            shapeScale={0.6}
+            speed={10}
+            scale={0.9}
+            rotation={160}
+            style={{ width: '100%', height: '100%' }}
+          />
+        </div>
+      )}
       <div className={`absolute inset-0 ${isDarkMode ? 'opacity-30' : 'opacity-50'}`}>
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-green-500/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
@@ -968,6 +996,16 @@ export default function ModulePage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 <span className="hidden sm:inline">Examen</span>
+              </button>
+              <button
+                onClick={() => setShaderEnabled(prev => { const next = !prev; localStorage.setItem('shaderEnabled', String(next)); return next; })}
+                title="Shader"
+                className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex-shrink-0 shadow-sm flex items-center gap-1 ${shaderEnabled ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-emerald-500/25' : isDarkMode ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50' : 'bg-white/80 text-gray-700 hover:bg-gray-200/80'}`}
+              >
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                </svg>
+                <span className="hidden sm:inline">Shader</span>
               </button>
               {!examMode && (
                 <>
