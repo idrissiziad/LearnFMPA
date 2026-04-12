@@ -44,7 +44,6 @@ export default function ProgressPage() {
   useEffect(() => {
     const loadProgress = async () => {
       if (user) {
-        invalidateProgressCache();
         const allProgress = await getAllProgress();
         setProgress(allProgress);
 
@@ -61,7 +60,7 @@ export default function ProgressPage() {
       }
     };
     loadProgress();
-  }, [user, getAllProgress, invalidateProgressCache]);
+  }, [user, getAllProgress]);
 
   const handleLogout = () => {
     logout();

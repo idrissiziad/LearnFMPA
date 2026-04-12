@@ -279,8 +279,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     pendingAnswersRef.current.push(answer);
-    flushPendingAnswers();
-  }, [user, flushPendingAnswers]);
+    scheduleFlush();
+  }, [user, scheduleFlush]);
 
   const getProgress = useCallback(async (moduleId: number) => {
     if (!user) return {};

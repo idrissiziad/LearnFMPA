@@ -124,7 +124,6 @@ export default function ModulePage() {
 
         if (user && typeof window !== 'undefined') {
           try {
-            invalidateProgressCache();
             const dbProgress = await getProgress(moduleId);
             const serverProgress: { [key: string]: boolean } = {};
             Object.entries(dbProgress).forEach(([key, value]: [string, any]) => {
@@ -696,6 +695,7 @@ export default function ModulePage() {
       
       if (user) {
         submitAnswer(moduleId, currentQuestion.id.toString(), isCorrect, mappedSelectedAnswers);
+        await flushAnswers();
         const stats = await getQuestionStats(moduleId, currentQuestion.id.toString());
         if (stats) {
           setQuestionStats(stats);
