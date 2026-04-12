@@ -815,9 +815,15 @@ export default function ModulePage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                   </svg>
                 </Link>
-                <div className={`w-9 h-9 sm:w-11 sm:h-11 bg-gradient-to-br ${module.gradient} rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-green-500/20`}>
-                  <span className="text-white font-bold text-sm sm:text-lg">{module.title.charAt(0)}</span>
-                </div>
+                {module.icon ? (
+                  <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl overflow-hidden shadow-lg shadow-green-500/20">
+                    <Image src={module.icon} alt={module.title} width={44} height={44} className="w-full h-full object-cover" />
+                  </div>
+                ) : (
+                  <div className={`w-9 h-9 sm:w-11 sm:h-11 bg-gradient-to-br ${module.gradient} rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-green-500/20`}>
+                    <span className="text-white font-bold text-sm sm:text-lg">{module.title.charAt(0)}</span>
+                  </div>
+                )}
                 <h1 className={`text-base sm:text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{module.title}</h1>
               </div>
               <button
@@ -936,9 +942,15 @@ export default function ModulePage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                   </svg>
                 </Link>
-                <div className={`w-9 h-9 sm:w-11 sm:h-11 bg-gradient-to-br ${module.gradient} rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-green-500/20`}>
-                  <span className="text-white font-bold text-sm sm:text-lg">{module.title.charAt(0)}</span>
-                </div>
+                {module.icon ? (
+                  <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl overflow-hidden shadow-lg shadow-green-500/20">
+                    <Image src={module.icon} alt={module.title} width={44} height={44} className="w-full h-full object-cover" />
+                  </div>
+                ) : (
+                  <div className={`w-9 h-9 sm:w-11 sm:h-11 bg-gradient-to-br ${module.gradient} rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-green-500/20`}>
+                    <span className="text-white font-bold text-sm sm:text-lg">{module.title.charAt(0)}</span>
+                  </div>
+                )}
                 <div className="min-w-0">
                   <h1 className={`text-base sm:text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} truncate`}>{module.title}</h1>
                   <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{examMode ? `${examQuestions.length} questions` : `${questions.length} questions`}</p>

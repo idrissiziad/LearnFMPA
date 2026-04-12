@@ -13,6 +13,7 @@ export interface Module {
   level: string;
   gradient: string;
   json_filename?: string;
+  icon?: string;
 }
 
 export interface JsonQuestion {
@@ -84,7 +85,8 @@ export const modules: Module[] = [
     description: 'Pharmacologie',
     level: '3ème année',
     gradient: 'from-blue-400 to-blue-600',
-    json_filename: 'Pharmacologie'
+    json_filename: 'Pharmacologie',
+    icon: '/modules/pharmacology.jpg'
   },
   {
     id: 2,
