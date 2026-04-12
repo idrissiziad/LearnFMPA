@@ -28,7 +28,7 @@ interface ModuleProgressDetail {
 export default function ProgressPage() {
   const router = useRouter();
   const { theme } = useTheme();
-  const { user, isLoading: authLoading, logout, getAllProgress } = useAuth();
+  const { user, isLoading: authLoading, logout, getAllProgress, invalidateProgressCache } = useAuth();
   const isDarkMode = theme === 'dark';
   const [progress, setProgress] = useState<{ [key: string]: any }>({});
   const [moduleData, setModuleData] = useState<{ [moduleId: number]: Question[] }>({});
@@ -535,7 +535,18 @@ export default function ProgressPage() {
               onClick={async () => {
                 if (confirm('Êtes-vous sûr de vouloir réinitialiser toute votre progression ?')) {
                   try {
-                    await fetch(`/api/progress?user_id=${user.id}`, { method: 'DELETE' });
+                    const token = localStorage.getItem('learnfmpa_token');
+                    await fetch(`/api/progress?user_id=${user.id}`, {
+                      method: 'DELETE',
+                      headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    invalidateProgressCache();
+                    for (let i = localStorage.length - 1; i >= 0; i--) {
+                      const key = localStorage.key(i);
+                      if (key?.startsWith('learnfmpa_answered_')) {
+                        localStorage.removeItem(key);
+                      }
+                    }
                     setProgress({});
                     setModuleData({});
                   } catch (error) {
