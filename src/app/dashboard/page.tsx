@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
-import { modules, getModuleQuestions, getModuleChapters, Question } from '@/data/modules';
+import { modules, preloadModuleData, Question } from '@/data/modules';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -37,6 +37,7 @@ export default function Dashboard() {
   const [allModuleQuestions, setAllModuleQuestions] = useState<Map<number, Question[]>>(new Map());
   const [moduleStats, setModuleStats] = useState<Map<number, ModuleStats>>(new Map());
   const [isLoading, setIsLoading] = useState(true);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -48,28 +49,31 @@ export default function Dashboard() {
     const loadModuleStats = async () => {
       const statsMap = new Map<number, ModuleStats>();
       const questionsMap = new Map<number, Question[]>();
-      
-      for (const mod of modules) {
-        try {
-          const [questions, chapters] = await Promise.all([
-            getModuleQuestions(mod.id),
-            getModuleChapters(mod.id)
-          ]);
-          statsMap.set(mod.id, {
-            questionCount: questions.length,
-            chapterCount: chapters.length,
-            loaded: true
-          });
-          questionsMap.set(mod.id, questions);
-        } catch {
-          statsMap.set(mod.id, {
-            questionCount: 0,
-            chapterCount: 0,
-            loaded: false
-          });
-        }
+
+      const results = await Promise.all(
+        modules.map(async (mod) => {
+          try {
+            const { questions, chapters } = await preloadModuleData(mod.id);
+            return {
+              id: mod.id,
+              stats: { questionCount: questions.length, chapterCount: chapters.length, loaded: true } as ModuleStats,
+              questions
+            };
+          } catch {
+            return {
+              id: mod.id,
+              stats: { questionCount: 0, chapterCount: 0, loaded: false } as ModuleStats,
+              questions: [] as Question[]
+            };
+          }
+        })
+      );
+
+      for (const result of results) {
+        statsMap.set(result.id, result.stats);
+        questionsMap.set(result.id, result.questions);
       }
-      
+
       setModuleStats(statsMap);
       setAllModuleQuestions(questionsMap);
       setIsLoading(false);
@@ -131,20 +135,23 @@ export default function Dashboard() {
   }, [allModuleQuestions]);
 
   useEffect(() => {
-    const debounceTimer = setTimeout(() => {
-      if (searchQuery) {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (searchQuery.trim()) {
+      debounceRef.current = setTimeout(() => {
         performSearch(searchQuery);
-      } else {
-        setSearchResults([]);
-        setShowResults(false);
-      }
-    }, 300);
-
-    return () => clearTimeout(debounceTimer);
+      }, 300);
+    } else {
+      setSearchResults([]);
+      setShowResults(false);
+    }
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
   }, [searchQuery, performSearch]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    if (debounceRef.current) clearTimeout(debounceRef.current);
     performSearch(searchQuery);
   };
 
@@ -288,8 +295,8 @@ export default function Dashboard() {
                 </h2>
               </div>
               <form onSubmit={handleSearch}>
-                <div className={`flex flex-col sm:flex-row items-stretch sm:items-center rounded-xl border ${isDarkMode ? 'border-gray-600 bg-gray-700/50' : 'border-gray-200 bg-gray-50'} overflow-hidden focus-within:ring-2 focus-within:ring-green-500 focus-within:border-transparent transition-all`}>
-                  <div className={`flex items-center px-4 py-3 border-b sm:border-b-0 sm:border-r ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}>
+                <div className={`group flex flex-col sm:flex-row items-stretch sm:items-center rounded-xl border-2 ${isDarkMode ? 'border-gray-600 bg-gray-700/50 focus-within:border-green-500' : 'border-gray-200 bg-gray-50 focus-within:border-green-500'} transition-all`}>
+                  <div className={`flex items-center px-4 py-3 border-b sm:border-b-0 sm:border-r ${isDarkMode ? 'border-gray-600 group-focus-within:border-green-500' : 'border-gray-200 group-focus-within:border-green-500'} transition-colors`}>
                     <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
@@ -322,7 +329,7 @@ export default function Dashboard() {
                         <button
                           key={`${result.type}-${result.moduleId}-${result.questionId || index}`}
                           onClick={() => handleResultClick(result)}
-                          className={`w-full text-left p-4 hover:${isDarkMode ? 'bg-gray-600' : 'bg-gray-50'} transition-colors`}
+                          className={`w-full text-left p-4 ${isDarkMode ? 'hover:bg-gray-600' : 'hover:bg-gray-50'} transition-colors`}
                         >
                           {result.type === 'module' ? (
                             <div className="flex items-center gap-3">
@@ -345,7 +352,7 @@ export default function Dashboard() {
                               </div>
                               <div className="flex-1 min-w-0">
                                 <p className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'} truncate`}>
-                                  {result.questionText?.substring(0, 80)}...
+                                  {(result.questionText && result.questionText.length > 80 ? result.questionText.substring(0, 80) + '...' : result.questionText)}
                                 </p>
                                 <div className="flex items-center gap-2 mt-1">
                                   <span className={`text-xs px-2 py-0.5 rounded ${isDarkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-100 text-gray-600'}`}>

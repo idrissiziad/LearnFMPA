@@ -3,6 +3,7 @@
 // Cache for storing loaded module data
 export const moduleQuestionsCache = new Map<number, Question[]>();
 export const moduleChaptersCache = new Map<number, Chapter[]>();
+const moduleRawJsonCache = new Map<number, JsonQuestion[]>();
 
 export interface Module {
   id: number;
@@ -141,15 +142,13 @@ export const extractChaptersFromQuestions = (questions: JsonQuestion[]): Chapter
   return chapters;
 };
 
-export const getModuleQuestions = async (moduleId: number): Promise<Question[]> => {
-  // Check if data is already cached
-  if (moduleQuestionsCache.has(moduleId)) {
-    return moduleQuestionsCache.get(moduleId)!;
+const getModuleRawJson = async (moduleId: number): Promise<JsonQuestion[]> => {
+  if (moduleRawJsonCache.has(moduleId)) {
+    return moduleRawJsonCache.get(moduleId)!;
   }
 
-  // In a real app, this would fetch from an API
   let jsonQuestions: JsonQuestion[] = [];
-  
+
   switch (moduleId) {
     case 1:
       const PharmacologieModule = await import('./Pharmacologie.json', { with: { type: 'json' } });
@@ -162,6 +161,17 @@ export const getModuleQuestions = async (moduleId: number): Promise<Question[]> 
     default:
       return [];
   }
+
+  moduleRawJsonCache.set(moduleId, jsonQuestions);
+  return jsonQuestions;
+};
+
+export const getModuleQuestions = async (moduleId: number): Promise<Question[]> => {
+  if (moduleQuestionsCache.has(moduleId)) {
+    return moduleQuestionsCache.get(moduleId)!;
+  }
+
+  const jsonQuestions = await getModuleRawJson(moduleId);
   
   // Convert JSON questions to the Question interface
   const questions = jsonQuestions.map((q, index) => {
@@ -215,25 +225,11 @@ export const getModuleQuestions = async (moduleId: number): Promise<Question[]> 
 };
 
 export const getModuleChapters = async (moduleId: number): Promise<Chapter[]> => {
-  // Check if data is already cached
   if (moduleChaptersCache.has(moduleId)) {
     return moduleChaptersCache.get(moduleId)!;
   }
 
-  let jsonQuestions: JsonQuestion[] = [];
-  
-  switch (moduleId) {
-    case 1:
-      const PharmacologieModule = await import('./Pharmacologie.json', { with: { type: 'json' } });
-      jsonQuestions = PharmacologieModule.default as JsonQuestion[];
-      break;
-    case 2:
-      const TestSampleModule = await import('./TestSample.json', { with: { type: 'json' } });
-      jsonQuestions = TestSampleModule.default as JsonQuestion[];
-      break;
-    default:
-      return [];
-  }
+  const jsonQuestions = await getModuleRawJson(moduleId);
   
   const chapters = extractChaptersFromQuestions(jsonQuestions);
   
@@ -251,15 +247,15 @@ export const getAllModules = (): Module[] => {
 export const clearModuleCache = (moduleId: number): void => {
   moduleQuestionsCache.delete(moduleId);
   moduleChaptersCache.delete(moduleId);
+  moduleRawJsonCache.delete(moduleId);
 };
 
-// Function to clear all caches
 export const clearAllModuleCache = (): void => {
   moduleQuestionsCache.clear();
   moduleChaptersCache.clear();
+  moduleRawJsonCache.clear();
 };
 
-// Function to preload module data with caching check
 export const preloadModuleData = async (moduleId: number): Promise<{ questions: Question[], chapters: Chapter[] }> => {
   const [questions, chapters] = await Promise.all([
     getModuleQuestions(moduleId),
