@@ -27,6 +27,7 @@ interface AuthContextType {
   getProgress: (moduleId: number) => Promise<{ [key: string]: any }>;
   getAllProgress: () => Promise<{ [key: string]: any }>;
   getQuestionStats: (moduleId: number, questionId: string) => Promise<QuestionStats | null>;
+  invalidateProgressCache: () => void;
   kickedOut: boolean;
 }
 
@@ -388,6 +389,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       getProgress,
       getAllProgress,
       getQuestionStats,
+      invalidateProgressCache,
       kickedOut
     }}>
       {children}

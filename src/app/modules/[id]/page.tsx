@@ -26,7 +26,7 @@ export default function ModulePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { theme } = useTheme();
-  const { user, isLoading: authLoading, submitAnswer, getProgress, getQuestionStats } = useAuth();
+  const { user, isLoading: authLoading, submitAnswer, getProgress, getQuestionStats, invalidateProgressCache } = useAuth();
   const isDarkMode = theme === 'dark';
   const [allQuestions, setAllQuestions] = useState<ExtendedQuestion[]>([]);
   const [questions, setQuestions] = useState<ExtendedQuestion[]>([]);
@@ -119,16 +119,16 @@ export default function ModulePage() {
         if (user && typeof window !== 'undefined') {
           try {
             const dbProgress = await getProgress(moduleId);
-            const mergedProgress = { ...localProgress };
+            const serverProgress: { [key: string]: boolean } = {};
             Object.entries(dbProgress).forEach(([key, value]: [string, any]) => {
               if (value?.is_correct) {
-                mergedProgress[key] = true;
+                serverProgress[key] = true;
               }
             });
-            setCorrectlyAnsweredQuestions(mergedProgress);
+            setCorrectlyAnsweredQuestions(serverProgress);
             const storageKey = `learnfmpa_answered_${moduleId}`;
-            localStorage.setItem(storageKey, JSON.stringify(mergedProgress));
-            localProgress = mergedProgress;
+            localStorage.setItem(storageKey, JSON.stringify(serverProgress));
+            localProgress = serverProgress;
           } catch (e) {
             setCorrectlyAnsweredQuestions(localProgress);
           }
@@ -774,11 +774,19 @@ export default function ModulePage() {
     setShowResetConfirm(true);
   };
 
-  const confirmResetProgress = () => {
+  const confirmResetProgress = async () => {
     setCorrectlyAnsweredQuestions({});
     if (typeof window !== 'undefined' && moduleId) {
       const storageKey = `learnfmpa_answered_${moduleId}`;
       localStorage.removeItem(storageKey);
+    }
+    if (user) {
+      try {
+        invalidateProgressCache();
+        await fetch(`/api/progress?user_id=${user.id}&module_id=${moduleId}`, { method: 'DELETE' });
+      } catch (e) {
+        console.error('Failed to reset server progress:', e);
+      }
     }
     setShowResetConfirm(false);
   };
