@@ -28,6 +28,7 @@ interface AuthContextType {
   getAllProgress: () => Promise<{ [key: string]: any }>;
   getQuestionStats: (moduleId: number, questionId: string) => Promise<QuestionStats | null>;
   invalidateProgressCache: () => void;
+  flushAnswers: () => Promise<any>;
   kickedOut: boolean;
 }
 
@@ -378,6 +379,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [getAuthHeaders, handleUnauthorized]);
 
+  const flushAnswers = useCallback(async () => {
+    return flushPendingAnswers();
+  }, [flushPendingAnswers]);
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -390,6 +395,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       getAllProgress,
       getQuestionStats,
       invalidateProgressCache,
+      flushAnswers,
       kickedOut
     }}>
       {children}

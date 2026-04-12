@@ -26,7 +26,7 @@ export default function ModulePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { theme } = useTheme();
-  const { user, isLoading: authLoading, submitAnswer, getProgress, getQuestionStats, invalidateProgressCache } = useAuth();
+  const { user, isLoading: authLoading, submitAnswer, getProgress, getQuestionStats, invalidateProgressCache, flushAnswers } = useAuth();
   const isDarkMode = theme === 'dark';
   const [allQuestions, setAllQuestions] = useState<ExtendedQuestion[]>([]);
   const [questions, setQuestions] = useState<ExtendedQuestion[]>([]);
@@ -91,6 +91,12 @@ export default function ModulePage() {
       router.push('/login');
     }
   }, [user, authLoading, router]);
+
+  useEffect(() => {
+    return () => {
+      flushAnswers();
+    };
+  }, [flushAnswers]);
 
   useEffect(() => {
     if (moduleId) {
@@ -783,12 +789,19 @@ export default function ModulePage() {
     if (user) {
       try {
         invalidateProgressCache();
-        await fetch(`/api/progress?user_id=${user.id}&module_id=${moduleId}`, { method: 'DELETE' });
+        const token = localStorage.getItem('learnfmpa_token');
+        await fetch(`/api/progress?user_id=${user.id}&module_id=${moduleId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
       } catch (e) {
         console.error('Failed to reset server progress:', e);
       }
     }
+    setScore(0);
+    setAnsweredQuestions(new Set());
     setShowResetConfirm(false);
+    applyAnsweredQuestionsFilter({});
   };
 
   const cancelResetProgress = () => {
