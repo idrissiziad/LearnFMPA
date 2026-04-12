@@ -279,13 +279,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     pendingAnswersRef.current.push(answer);
-
-    if (pendingAnswersRef.current.length >= MAX_BATCH_SIZE) {
-      flushPendingAnswers();
-    } else {
-      scheduleFlush();
-    }
-  }, [user, flushPendingAnswers, scheduleFlush]);
+    flushPendingAnswers();
+  }, [user, flushPendingAnswers]);
 
   const getProgress = useCallback(async (moduleId: number) => {
     if (!user) return {};
@@ -298,6 +293,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const response = await fetch(`${API_BASE}/progress?user_id=${user.id}`, {
         headers: getAuthHeaders(),
+        cache: 'no-store',
       });
 
       if (response.status === 401) {
@@ -329,6 +325,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const response = await fetch(`${API_BASE}/progress?user_id=${user.id}`, {
         headers: getAuthHeaders(),
+        cache: 'no-store',
       });
 
       if (response.status === 401) {
@@ -359,6 +356,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const response = await fetch(`${API_BASE}/statistics?module_id=${moduleId}&question_id=${questionId}`, {
         headers: getAuthHeaders(),
+        cache: 'no-store',
       });
 
       if (response.status === 401) {

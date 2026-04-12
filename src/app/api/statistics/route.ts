@@ -22,15 +22,15 @@ export async function GET(request: NextRequest) {
         success: true,
         statistics: questionStats,
       }, {
-        headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' }
-      });
-    }
+      headers: { 'Cache-Control': 'no-store' }
+    });
+  }
 
-    return NextResponse.json({
-      success: true,
-      statistics: stats,
-    }, {
-      headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' }
+  return NextResponse.json({
+    success: true,
+    statistics: stats,
+  }, {
+      headers: { 'Cache-Control': 'no-store' }
     });
   } catch (error) {
     console.error('Get statistics error:', error);

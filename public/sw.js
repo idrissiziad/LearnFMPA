@@ -1,4 +1,4 @@
-const CACHE_NAME = "learnfmpa-v1";
+const CACHE_NAME = "learnfmpa-v2";
 const PRECACHE_URLS = ["/"];
 
 self.addEventListener("install", (event) => {
@@ -19,6 +19,10 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+
+  const url = new URL(event.request.url);
+  if (url.pathname.startsWith("/api/")) return;
+
   event.respondWith(
     fetch(event.request)
       .then((response) => {
