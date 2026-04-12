@@ -122,7 +122,7 @@ export default function ModulePage() {
             const serverProgress: { [key: string]: boolean } = {};
             Object.entries(dbProgress).forEach(([key, value]: [string, any]) => {
               if (value?.is_correct) {
-                serverProgress[key] = true;
+                serverProgress[`${moduleId}_${key}`] = true;
               }
             });
             setCorrectlyAnsweredQuestions(serverProgress);
