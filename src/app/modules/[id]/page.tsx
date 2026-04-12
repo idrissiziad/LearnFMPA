@@ -1245,6 +1245,7 @@ export default function ModulePage() {
               const answerExplanation = showAnswer
                 ? (currentQuestion?.answerExplanations && currentQuestion.answerExplanations[index])
                 : (shuffledAnswerExplanations[currentQuestionIndex] && shuffledAnswerExplanations[currentQuestionIndex][index]);
+              const hasGDR = answerExplanation && answerExplanation.includes('[GDR]');
               
               const questionKey = `${moduleId}_${currentQuestionIndex}`;
               let isStrikethrough = false;
@@ -1311,6 +1312,11 @@ export default function ModulePage() {
                         </svg>
                       </div>
                     )}
+                    {showAnswer && hasGDR && (
+                      <span className="flex-shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-300 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-700" title="Réponse du professeur">
+                        📖 GDR
+                      </span>
+                    )}
                     {showAnswer && (
                       <button onClick={toggleCollapse} className="flex-shrink-0 p-1 rounded-lg hover:bg-black/10 transition-colors">
                         <svg className={`w-5 h-5 transition-transform duration-200 ${isCollapsed ? '' : 'rotate-180'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1358,7 +1364,7 @@ export default function ModulePage() {
                   {!isCollapsed && showAnswer && answerExplanation && (
                     <div className={`px-4 sm:px-5 pb-4 sm:pb-5 pt-3 border-t ${showCorrectFeedback ? 'border-white/20' : showIncorrectFeedback || showMissedCorrectFeedback ? 'border-red-200' : isDarkMode ? 'border-gray-600/50' : 'border-gray-100'}`}>
                       <p className={`text-xs sm:text-sm leading-relaxed ${showCorrectFeedback ? 'text-white/90' : showMissedCorrectFeedback ? 'text-red-700' : showIncorrectFeedback ? 'text-white/90' : isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                        {answerExplanation.replace(/\s*\([^)]*\)/g, '')}
+                        {answerExplanation.replace(/\s*\([^)]*\)/g, '').replace(/\s*\[GDR\]/g, '')}
                       </p>
                     </div>
                   )}
