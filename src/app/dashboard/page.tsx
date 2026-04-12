@@ -306,7 +306,7 @@ export default function Dashboard() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Rechercher un module, chapitre ou question..."
-                    className={`flex-1 px-4 py-3 outline-none ring-0 focus:outline-none focus:ring-0 text-sm sm:text-base ${isDarkMode ? 'text-white bg-transparent placeholder-gray-400' : 'text-gray-800 bg-transparent placeholder-gray-500'}`}
+                    className={`flex-1 px-4 py-3 outline-none ring-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 text-sm sm:text-base ${isDarkMode ? 'text-white bg-transparent placeholder-gray-400' : 'text-gray-800 bg-transparent placeholder-gray-500'}`}
                   />
                   <button
                     type="submit"
