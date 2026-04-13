@@ -237,7 +237,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const response = await fetch(`${API_BASE}/auth/change-password`, {
         method: 'POST',
         headers: getAuthHeaders(),
-        body: JSON.stringify({ email, current_password: currentPassword, new_password: newPassword })
+        body: JSON.stringify({ email, current_password: currentPassword, new_password: newPassword, user_id: user?.id })
       });
 
       if (response.status === 401) {
