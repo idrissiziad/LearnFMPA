@@ -22,8 +22,8 @@ export default function ModulesPage() {
   const [moduleStats, setModuleStats] = useState<Map<number, ModuleStats>>(new Map());
   const [isLoading, setIsLoading] = useState(true);
 
-  const userYear = user?.year || '3ème année';
-  const filteredModules = modules.filter(m => m.level === userYear);
+  const userYears = user?.years || ['3ème année'];
+  const filteredModules = modules.filter(m => userYears.includes(m.level));
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -60,7 +60,7 @@ export default function ModulesPage() {
     };
 
     loadModuleStats();
-  }, [userYear]);
+  }, [userYears]);
 
   const handleLogout = () => {
     logout();
@@ -138,7 +138,7 @@ export default function ModulesPage() {
             Modules
           </h1>
           <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-            Choisissez un module pour commencer à réviser les annales — {userYear}
+            Choisissez un module pour commencer à réviser les annales — {userYears.join(', ')}
           </p>
         </div>
 

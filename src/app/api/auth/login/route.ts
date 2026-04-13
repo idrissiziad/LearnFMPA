@@ -73,7 +73,15 @@ export async function POST(request: NextRequest) {
     }
 
     usersData.users[foundUserId].last_login = new Date().toISOString();
-    if (!usersData.users[foundUserId].year) usersData.users[foundUserId].year = '3ème année';
+    if (!Array.isArray(usersData.users[foundUserId].years)) {
+      const legacyYear = (usersData.users[foundUserId] as any).year;
+      if (legacyYear && typeof legacyYear === 'string') {
+        usersData.users[foundUserId].years = [legacyYear];
+        delete (usersData.users[foundUserId] as any).year;
+      } else {
+        usersData.users[foundUserId].years = ['3ème année'];
+      }
+    }
     if (usersData.users[foundUserId].activation_days === undefined || usersData.users[foundUserId].activation_days === null) usersData.users[foundUserId].activation_days = 150;
     if (!usersData.users[foundUserId].activated_at) usersData.users[foundUserId].activated_at = usersData.users[foundUserId].created_at;
     if (usersData.users[foundUserId].has_paid === undefined || usersData.users[foundUserId].has_paid === null) usersData.users[foundUserId].has_paid = false;
@@ -89,7 +97,7 @@ export async function POST(request: NextRequest) {
         name: foundUser.name,
         email: foundUser.email,
         must_change_password: foundUser.must_change_password,
-        year: foundUser.year || '3ème année',
+        years: foundUser.years || ['3ème année'],
         token
       }
     });

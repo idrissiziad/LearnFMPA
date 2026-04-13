@@ -25,7 +25,17 @@ const VALID_YEARS = [
 ];
 
 function migrateUser(user: any): any {
-  if (!user.year) user.year = '3ème année';
+  if (!user.years || !Array.isArray(user.years)) {
+    if (user.year && typeof user.year === 'string') {
+      user.years = [user.year];
+    } else {
+      user.years = ['3ème année'];
+    }
+    delete user.year;
+  }
+  if (user.years.length === 0) user.years = ['3ème année'];
+  user.years = user.years.filter((y: string) => VALID_YEARS.includes(y));
+  if (user.years.length === 0) user.years = ['3ème année'];
   if (user.activation_days === undefined || user.activation_days === null) user.activation_days = 150;
   if (!user.activated_at) user.activated_at = user.created_at || new Date().toISOString();
   if (user.has_paid === undefined || user.has_paid === null) user.has_paid = false;
@@ -35,22 +45,25 @@ function migrateUser(user: any): any {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { action, name, email, password, admin_secret, new_password, is_active, year, activation_days, has_paid } = body;
+    const { action, name, email, password, admin_secret, new_password, is_active, year, years, activation_days, has_paid } = body;
 
     if (!validateAdmin(admin_secret)) {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 403 });
     }
 
     // Update user properties (year, activation_days, has_paid)
-    if (action === 'update_user' || (!action && email && !name && !password && !new_password && is_active === undefined && (year !== undefined || activation_days !== undefined || has_paid !== undefined))) {
+    if (action === 'update_user' || (!action && email && !name && !password && !new_password && is_active === undefined && (year !== undefined || years !== undefined || activation_days !== undefined || has_paid !== undefined))) {
       const usersData = await loadUsers();
       let found = false;
       
       for (const [userId, user] of Object.entries(usersData.users)) {
         if (user.email.toLowerCase() === email.toLowerCase()) {
           const migrated = migrateUser(usersData.users[userId]);
-          if (year !== undefined && VALID_YEARS.includes(year)) {
-            migrated.year = year;
+          const resolvedYears = Array.isArray(years)
+            ? years.filter((y: string) => VALID_YEARS.includes(y))
+            : (year && VALID_YEARS.includes(year) ? [year] : null);
+          if (resolvedYears && resolvedYears.length > 0) {
+            migrated.years = resolvedYears;
           }
           if (activation_days !== undefined && typeof activation_days === 'number' && activation_days > 0) {
             migrated.activation_days = activation_days;
@@ -125,7 +138,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const userYear = (year && VALID_YEARS.includes(year)) ? year : '3ème année';
+    const resolvedYears = Array.isArray(years)
+      ? years.filter((y: string) => VALID_YEARS.includes(y))
+      : (year && VALID_YEARS.includes(year) ? [year] : ['3ème année']);
+    if (resolvedYears.length === 0) resolvedYears.push('3ème année');
     const userActivationDays = (activation_days && typeof activation_days === 'number' && activation_days > 0) ? activation_days : 150;
 
     const usersData = await loadUsers();
@@ -151,7 +167,7 @@ export async function POST(request: NextRequest) {
       created_at: now,
       last_login: null,
       is_active: true,
-      year: userYear,
+      years: resolvedYears,
       activation_days: userActivationDays,
       activated_at: now,
       has_paid: has_paid === true
@@ -165,7 +181,7 @@ export async function POST(request: NextRequest) {
         id: userId,
         name,
         email: email.toLowerCase(),
-        year: userYear,
+        years: resolvedYears,
         activation_days: userActivationDays,
         has_paid: has_paid === true
       },
@@ -192,7 +208,8 @@ export async function GET(request: NextRequest) {
     let needsMigration = false;
 
     for (const [userId, user] of Object.entries(usersData.users)) {
-      if (!user.year || user.activation_days === undefined || user.has_paid === undefined) {
+      const userAny = user as any;
+      if (!user.years || !Array.isArray(user.years) || userAny.year || user.activation_days === undefined || user.has_paid === undefined) {
         migrateUser(usersData.users[userId]);
         needsMigration = true;
       }
@@ -216,7 +233,7 @@ export async function GET(request: NextRequest) {
               created_at: user.created_at,
               last_login: user.last_login,
               is_active: user.is_active,
-              year: user.year,
+              years: user.years,
               activation_days: user.activation_days,
               activated_at: user.activated_at,
               has_paid: user.has_paid
@@ -236,7 +253,7 @@ export async function GET(request: NextRequest) {
       created_at: user.created_at,
       last_login: user.last_login,
       is_active: user.is_active,
-      year: user.year,
+      years: user.years,
       activation_days: user.activation_days,
       activated_at: user.activated_at,
       has_paid: user.has_paid

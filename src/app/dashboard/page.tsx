@@ -39,8 +39,8 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  const userYear = user?.year || '3ème année';
-  const filteredModules = modules.filter(m => m.level === userYear);
+  const userYears = user?.years || ['3ème année'];
+  const filteredModules = modules.filter(m => userYears.includes(m.level));
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -83,7 +83,7 @@ export default function Dashboard() {
     };
 
     loadModuleStats();
-  }, [userYear]);
+  }, [userYears]);
 
   const totalQuestions = Array.from(moduleStats.values()).reduce((sum, s) => sum + s.questionCount, 0);
   const totalChapters = Array.from(moduleStats.values()).reduce((sum, s) => sum + s.chapterCount, 0);

@@ -8,7 +8,7 @@ interface User {
   name: string;
   email: string;
   must_change_password: boolean;
-  year: string;
+  years: string[];
 }
 
 interface QuestionStats {
@@ -188,7 +188,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         name: data.user.name,
         email: data.user.email,
         must_change_password: data.user.must_change_password,
-        year: data.user.year || '3ème année'
+        years: data.user.years || ['3ème année']
       };
 
       setUser(userInfo);
