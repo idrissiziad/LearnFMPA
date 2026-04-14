@@ -23,7 +23,7 @@ export default function ModulesPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   const userYears = user?.years || ['3ème année'];
-  const filteredModules = modules.filter(m => userYears.includes(m.level));
+  const filteredModules = modules.filter(m => m.levels.some(level => userYears.includes(level)));
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -164,9 +164,13 @@ export default function ModulesPage() {
                       <h3 className={`font-bold text-lg group-hover:text-green-600 transition-colors ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                         {module.title}
                       </h3>
-                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${getYearBadgeColor(module.level)}`}>
-                        {module.level}
-                      </span>
+                      <div className="flex flex-wrap gap-1">
+                        {module.levels.map((level) => (
+                          <span key={level} className={`text-xs px-2 py-1 rounded-full font-medium ${getYearBadgeColor(level)}`}>
+                            {level}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                     <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} mb-3`}>
                       {module.description}

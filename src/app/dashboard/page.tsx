@@ -40,7 +40,7 @@ export default function Dashboard() {
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   const userYears = user?.years || ['3ème année'];
-  const filteredModules = modules.filter(m => userYears.includes(m.level));
+  const filteredModules = modules.filter(m => m.levels.some(level => userYears.includes(level)));
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -516,7 +516,7 @@ export default function Dashboard() {
                         {module.title}
                       </h3>
                       <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} mt-1`}>
-                        {module.level} · {stats ? `${stats.chapterCount} chapitres` : '...'}
+                        {module.levels.join(', ')} · {stats ? `${stats.chapterCount} chapitres` : '...'}
                       </p>
                     </div>
                   </div>

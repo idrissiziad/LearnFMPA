@@ -1,6 +1,6 @@
 [
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Définitions et limites",
         "QuestionText": "L'organisation mondiale de la santé définit la pharmacologie comme l'ensemble des activités qui couvrent un champ extrêmement large. Choisissez l'activité incorrecte parmi les suivantes.",
         "Choice_A_Text": "La modélisation pharmacocinélique.",
@@ -25,7 +25,7 @@
         "Choice_E_Image": "pharmacologie-0278.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Définitions et limites",
         "QuestionText": "Au sens de la Loi n° 17-04 portant code du médicament et de la pharmacie, identifiez la proposition fausse parmi les choix ci-dessous.",
         "Choice_A_Text": "Le médicament est une préparation magistrale.",
@@ -50,7 +50,7 @@
         "Choice_E_Image": "pharmacologie-0603.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Définitions et limites",
         "QuestionText": "Sélectionnez la réponse qui ne correspond pas à la description donnée du Médicament :",
         "Choice_A_Text": "Une Substance qui possède des propriétés curatives.",
@@ -75,7 +75,7 @@
         "Choice_E_Image": "pharmacologie-0282.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Définitions et limites",
         "QuestionText": "Cochez l'alternative qui n'est pas correcte dans le contexte de la question, la réponse provoquée par l'interaction du médicament avec sa cible biologique est déterminée par :",
         "Choice_A_Text": "La localisation de la cible.",
@@ -100,7 +100,7 @@
         "Choice_E_Image": "pharmacologie-0283.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Définitions et limites",
         "QuestionText": "La variabilité de la réponse pharmacologique est liée à plusieurs facteurs identifiez la proposition fausse parmi les choix ci-dessous.",
         "Choice_A_Text": "Le nombre de cibles présentes.",
@@ -128,7 +128,7 @@
         ]
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Fonctions du Médicament",
         "QuestionText": "Quelle est la fonction principale et habituelle des médicaments :",
         "Choice_A_Text": "Thérapeutique en soulageant les symptômes.",
@@ -153,7 +153,7 @@
         "Choice_E_Image": "pharmacologie-0360.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Fonctions du Médicament",
         "QuestionText": "D'où peuvent provenir les principes actifs des médicaments, identifiez la proposition fausse parmi les choix ci-dessous.",
         "Choice_A_Text": "Plantes.",
@@ -181,7 +181,7 @@
         ]
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Fonctions du Médicament",
         "QuestionText": "Choisissez l'option incorrecte parmi les suivantes concernant la classification chimique des médicaments.",
         "Choice_A_Text": "Est une classification pertinente pour le chimiste.",
@@ -206,7 +206,7 @@
         "Choice_E_Image": "pharmacologie-0369.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Pharmacocinétique qualitative et quantitative",
         "QuestionText": "La résorption est l'ensemble des phénomènes qui permettent aux médicaments de traverser les différentes membranes qui séparent le lieu d'administration, de la circulation générale sanguine. Indiquer quel est le facteur qui n'affecte pas la résorption des médicaments par voie orale ?",
         "Choice_A_Text": "Le pH gastrique.",
@@ -231,7 +231,7 @@
         "Choice_E_Image": "pharmacologie-0643.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Pharmacocinétique qualitative et quantitative",
         "QuestionText": "Qu'est-ce que la distribution pharmacocinétique ?",
         "Choice_A_Text": "Élimination du médicament par le foie.",
@@ -256,7 +256,7 @@
         "Choice_E_Image": "pharmacologie-0668.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Formes galéniques et voies dadministration",
         "QuestionText": "Parmi les formes galéniques suivantes, laquelle est spécifiquement conçue pour protéger le principe actif contre les acides de l'estomac ?",
         "Choice_A_Text": "Comprimé effervescent.",
@@ -281,7 +281,7 @@
         "Choice_E_Image": "pharmacologie-0427.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Système nerveux central",
         "QuestionText": "Parmi les exemples suivants, lequel illustre une interaction pharmacodynamique d'antagonisme ?",
         "Choice_A_Text": "Association d'anticoagulants oraux et d'anti-inflammatoires non stéroïdiens (AINS).",
@@ -306,7 +306,7 @@
         "Choice_E_Image": "pharmacologie-0115.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Système nerveux central",
         "QuestionText": "Quel médicament parmi les suivants est contre-indiqué pendant la grossesse en raison de son fort risque tératogène ?",
         "Choice_A_Text": "Paracétamol.",
@@ -331,7 +331,7 @@
         "Choice_E_Image": "pharmacologie-0492.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Système nerveux central",
         "QuestionText": "Pour quel type de médicament le suivi thérapeutique pharmacologique (STP) est-il le plus souvent indiqué ?",
         "Choice_A_Text": "Les antiacides.",
@@ -356,7 +356,7 @@
         "Choice_E_Image": "pharmacologie-0114.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Fonctions du Médicament",
         "QuestionText": "Chaque médicament possède :",
         "Choice_A_Text": "Une dénomination commune internationale.",
@@ -381,7 +381,7 @@
         "Choice_E_Image": "pharmacologie-0379.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Phases de développement du médicament",
         "QuestionText": "Au cours des essais précliniques, les études pharmacologiques permettent de :",
         "Choice_A_Text": "Connaitre les caractéristiques de l'effet principal.",
@@ -406,7 +406,7 @@
         "Choice_E_Image": "pharmacologie-0761.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Formes galéniques et voies dadministration",
         "QuestionText": "Les caractéristiques d'un médicament administré par voie orale sont :",
         "Choice_A_Text": "L'utilisation dans le traitement d'urgence.",
@@ -431,7 +431,7 @@
         "Choice_E_Image": "pharmacologie-0399.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Pharmacocinétique qualitative et quantitative",
         "QuestionText": "L'absorption d'un médicament à travers une membrane biologique dépend :",
         "Choice_A_Text": "Des concentrations plasmatiques.",
@@ -459,7 +459,7 @@
         "Choice_E_Image": "pharmacologie-0643.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Pharmacocinétique qualitative et quantitative",
         "QuestionText": "Dans la distribution d'un médicament :",
         "Choice_A_Text": "C'est la forme libre qui diffuse vers les tissus.",
@@ -487,7 +487,7 @@
         ]
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Pharmacocinétique qualitative et quantitative",
         "QuestionText": "Le cytochrome P450 :",
         "Choice_A_Text": "Catalyse une seule réaction.",
@@ -512,7 +512,7 @@
         "Choice_E_Image": "pharmacologie-0673.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Pharmacocinétique qualitative et quantitative",
         "QuestionText": "La biodisponibilité :",
         "Choice_A_Text": "Nécessite la mesure de la concentration plasmatique minimale atteinte pendant la phase d'absorption du médicament (Cmin).",
@@ -537,7 +537,7 @@
         "Choice_E_Image": "pharmacologie-0575.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Pharmacocinétique qualitative et quantitative",
         "QuestionText": "Concernant la biodisponibilité, cocher la proposition juste :",
         "Choice_A_Text": "La fraction de la dose de médicament administré qui atteint la circulation générale.",
@@ -562,7 +562,7 @@
         "Choice_E_Image": "pharmacologie-0652.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Pharmacodynamie",
         "QuestionText": "Parmi les affirmations suivantes concernant la pharmacodynamie, la (les)quelle(s) est (sont) fausse (s) ?",
         "Choice_A_Text": "C'est l'étude de l'effet du médicament sur le corps.",
@@ -587,7 +587,7 @@
         "Choice_E_Image": "pharmacologie-0699.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Effets indésirables médicamenteux",
         "QuestionText": "L'Effet indésirable médicamenteux :",
         "Choice_A_Text": "Est une réaction nocive et voulue.",
@@ -612,7 +612,7 @@
         "Choice_E_Image": "pharmacologie-0300.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Médicaments géneriques",
         "QuestionText": "Un médicament générique n'est pas toujours une copie conforme du médicament princeps, il peut présenter un aspect différent, tant par :",
         "Choice_A_Text": "La biodisponibilité.",
@@ -637,7 +637,7 @@
         "Choice_E_Image": "pharmacologie-0571.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Psychopharmacologie",
         "QuestionText": "Pour un médicament donné, la mesure des concentrations sanguines n'est utile sauf si :",
         "Choice_A_Text": "La variabilité pharmacocinétique interindividuelle est minime.",
@@ -662,7 +662,7 @@
         "Choice_E_Image": "pharmacologie-1017.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Psychopharmacologie",
         "QuestionText": "Un dosage de médicament n'est valide que si :",
         "Choice_A_Text": "Il concerne la ou les formes pharmacologiquement actives.",
@@ -687,7 +687,7 @@
         "Choice_E_Image": "pharmacologie-1017.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Pharmacocinétique qualitative et quantitative",
         "QuestionText": "Le polymorphisme génétique peut influencer :",
         "Choice_A_Text": "L'absorption du médicament.",
@@ -712,7 +712,7 @@
         "Choice_E_Image": "pharmacologie-0673.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Phases de développement du médicament",
         "QuestionText": "L'ordonnance doit indiquer lisiblement :",
         "Choice_A_Text": "Le nom du malade.",
@@ -737,7 +737,7 @@
         "Choice_E_Image": "pharmacologie-0280.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Effets indésirables médicamenteux",
         "QuestionText": "Pour la surveillance des médicaments, la notification spontanée est :",
         "Choice_A_Text": "La méthode la plus coûteuse.",
@@ -762,7 +762,7 @@
         "Choice_E_Image": "pharmacologie-0346.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Définitions et limites",
         "QuestionText": "Les objectifs principaux de la pharmacovigilance sont :",
         "Choice_A_Text": "La sécurité du patient.",
@@ -787,7 +787,7 @@
         "Choice_E_Image": "pharmacologie-0279.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Antibiotiques",
         "QuestionText": "Les antibiotiques agissent au niveau de :",
         "Choice_A_Text": "La paroi bactérienne.",
@@ -812,7 +812,7 @@
         "Choice_E_Image": "pharmacologie-0131.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Antibiotiques",
         "QuestionText": "La classification des antibiotiques se base sur :",
         "Choice_A_Text": "Leur origine.",
@@ -837,7 +837,7 @@
         "Choice_E_Image": "pharmacologie-0128.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Différentes familles d'antibiotiques",
         "QuestionText": "Les aminopénicillines :",
         "Choice_A_Text": "Ont un spectre élargi par rapport à la pénicilline G.",
@@ -862,7 +862,7 @@
         "Choice_E_Image": "pharmacologie-0251.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Différentes familles d'antibiotiques",
         "QuestionText": "De génération en génération, les céphalosporines gagnent en :",
         "Choice_A_Text": "Activité sur les SASM.",
@@ -887,7 +887,7 @@
         "Choice_E_Image": "pharmacologie-0257.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Différentes familles d'antibiotiques",
         "QuestionText": "Les monobactames sont :",
         "Choice_A_Text": "Très utilisés en ville.",
@@ -912,7 +912,7 @@
         "Choice_E_Image": "pharmacologie-0262.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Psychopharmacologie",
         "QuestionText": "Quel est le principal mode d'action de la Cimétidine ?",
         "Choice_A_Text": "Diminution de l'acidité gastrique basale.",
@@ -937,7 +937,7 @@
         "Choice_E_Image": "pharmacologie-0894.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Anti-hypertenseurs",
         "QuestionText": "Parmi ces propositions concernant les bêtabloquants, lesquelles sont vraies ?",
         "Choice_A_Text": "On les utilise dans le traitement de l'asthme.",
@@ -962,7 +962,7 @@
         "Choice_E_Image": "pharmacologie-0096.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Effets indésirables médicamenteux",
         "QuestionText": "Les médicaments utilisés pendant la grossesse peuvent :",
         "Choice_A_Text": "Provoquer un avortement.",
@@ -987,7 +987,7 @@
         "Choice_E_Image": "pharmacologie-0338.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Système nerveux central",
         "QuestionText": "Parmi les affirmations suivantes concernant les Anticholinergiques, la (les)quelle(s) est (sont) exacte (s) ?",
         "Choice_A_Text": "Ils diminuent l'hyperfonctionnement des récepteurs cholinergiques.",
@@ -1012,7 +1012,7 @@
         "Choice_E_Image": "pharmacologie-0967.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Psychopharmacologie",
         "QuestionText": "Quel est le mode d'action des antidépresseurs tricycliques :",
         "Choice_A_Text": "Action directe sur des enzymes responsable de dégradation des neurotransmetteurs.",
@@ -1037,7 +1037,7 @@
         "Choice_E_Image": "pharmacologie-0830.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Psychopharmacologie",
         "QuestionText": "Parmi les propositions suivantes concernant les benzodiazépines, cocher les réponses exactes :",
         "Choice_A_Text": "Elles peuvent induire une dépendance.",
@@ -1062,7 +1062,7 @@
         "Choice_E_Image": "pharmacologie-0868.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Psychopharmacologie",
         "QuestionText": "Parmi ces propositions concernant les propriétés des benzodiazépines, lesquelles sont fausses :",
         "Choice_A_Text": "Les benzodiazépines développent la mémoire.",
@@ -1087,7 +1087,7 @@
         "Choice_E_Image": "pharmacologie-0866.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Antalgiques",
         "QuestionText": "Concernant le Paracétamol, parmi les propositions suivantes, lesquelles sont vraies ?",
         "Choice_A_Text": "Le Paracétamol est un antalgique de palier 2 selon la classification de l'OMS.",
@@ -1112,7 +1112,7 @@
         "Choice_E_Image": "pharmacologie-0057.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Corticoïdes",
         "QuestionText": "Concernant les corticoïdes, quelles propositions sont vraies ?",
         "Choice_A_Text": "Les corticoïdes sont des hormones sécrétées par les corticosurrénales.",
@@ -1137,7 +1137,7 @@
         "Choice_E_Image": "pharmacologie-0215.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "AINS",
         "QuestionText": "Quelle(s) est (sont) la (les) proposition (s) vraies concernant les AINS :",
         "Choice_A_Text": "Tous les AINS inhibent les COX 1 et 2.",
@@ -1165,7 +1165,7 @@
         "Choice_E_Image": "pharmacologie-0030.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Psychopharmacologie",
         "QuestionText": "Parmi ces propositions concernant les caractéristiques des neuroleptiques, la (les) quelle(s) est (sont) vraie(s) ?",
         "Choice_A_Text": "La création d'un état d'indifférence psychomotrice.",
@@ -1190,7 +1190,7 @@
         "Choice_E_Image": "pharmacologie-0786.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Psychopharmacologie",
         "QuestionText": "Parmi ces propositions concernant les contre-indications absolues des neuroleptiques, deux sont vraies ?",
         "Choice_A_Text": "Glaucome à angle fermé.",
@@ -1215,7 +1215,7 @@
         "Choice_E_Image": "pharmacologie-0807.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Chimiothérapie",
         "QuestionText": "Parmi ces propositions concernant des anticancéreux ayant une interaction directe avec l'ADN le mécanisme d'action peut être une :",
         "Choice_A_Text": "Réaction chimique (agents alkylants).",
@@ -1240,7 +1240,7 @@
         "Choice_E_Image": "pharmacologie-0150.avif"
     },
     {
-        "YearAsked": "Décembre 2024",
+        "YearAsked": "Décembre 2024 (Normale)",
         "Subtopic": "Anti-hypertenseurs",
         "QuestionText": "A propos des bêtabloquants, lesquelles de ces indications sont fausses :",
         "Choice_A_Text": "Angor.",

@@ -152,20 +152,21 @@ export default function ModulePage() {
             };
             
             const parseSession = (session: string) => {
-              const parts = session.toLowerCase().split(' ');
-              if (parts.length === 2) {
-                const month = months[parts[0] as keyof typeof months];
-                const year = parseInt(parts[1]);
-                return { month, year };
-              }
-              return { month: 0, year: parseInt(session) || 0 };
+              const lower = session.toLowerCase();
+              const parts = lower.split(' ');
+              const month = months[parts[0] as keyof typeof months] || 0;
+              const year = parseInt(parts[1]) || 0;
+              let type = 0;
+              if (lower.includes('(rattrapage)')) type = 1;
+              return { month, year, type };
             };
             
             const sessionA = parseSession(a);
             const sessionB = parseSession(b);
             
             if (sessionA.year !== sessionB.year) return sessionB.year - sessionA.year;
-            return sessionB.month - sessionA.month;
+            if (sessionA.month !== sessionB.month) return sessionB.month - sessionA.month;
+            return sessionA.type - sessionB.type;
           });
         setAvailableSessions(sessions);
         
@@ -515,14 +516,14 @@ export default function ModulePage() {
     };
     
     const parseYear = (year: string | undefined) => {
-      if (!year) return { month: 0, year: 0 };
-      const parts = year.toLowerCase().split(' ');
-      if (parts.length === 2) {
-        const month = months[parts[0] as keyof typeof months];
-        const yearNum = parseInt(parts[1]);
-        return { month, year: yearNum };
-      }
-      return { month: 0, year: parseInt(year) || 0 };
+      if (!year) return { month: 0, year: 0, type: 0 };
+      const lower = year.toLowerCase();
+      const parts = lower.split(' ');
+      const month = months[parts[0] as keyof typeof months] || 0;
+      const yearNum = parseInt(parts[1]) || 0;
+      let type = 0;
+      if (lower.includes('(rattrapage)')) type = 1;
+      return { month, year: yearNum, type };
     };
     
     baseQuestions.sort((a, b) => {
@@ -530,7 +531,8 @@ export default function ModulePage() {
       const yearB = parseYear(b.year);
       
       if (yearA.year !== yearB.year) return yearB.year - yearA.year;
-      return yearB.month - yearA.month;
+      if (yearA.month !== yearB.month) return yearB.month - yearA.month;
+      return yearA.type - yearB.type;
     });
 
     if (chapterFilter) {
