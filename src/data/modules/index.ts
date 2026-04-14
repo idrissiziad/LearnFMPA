@@ -81,9 +81,9 @@ export const modules: Module[] = [
   {
     id: 1,
     title: 'Pharmacologie',
-    subtitle: '2/3A',
-    description: 'Pharmacologie',
-    levels: ['3ème année'],
+    subtitle: '189',
+    description: 'Phase 1',
+    levels: ['2ème année', '3ème année'],
     gradient: 'from-blue-400 to-blue-600',
     json_filename: 'Pharmacologie'
   }
