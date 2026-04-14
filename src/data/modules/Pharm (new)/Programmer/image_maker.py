@@ -45,8 +45,10 @@ def process_pharmacology_data():
             print(f"Error: {input_file} is not a valid JSON file.")
             return
 
-    # Regex to find page numbers or ranges (e.g., 278 or 659-660)
-    page_regex = re.compile(r"Page Globale\s+([\d-]+)")
+    # UPDATED REGEX: 
+    # Matches "Page " OR "Page Globale "
+    # Captures digits, hyphens (-), and slashes (/)
+    page_regex = re.compile(r"Page(?:\s+Globale)?\s+([\d\-/]+)", re.IGNORECASE)
 
     # 4. Process the entries
     for entry in data:
@@ -59,22 +61,23 @@ def process_pharmacology_data():
             
             if match:
                 raw_pages = match.group(1)
-                # Split by hyphen if it's a range (659-660)
-                page_parts = raw_pages.split('-')
+                # Split by hyphen or slash (handles 659-660 or 636/649)
+                page_parts = re.split(r'[-/]', raw_pages)
                 
-                # Clean, pad, and add extension to each number found in the match
+                # Clean, pad, and add extension
                 formatted_images = [
                     f"{base_name}-{p.strip().zfill(padding_count)}.avif" 
                     for p in page_parts if p.strip().isdigit()
                 ]
 
-                # If single page -> String. If multiple pages -> List of strings.
                 if len(formatted_images) == 1:
                     entry[image_key] = formatted_images[0]
-                else:
+                elif len(formatted_images) > 1:
                     entry[image_key] = formatted_images
+                else:
+                    entry[image_key] = ""
             else:
-                # If no "Page Globale" found, provide an empty string
+                # If no page info found, provide an empty string
                 entry[image_key] = ""
 
     # 5. Save the result
@@ -86,7 +89,7 @@ def process_pharmacology_data():
     print(f"SUCCESS!")
     print(f"Input file:  {input_file}")
     print(f"Output file: {output_file}")
-    print(f"Format:      {base_name}-{'2'.zfill(padding_count)}.avif")
+    print(f"Format Example: {base_name}-{'2'.zfill(padding_count)}.avif")
     print("-" * 40)
 
 if __name__ == "__main__":
