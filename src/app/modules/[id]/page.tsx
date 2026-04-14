@@ -1372,7 +1372,7 @@ export default function ModulePage() {
                   </div>
                   
                   {!isCollapsed && showAnswer && optionImage && (() => {
-                    const imagePaths = optionImage.split(',').map(img => img.trim()).filter(img => img);
+                    const imagePaths = (Array.isArray(optionImage) ? optionImage.join(',') : String(optionImage)).split(',').map(img => img.trim()).filter(img => img);
                     if (imagePaths.length === 0) return null;
                     return (
                       <div className={`px-4 sm:px-5 pb-4 sm:pb-5 ${imagePaths.length > 1 ? 'grid grid-cols-2 gap-2' : ''}`}>

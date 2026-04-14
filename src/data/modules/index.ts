@@ -24,23 +24,23 @@ export interface JsonQuestion {
   Choice_A_Text: string;
   Choice_A_isCorrect: boolean;
   Choice_A_Explanation: string;
-  Choice_A_Image?: string;
+  Choice_A_Image?: string | string[];
   Choice_B_Text: string;
   Choice_B_isCorrect: boolean;
   Choice_B_Explanation: string;
-  Choice_B_Image?: string;
+  Choice_B_Image?: string | string[];
   Choice_C_Text: string;
   Choice_C_isCorrect: boolean;
   Choice_C_Explanation: string;
-  Choice_C_Image?: string;
+  Choice_C_Image?: string | string[];
   Choice_D_Text: string;
   Choice_D_isCorrect: boolean;
   Choice_D_Explanation: string;
-  Choice_D_Image?: string;
+  Choice_D_Image?: string | string[];
   Choice_E_Text: string;
   Choice_E_isCorrect: boolean;
   Choice_E_Explanation: string;
-  Choice_E_Image?: string;
+  Choice_E_Image?: string | string[];
   OverallExplanation: string;
   IsChapterStart?: boolean;
   ChapterName?: string;
@@ -154,11 +154,71 @@ const getModuleRawJson = async (moduleId: number): Promise<JsonQuestion[]> => {
   switch (moduleId) {
     case 1:
       const PharmacologieModule = await import('./Pharmacologie.json', { with: { type: 'json' } });
-      jsonQuestions = PharmacologieModule.default as JsonQuestion[];
+      jsonQuestions = (PharmacologieModule.default as any[]).map((item: any) => ({
+        YearAsked: item.YearAsked || '',
+        Subtopic: item.Subtopic || '',
+        QuestionText: item.QuestionText || '',
+        QuestionImage: item.QuestionImage,
+        Choice_A_Text: item.Choice_A_Text || '',
+        Choice_A_isCorrect: !!item.Choice_A_isCorrect,
+        Choice_A_Explanation: item.Choice_A_Explanation || '',
+        Choice_A_Image: item.Choice_A_Image,
+        Choice_B_Text: item.Choice_B_Text || '',
+        Choice_B_isCorrect: !!item.Choice_B_isCorrect,
+        Choice_B_Explanation: item.Choice_B_Explanation || '',
+        Choice_B_Image: item.Choice_B_Image,
+        Choice_C_Text: item.Choice_C_Text || '',
+        Choice_C_isCorrect: !!item.Choice_C_isCorrect,
+        Choice_C_Explanation: item.Choice_C_Explanation || '',
+        Choice_C_Image: item.Choice_C_Image,
+        Choice_D_Text: item.Choice_D_Text || '',
+        Choice_D_isCorrect: !!item.Choice_D_isCorrect,
+        Choice_D_Explanation: item.Choice_D_Explanation || '',
+        Choice_D_Image: item.Choice_D_Image,
+        Choice_E_Text: item.Choice_E_Text || '',
+        Choice_E_isCorrect: !!item.Choice_E_isCorrect,
+        Choice_E_Explanation: item.Choice_E_Explanation || '',
+        Choice_E_Image: item.Choice_E_Image,
+        OverallExplanation: item.OverallExplanation || '',
+        IsChapterStart: item.IsChapterStart,
+        ChapterName: item.ChapterName,
+        ChapterColor: item.ChapterColor,
+        Confirmed: item.Confirmed,
+      }));
       break;
     case 2:
       const TestSampleModule = await import('./TestSample.json', { with: { type: 'json' } });
-      jsonQuestions = TestSampleModule.default as JsonQuestion[];
+      jsonQuestions = (TestSampleModule.default as any[]).map((item: any) => ({
+        YearAsked: item.YearAsked || '',
+        Subtopic: item.Subtopic || '',
+        QuestionText: item.QuestionText || '',
+        QuestionImage: item.QuestionImage,
+        Choice_A_Text: item.Choice_A_Text || '',
+        Choice_A_isCorrect: !!item.Choice_A_isCorrect,
+        Choice_A_Explanation: item.Choice_A_Explanation || '',
+        Choice_A_Image: item.Choice_A_Image,
+        Choice_B_Text: item.Choice_B_Text || '',
+        Choice_B_isCorrect: !!item.Choice_B_isCorrect,
+        Choice_B_Explanation: item.Choice_B_Explanation || '',
+        Choice_B_Image: item.Choice_B_Image,
+        Choice_C_Text: item.Choice_C_Text || '',
+        Choice_C_isCorrect: !!item.Choice_C_isCorrect,
+        Choice_C_Explanation: item.Choice_C_Explanation || '',
+        Choice_C_Image: item.Choice_C_Image,
+        Choice_D_Text: item.Choice_D_Text || '',
+        Choice_D_isCorrect: !!item.Choice_D_isCorrect,
+        Choice_D_Explanation: item.Choice_D_Explanation || '',
+        Choice_D_Image: item.Choice_D_Image,
+        Choice_E_Text: item.Choice_E_Text || '',
+        Choice_E_isCorrect: !!item.Choice_E_isCorrect,
+        Choice_E_Explanation: item.Choice_E_Explanation || '',
+        Choice_E_Image: item.Choice_E_Image,
+        OverallExplanation: item.OverallExplanation || '',
+        IsChapterStart: item.IsChapterStart,
+        ChapterName: item.ChapterName,
+        ChapterColor: item.ChapterColor,
+        Confirmed: item.Confirmed,
+      }));
       break;
     default:
       return [];
@@ -199,7 +259,7 @@ export const getModuleQuestions = async (moduleId: number): Promise<Question[]> 
     validOptions.forEach((option, index) => {
       if (option.isCorrect) correctAnswers.push(index);
       answerExplanations.push(option.explanation);
-      optionImages.push(option.image);
+      optionImages.push(Array.isArray(option.image) ? option.image.join(',') : option.image);
     });
     
     return {
