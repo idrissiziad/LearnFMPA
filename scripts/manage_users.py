@@ -12,7 +12,7 @@ Usage:
   python manage_users.py set-year "email@example.com" "3ème année"
   python manage_users.py set-days "email@example.com" 300
   python manage_users.py set-paid "email@example.com" true
-  python manage_users.py migrate
+    python manage_users.py migrate "user1@email.com" "user2@email.com" --from "2ème année" --to "3ème année"
 
 Set environment variables:
   API_URL - Your Vercel deployment URL (default: https://www.learnfmpa.com)
@@ -454,60 +454,69 @@ def show_progress(api_url: str, admin_secret: str, email: str):
         print(f"\n✗ Error: {result.get('error', 'Unknown error')}\n")
 
 
-def migrate_users(api_url: str, admin_secret: str, target_year: str = "3ème année"):
-    """Migrate all existing users to the specified year (default: 3rd year)."""
-    if target_year not in VALID_YEARS:
+def migrate_users(
+    api_url: str, admin_secret: str, emails: list, from_year: str, to_year: str
+):
+    """Migrate specified users from one year to another."""
+    if from_year not in VALID_YEARS:
         print(
-            f"\n✗ Invalid year '{target_year}'. Valid options: {', '.join(VALID_YEARS)}\n"
+            f"\n✗ Invalid source year '{from_year}'. Valid options: {', '.join(VALID_YEARS)}\n"
         )
         return
-
-    result = api_request(api_url, admin_secret, "/api/admin/users", "GET")
-
-    if not result.get("success"):
-        print(f"\n✗ Error: {result.get('error', 'Unknown error')}\n")
-        return
-
-    users = result.get("users", [])
-    if not users:
-        print("\nNo users to migrate.\n")
+    if to_year not in VALID_YEARS:
+        print(
+            f"\n✗ Invalid target year '{to_year}'. Valid options: {', '.join(VALID_YEARS)}\n"
+        )
         return
 
     migrated = 0
     skipped = 0
+    failed = 0
 
-    for user in users:
-        email = user.get("email", "")
+    for email in emails:
+        result = api_request(
+            api_url, admin_secret, f"/api/admin/users?email={email}", "GET"
+        )
+
+        if not result.get("success"):
+            print(f"  ✗ {email}: User not found")
+            failed += 1
+            continue
+
+        user = result.get("user", {})
         current_years = user.get("years", ["3ème année"])
-        if (
-            isinstance(current_years, list)
-            and target_year in current_years
-            and len(current_years) == 1
-        ):
+
+        if not isinstance(current_years, list):
+            current_years = [current_years]
+
+        if from_year not in current_years:
+            print(
+                f"  ⚠ {email}: Not in '{from_year}' (currently: {', '.join(current_years)})"
+            )
             skipped += 1
             continue
+
+        new_years = [y if y != from_year else to_year for y in current_years]
 
         set_result = api_request(
             api_url,
             admin_secret,
             "/api/admin/users",
             "POST",
-            {"action": "update_user", "email": email, "years": [target_year]},
+            {"action": "update_user", "email": email, "years": new_years},
         )
 
         if set_result.get("success"):
             migrated += 1
-            old_str = (
-                ", ".join(current_years)
-                if isinstance(current_years, list)
-                else str(current_years)
-            )
-            print(f"  ✓ {email}: '{old_str}' → '{target_year}'")
+            old_str = ", ".join(current_years)
+            new_str = ", ".join(new_years)
+            print(f"  ✓ {email}: '{old_str}' → '{new_str}'")
         else:
+            failed += 1
             print(f"  ✗ {email}: {set_result.get('error', 'Failed')}")
 
     print(
-        f"\nMigration complete: {migrated} users migrated, {skipped} already on '{target_year}'.\n"
+        f"\nMigration complete: {migrated} migrated, {skipped} skipped, {failed} failed.\n"
     )
 
 
@@ -535,9 +544,8 @@ Examples:
    python manage_users.py set-paid "john@example.com" true
    python manage_users.py renew "john@example.com"
    python manage_users.py renew "john@example.com" -d 300
-   python manage_users.py migrate
-   python manage_users.py migrate -y "2ème année"
-   python manage_users.py reset "john@example.com"
+  python manage_users.py migrate user1@email.com user2@email.com --from "2ème année" --to "3ème année"
+    python manage_users.py reset "john@example.com"
    python manage_users.py deactivate "john@example.com"
    python manage_users.py delete "john@example.com"
 """,
@@ -627,10 +635,40 @@ Examples:
 
     migrate_parser = subparsers.add_parser(
         "migrate",
-        help="Migrate all existing users to a specific year (default: 3ème année)",
+        help="Migrate specific users from one year to another",
     )
     migrate_parser.add_argument(
-        "-y", "--year", choices=VALID_YEARS, default="3ème année", help="Target year"
+        "email",
+        nargs="+",
+        help="Email address(es) of user(s) to migrate",
+    )
+    migrate_parser.add_argument(
+        "--from",
+        dest="from_year",
+        choices=VALID_YEARS,
+        required=True,
+        help="Source year to migrate from",
+    )
+    migrate_parser.add_argument(
+        "--to",
+        dest="to_year",
+        choices=VALID_YEARS,
+        required=True,
+        help="Target year to migrate to",
+    )
+    migrate_parser.add_argument(
+        "--from",
+        dest="from_year",
+        choices=VALID_YEARS,
+        required=True,
+        help="Source year to migrate from",
+    )
+    migrate_parser.add_argument(
+        "--to",
+        dest="to_year",
+        choices=VALID_YEARS,
+        required=True,
+        help="Target year to migrate to",
     )
 
     args = parser.parse_args()
@@ -678,7 +716,7 @@ Examples:
     elif args.command == "renew":
         renew_user(api_url, admin_secret, args.email, args.days)
     elif args.command == "migrate":
-        migrate_users(api_url, admin_secret, args.year)
+        migrate_users(api_url, admin_secret, args.email, args.from_year, args.to_year)
 
 
 if __name__ == "__main__":
