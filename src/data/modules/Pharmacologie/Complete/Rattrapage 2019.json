@@ -1,6 +1,6 @@
 [
     {
-        "YearAsked": "2018-2019",
+        "YearAsked": "Rattrapage 2019",
         "Subtopic": "Phases de développement du médicament",
         "QuestionText": "Les essais précliniques sont réalisés :",
         "Choice_A_Text": "Après commercialisation du médicament.",
@@ -22,7 +22,7 @@
         "Choice_E_Image": ""
     },
     {
-        "YearAsked": "2018-2019",
+        "YearAsked": "Rattrapage 2019",
         "Subtopic": "Phases de développement du médicament",
         "QuestionText": "Les essais cliniques de phase II :",
         "Choice_A_Text": "Se pratiquent chez le volontaire sain.",
@@ -44,7 +44,7 @@
         "Choice_E_Image": ""
     },
     {
-        "YearAsked": "2018-2019",
+        "YearAsked": "Rattrapage 2019",
         "Subtopic": "Pharmacocinétique qualitative et quantitative",
         "QuestionText": "L'absorption d'un médicament est influencée par :",
         "Choice_A_Text": "La liaison aux protéines plasmatiques.",
@@ -66,7 +66,7 @@
         "Choice_E_Image": ""
     },
     {
-        "YearAsked": "2018-2019",
+        "YearAsked": "Rattrapage 2019",
         "Subtopic": "Formes galéniques et voies d’administration",
         "QuestionText": "Les inconvénients de la voie intra musculaire sont :",
         "Choice_A_Text": "L'introduction du médicament est irréversible.",
@@ -88,7 +88,7 @@
         "Choice_E_Image": ""
     },
     {
-        "YearAsked": "2018-2019",
+        "YearAsked": "Rattrapage 2019",
         "Subtopic": "Pharmacocinétique qualitative et quantitative",
         "QuestionText": "La biodisponibilité d'un médicament :",
         "Choice_A_Text": "Est un paramètre pharmacocinétique qui évalue la distribution.",
@@ -110,7 +110,7 @@
         "Choice_E_Image": ""
     },
     {
-        "YearAsked": "2018-2019",
+        "YearAsked": "Rattrapage 2019",
         "Subtopic": "Pharmacocinétique qualitative et quantitative",
         "QuestionText": "La fraction du médicament liée aux protéines plasmatiques :",
         "Choice_A_Text": "Est la forme active du médicament.",
@@ -132,7 +132,7 @@
         "Choice_E_Image": ""
     },
     {
-        "YearAsked": "2018-2019",
+        "YearAsked": "Rattrapage 2019",
         "Subtopic": "Pharmacocinétique qualitative et quantitative",
         "QuestionText": "Le volume de distribution d'un médicament :",
         "Choice_A_Text": "Évalue l'absorption.",
@@ -154,7 +154,7 @@
         "Choice_E_Image": ""
     },
     {
-        "YearAsked": "2018-2019",
+        "YearAsked": "Rattrapage 2019",
         "Subtopic": "Pharmacocinétique qualitative et quantitative",
         "QuestionText": "Les réactions de phase 1 du métabolisme sont :",
         "Choice_A_Text": "Des réactions de fonctionnalisation.",
@@ -176,7 +176,7 @@
         "Choice_E_Image": ""
     },
     {
-        "YearAsked": "2018-2019",
+        "YearAsked": "Rattrapage 2019",
         "Subtopic": "Pharmacocinétique qualitative et quantitative",
         "QuestionText": "Le métabolisme est influencé par :",
         "Choice_A_Text": "L'âge du patient.",
@@ -198,7 +198,7 @@
         "Choice_E_Image": ""
     },
     {
-        "YearAsked": "2018-2019",
+        "YearAsked": "Rattrapage 2019",
         "Subtopic": "Pharmacocinétique qualitative et quantitative",
         "QuestionText": "L'élimination rénale du médicament se fait par :",
         "Choice_A_Text": "Filtration glomérulaire.",
@@ -220,7 +220,7 @@
         "Choice_E_Image": ""
     },
     {
-        "YearAsked": "2018-2019",
+        "YearAsked": "Rattrapage 2019",
         "Subtopic": "Effets indésirables médicamenteux",
         "QuestionText": "Un effet indésirable médicamenteux résulte :",
         "Choice_A_Text": "D'un mésusage.",
@@ -242,7 +242,7 @@
         "Choice_E_Image": ""
     },
     {
-        "YearAsked": "2018-2019",
+        "YearAsked": "Rattrapage 2019",
         "Subtopic": "Antibiotiques",
         "QuestionText": "Un antibiotique est une substance :",
         "Choice_A_Text": "D'origine naturelle.",
@@ -264,7 +264,7 @@
         "Choice_E_Image": ""
     },
     {
-        "YearAsked": "2018-2019",
+        "YearAsked": "Rattrapage 2019",
         "Subtopic": "Différentes familles d'antibiotiques",
         "QuestionText": "Les contre-indications des aminosides sont :",
         "Choice_A_Text": "Femme enceinte.",
@@ -286,7 +286,7 @@
         "Choice_E_Image": ""
     },
     {
-        "YearAsked": "2018-2019",
+        "YearAsked": "Rattrapage 2019",
         "Subtopic": "Différentes familles d'antibiotiques",
         "QuestionText": "Les tétracyclines :",
         "Choice_A_Text": "Agissent sur la synthèse protéique.",
@@ -308,7 +308,7 @@
         "Choice_E_Image": ""
     },
     {
-        "YearAsked": "2018-2019",
+        "YearAsked": "Rattrapage 2019",
         "Subtopic": "Différentes familles d'antibiotiques",
         "QuestionText": "Les fluoroquinolones sont indiquées dans :",
         "Choice_A_Text": "Infections ostéoarticulaires, cutanées et des tissus mous.",
@@ -330,7 +330,7 @@
         "Choice_E_Image": ""
     },
     {
-        "YearAsked": "2018-2019",
+        "YearAsked": "Rattrapage 2019",
         "Subtopic": "Pharmacocinétique qualitative et quantitative",
         "QuestionText": "Citer les différents mécanismes des interactions médicamenteuses.",
         "Choice_A_Text": "Je comprends.",
@@ -346,7 +346,7 @@
         "Choice_E_Image": ""
     },
     {
-        "YearAsked": "2018-2019",
+        "YearAsked": "Rattrapage 2019",
         "Subtopic": "Médicaments antidiabétiques",
         "QuestionText": "Décrire les classes des antidiabétiques oraux et leurs mécanismes d'action.",
         "Choice_A_Text": "Je comprends.",
