@@ -14159,10 +14159,10 @@
         "Choice_D_Text": "Chez le volontaire sain.",
         "Choice_D_isCorrect": false,
         "Choice_D_Explanation": "Les tests chez le volontaire sain correspondent à la Phase I des essais cliniques. (Source : Effets indésirables médicamenteux, Page Global 317).",
-        "Choice_A_Image": "",
-        "Choice_B_Image": "",
-        "Choice_C_Image": "",
-        "Choice_D_Image": "",
+        "Choice_A_Image": "pharmacologie-0314.avif",
+        "Choice_B_Image": "pharmacologie-0314.avif",
+        "Choice_C_Image": "pharmacologie-0318.avif",
+        "Choice_D_Image": "pharmacologie-0317.avif",
         "Choice_E_Image": ""
     },
     {
@@ -14181,10 +14181,10 @@
         "Choice_D_Text": "Permettent de déterminer la durée du traitement.",
         "Choice_D_isCorrect": false,
         "Choice_D_Explanation": "La durée de traitement est précisée lors des phases de grande échelle (Phase III) et après commercialisation. (Source : Effets indésirables médicamenteux, Page Global 319).",
-        "Choice_A_Image": "",
-        "Choice_B_Image": "",
-        "Choice_C_Image": "",
-        "Choice_D_Image": "",
+        "Choice_A_Image": "pharmacologie-0317.avif",
+        "Choice_B_Image": "pharmacologie-0318.avif",
+        "Choice_C_Image": "pharmacologie-0318.avif",
+        "Choice_D_Image": "pharmacologie-0319.avif",
         "Choice_E_Image": ""
     },
     {
@@ -14203,10 +14203,10 @@
         "Choice_D_Text": "Son Pka.",
         "Choice_D_isCorrect": true,
         "Choice_D_Explanation": "Le pKa détermine le quotient d'ionisation selon le pH du milieu, influençant ainsi directement l'absorption. (Source : Pharmacocinétique qualitative et quantitative, Page Global 645).",
-        "Choice_A_Image": "",
-        "Choice_B_Image": "",
-        "Choice_C_Image": "",
-        "Choice_D_Image": "",
+        "Choice_A_Image": "pharmacologie-0660.avif",
+        "Choice_B_Image": "pharmacologie-0643.avif",
+        "Choice_C_Image": "pharmacologie-0647.avif",
+        "Choice_D_Image": "pharmacologie-0645.avif",
         "Choice_E_Image": ""
     },
     {
@@ -14225,10 +14225,10 @@
         "Choice_D_Text": "Le volume injecté est illimité.",
         "Choice_D_isCorrect": false,
         "Choice_D_Explanation": "Le volume injectable par voie intramusculaire est limité par la capacité de réception du tissu musculaire. (Source : Formes galéniques et voies d’administration, Page Global 424).",
-        "Choice_A_Image": "",
-        "Choice_B_Image": "",
-        "Choice_C_Image": "",
-        "Choice_D_Image": "",
+        "Choice_A_Image": "pharmacologie-0422.avif",
+        "Choice_B_Image": "pharmacologie-0424.avif",
+        "Choice_C_Image": "pharmacologie-0424.avif",
+        "Choice_D_Image": "pharmacologie-0424.avif",
         "Choice_E_Image": ""
     },
     {
@@ -14247,10 +14247,10 @@
         "Choice_D_Text": "La vitesse avec laquelle la fraction de la dose atteint la circulation générale.",
         "Choice_D_isCorrect": true,
         "Choice_D_Explanation": "La définition complète inclut à la fois la fraction absorbée et la vitesse à laquelle elle atteint le sang. (Source : Pharmacocinétique qualitative et quantitative, Page Global 652).",
-        "Choice_A_Image": "",
-        "Choice_B_Image": "",
-        "Choice_C_Image": "",
-        "Choice_D_Image": "",
+        "Choice_A_Image": "pharmacologie-0651.avif",
+        "Choice_B_Image": "pharmacologie-0652.avif",
+        "Choice_C_Image": "pharmacologie-0652.avif",
+        "Choice_D_Image": "pharmacologie-0652.avif",
         "Choice_E_Image": ""
     },
     {
@@ -14269,10 +14269,10 @@
         "Choice_D_Text": "Ne diffuse pas à travers les membranes.",
         "Choice_D_isCorrect": true,
         "Choice_D_Explanation": "La liaison aux protéines plasmatiques (comme l'albumine) confine le médicament dans le compartiment vasculaire. (Source : Pharmacocinétique qualitative et quantitative, Page Global 660).",
-        "Choice_A_Image": "",
-        "Choice_B_Image": "",
-        "Choice_C_Image": "",
-        "Choice_D_Image": "",
+        "Choice_A_Image": "pharmacologie-0660.avif",
+        "Choice_B_Image": "pharmacologie-0660.avif",
+        "Choice_C_Image": "pharmacologie-0660.avif",
+        "Choice_D_Image": "pharmacologie-0660.avif",
         "Choice_E_Image": ""
     },
     {
@@ -14291,10 +14291,10 @@
         "Choice_D_Text": "Évalue la distribution des tissus vers le sang.",
         "Choice_D_isCorrect": false,
         "Choice_D_Explanation": "Le Vd quantifie l'espace de dilution dans l'organisme à partir de la concentration plasmatique. (Source : Pharmacocinétique qualitative et quantitative, Page Global 663).",
-        "Choice_A_Image": "",
-        "Choice_B_Image": "",
-        "Choice_C_Image": "",
-        "Choice_D_Image": "",
+        "Choice_A_Image": "pharmacologie-0663.avif",
+        "Choice_B_Image": "pharmacologie-0663.avif",
+        "Choice_C_Image": "pharmacologie-0663.avif",
+        "Choice_D_Image": "pharmacologie-0663.avif",
         "Choice_E_Image": ""
     },
     {
@@ -14313,10 +14313,10 @@
         "Choice_D_Text": "Des réactions de réduction.",
         "Choice_D_isCorrect": true,
         "Choice_D_Explanation": "La réduction est, avec l'oxydation et l'hydrolyse, une réaction typique de fonctionnalisation de phase 1. (Source : Pharmacocinétique qualitative et quantitative, Page Global 670).",
-        "Choice_A_Image": "",
-        "Choice_B_Image": "",
-        "Choice_C_Image": "",
-        "Choice_D_Image": "",
+        "Choice_A_Image": "pharmacologie-0669.avif",
+        "Choice_B_Image": "pharmacologie-0670.avif",
+        "Choice_C_Image": "pharmacologie-0671.avif",
+        "Choice_D_Image": "pharmacologie-0670.avif",
         "Choice_E_Image": ""
     },
     {
@@ -14335,10 +14335,10 @@
         "Choice_D_Text": "La prise concomitante de médicaments inhibiteurs du cytochrome P450.",
         "Choice_D_isCorrect": true,
         "Choice_D_Explanation": "L'inhibition enzymatique par d'autres substances ralentit la biotransformation du médicament. (Source : Pharmacocinétique qualitative et quantitative, Page Global 673).",
-        "Choice_A_Image": "",
-        "Choice_B_Image": "",
-        "Choice_C_Image": "",
-        "Choice_D_Image": "",
+        "Choice_A_Image": "pharmacologie-0673.avif",
+        "Choice_B_Image": "pharmacologie-0285.avif",
+        "Choice_C_Image": "pharmacologie-0673.avif",
+        "Choice_D_Image": "pharmacologie-0673.avif",
         "Choice_E_Image": ""
     },
     {
@@ -14357,10 +14357,10 @@
         "Choice_D_Text": "Réabsorption tubulaire.",
         "Choice_D_isCorrect": true,
         "Choice_D_Explanation": "Processus (souvent passif) qui renvoie le médicament du fluide tubulaire vers le sang. (Source : Pharmacocinétique qualitative et quantitative, Page Global 677).",
-        "Choice_A_Image": "",
-        "Choice_B_Image": "",
-        "Choice_C_Image": "",
-        "Choice_D_Image": "",
+        "Choice_A_Image": "pharmacologie-0677.avif",
+        "Choice_B_Image": "pharmacologie-0677.avif",
+        "Choice_C_Image": "pharmacologie-0661.avif",
+        "Choice_D_Image": "pharmacologie-0677.avif",
         "Choice_E_Image": ""
     },
     {
@@ -14379,10 +14379,10 @@
         "Choice_D_Text": "De la bonne qualité du produit.",
         "Choice_D_isCorrect": false,
         "Choice_D_Explanation": "Les effets indésirables peuvent aussi découler d'un produit défectueux ou de mauvaise qualité. (Source : Effets indésirables médicamenteux, Page Global 302).",
-        "Choice_A_Image": "",
-        "Choice_B_Image": "",
-        "Choice_C_Image": "",
-        "Choice_D_Image": "",
+        "Choice_A_Image": "pharmacologie-0302.avif",
+        "Choice_B_Image": "pharmacologie-0301.avif",
+        "Choice_C_Image": "pharmacologie-0302.avif",
+        "Choice_D_Image": "pharmacologie-0302.avif",
         "Choice_E_Image": ""
     },
     {
@@ -14401,10 +14401,10 @@
         "Choice_D_Text": "Produite par un champignon.",
         "Choice_D_isCorrect": true,
         "Choice_D_Explanation": "Certaines moisissures (champignons) neutralisent la prolifération bactérienne. (Source : Antibiotiques, Page Global 127).",
-        "Choice_A_Image": "",
-        "Choice_B_Image": "",
-        "Choice_C_Image": "",
-        "Choice_D_Image": "",
+        "Choice_A_Image": "pharmacologie-0124.avif",
+        "Choice_B_Image": "pharmacologie-0124.avif",
+        "Choice_C_Image": "pharmacologie-0127.avif",
+        "Choice_D_Image": "pharmacologie-0127.avif",
         "Choice_E_Image": ""
     },
     {
@@ -14423,10 +14423,10 @@
         "Choice_D_Text": "Association à l'acide étacrynique.",
         "Choice_D_isCorrect": true,
         "Choice_D_Explanation": "L'association avec d'autres médicaments ototoxiques (comme cet acide) augmente les risques de surdité. (Source : Différentes familles d'antibiotiques, Page Global 264).",
-        "Choice_A_Image": "",
-        "Choice_B_Image": "",
-        "Choice_C_Image": "",
-        "Choice_D_Image": "",
+        "Choice_A_Image": "pharmacologie-0264.avif",
+        "Choice_B_Image": "pharmacologie-0264.avif",
+        "Choice_C_Image": "pharmacologie-0264.avif",
+        "Choice_D_Image": "pharmacologie-0264.avif",
         "Choice_E_Image": ""
     },
     {
@@ -14445,10 +14445,10 @@
         "Choice_D_Text": "Sont bactéricides.",
         "Choice_D_isCorrect": false,
         "Choice_D_Explanation": "Contrairement aux bêta-lactamines, les tétracyclines ne détruisent pas directement les bactéries. (Source : Différentes familles d'antibiotiques, Page Global 265).",
-        "Choice_A_Image": "",
-        "Choice_B_Image": "",
-        "Choice_C_Image": "",
-        "Choice_D_Image": "",
+        "Choice_A_Image": "pharmacologie-0265.avif",
+        "Choice_B_Image": "pharmacologie-0265.avif",
+        "Choice_C_Image": "pharmacologie-0265.avif",
+        "Choice_D_Image": "pharmacologie-0265.avif",
         "Choice_E_Image": ""
     },
     {
@@ -14467,10 +14467,10 @@
         "Choice_D_Text": "Diarrhée bactérienne invasives.",
         "Choice_D_isCorrect": true,
         "Choice_D_Explanation": "Elles sont indiquées dans les cas de diarrhées invasives graves. (Source : Différentes familles d'antibiotiques, Page Global 272).",
-        "Choice_A_Image": "",
-        "Choice_B_Image": "",
-        "Choice_C_Image": "",
-        "Choice_D_Image": "",
+        "Choice_A_Image": "pharmacologie-0272.avif",
+        "Choice_B_Image": "pharmacologie-0272.avif",
+        "Choice_C_Image": "pharmacologie-0272.avif",
+        "Choice_D_Image": "pharmacologie-0272.avif",
         "Choice_E_Image": ""
     },
     {
@@ -14484,7 +14484,7 @@
         "Choice_B_isCorrect": false,
         "Choice_B_Explanation": "Les interactions peuvent être pharmacocinétiques (ADME : absorption, distribution, métabolisme via CYP450, ou élimination) ou pharmacodynamiques (synergie ou antagonisme au niveau des récepteurs). (Source : Hypolipémiant / SNA, Page Global 456 / 933).",
         "Choice_A_Image": "",
-        "Choice_B_Image": "",
+        "Choice_B_Image": "pharmacologie-0456.avif",
         "Choice_C_Image": "",
         "Choice_D_Image": "",
         "Choice_E_Image": ""
@@ -14500,7 +14500,10 @@
         "Choice_B_isCorrect": false,
         "Choice_B_Explanation": "On distingue trois classes majeures : 1. Les sulfamides/glinides (stimulent la sécrétion d'insuline), 2. Les biguanides/metformine (sensibilisent les tissus et inhibent la néoglucogenèse), 3. Les inhibiteurs d'alpha-glucosidases (retardent l'absorption intestinale du glucose). (Source : Médicaments antidiabétiques, Page Global 499-515).",
         "Choice_A_Image": "",
-        "Choice_B_Image": "",
+        "Choice_B_Image": [
+            "pharmacologie-0499.avif",
+            "pharmacologie-0515.avif"
+        ],
         "Choice_C_Image": "",
         "Choice_D_Image": "",
         "Choice_E_Image": ""

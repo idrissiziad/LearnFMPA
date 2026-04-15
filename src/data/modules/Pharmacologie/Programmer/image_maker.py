@@ -30,7 +30,7 @@ def process_pharmacology_data():
         return
 
     # 2. Get user configuration
-    base_name = input("Enter the base image name (e.g., pharmacologie): ").strip()
+    base_name = input("Enter the base image name (e.g., pharmaco): ").strip()
     try:
         padding_count = int(input("How many digits should the page number contain (e.g., 4 for '0002')? "))
     except ValueError:
@@ -46,39 +46,42 @@ def process_pharmacology_data():
             return
 
     # UPDATED REGEX: 
-    # Matches "Page " OR "Page Globale "
-    # Captures digits, hyphens (-), and slashes (/)
-    page_regex = re.compile(r"Page(?:\s+Globale)?\s+([\d\-/]+)", re.IGNORECASE)
+    # 1. Matches "Page"
+    # 2. Optionally matches " Global" or " Globale" (the 'e' is now optional)
+    # 3. Captures the digits/ranges
+    page_regex = re.compile(r"Page\s+(?:Global[e]?\s+)?([\d\-/]+)", re.IGNORECASE)
 
     # 4. Process the entries
     for entry in data:
+        # Check choices A through E
         for char in ['A', 'B', 'C', 'D', 'E']:
             explanation_key = f"Choice_{char}_Explanation"
             image_key = f"Choice_{char}_Image"
             
-            explanation_text = entry.get(explanation_key, "")
-            match = page_regex.search(explanation_text)
-            
-            if match:
-                raw_pages = match.group(1)
-                # Split by hyphen or slash (handles 659-660 or 636/649)
-                page_parts = re.split(r'[-/]', raw_pages)
+            # Ensure the key exists in the JSON entry
+            if explanation_key in entry:
+                explanation_text = entry.get(explanation_key, "")
+                match = page_regex.search(explanation_text)
                 
-                # Clean, pad, and add extension
-                formatted_images = [
-                    f"{base_name}-{p.strip().zfill(padding_count)}.avif" 
-                    for p in page_parts if p.strip().isdigit()
-                ]
+                if match:
+                    raw_pages = match.group(1)
+                    # Split by hyphen or slash (handles 659-660 or 636/649)
+                    page_parts = re.split(r'[-/]', raw_pages)
+                    
+                    # Clean, pad, and add extension
+                    formatted_images = [
+                        f"{base_name}-{p.strip().zfill(padding_count)}.avif" 
+                        for p in page_parts if p.strip().isdigit()
+                    ]
 
-                if len(formatted_images) == 1:
-                    entry[image_key] = formatted_images[0]
-                elif len(formatted_images) > 1:
-                    entry[image_key] = formatted_images
+                    if len(formatted_images) == 1:
+                        entry[image_key] = formatted_images[0]
+                    elif len(formatted_images) > 1:
+                        entry[image_key] = formatted_images
+                    else:
+                        entry[image_key] = ""
                 else:
                     entry[image_key] = ""
-            else:
-                # If no page info found, provide an empty string
-                entry[image_key] = ""
 
     # 5. Save the result
     output_file = input_file.replace('.json', '_Updated.json')

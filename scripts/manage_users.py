@@ -656,20 +656,6 @@ Examples:
         required=True,
         help="Target year to migrate to",
     )
-    migrate_parser.add_argument(
-        "--from",
-        dest="from_year",
-        choices=VALID_YEARS,
-        required=True,
-        help="Source year to migrate from",
-    )
-    migrate_parser.add_argument(
-        "--to",
-        dest="to_year",
-        choices=VALID_YEARS,
-        required=True,
-        help="Target year to migrate to",
-    )
 
     args = parser.parse_args()
 
