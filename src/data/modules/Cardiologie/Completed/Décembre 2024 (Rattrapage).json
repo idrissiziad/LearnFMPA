@@ -1,0 +1,96 @@
+[
+    {
+        "YearAsked": "Décembre 2024 (Rattrapage)",
+        "Subtopic": "Insuffisance aortique",
+        "QuestionText": "Citer les signes cliniques de sévérité de l'insuffisance aortique chronique.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'étudiant confirme avoir assimilé les signes de sévérité. (Source : Insuffisance aortique, Page Globale 923).",
+        "Choice_B_Text": "Je ne comprends pas?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Selon le document, les signes de sévérité clinique sont : le claquement méso-systolique (pistol-shot), le roulement diastolique de Flint, le galop proto-diastolique (signe d'IVG), l'élargissement de la différentielle de PA avec une PAD < 50 mmHg, et l'hyperpulsatilité artérielle. (Source : Insuffisance aortique, Page Globale 923).",
+        "Choice_A_Image": "cardiologie-0923.avif",
+        "Choice_B_Image": "cardiologie-0923.avif"
+    },
+    {
+        "YearAsked": "Décembre 2024 (Rattrapage)",
+        "Subtopic": "Rhumatisme articulaire aigu",
+        "QuestionText": "Citer les critères diagnostiques du rhumatisme articulaire aigu.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'étudiant confirme avoir assimilé les critères de Jones. (Source : Rhumatisme articulaire aigu, Page Globale 1190).",
+        "Choice_B_Text": "Je ne comprends pas?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Le diagnostic repose sur les critères de Jones modifiés. Critères Majeurs : Polyarthrite, Cardite, Chorée de Sydenham, Nodules sous-cutanés, Érythème marginé. Critères Mineurs : Arthralgies, Fièvre, Allongement de l'espace PR à l'ECG, Élévation de la VS ou CRP. Une preuve d'infection streptococcique récente est indispensable. (Source : Rhumatisme articulaire aigu, Page Globale 1190).",
+        "Choice_A_Image": "cardiologie-1190.avif",
+        "Choice_B_Image": "cardiologie-1190.avif"
+    },
+    {
+        "YearAsked": "Décembre 2024 (Rattrapage)",
+        "Subtopic": "Infarctus du myocarde",
+        "QuestionText": "Citez trois complications précoces et trois complications tardives de l'infarctus du myocarde.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'étudiant confirme avoir assimilé les complications. (Source : Infarctus du myocarde, Page Globale 901).",
+        "Choice_B_Text": "Je ne comprends pas?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Complications précoces : Troubles du rythme (ventriculaires ou auriculaires), Troubles de la conduction (BAV), Insuffisance ventriculaire gauche/Choc cardiogénique, Complications mécaniques (rupture de paroi libre, IM aiguë). Complications tardives : Insuffisance cardiaque chronique, Anévrysme du VG, Syndrome de Dressler, Insuffisance mitrale chronique. (Source : Infarctus du myocarde, Page Globale 901).",
+        "Choice_A_Image": "cardiologie-0901.avif",
+        "Choice_B_Image": "cardiologie-0901.avif"
+    },
+    {
+        "YearAsked": "Décembre 2024 (Rattrapage)",
+        "Subtopic": "Syncope",
+        "QuestionText": "Définissez la syncope et citez 4 étiologies de la syncope d'effort.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'étudiant confirme avoir assimilé la définition et les causes. (Source : Syncope, Page Globale 1306).",
+        "Choice_B_Text": "Je ne comprends pas?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Définition : Perte de connaissance brutale, totale et brève avec chute (perte de tonus postural) et récupération spontanée. Étiologies d'effort : Rétrécissement aortique (RAO) serré, Cardiomyopathie hypertrophique obstructive (CMHO), Hypertension artérielle pulmonaire (HTAP), et Embolie pulmonaire massive. (Source : Syncope, Page Globale 1306, 1347-1350).",
+        "Choice_A_Image": "cardiologie-1306.avif",
+        "Choice_B_Image": "cardiologie-1306.avif"
+    },
+    {
+        "YearAsked": "Décembre 2024 (Rattrapage)",
+        "Subtopic": "IAMI",
+        "QuestionText": "Définissez une ischémie aiguë du membre inférieur.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'étudiant confirme avoir assimilé la définition. (Source : IAMI, Page Globale 811).",
+        "Choice_B_Text": "Je ne comprends pas?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "L'ischémie aiguë est l'interruption brutale du courant sanguin et de l'irrigation tissulaire du membre inférieur menaçant sa viabilité, dont la survenue est inférieure à 15 jours. (Source : IAMI, Page Globale 811).",
+        "Choice_A_Image": "cardiologie-0811.avif",
+        "Choice_B_Image": "cardiologie-0811.avif"
+    },
+    {
+        "YearAsked": "Décembre 2024 (Rattrapage)",
+        "Subtopic": "AAA",
+        "QuestionText": "Citez trois complications d'un anévrysme de l'aorte abdominale.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'étudiant confirme avoir assimilé les complications. (Source : AAA, Page Globale 27).",
+        "Choice_B_Text": "Je ne comprends pas?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Les complications majeures sont : 1. La rupture (souvent fatale), 2. La fissuration (urgence thérapeutique), 3. Les accidents thrombo-emboliques (ischémie de membre). (Source : AAA, Page Globale 27-29).",
+        "Choice_A_Image": "cardiologie-0027.avif",
+        "Choice_B_Image": [
+            "cardiologie-0027.avif",
+            "cardiologie-0029.avif"
+        ]
+    },
+    {
+        "YearAsked": "Décembre 2024 (Rattrapage)",
+        "Subtopic": "Dissection aortique aigue",
+        "QuestionText": "Concernant la dissection de l'aorte type A : donnez la définition et le diagnostic clinique et paraclinique.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'étudiant confirme avoir assimilé la pathologie. (Source : Dissection aortique aigue, Page Globale 441).",
+        "Choice_B_Text": "Je ne comprends pas?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Définition : Déchirure de l'intima avec clivage longitudinal de la média touchant l'aorte ascendante (Type A). Clinique : Douleur thoracique brutale, intense, à type de déchirure, asymétrie tensionnelle, souffle d'IA, abolition de pouls. Paraclinique : ETT/ETO (voile intimal, dilatation aortique), Angioscanner (examen de référence pour confirmer le diagnostic et l'extension). (Source : Dissection aortique aigue, Page Globale 441, 448-456).",
+        "Choice_A_Image": "cardiologie-0441.avif",
+        "Choice_B_Image": "cardiologie-0441.avif"
+    }
+]

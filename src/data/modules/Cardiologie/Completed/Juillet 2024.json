@@ -1,0 +1,46 @@
+[
+  {
+    "YearAsked": "2024",
+    "Subtopic": "Infarctus du myocarde",
+    "QuestionText": "Physiopathologie et complications de l'infarctus de myocarde.",
+    "Choice_A_Text": "Je comprends.",
+    "Choice_A_isCorrect": true,
+    "Choice_A_Explanation": "Ce choix valide la compréhension de la physiopathologie (athérothrombose par rupture de plaque) et des complications de l'IDM. (Source : Infarctus du myocarde, Page Globale 852).",
+    "Choice_B_Text": "Je ne comprends pas?",
+    "Choice_B_isCorrect": false,
+    "Choice_B_Explanation": "L'IDM est lié à une occlusion coronaire complète, souvent par rupture de plaque vulnérable (60% des cas) provoquant un thrombus occlusif. Les complications précoces incluent les troubles du rythme (FV, TV), de conduction (BAV), les complications hémodynamiques (choc cardiogénique) et mécaniques (rupture septale, IM aiguë), tandis que les complications tardives incluent l'insuffisance cardiaque et l'anévrysme du VG. (Source : Infarctus du myocarde, Pages Globales 852, 859, 901)."
+  },
+  {
+    "YearAsked": "2024",
+    "Subtopic": "Rhumatisme articulaire aigu",
+    "QuestionText": "Traitement de la cardite rhumatismale.",
+    "Choice_A_Text": "Je comprends.",
+    "Choice_A_isCorrect": true,
+    "Choice_A_Explanation": "Ce choix valide la connaissance du traitement associant antibiothérapie et corticothérapie. (Source : Rhumatisme articulaire aigu, Page Globale 1195).",
+    "Choice_B_Text": "Je ne comprends pas?",
+    "Choice_B_isCorrect": false,
+    "Choice_B_Explanation": "Le traitement repose sur l'éradication du foyer streptococcique (Pénicilline G ou Benzathine pénicilline) et une corticothérapie (Prednisone 2 mg/kg/j) pendant 3 semaines (attaque) suivie d'une phase d'entretien de 6 à 9 semaines selon la sévérité. En cas d'insuffisance cardiaque, on adjoint des diurétiques et des IEC. (Source : Rhumatisme articulaire aigu, Pages Globales 1197, 1198, 1200)."
+  },
+  {
+    "YearAsked": "2024",
+    "Subtopic": "AOMI",
+    "QuestionText": "AOMI : diagnostic et traitement.",
+    "Choice_A_Text": "Je comprends.",
+    "Choice_A_isCorrect": true,
+    "Choice_A_Explanation": "Ce choix valide la démarche diagnostique clinique et paraclinique ainsi que l'arsenal thérapeutique de l'AOMI. (Source : AOMI, Page Globale 51).",
+    "Choice_B_Text": "Je ne comprends pas?",
+    "Choice_B_isCorrect": false,
+    "Choice_B_Explanation": "Le diagnostic est clinique (douleur à l'effort, abolition des pouls, IPS < 0,9) et confirmé par l'écho-doppler, l'angioscanner ou l'artériographie. Le traitement associe le contrôle des FDR (arrêt tabac, marche), un traitement médical (antiagrégants, statines) et une revascularisation (angioplastie ou pontage) selon la classification TASC. (Source : AOMI, Pages Globales 61, 66, 91, 117)."
+  },
+  {
+    "YearAsked": "2024",
+    "Subtopic": "Dissection aortique aigue",
+    "QuestionText": "Dissection aortique : diagnostic et traitement.",
+    "Choice_A_Text": "Je comprends.",
+    "Choice_A_isCorrect": true,
+    "Choice_A_Explanation": "Ce choix valide la reconnaissance de l'urgence chirurgicale (Type A) et de la prise en charge médicale (Type B). (Source : Dissection aortique aigue, Page Globale 441).",
+    "Choice_B_Text": "Je ne comprends pas?",
+    "Choice_B_isCorrect": false,
+    "Choice_B_Explanation": "Le diagnostic est évoqué devant une douleur thoracique brutale intense avec asymétrie tensionnelle ou abolition d'un pouls, confirmé par angioscanner ou ETO. Le traitement du Type A est une urgence chirurgicale sous CEC, tandis que le Type B est principalement médical (contrôle de la PA et antalgiques) sauf complications (TEVAR). (Source : Dissection aortique aigue, Pages Globales 449, 456, 459, 464)."
+  }
+]

@@ -1,0 +1,46 @@
+[
+  {
+    "YearAsked": "2024",
+    "Subtopic": "Rétrecissement mitral",
+    "QuestionText": "Rétrécissement mitral : diagnostic clinique et complications.",
+    "Choice_A_Text": "Je comprends.",
+    "Choice_A_isCorrect": true,
+    "Choice_A_Explanation": "Le diagnostic clinique repose sur la triade de Durozier (éclat de B1, claquement d'ouverture mitrale, roulement diastolique) et des signes de retentissement comme le faciès mitral. Les complications majeures incluent la fibrillation atriale, les embolies systémiques, l'œdème aigu du poumon et l'insuffisance cardiaque droite. (Source : Rétrecissement mitral, Pages Globales 1260 et 1279).",
+    "Choice_B_Text": "Je ne comprends pas.",
+    "Choice_B_isCorrect": false,
+    "Choice_B_Explanation": "Le diagnostic clinique du RM pur est dominé à l'auscultation par l'éclat du premier bruit (B1), le claquement d'ouverture mitrale et le roulement diastolique à la pointe, souvent précédé d'une dyspnée d'effort. Les complications évolutives classiques sont le passage en fibrillation atriale, les accidents emboliques artériels et le retentissement pulmonaire (OAP, hémoptysie) puis cardiaque droit. (Source : Rétrecissement mitral, Pages Globales 1260 et 1279)."
+  },
+  {
+    "YearAsked": "2024",
+    "Subtopic": "Endocardite infectieuse",
+    "QuestionText": "Diagnostic clinique et paraclinique de l'endocardite infectieuse.",
+    "Choice_A_Text": "Je comprends.",
+    "Choice_A_isCorrect": true,
+    "Choice_A_Explanation": "Le diagnostic clinique associe classiquement un syndrome fébrile à l'apparition ou la modification d'un souffle cardiaque, complété par des signes extracardiaques (nodosités d'Osler, érythème de Janeway). Le diagnostic paraclinique repose sur les hémocultures pour identifier le germe et l'échocardiographie (ETT/ETO) pour visualiser les végétations, les abcès ou les perforations valvulaires. (Source : Endocardite infectieuse, Pages Globales 623, 628, 635, 642).",
+    "Choice_B_Text": "Je ne comprends pas.",
+    "Choice_B_isCorrect": false,
+    "Choice_B_Explanation": "Le diagnostic doit être suspecté devant toute fièvre inexpliquée chez un patient porteur d'une valvulopathie ou d'une prothèse. Cliniquement, on recherche un nouveau souffle de régurgitation et des emboles. Les examens clés sont les hémocultures répétées (minimum 3 en 24h) et l'échocardiographie qui met en évidence la lésion anatomique élémentaire : la végétation. (Source : Endocardite infectieuse, Pages Globales 623, 635, 642)."
+  },
+  {
+    "YearAsked": "2024",
+    "Subtopic": "AAA",
+    "QuestionText": "Citer 3 indications opératoires de l'anévrysme de l'aorte abdominale sous-rénal.",
+    "Choice_A_Text": "Je comprends.",
+    "Choice_A_isCorrect": true,
+    "Choice_A_Explanation": "Les indications opératoires majeures sont : un diamètre anévrismal > 5 cm, une vitesse de croissance rapide (> 1 cm en 1 an) et le caractère symptomatique ou rompu de l'anévrisme. (Source : AAA, Page Globale 44).",
+    "Choice_B_Text": "Je ne comprends pas.",
+    "Choice_B_isCorrect": false,
+    "Choice_B_Explanation": "Le traitement est préventif pour éviter la rupture. Les critères d'intervention incluent un diamètre supérieur à 5 cm, une augmentation de taille de plus d'un centimètre par an, ou un anévrisme de forme sacciforme évolutif. Les anévrismes rompus ou symptomatiques sont des urgences opératoires. (Source : AAA, Page Globale 44)."
+  },
+  {
+    "YearAsked": "2024",
+    "Subtopic": "Coarctation de l’aorte",
+    "QuestionText": "La coarctation de l'aorte : définissez-la, donnez les circonstances de découverte, les données de l'examen physique et 3 complications possibles si elle n'est pas prise en charge.",
+    "Choice_A_Text": "Je comprends.",
+    "Choice_A_isCorrect": true,
+    "Choice_A_Explanation": "La coarctation est un rétrécissement congénital localisé de l'isthme aortique. Elle est souvent découverte fortuitement lors d'un bilan d'HTA ou par l'absence de pouls fémoraux. L'examen physique montre une HTA aux membres supérieurs contrastant avec une hypotension aux membres inférieurs et un souffle systolique inter-scapulaire. Les complications incluent l'AVC hémorragique, la dissection aortique et l'endocardite. (Source : Coarctation de l’aorte, Pages Globales 392, 404, 405, 416).",
+    "Choice_B_Text": "Je ne comprends pas.",
+    "Choice_B_isCorrect": false,
+    "Choice_B_Explanation": "Définition : sténose isthmique congénitale. Découverte : HTA fortuite, pouls fémoraux diminués/abolis, céphalées ou dyspnée d'effort. Examen : asymétrie tensionnelle (HTA membres supérieurs / hypotension membres inférieurs), pouls radiaux amples vs fémoraux faibles, thorax athlétique avec membres inférieurs grêles. Complications : décès par rupture ou dissection aortique, AVC par rupture d'anévrisme cérébral, et endocardite sur la coarctation. (Source : Coarctation de l’aorte, Pages Globales 392, 404, 405, 416)."
+  }
+]

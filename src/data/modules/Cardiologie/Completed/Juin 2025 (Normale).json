@@ -2,7 +2,7 @@
     {
         "YearAsked": "Juin 2025 (Normale)",
         "Subtopic": "Insuffisance mitrale",
-        "QuestionText": "Quelle est la valvulopathie à évoquer en premier devant cette auscultation cardiaque anormale ?",
+        "QuestionText": "Cas clinique : Madame A. Fatima, 22ans se présente en consultation pour une dyspnée d'effort d'aggravation rapidement progressive. Elle ne prend aucun traitement actuellement. Son examen clinique retrouve une tension artérielle de 105/69 mmnHg, et une Fréquence cardiaque à 89 c/min, son poids est de 72 kg pour une taille de 168cm. L'auscultation cardiaque retrouve un souffle systolique, apexien, coté 5/6ème, irradiant vers l'aisselle. Un signe de Harzer positif, de discret œdèmes rétro malléolaire et une turgescence spontanée des veines jugulaires. L'auscultation pulmonaire est claire, et le reste de l'examen clinique est sans particularités. Son ECG s'inscrit en rythme sinusal avec un hémibloc antérieur gauche.\n\nQuestion 1 : Quelle est la valvulopathie à évoquer en premier devant cette auscultation cardiaque anormale ?",
         "Choice_A_Text": "Maladie Mitrale.",
         "Choice_A_isCorrect": false,
         "Choice_A_Explanation": "La maladie mitrale associe un rétrécissement et une insuffisance, ce qui n'est pas décrit ici. (Source : Insuffisance mitrale, Page Globale 1063).",
