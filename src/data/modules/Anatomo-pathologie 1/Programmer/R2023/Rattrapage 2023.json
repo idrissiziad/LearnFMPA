@@ -1,0 +1,80 @@
+[
+    {
+        "YearAsked": "Rattrapage 2023",
+        "Subtopic": "Pathologie générale tumorale 2",
+        "QuestionText": "Décrire les mécanismes impliquant les gènes TP53 et RB dans la cancérogénèse.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Ces gènes sont des suppresseurs de tumeurs régulant négativement le cycle cellulaire ou positivement l'apoptose. (Source : Pathologie générale tumorale 2, Page Globale 421).",
+        "Choice_B_Text": "Je ne comprends pas ?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "La cancérogénèse survient par l'inactivation de ces deux allèles (mode récessif), levant ainsi le frein à la prolifération cellulaire. (Source : Pathologie générale tumorale 2, Page Globale 425).",
+        "Choice_A_Image": "anapath1-421.avif",
+        "Choice_B_Image": "anapath1-425.avif"
+    },
+    {
+        "YearAsked": "Rattrapage 2023",
+        "Subtopic": "Formes anatomo-cliniques de l'inflammation",
+        "QuestionText": "Préciser les éléments morphologiques observés dans le granulome tuberculoïde caractéristique d'une infection au bacille de Koch (BK).",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Le granulome contient des cellules épithélioïdes, des cellules géantes de Langhans et une couronne de lymphocytes. (Source : Formes anatomo-cliniques de l'inflammation, Page Globale 76).",
+        "Choice_B_Text": "Je ne comprends pas ?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "L'élément spécifique de la tuberculose est la nécrose caséeuse, un matériel éosinophile, anhistre et craquelé. (Source : Formes anatomo-cliniques de l'inflammation, Page Globale 76).",
+        "Choice_A_Image": "anapath1-076.avif",
+        "Choice_B_Image": "anapath1-076.avif"
+    },
+    {
+        "YearAsked": "Rattrapage 2023",
+        "Subtopic": "Étapes de la réaction inflammatoire",
+        "QuestionText": "Décrire les étapes de la phagocytose.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "La phagocytose se déroule en trois étapes : reconnaissance/fixation, englobement (formation du phagolysosome) et destruction/dégradation. (Source : Étapes de la réaction inflammatoire, Page Globale 507).",
+        "Choice_B_Text": "Je ne comprends pas ?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "La destruction peut être oxygène-dépendante ou indépendante via les hydrolases acides des lysosomes. (Source : Étapes de la réaction inflammatoire, Page Globale 508).",
+        "Choice_A_Image": "anapath1-507.avif",
+        "Choice_B_Image": "anapath1-508.avif"
+    },
+    {
+        "YearAsked": "Rattrapage 2023",
+        "Subtopic": "Généralités sur les tumeurs 2",
+        "QuestionText": "Copier et compléter le tableau de nomenclature suivant (Tissu d'origine vs Nomenclature).",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Une tumeur maligne épithéliale glandulaire est un adénocarcinome ; une tumeur bénigne de fibroblastes est un fibrome. (Source : Généralités sur les tumeurs 2, Page Globale 101).",
+        "Choice_B_Text": "Je ne comprends pas ?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Le chondrosarcome est une tumeur maligne se développant à partir des chondroblastes. (Source : Généralités sur les tumeurs 2, Page Globale 101).",
+        "Choice_A_Image": "anapath1-101.avif",
+        "Choice_B_Image": "anapath1-101.avif"
+    },
+    {
+        "YearAsked": "Rattrapage 2023",
+        "Subtopic": "Histoire naturelle du cancer",
+        "QuestionText": "Citez les voies de dissémination métastatique.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Les quatre voies principales sont : la voie locale (invasion), la voie lymphatique, la voie sanguine et la voie transcœlomique. (Source : Histoire naturelle du cancer, Page Globale 234).",
+        "Choice_B_Text": "Je ne comprends pas ?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "La voie lymphatique est prédominante pour les carcinomes, tandis que la voie hématogène est typique des sarcomes. (Source : Histoire naturelle du cancer, Page Globale 254).",
+        "Choice_A_Image": "anapath1-234.avif",
+        "Choice_B_Image": "anapath1-254.avif"
+    },
+    {
+        "YearAsked": "Rattrapage 2023",
+        "Subtopic": "Médiateurs de l'inflammation",
+        "QuestionText": "Citez les médiateurs de l'inflammation d'origine cellulaire et plasmatique.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Les médiateurs cellulaires incluent l'histamine, les cytokines, les prostaglandines et les leucotriènes. (Source : Médiateurs de l'inflammation, Page Globale 315).",
+        "Choice_B_Text": "Je ne comprends pas ?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Les médiateurs plasmatiques regroupent le système des kinines, le système du complément et la cascade de coagulation/fibrinolyse. (Source : Médiateurs de l'inflammation, Page Globale 315).",
+        "Choice_A_Image": "anapath1-315.avif",
+        "Choice_B_Image": "anapath1-315.avif"
+    }
+]

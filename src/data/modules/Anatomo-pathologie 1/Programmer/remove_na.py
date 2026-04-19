@@ -19,7 +19,7 @@ def remove_na_choices(input_file):
                 text_key = f"{prefix}_Text"
                 
                 # Check if the choice text is "NA"
-                if question.get(text_key) == "NA.":
+                if question.get(text_key) == "NA":
                     # Delete the related keys for this choice
                     keys_to_delete = [
                         f"{prefix}_Text",

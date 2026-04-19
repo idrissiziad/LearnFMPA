@@ -1,0 +1,54 @@
+[
+    {
+        "YearAsked": "Octobre 2024",
+        "Subtopic": "Accumulation de matériel intra-extracellulaire",
+        "QuestionText": "Quelles sont les caractéristiques morphologiques macroscopiques et microscopiques de l'amylose ?",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'amylose est un dépôt extracellulaire de matériel fibrillaire protéique devenu insoluble. (Source : Accumulation de matériel intra-extracellulaire, Page 48).",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Macroscopie : organes augmentés de volume et pâles (ex: rate jambon cuit). Microscopie : dépôts amorphes, éosinophiles, colorés en rouge au Rouge Congo avec biréfringence vert-jaune en lumière polarisée. (Source : Accumulation de matériel intra-extracellulaire, Page 54, 58).",
+        "Choice_A_Image": "anapath1-048.avif",
+        "Choice_B_Image": "anapath1-054.avif"
+    },
+    {
+        "YearAsked": "Octobre 2024",
+        "Subtopic": "Pathologie cellulaire et tissulaire",
+        "QuestionText": "Définissez l'apoptose et décrivez les caractéristiques morphologiques d'une cellule apoptotique.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'apoptose est une mort cellulaire programmée assurant l'homéostasie tissulaire. (Source : Pathologie cellulaire et tissulaire, Page 375).",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Elle se définit par une cellule de taille diminuée, un cytoplasme éosinophile, un noyau densifié/fragmenté (pycnose/caryorrhexis) et la formation de corps apoptotiques sans inflammation. (Source : Pathologie cellulaire et tissulaire, Page 376).",
+        "Choice_A_Image": "anapath1-375.avif",
+        "Choice_B_Image": "anapath1-376.avif"
+    },
+    {
+        "YearAsked": "Octobre 2024",
+        "Subtopic": "Histoire naturelle du cancer",
+        "QuestionText": "Quelles sont les voies de dissémination métastatique ?",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "La métastase est le développement de foyers tumoraux secondaires à distance du foyer initial. (Source : Histoire naturelle du cancer, Page 232).",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Les quatre voies principales sont : la voie locale (invasion), la voie lymphatique, la voie sanguine (hématogène) et la voie transcœlomique. (Source : Histoire naturelle du cancer, Page 234).",
+        "Choice_A_Image": "anapath1-232.avif",
+        "Choice_B_Image": "anapath1-234.avif"
+    },
+    {
+        "YearAsked": "Octobre 2024",
+        "Subtopic": "Histoire naturelle du cancer",
+        "QuestionText": "Définissez la dysplasie et décrivez son aspect histopathologique.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "La dysplasie est un trouble acquis de la multiplication cellulaire réalisant des altérations morphologiques et une modification de l'organisation tissulaire. (Source : Histoire naturelle du cancer, Page 210).",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Son aspect comprend : multiplication des couches basales, mitoses augmentées, anisocytose/anisocaryose et perte de la différenciation cellulaire. (Source : Histoire naturelle du cancer, Page 211).",
+        "Choice_A_Image": "anapath1-210.avif",
+        "Choice_B_Image": "anapath1-211.avif"
+    }
+]

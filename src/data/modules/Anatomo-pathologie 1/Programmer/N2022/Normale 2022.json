@@ -1,0 +1,46 @@
+[
+  {
+    "YearAsked": "Normale 2022",
+    "Subtopic": "Formes anatomo-cliniques de l'inflammation",
+    "QuestionText": "Vous recevez une patiente de 18 ans qui présente une AEG avec fièvre, sueurs nocturnes, douleurs abdomino-pelviennes et aménorrhée. L'examen clinique retrouve une distension abdominale avec une matité déclive, sans défense abdominale, sans masse et sans autres signes cliniques. A quoi correspond le symptôme retrouvé à l'examen clinique ? Un examen biologique a été réalisé et montre un syndrome inflammatoire : quel(s) autre(s) examen(s) pourriez-vous demander ? L'étude du liquide péritonéale a été faite et retrouve un liquide jaune citrin, l'examen biochimique conclu à un exsudat : Expliquez ce que c'est qu'un exsudat ? Quel est le mécanisme de constitution de cet exsudat ? A ce stade quel (s) est (sont) vos hypothèses diagnostiques ? quel (s) examen(s) pratiqueriez-vous pour confirmer votre diagnostic(s) ? L'examen anatomopathologique du tissu péritonéale de cette patiente retrouve : une inflammation chronique avec présence de granulomes épithélio et gigonto cellulaire sans nécrose caséeuse : est ce que ce résultat conforte votre hypothèse diagnostic ? definisez l'inflammation chronique ? Expliquez la constitution de ce granulome et les cellules qui le forment ? quel(s) est(sont) les diagnostiques différentiel(s) anapath?",
+    "Choice_A_Text": "Je comprends.",
+    "Choice_A_isCorrect": true,
+    "Choice_A_Explanation": "L'étudiant confirme sa compréhension des mécanismes de l'ascite exsudative et de l'inflammation granulomateuse tuberculoïde. (Source : Formes anatomo-cliniques de l'inflammation, Page 76).",
+    "Choice_B_Text": "Je ne comprends pas.",
+    "Choice_B_isCorrect": false,
+    "Choice_B_Explanation": "La matité déclive correspond à une ascite ; l'exsudat est un liquide riche en protéines lié à une augmentation de la perméabilité vasculaire, et le granulome évoque une tuberculose ou une sarcoïdose. (Source : Formes anatomo-cliniques de l'inflammation, Page 76)."
+  },
+  {
+    "YearAsked": "Normale 2022",
+    "Subtopic": "Pathologie circulatoire 2",
+    "QuestionText": "Vous recevez un patient de 54 ans, qui se plaint de douleurs épigastriques avec syncope depuis 3 heures, qui ont apparu au cours d'un effort physique. Un bilan biologique est demandé est montre une hypercholestérolémie avec augmentation des enzymes cardiaques : Donnez la définition de l'infarctus ? Quels est (sont) le(s) facteur(s) étiologique(s) de l'infarctus dans notre cas ? expliquez les différents temps (ou phases) de constitution de l'infarctus ? à quel moment il faut réagir avant les lésions définitives ? quelles peuvent être les complications de cet infarctus ?",
+    "Choice_A_Text": "Je comprends.",
+    "Choice_A_isCorrect": true,
+    "Choice_A_Explanation": "L'étudiant valide les signes cliniques et biologiques d'une nécrose ischémique myocardique. (Source : Pathologie circulatoire 2, Page 393).",
+    "Choice_B_Text": "Je ne comprends pas.",
+    "Choice_B_isCorrect": false,
+    "Choice_B_Explanation": "L'infarctus est une nécrose de coagulation liée à l'arrêt brutal de l'irrigation, causée ici par l'athérosclérose, et peut se compliquer de rupture cardiaque ou de choc. (Source : Pathologie circulatoire 2, Page 396)."
+  },
+  {
+    "YearAsked": "Normale 2022",
+    "Subtopic": "Pathologie cellulaire et tissulaire",
+    "QuestionText": "Expliquez la différence entre la nécrose de coagulation et la nécrose de liquéfaction ? Définissez l'apoptose ? Citez les deux voies qui déclenchent l'apoptose ?",
+    "Choice_A_Text": "Je comprends.",
+    "Choice_A_isCorrect": true,
+    "Choice_A_Explanation": "L'étudiant confirme maîtriser les bases de la mort cellulaire accidentelle et programmée. (Source : Pathologie cellulaire et tissulaire, Page 372).",
+    "Choice_B_Text": "Je ne comprends pas.",
+    "Choice_B_isCorrect": false,
+    "Choice_B_Explanation": "La nécrose de coagulation conserve les formes cellulaires, tandis que la liquéfaction est une autolyse suppurée ; l'apoptose est programmée via les voies intrinsèque et extrinsèque. (Source : Pathologie cellulaire et tissulaire, Page 372-377)."
+  },
+  {
+    "YearAsked": "Normale 2022",
+    "Subtopic": "Histoire naturelle du cancer",
+    "QuestionText": "Vous recevez une patiente avec un compte rendu anatomopathologique qui parle d'une dysplasie de haut grade (CIN3) au niveau du col utérin : Définissez la dysplasie ? Quels sont les critères cytologiques de malignité ? Quel est serait l'étiologie de cette lésion au niveau du col utérin ? Une conisation est réalisée chez cette patiente et parle d'un foyer de cancer invasif au niveau du col : Comment va-t-on nommez cette tumeur maligne qui s'est développée à partir de l'exocol ? Expliquez le mécanisme d'invasion locale de ce foyer cancéreux ? Au stade de votre patiente, y a-t-il un risque de métastases ? lesquelles et pourquoi ? Expliquez la pathogénie des métastases cancéreuse ?",
+    "Choice_A_Text": "Je comprends.",
+    "Choice_A_isCorrect": true,
+    "Choice_A_Explanation": "L'étudiant comprend le passage d'une lésion précancéreuse intra-épithéliale à un carcinome invasif. (Source : Histoire naturelle du cancer, Page 210).",
+    "Choice_B_Text": "Je ne comprends pas.",
+    "Choice_B_isCorrect": false,
+    "Choice_B_Explanation": "La dysplasie est un trouble de multiplication avec anisocytose, et le cancer de l'exocol est un carcinome épidermoïde qui envahit via la dégradation de la membrane basale. (Source : Histoire naturelle du cancer, Page 210-229)."
+  }
+]
