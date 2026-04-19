@@ -1,6 +1,6 @@
 [
   {
-    "YearAsked": "2022-2023",
+    "YearAsked": "Normale 2023",
     "Subtopic": "Formes anatomo-cliniques de l'inflammation",
     "QuestionText": "Quel est le diagnostic retenu pour ce patient de 35 ans présentant une douleur de l'hypochondre droit, une fièvre à 39°C et une lésion hépatique arrondie hypodense rehaussée en périphérie ? Argumentez selon les signes cliniques, radiologiques et anatomopathologiques.",
     "Choice_A_Text": "Je comprends.",
@@ -11,7 +11,7 @@
     "Choice_B_Explanation": "Le diagnostic est un abcès hépatique car on retrouve cliniquement la triade douleur/fièvre, radiologiquement une coque rehaussée, et histologiquement une cavité remplie de PNN et de débris nécrotiques. (Source : Formes anatomo-cliniques de l'inflammation, Page 74)."
   },
   {
-    "YearAsked": "2022-2023",
+    "YearAsked": "Normale 2023",
     "Subtopic": "Formes anatomo-cliniques de l'inflammation",
     "QuestionText": "Citez les temps de la réaction inflammatoire.",
     "Choice_A_Text": "Je comprends.",
@@ -22,7 +22,7 @@
     "Choice_B_Explanation": "Les temps sont la phase vasculo-sanguine (congestion, oedème, diapédèse), la phase cellulaire (formation du granulome) et la phase de réparation/cicatrisation. (Source : Formes anatomo-cliniques de l'inflammation, Page 69)."
   },
   {
-    "YearAsked": "2022-2023",
+    "YearAsked": "Normale 2023",
     "Subtopic": "Formes anatomo-cliniques de l'inflammation",
     "QuestionText": "Quelles sont les étapes de développement de la pathologie retenue comme diagnostic (abcès) ?",
     "Choice_A_Text": "Je comprends.",
@@ -33,7 +33,7 @@
     "Choice_B_Explanation": "L'abcès se constitue en deux phases : la phase phlegmoneuse (phénomènes vasculaires exsudatifs diffus) et la phase de collection (nécrose purulente circonscrite). (Source : Formes anatomo-cliniques de l'inflammation, Page 74)."
   },
   {
-    "YearAsked": "2022-2023",
+    "YearAsked": "Normale 2023",
     "Subtopic": "Formes anatomo-cliniques de l'inflammation",
     "QuestionText": "Sur le plan anatomopathologique, quels sont les éléments observés dans ce diagnostic (abcès) ?",
     "Choice_A_Text": "Je comprends.",
@@ -44,7 +44,7 @@
     "Choice_B_Explanation": "On observe une paroi interne (PNN, fibrine, vaisseaux congestifs) et une paroi externe ou bourgeon charnu (macrophages, fibroblastes, néovaisseaux). (Source : Formes anatomo-cliniques de l'inflammation, Page 74)."
   },
   {
-    "YearAsked": "2022-2023",
+    "YearAsked": "Normale 2023",
     "Subtopic": "Formes anatomo-cliniques de l'inflammation",
     "QuestionText": "Quelles sont les possibilités évolutives de cette pathologie (abcès) ?",
     "Choice_A_Text": "Je comprends.",
@@ -55,7 +55,7 @@
     "Choice_B_Explanation": "L'évolution peut se faire vers une cicatrice fibreuse après détersion, une progression par nécrose adjacente, un enkystement ou une calcification de la nécrose. (Source : Formes anatomo-cliniques de l'inflammation, Page 74)."
   },
   {
-    "YearAsked": "2022-2023",
+    "YearAsked": "Normale 2023",
     "Subtopic": "Travaux pratiques",
     "QuestionText": "Préciser les éléments morphologiques observés dans l'appendicite aiguë fibrino-leucocytaire.",
     "Choice_A_Text": "Je comprends.",
@@ -66,7 +66,7 @@
     "Choice_B_Explanation": "On observe des ulcérations de la muqueuse couvertes d'un enduit de PNN et de fibrine, une congestion vasculaire et un infiltrat inflammatoire transmural. (Source : Travaux pratiques, Page 459)."
   },
   {
-    "YearAsked": "2022-2023",
+    "YearAsked": "Normale 2023",
     "Subtopic": "Généralités sur les tumeurs",
     "QuestionText": "Énumérer les caractères généraux distinctifs entre les tumeurs bénignes et les tumeurs malignes.",
     "Choice_A_Text": "Je comprends.",
@@ -77,7 +77,7 @@
     "Choice_B_Explanation": "Les tumeurs bénignes sont bien limitées, sans atypies, à croissance lente et sans métastases, contrairement aux malignes qui envahissent et métastasent. (Source : Généralités sur les tumeurs, Page 162)."
   },
   {
-    "YearAsked": "2022-2023",
+    "YearAsked": "Normale 2023",
     "Subtopic": "Histoire naturelle du cancer",
     "QuestionText": "Définir la dysplasie et donner ses caractéristiques morphologiques.",
     "Choice_A_Text": "Je comprends.",
@@ -88,7 +88,7 @@
     "Choice_B_Explanation": "La dysplasie est un trouble acquis de la multiplication cellulaire avec anisocytose, anisocaryose, mitoses nombreuses et désorganisation tissulaire. (Source : Histoire naturelle du cancer, Page 210-211)."
   },
   {
-    "YearAsked": "2022-2023",
+    "YearAsked": "Normale 2023",
     "Subtopic": "Pathologie cellulaire et tissulaire",
     "QuestionText": "Définissez l'apoptose et citez ses deux voies.",
     "Choice_A_Text": "Je comprends.",
