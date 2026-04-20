@@ -72,6 +72,7 @@ export default function ModulePage() {
   const [timerSeconds, setTimerSeconds] = useState(60);
   const [randomizerEnabled, setRandomizerEnabled] = useState(false);
   const [examMode, setExamMode] = useState(false);
+  const [gdrMode, setGdrMode] = useState(false);
   const [examTimeLeft, setExamTimeLeft] = useState(3600);
   const [examAnswers, setExamAnswers] = useState<Record<number, number[]>>({});
   const [examFinished, setExamFinished] = useState(false);
@@ -418,9 +419,11 @@ export default function ModulePage() {
       setOriginalSelectedAnswers([]);
       setCollapsedChoices(new Set());
       setQuestionStats(null);
+      setGdrMode(false);
       applyAnsweredQuestionsFilter();
       return;
     }
+    setGdrMode(false);
     const pool = allQuestions.length >= 50 ? shuffleArray(allQuestions).slice(0, 50) : shuffleArray(allQuestions);
     setExamQuestions(pool);
     setExamMode(true);
@@ -436,6 +439,11 @@ export default function ModulePage() {
     setOriginalSelectedAnswers([]);
     setCollapsedChoices(new Set());
     setQuestionStats(null);
+  };
+
+  const handleToggleGdrMode = () => {
+    if (examMode) return;
+    setGdrMode(prev => !prev);
   };
 
   const formatExamTime = (seconds: number) => {
@@ -664,7 +672,10 @@ export default function ModulePage() {
     const mappedSelectedAnswers = selectedAnswers.map(selectedIndex => mapping[selectedIndex]);
     setOriginalSelectedAnswers(mappedSelectedAnswers);
 
-    const correctAnswersSet = new Set(currentQuestion.correctAnswers);
+    const correctAnswersSet = new Set(gdrMode
+      ? (currentQuestion.answerExplanations || []).reduce((acc: number[], expl: string, i: number) => expl && expl.includes('[GDR]') ? [...acc, i] : acc, [])
+      : currentQuestion.correctAnswers
+    );
     const selectedAnswersSet = new Set(mappedSelectedAnswers);
     
     const defaultCollapsed = new Set<number>();
@@ -676,7 +687,7 @@ export default function ModulePage() {
     setCollapsedChoices(defaultCollapsed);
 
     const allSelectedAreCorrect = mappedSelectedAnswers.every(answer => correctAnswersSet.has(answer));
-    const allCorrectAreSelected = currentQuestion.correctAnswers.every(answer => selectedAnswersSet.has(answer));
+    const allCorrectAreSelected = Array.from(correctAnswersSet).every(answer => selectedAnswersSet.has(answer));
     const isCorrect = allSelectedAreCorrect && allCorrectAreSelected;
     
     setIsCorrectlyAnswered(isCorrect);
@@ -1012,6 +1023,15 @@ export default function ModulePage() {
                 </svg>
                 <span className="hidden sm:inline">Examen</span>
               </button>
+              {!examMode && (
+              <button
+                onClick={handleToggleGdrMode}
+                title="Mode GDR - Réponse du professeur"
+                className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex-shrink-0 shadow-sm flex items-center gap-1 ${gdrMode ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-blue-500/25' : isDarkMode ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50' : 'bg-white/80 text-gray-700 hover:bg-gray-200/80'}`}
+              >
+                {gdrMode ? <span className="text-sm sm:text-base">📖</span> : <span className="hidden sm:inline">GDR</span>}
+              </button>
+              )}
               <button
                 onClick={() => setShaderEnabled(prev => { const next = !prev; localStorage.setItem('shaderEnabled', String(next)); return next; })}
                 title="Shader"
@@ -1239,7 +1259,12 @@ export default function ModulePage() {
           {showAnswer && currentQuestion && (
             <div className={`px-4 sm:px-8 py-3 sm:py-4 ${isDarkMode ? 'bg-gray-750/50' : 'bg-gray-50/50'} border-b ${isDarkMode ? 'border-gray-700/50' : 'border-gray-100'}`}>
               <div className="flex flex-wrap gap-2 sm:gap-2.5">
-                {isCorrectlyAnswered && (
+                {gdrMode && showAnswer && (
+                  <span className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold bg-gradient-to-r from-blue-500 to-blue-600 text-white flex items-center gap-1.5 shadow-lg shadow-blue-500/25">
+                    <span>📖</span>
+                  </span>
+                )}
+                {!gdrMode && isCorrectlyAnswered && (
                   <span className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold bg-gradient-to-r from-green-500 to-emerald-600 text-white flex items-center gap-1.5 shadow-lg shadow-green-500/25">
                     <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -1266,22 +1291,23 @@ export default function ModulePage() {
 
           <div className="p-4 sm:p-5 sm:p-8 space-y-3 sm:space-y-4">
             {(showAnswer ? currentQuestion?.options : (shuffledOptions[currentQuestionIndex] || [])).map((option, index) => {
-              const isCorrect = showAnswer
+              const jsonIsCorrect = showAnswer
                 ? (currentQuestion?.correctAnswers || []).includes(index)
                 : (shuffledCorrectAnswers[currentQuestionIndex] || []).includes(index);
-              const isSelected = showAnswer
-                ? originalSelectedAnswers.includes(index)
-                : selectedAnswers.includes(index);
-              const showCorrectFeedback = showAnswer && isCorrect && isSelected;
-              const showMissedCorrectFeedback = showAnswer && isCorrect && !isSelected;
-              const showIncorrectFeedback = showAnswer && !isCorrect && isSelected;
-              const optionImage = showAnswer
-                ? (currentQuestion?.optionImages && currentQuestion.optionImages[index])
-                : (shuffledOptionImages[currentQuestionIndex] && shuffledOptionImages[currentQuestionIndex][index]);
               const answerExplanation = showAnswer
                 ? (currentQuestion?.answerExplanations && currentQuestion.answerExplanations[index])
                 : (shuffledAnswerExplanations[currentQuestionIndex] && shuffledAnswerExplanations[currentQuestionIndex][index]);
               const hasGDR = answerExplanation && answerExplanation.includes('[GDR]');
+              const isCorrect = gdrMode && showAnswer ? !!hasGDR : jsonIsCorrect;
+              const isSelected = showAnswer
+                ? originalSelectedAnswers.includes(index)
+                : selectedAnswers.includes(index);
+              const showCorrectFeedback = !gdrMode && showAnswer && isCorrect && isSelected;
+              const showMissedCorrectFeedback = !gdrMode && showAnswer && isCorrect && !isSelected;
+              const showIncorrectFeedback = !gdrMode && showAnswer && !isCorrect && isSelected;
+              const optionImage = showAnswer
+                ? (currentQuestion?.optionImages && currentQuestion.optionImages[index])
+                : (shuffledOptionImages[currentQuestionIndex] && shuffledOptionImages[currentQuestionIndex][index]);
               
               const questionKey = `${moduleId}_${currentQuestionIndex}`;
               let isStrikethrough = false;
@@ -1295,6 +1321,8 @@ export default function ModulePage() {
               }
 
               const getOptionStyle = () => {
+                if (gdrMode && showAnswer && isCorrect) return 'bg-gradient-to-r from-blue-500 to-blue-600 text-white border-blue-500 shadow-lg shadow-blue-500/30';
+                if (gdrMode && showAnswer && !isCorrect) return 'bg-gradient-to-r from-orange-400 to-orange-500 text-white border-orange-400 shadow-lg shadow-orange-400/30';
                 if (showCorrectFeedback) return 'bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-500 shadow-lg shadow-green-500/30';
                 if (showMissedCorrectFeedback) return 'bg-gradient-to-r from-red-50 to-red-100 text-red-800 border-red-300';
                 if (showIncorrectFeedback) return 'bg-gradient-to-r from-red-500 to-red-600 text-white border-red-500 shadow-lg shadow-red-500/30';
@@ -1323,6 +1351,8 @@ export default function ModulePage() {
                 >
                   <div className="p-4 sm:p-5 flex flex-wrap items-center gap-3 sm:gap-4">
                     <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm sm:text-base ${
+                      gdrMode && showAnswer && isCorrect ? 'bg-white/20' :
+                      gdrMode && showAnswer && !isCorrect ? 'bg-white/20' :
                       showCorrectFeedback ? 'bg-white/20' :
                       showMissedCorrectFeedback ? 'bg-red-200' :
                       showIncorrectFeedback ? 'bg-white/20' :
@@ -1334,7 +1364,19 @@ export default function ModulePage() {
                     <div className={`flex-1 min-w-0 ${isStrikethrough ? 'line-through' : ''}`}>
                       <p className={`text-sm sm:text-base leading-relaxed break-words ${isCollapsed ? 'line-clamp-1' : ''}`}>{option}</p>
                     </div>
-                    {(showCorrectFeedback || showMissedCorrectFeedback) && (
+                    {(gdrMode && showAnswer && isCorrect) && (
+                      <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                        <span className="text-sm">📖</span>
+                      </div>
+                    )}
+                    {(gdrMode && showAnswer && !isCorrect) && (
+                      <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                        <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                    )}
+                    {(!gdrMode && showAnswer && (showCorrectFeedback || showMissedCorrectFeedback)) && (
                       <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
                         <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -1348,7 +1390,7 @@ export default function ModulePage() {
                         </svg>
                       </div>
                     )}
-                    {showAnswer && hasGDR && (
+                    {!gdrMode && showAnswer && hasGDR && (
                       <span className="flex-shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-300 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-700" title="Réponse du professeur">
                         📖 GDR
                       </span>
@@ -1363,8 +1405,8 @@ export default function ModulePage() {
                     {showAnswer && questionStats && questionStats.total_answers > 0 && (() => {
                       const statCount = questionStats.option_counts[index] || 0;
                       const statPct = questionStats.total_answers > 0 ? Math.round((statCount / questionStats.total_answers) * 100) : 0;
-                      const statTextColor = showCorrectFeedback ? 'text-white/80' : showIncorrectFeedback ? 'text-white/80' : showMissedCorrectFeedback ? 'text-red-600' : isDarkMode ? 'text-gray-400' : 'text-gray-500';
-                      const statBgColor = showCorrectFeedback ? 'bg-white/15' : showIncorrectFeedback ? 'bg-white/15' : showMissedCorrectFeedback ? 'bg-red-200/60' : isDarkMode ? 'bg-gray-600/50' : 'bg-gray-100';
+                      const statTextColor = gdrMode && showAnswer && isCorrect ? 'text-white/80' : gdrMode && showAnswer && !isCorrect ? 'text-white/80' : showCorrectFeedback ? 'text-white/80' : showIncorrectFeedback ? 'text-white/80' : showMissedCorrectFeedback ? 'text-red-600' : isDarkMode ? 'text-gray-400' : 'text-gray-500';
+                      const statBgColor = gdrMode && showAnswer && isCorrect ? 'bg-white/15' : gdrMode && showAnswer && !isCorrect ? 'bg-white/15' : showCorrectFeedback ? 'bg-white/15' : showIncorrectFeedback ? 'bg-white/15' : showMissedCorrectFeedback ? 'bg-red-200/60' : isDarkMode ? 'bg-gray-600/50' : 'bg-gray-100';
                       return (
                         <span className={`basis-full sm:basis-auto flex-shrink-0 px-2.5 py-1 rounded-md text-xs font-semibold ${statTextColor} ${statBgColor}`}>
                           {statPct}% des réponses
@@ -1398,8 +1440,8 @@ export default function ModulePage() {
                   })()}
 
                   {!isCollapsed && showAnswer && answerExplanation && (
-                    <div className={`px-4 sm:px-5 pb-4 sm:pb-5 pt-3 border-t ${showCorrectFeedback ? 'border-white/20' : showIncorrectFeedback || showMissedCorrectFeedback ? 'border-red-200' : isDarkMode ? 'border-gray-600/50' : 'border-gray-100'}`}>
-                      <p className={`text-xs sm:text-sm leading-relaxed ${showCorrectFeedback ? 'text-white/90' : showMissedCorrectFeedback ? 'text-red-700' : showIncorrectFeedback ? 'text-white/90' : isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    <div className={`px-4 sm:px-5 pb-4 sm:pb-5 pt-3 border-t ${gdrMode && showAnswer && isCorrect ? 'border-white/20' : gdrMode && showAnswer && !isCorrect ? 'border-white/20' : showCorrectFeedback ? 'border-white/20' : showIncorrectFeedback || showMissedCorrectFeedback ? 'border-red-200' : isDarkMode ? 'border-gray-600/50' : 'border-gray-100'}`}>
+                      <p className={`text-xs sm:text-sm leading-relaxed ${gdrMode && showAnswer && isCorrect ? 'text-white/90' : gdrMode && showAnswer && !isCorrect ? 'text-white/90' : showCorrectFeedback ? 'text-white/90' : showMissedCorrectFeedback ? 'text-red-700' : showIncorrectFeedback ? 'text-white/90' : isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                         {answerExplanation.replace(/\s*\([^)]*\)\.?/g, '').replace(/\s*\[GDR\]/g, '')}
                       </p>
                     </div>
