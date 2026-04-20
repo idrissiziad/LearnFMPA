@@ -28,7 +28,7 @@ interface SearchResult {
 export default function Dashboard() {
   const router = useRouter();
   const { theme } = useTheme();
-  const { user, isLoading: authLoading, logout } = useAuth();
+  const { user, isLoading: authLoading, logout, getAllProgress } = useAuth();
   const isDarkMode = theme === 'dark';
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
@@ -84,6 +84,12 @@ export default function Dashboard() {
 
     loadModuleStats();
   }, [userYears]);
+
+  useEffect(() => {
+    if (user) {
+      getAllProgress().catch(() => {});
+    }
+  }, [user, getAllProgress]);
 
   const totalQuestions = Array.from(moduleStats.values()).reduce((sum, s) => sum + s.questionCount, 0);
   const totalChapters = Array.from(moduleStats.values()).reduce((sum, s) => sum + s.chapterCount, 0);

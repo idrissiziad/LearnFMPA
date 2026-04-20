@@ -17,6 +17,11 @@ interface QuestionStats {
   option_counts: { [optionIndex: string]: number };
 }
 
+interface FlushResult {
+  statistics?: QuestionStats | null;
+  progress?: Record<string, unknown> | null;
+}
+
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
@@ -28,17 +33,19 @@ interface AuthContextType {
   getAllProgress: () => Promise<{ [key: string]: any }>;
   getQuestionStats: (moduleId: number, questionId: string) => Promise<QuestionStats | null>;
   invalidateProgressCache: () => void;
-  flushAnswers: () => Promise<any>;
+  clearProgressAndStats: () => void;
+  flushAnswers: () => Promise<FlushResult | null>;
   kickedOut: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const API_BASE = '/api';
-const PROGRESS_CACHE_TTL = 120000;
+const PROGRESS_CACHE_TTL = 300000;
 const FLUSH_INTERVAL = 3000;
-const MAX_BATCH_SIZE = 5;
-const STATS_CACHE_TTL = 60000;
+const STATS_CACHE_TTL = 120000;
+const LOCAL_PROGRESS_KEY = 'learnfmpa_progress_cache';
+const LOCAL_STATS_KEY = 'learnfmpa_stats_cache';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -50,7 +57,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const statsCacheRef = useRef<Map<string, { stats: QuestionStats; timestamp: number }>>(new Map());
   const pendingAnswersRef = useRef<any[]>([]);
   const flushTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const flushPromiseRef = useRef<Promise<any> | null>(null);
+  const flushPromiseRef = useRef<Promise<FlushResult | null> | null>(null);
+  const progressFetchRef = useRef<Promise<any> | null>(null);
 
   const getAuthHeaders = useCallback(() => {
     const token = localStorage.getItem('learnfmpa_token');
@@ -61,18 +69,94 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return headers;
   }, []);
 
+  const loadProgressFromStorage = useCallback((): { data: any; timestamp: number } | null => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const stored = localStorage.getItem(LOCAL_PROGRESS_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.data && parsed.timestamp) {
+          return parsed;
+        }
+      }
+    } catch {}
+    return null;
+  }, []);
+
+  const saveProgressToStorage = useCallback((data: any) => {
+    if (typeof window === 'undefined') return;
+    try {
+      localStorage.setItem(LOCAL_PROGRESS_KEY, JSON.stringify({ data, timestamp: Date.now() }));
+    } catch {}
+  }, []);
+
+  const loadStatsFromStorage = useCallback((): Record<string, { stats: QuestionStats; timestamp: number }> | null => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const stored = localStorage.getItem(LOCAL_STATS_KEY);
+      if (stored) {
+        return JSON.parse(stored);
+      }
+    } catch {}
+    return null;
+  }, []);
+
+  const saveStatsToStorage = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const obj: Record<string, { stats: QuestionStats; timestamp: number }> = {};
+      statsCacheRef.current.forEach((v, k) => { obj[k] = v; });
+      localStorage.setItem(LOCAL_STATS_KEY, JSON.stringify(obj));
+    } catch {}
+  }, []);
+
   const invalidateProgressCache = useCallback(() => {
     progressCacheRef.current = { data: null, timestamp: 0 };
   }, []);
+
+  const clearProgressAndStats = useCallback(() => {
+    progressCacheRef.current = { data: null, timestamp: 0 };
+    statsCacheRef.current = new Map();
+    try {
+      localStorage.removeItem(LOCAL_PROGRESS_KEY);
+      localStorage.removeItem(LOCAL_STATS_KEY);
+    } catch {}
+  }, []);
+
+  const clearAllCaches = useCallback(() => {
+    progressCacheRef.current = { data: null, timestamp: 0 };
+    statsCacheRef.current = new Map();
+    try {
+      localStorage.removeItem(LOCAL_PROGRESS_KEY);
+      localStorage.removeItem(LOCAL_STATS_KEY);
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    const stored = loadProgressFromStorage();
+    if (stored) {
+      progressCacheRef.current = stored;
+    }
+    const storedStats = loadStatsFromStorage();
+    if (storedStats) {
+      const map = new Map<string, { stats: QuestionStats; timestamp: number }>();
+      Object.entries(storedStats).forEach(([k, v]: [string, any]) => {
+        if (Date.now() - v.timestamp < STATS_CACHE_TTL) {
+          map.set(k, v as { stats: QuestionStats; timestamp: number });
+        }
+      });
+      statsCacheRef.current = map;
+    }
+  }, [loadProgressFromStorage, loadStatsFromStorage]);
 
   const handleUnauthorized = useCallback(() => {
     setKickedOut(true);
     setUser(null);
     localStorage.removeItem('learnfmpa_user');
     localStorage.removeItem('learnfmpa_token');
-    invalidateProgressCache();
+    clearAllCaches();
     router.push('/login?kicked=1');
-  }, [router, invalidateProgressCache]);
+  }, [router, clearAllCaches]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('learnfmpa_user');
@@ -112,7 +196,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [user]);
 
-  const flushPendingAnswers = useCallback(async (): Promise<any> => {
+  const flushPendingAnswers = useCallback(async (): Promise<FlushResult | null> => {
     if (pendingAnswersRef.current.length === 0) return null;
 
     if (flushPromiseRef.current) return flushPromiseRef.current;
@@ -125,12 +209,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       flushTimerRef.current = null;
     }
 
-    flushPromiseRef.current = (async () => {
+    const currentAnswers = answersToFlush;
+
+    flushPromiseRef.current = (async (): Promise<FlushResult | null> => {
       try {
         const response = await fetch(`${API_BASE}/answer`, {
           method: 'POST',
           headers: getAuthHeaders(),
-          body: JSON.stringify({ user_id: user?.id, answers: answersToFlush })
+          body: JSON.stringify({ user_id: user?.id, answers: currentAnswers })
         });
 
         if (response.status === 401) {
@@ -139,20 +225,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
 
         const data = await response.json();
-        invalidateProgressCache();
 
-        if (data.success && data.statistics) {
-          const lastAnswer = answersToFlush[answersToFlush.length - 1];
-          if (lastAnswer) {
-            const statsKey = `${lastAnswer.module_id}_${lastAnswer.question_id}`;
-            statsCacheRef.current.set(statsKey, { stats: data.statistics, timestamp: Date.now() });
+        if (data.success) {
+          if (data.statistics) {
+            const lastAnswer = currentAnswers[currentAnswers.length - 1];
+            if (lastAnswer) {
+              const statsKey = `${lastAnswer.module_id}_${lastAnswer.question_id}`;
+              statsCacheRef.current.set(statsKey, { stats: data.statistics, timestamp: Date.now() });
+            }
+            saveStatsToStorage();
           }
+
+          if (data.progress) {
+            progressCacheRef.current = { data: data.progress, timestamp: Date.now() };
+            saveProgressToStorage(data.progress);
+          } else {
+            progressCacheRef.current = { data: null, timestamp: 0 };
+          }
+
+          return {
+            statistics: data.statistics || null,
+            progress: data.progress || null,
+          };
         }
 
-        return data;
+        return null;
       } catch (error) {
         console.error('Failed to flush answers:', error);
-        pendingAnswersRef.current = [...answersToFlush, ...pendingAnswersRef.current];
+        pendingAnswersRef.current = [...currentAnswers, ...pendingAnswersRef.current];
         return null;
       } finally {
         flushPromiseRef.current = null;
@@ -160,7 +260,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })();
 
     return flushPromiseRef.current;
-  }, [user, invalidateProgressCache, getAuthHeaders, handleUnauthorized]);
+  }, [user, getAuthHeaders, handleUnauthorized, saveStatsToStorage, saveProgressToStorage]);
 
   const scheduleFlush = useCallback(() => {
     if (flushTimerRef.current) {
@@ -196,6 +296,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('learnfmpa_token', data.user.token);
       setKickedOut(false);
 
+      progressCacheRef.current = { data: null, timestamp: 0 };
+
       return {
         success: true,
         mustChangePassword: data.user.must_change_password
@@ -220,8 +322,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     localStorage.removeItem('learnfmpa_user');
     localStorage.removeItem('learnfmpa_token');
-    invalidateProgressCache();
-    const keysToRemove = [];
+    clearAllCaches();
+    const keysToRemove: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
       if (key && key.startsWith('learnfmpa_answered_')) {
@@ -230,7 +332,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     keysToRemove.forEach(key => localStorage.removeItem(key));
     router.push('/login');
-  }, [router, flushPendingAnswers, invalidateProgressCache]);
+  }, [router, flushPendingAnswers, clearAllCaches]);
 
   const changePassword = async (email: string, currentPassword: string, newPassword: string) => {
     try {
@@ -290,29 +392,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return cache.data[`module_${moduleId}`] || {};
     }
 
-    try {
-      const response = await fetch(`${API_BASE}/progress?user_id=${user.id}`, {
-        headers: getAuthHeaders(),
-        cache: 'no-store',
-      });
-
-      if (response.status === 401) {
-        handleUnauthorized();
-        return {};
-      }
-
-      const data = await response.json();
-
-      if (data.success && data.progress) {
-        progressCacheRef.current = { data: data.progress, timestamp: Date.now() };
-        return data.progress[`module_${moduleId}`] || {};
-      }
-      return {};
-    } catch (error) {
-      console.error('Failed to get progress:', error);
-      return {};
+    const storedProg = loadProgressFromStorage();
+    if (storedProg && storedProg.data && Date.now() - storedProg.timestamp < PROGRESS_CACHE_TTL) {
+      progressCacheRef.current = storedProg;
+      return storedProg.data[`module_${moduleId}`] || {};
     }
-  }, [user, getAuthHeaders, handleUnauthorized]);
+
+    if (progressFetchRef.current) {
+      return progressFetchRef.current.then((data: any) => data?.[`module_${moduleId}`] || {});
+    }
+
+    progressFetchRef.current = (async () => {
+      try {
+        const response = await fetch(`${API_BASE}/progress?user_id=${user.id}`, {
+          headers: getAuthHeaders(),
+          cache: 'no-store',
+        });
+
+        if (response.status === 401) {
+          handleUnauthorized();
+          return storedProg?.data || {};
+        }
+
+        const data = await response.json();
+
+        if (data.success && data.progress) {
+          progressCacheRef.current = { data: data.progress, timestamp: Date.now() };
+          saveProgressToStorage(data.progress);
+          return data.progress;
+        }
+        return storedProg?.data || {};
+      } catch (error) {
+        console.error('Failed to get progress:', error);
+        if (storedProg?.data) {
+          progressCacheRef.current = { data: storedProg.data, timestamp: storedProg.timestamp };
+          return storedProg.data;
+        }
+        return {};
+      } finally {
+        progressFetchRef.current = null;
+      }
+    })();
+
+    return progressFetchRef.current.then((data: any) => data?.[`module_${moduleId}`] || {});
+  }, [user, getAuthHeaders, handleUnauthorized, loadProgressFromStorage, saveProgressToStorage]);
 
   const getAllProgress = useCallback(async () => {
     if (!user) return {};
@@ -322,29 +445,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return cache.data;
     }
 
-    try {
-      const response = await fetch(`${API_BASE}/progress?user_id=${user.id}`, {
-        headers: getAuthHeaders(),
-        cache: 'no-store',
-      });
-
-      if (response.status === 401) {
-        handleUnauthorized();
-        return {};
-      }
-
-      const data = await response.json();
-
-      if (data.success && data.progress) {
-        progressCacheRef.current = { data: data.progress, timestamp: Date.now() };
-        return data.progress;
-      }
-      return {};
-    } catch (error) {
-      console.error('Failed to get all progress:', error);
-      return {};
+    const storedProg = loadProgressFromStorage();
+    if (storedProg && storedProg.data && Date.now() - storedProg.timestamp < PROGRESS_CACHE_TTL) {
+      progressCacheRef.current = storedProg;
+      return storedProg.data;
     }
-  }, [user, getAuthHeaders, handleUnauthorized]);
+
+    if (progressFetchRef.current) {
+      return progressFetchRef.current;
+    }
+
+    progressFetchRef.current = (async () => {
+      try {
+        const response = await fetch(`${API_BASE}/progress?user_id=${user.id}`, {
+          headers: getAuthHeaders(),
+          cache: 'no-store',
+        });
+
+        if (response.status === 401) {
+          handleUnauthorized();
+          return storedProg?.data || {};
+        }
+
+        const data = await response.json();
+
+        if (data.success && data.progress) {
+          progressCacheRef.current = { data: data.progress, timestamp: Date.now() };
+          saveProgressToStorage(data.progress);
+          return data.progress;
+        }
+        return storedProg?.data || {};
+      } catch (error) {
+        console.error('Failed to get all progress:', error);
+        if (storedProg?.data) {
+          progressCacheRef.current = { data: storedProg.data, timestamp: storedProg.timestamp };
+          return storedProg.data;
+        }
+        return {};
+      } finally {
+        progressFetchRef.current = null;
+      }
+    })();
+
+    return progressFetchRef.current;
+  }, [user, getAuthHeaders, handleUnauthorized, loadProgressFromStorage, saveProgressToStorage]);
 
   const getQuestionStats = useCallback(async (moduleId: number, questionId: string): Promise<QuestionStats | null> => {
     const statsKey = `${moduleId}_${questionId}`;
@@ -361,6 +505,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (response.status === 401) {
         handleUnauthorized();
+        if (cached) return cached.stats;
         return null;
       }
 
@@ -368,6 +513,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (data.success && data.statistics) {
         statsCacheRef.current.set(statsKey, { stats: data.statistics, timestamp: Date.now() });
+        saveStatsToStorage();
         return data.statistics;
       }
       return null;
@@ -375,9 +521,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (cached) return cached.stats;
       return null;
     }
-  }, [getAuthHeaders, handleUnauthorized]);
+  }, [getAuthHeaders, handleUnauthorized, saveStatsToStorage]);
 
-  const flushAnswers = useCallback(async () => {
+  const flushAnswers = useCallback(async (): Promise<FlushResult | null> => {
     return flushPendingAnswers();
   }, [flushPendingAnswers]);
 
@@ -393,6 +539,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       getAllProgress,
       getQuestionStats,
       invalidateProgressCache,
+      clearProgressAndStats,
       flushAnswers,
       kickedOut
     }}>

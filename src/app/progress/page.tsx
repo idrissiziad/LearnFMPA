@@ -28,7 +28,7 @@ interface ModuleProgressDetail {
 export default function ProgressPage() {
   const router = useRouter();
   const { theme } = useTheme();
-  const { user, isLoading: authLoading, logout, getAllProgress, invalidateProgressCache } = useAuth();
+  const { user, isLoading: authLoading, logout, getAllProgress, invalidateProgressCache, clearProgressAndStats } = useAuth();
   const isDarkMode = theme === 'dark';
   const [progress, setProgress] = useState<{ [key: string]: any }>({});
   const [moduleData, setModuleData] = useState<{ [moduleId: number]: Question[] }>({});
@@ -540,7 +540,7 @@ export default function ProgressPage() {
                       method: 'DELETE',
                       headers: { 'Authorization': `Bearer ${token}` }
                     });
-                    invalidateProgressCache();
+                    clearProgressAndStats();
                     for (let i = localStorage.length - 1; i >= 0; i--) {
                       const key = localStorage.key(i);
                       if (key?.startsWith('learnfmpa_answered_')) {

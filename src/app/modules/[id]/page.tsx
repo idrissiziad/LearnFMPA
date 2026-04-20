@@ -26,7 +26,7 @@ export default function ModulePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { theme } = useTheme();
-  const { user, isLoading: authLoading, submitAnswer, getProgress, getQuestionStats, invalidateProgressCache, flushAnswers } = useAuth();
+  const { user, isLoading: authLoading, submitAnswer, getProgress, invalidateProgressCache, clearProgressAndStats, flushAnswers } = useAuth();
   const isDarkMode = theme === 'dark';
   const [allQuestions, setAllQuestions] = useState<ExtendedQuestion[]>([]);
   const [questions, setQuestions] = useState<ExtendedQuestion[]>([]);
@@ -119,6 +119,7 @@ export default function ModulePage() {
           if (stored) {
             try {
               localProgress = JSON.parse(stored);
+              setCorrectlyAnsweredQuestions(localProgress);
             } catch (e) {}
           }
         }
@@ -708,10 +709,9 @@ export default function ModulePage() {
       
       if (user) {
         submitAnswer(moduleId, currentQuestion.id.toString(), isCorrect, mappedSelectedAnswers);
-        await flushAnswers();
-        const stats = await getQuestionStats(moduleId, currentQuestion.id.toString());
-        if (stats) {
-          setQuestionStats(stats);
+        const flushResult = await flushAnswers();
+        if (flushResult?.statistics) {
+          setQuestionStats(flushResult.statistics);
         } else {
           setQuestionStats(null);
         }
@@ -802,7 +802,7 @@ export default function ModulePage() {
     }
     if (user) {
       try {
-        invalidateProgressCache();
+        clearProgressAndStats();
         const token = localStorage.getItem('learnfmpa_token');
         await fetch(`/api/progress?user_id=${user.id}&module_id=${moduleId}`, {
           method: 'DELETE',

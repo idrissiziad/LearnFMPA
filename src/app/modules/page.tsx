@@ -17,7 +17,7 @@ interface ModuleStats {
 export default function ModulesPage() {
   const router = useRouter();
   const { theme } = useTheme();
-  const { user, isLoading: authLoading, logout } = useAuth();
+  const { user, isLoading: authLoading, logout, getAllProgress } = useAuth();
   const isDarkMode = theme === 'dark';
   const [moduleStats, setModuleStats] = useState<Map<number, ModuleStats>>(new Map());
   const [isLoading, setIsLoading] = useState(true);
@@ -30,6 +30,12 @@ export default function ModulesPage() {
       router.push('/login');
     }
   }, [user, authLoading, router]);
+
+  useEffect(() => {
+    if (user && !authLoading) {
+      getAllProgress().catch(() => {});
+    }
+  }, [user, authLoading, getAllProgress]);
 
   useEffect(() => {
     const loadModuleStats = async () => {
