@@ -59,7 +59,7 @@ def api_request(
 
     headers = {"Content-Type": "application/json"}
 
-    if method == "GET" and "admin_secret" not in endpoint:
+    if "admin_secret" not in endpoint:
         url = f"{url}{'?' if '?' not in url else '&'}admin_secret={admin_secret}"
 
     req_data = None
