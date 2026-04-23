@@ -26,6 +26,8 @@ export interface User {
   activation_days: number;
   activated_at: string | null;
   has_paid: boolean;
+  is_trial?: boolean;
+  trial_started_at?: string | null;
 }
 
 export interface UsersData {
@@ -99,6 +101,26 @@ export async function saveQuestionStats(moduleId: number, stats: ModuleStats): P
     await client.set(`stats:module_${moduleId}`, JSON.stringify(stats));
   } catch (error) {
     console.error('Redis save stats error:', error);
+  }
+}
+
+export async function getSignupOpen(): Promise<boolean> {
+  try {
+    const client = await getRedis();
+    const value = await client.get('signup_open');
+    return value === 'true';
+  } catch (error) {
+    console.error('Redis get signup_open error:', error);
+    return false;
+  }
+}
+
+export async function setSignupOpen(open: boolean): Promise<void> {
+  try {
+    const client = await getRedis();
+    await client.set('signup_open', open ? 'true' : 'false');
+  } catch (error) {
+    console.error('Redis set signup_open error:', error);
   }
 }
 

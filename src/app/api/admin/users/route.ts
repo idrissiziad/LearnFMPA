@@ -39,20 +39,22 @@ function migrateUser(user: any): any {
   if (user.activation_days === undefined || user.activation_days === null) user.activation_days = 150;
   if (!user.activated_at) user.activated_at = user.created_at || new Date().toISOString();
   if (user.has_paid === undefined || user.has_paid === null) user.has_paid = false;
+  if (user.is_trial === undefined || user.is_trial === null) { user.is_trial = false; }
+  if (user.trial_started_at === undefined) { user.trial_started_at = null; }
   return user;
 }
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { action, name, email, password, admin_secret, new_password, is_active, year, years, activation_days, has_paid } = body;
+    const { action, name, email, password, admin_secret, new_password, is_active, year, years, activation_days, has_paid, is_trial, trial_started_at } = body;
 
     if (!validateAdmin(admin_secret)) {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 403 });
     }
 
     // Update user properties (year, activation_days, has_paid)
-    if (action === 'update_user' || (!action && email && !name && !password && !new_password && is_active === undefined && (year !== undefined || years !== undefined || activation_days !== undefined || has_paid !== undefined))) {
+    if (action === 'update_user' || (!action && email && !name && !password && !new_password && is_active === undefined && (year !== undefined || years !== undefined || activation_days !== undefined || has_paid !== undefined || is_trial !== undefined))) {
       const usersData = await loadUsers();
       let found = false;
       
@@ -73,6 +75,15 @@ export async function POST(request: NextRequest) {
             if (has_paid && !migrated.activated_at) {
               migrated.activated_at = new Date().toISOString();
             }
+          }
+          if (is_trial !== undefined) {
+            migrated.is_trial = !!is_trial;
+            if (!migrated.is_trial) {
+              migrated.trial_started_at = null;
+            }
+          }
+          if (trial_started_at !== undefined) {
+            migrated.trial_started_at = trial_started_at;
           }
           found = true;
           break;
@@ -236,7 +247,9 @@ export async function GET(request: NextRequest) {
               years: user.years,
               activation_days: user.activation_days,
               activated_at: user.activated_at,
-              has_paid: user.has_paid
+              has_paid: user.has_paid,
+              is_trial: user.is_trial || false,
+              trial_started_at: user.trial_started_at || null
             }
           });
         }
@@ -256,7 +269,9 @@ export async function GET(request: NextRequest) {
       years: user.years,
       activation_days: user.activation_days,
       activated_at: user.activated_at,
-      has_paid: user.has_paid
+      has_paid: user.has_paid,
+      is_trial: user.is_trial || false,
+      trial_started_at: user.trial_started_at || null
     }));
 
     return NextResponse.json({

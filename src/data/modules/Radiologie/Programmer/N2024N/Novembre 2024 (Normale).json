@@ -1,7 +1,7 @@
 [
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Radio-anatomie et moyens d'explorations",
         "QuestionText": "Concernant les techniques d'imagerie thoracique, cochez la ou les propositions justes :",
         "Choice_A_Text": "Pour la radiographie thoracique, l'incidence de base est en position semi assise.",
         "Choice_A_isCorrect": false,
@@ -25,8 +25,8 @@
         "Choice_E_Image": "Radiologie-1061.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Syndrome alvéolaire",
         "QuestionText": "Le syndrome alvéolaire est :",
         "Choice_A_Text": "Une dilatation des bronches.",
         "Choice_A_isCorrect": false,
@@ -50,8 +50,8 @@
         "Choice_E_Image": "Radiologie-1404.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Syndrome pariétal",
         "QuestionText": "La lyse costale est un signe pathognomonique :",
         "Choice_A_Text": "Dans le syndrome pleural.",
         "Choice_A_isCorrect": false,
@@ -75,8 +75,8 @@
         "Choice_E_Image": "Radiologie-1272.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Syndrome médiastinal",
         "QuestionText": "Une masse médiastinale sur une radiographie thoracique de face :",
         "Choice_A_Text": "Est une opacité dont la limite externe est floue.",
         "Choice_A_isCorrect": false,
@@ -100,8 +100,8 @@
         "Choice_E_Image": "Radiologie-1283.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Syndrome médiastinal",
         "QuestionText": "Dans le cadre des masses médiastinales, le rôle du scanner thoracique est de préciser :",
         "Choice_A_Text": "La topographie exacte de la masse médiastinale.",
         "Choice_A_isCorrect": true,
@@ -125,8 +125,8 @@
         "Choice_E_Image": "Radiologie-1261.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Imagerie hépatique",
         "QuestionText": "L'anévrysme de l'aorte abdominale :",
         "Choice_A_Text": "Est limité uniquement à l'étage sous rénal.",
         "Choice_A_isCorrect": false,
@@ -150,8 +150,8 @@
         "Choice_E_Image": "Radiologie-0272.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Cancers broncho-pulmonaires",
         "QuestionText": "Dans le cancer bronchopulmonaire, les propositions exactes sont :",
         "Choice_A_Text": "La radiographie thoracique montre uniquement une opacité périphérique.",
         "Choice_A_isCorrect": false,
@@ -175,8 +175,8 @@
         "Choice_E_Image": "Radiologie-0093.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Infection pulmonaire",
         "QuestionText": "En cas de tuberculose pulmonaire, les propositions exactes sont :",
         "Choice_A_Text": "La localisation siège surtout au niveau des lobes supérieurs.",
         "Choice_A_isCorrect": true,
@@ -200,8 +200,8 @@
         "Choice_E_Image": "Radiologie-0774.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Radio-anatomie et moyens d'explorations",
         "QuestionText": "Parmi ces signes radiologiques, lesquels sont retrouvés dans l'embolie pulmonaire ?",
         "Choice_A_Text": "Une ascension de la coupole diaphragmatique.",
         "Choice_A_isCorrect": true,
@@ -225,8 +225,8 @@
         "Choice_E_Image": "Radiologie-1138.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Infection pulmonaire",
         "QuestionText": "Dans les infections pulmonaires, les propositions exactes sont :",
         "Choice_A_Text": "Le kyste hydatique non rompu se manifestent par une opacité ronde bien limitée sur radiographie thoracique.",
         "Choice_A_isCorrect": true,
@@ -250,8 +250,8 @@
         "Choice_E_Image": "Radiologie-0769.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Imagerie de la prostate",
         "QuestionText": "Un patient de 60 ans qui présente une hématurie, dysurie avec une prostate dure suspecte à l'examen clinique et un taux de PSA élevé. Quel est l'examen de choix dans l'exploration de sa prostate ?",
         "Choice_A_Text": "Abdomen sans préparation ASP.",
         "Choice_A_isCorrect": false,
@@ -275,8 +275,8 @@
         "Choice_E_Image": "Radiologie-0547.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Syndrome tumoral renal",
         "QuestionText": "Chez un patient présentant un cancer rénal :",
         "Choice_A_Text": "Il faut rechercher des signes d'extension vers la veine cave inférieure.",
         "Choice_A_isCorrect": true,
@@ -300,8 +300,8 @@
         "Choice_E_Image": "Radiologie-1431.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Exploration urologique",
         "QuestionText": "L'exploration de l'appareil urinaire par tomodensitométrie permet des :",
         "Choice_A_Text": "Renseignements morphologiques.",
         "Choice_A_isCorrect": true,
@@ -325,8 +325,8 @@
         "Choice_E_Image": "Radiologie-0156.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Imagerie de la prostate",
         "QuestionText": "L'IRM multi paramétrique de la prostate :",
         "Choice_A_Text": "Est une technique irradiante.",
         "Choice_A_isCorrect": false,
@@ -350,8 +350,8 @@
         "Choice_E_Image": "Radiologie-0547.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Os normal, sémiologie et arthropathies dégénératives",
         "QuestionText": "Parmi les signes radiologiques de l'arthrose, on retrouve :",
         "Choice_A_Text": "Amincissement des parties molles péri articulaires.",
         "Choice_A_isCorrect": false,
@@ -375,8 +375,8 @@
         "Choice_E_Image": "Radiologie-0978.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Tumeurs osseuses",
         "QuestionText": "Dans la classification de Lodwick des ostéolyses osseuses :",
         "Choice_A_Text": "Le type IA est une ostéolyse géographique sans sclérose marginale.",
         "Choice_A_isCorrect": false,
@@ -400,8 +400,8 @@
         "Choice_E_Image": "Radiologie-1581.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Infections ostéoarticulaires",
         "QuestionText": "Enumérer les signes radiologiques du mal de pott à la phase d'état :",
         "Choice_A_Text": "Elargissement discal.",
         "Choice_A_isCorrect": false,
@@ -425,8 +425,8 @@
         "Choice_E_Image": "Radiologie-0138.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Tumeurs osseuses",
         "QuestionText": "L'ostéosarcome :",
         "Choice_A_Text": "Est une tumeur osseuse bénigne.",
         "Choice_A_isCorrect": false,
@@ -450,8 +450,8 @@
         "Choice_E_Image": "Radiologie-1616.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Os normal, sémiologie et arthropathies dégénératives",
         "QuestionText": "Une jeune patiente de 22 ans consulte pour des lombalgies inflammatoires. Le bilan biologique note un syndrome inflammatoire et la radiographie du bassin objective un flou, une irrégularité des berges articulaires et une condensation péri-articulaire des deux sacro iliaques. Quel est votre diagnostic :",
         "Choice_A_Text": "Une sacro iliite infectieuse.",
         "Choice_A_isCorrect": false,
@@ -475,8 +475,8 @@
         "Choice_E_Image": "Radiologie-0988.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Tumeurs osseuses",
         "QuestionText": "Le chondrome ou enchondrome :",
         "Choice_A_Text": "Est une tumeur maligne.",
         "Choice_A_isCorrect": false,
@@ -500,8 +500,8 @@
         "Choice_E_Image": "Radiologie-1596.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Traumatismes crânio-encéphaliques",
         "QuestionText": "Collection hématique bien limitée entre l'os de la voûte et la dure mère est :",
         "Choice_A_Text": "Hématome sous dural",
         "Choice_A_isCorrect": false,
@@ -525,8 +525,8 @@
         "Choice_E_Image": "Radiologie-1549.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Traumatismes crânio-encéphaliques",
         "QuestionText": "Lésions axonales diffuses :",
         "Choice_A_Text": "Dans les traumatismes mineurs",
         "Choice_A_isCorrect": false,
@@ -550,8 +550,8 @@
         "Choice_E_Image": "Radiologie-1558.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Hypertension intra-crânienne",
         "QuestionText": "Patient de 25 ans, sans antécédent, présente une céphalée avec raideur méningée dans un contexte fébrile, quel examen faut-il réalisé en première intention :",
         "Choice_A_Text": "Ponction lombaire",
         "Choice_A_isCorrect": true,
@@ -575,8 +575,8 @@
         "Choice_E_Image": "Radiologie-0219.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Hémorragie méningée",
         "QuestionText": "En IRM, l'hémorragie méningée :",
         "Choice_A_Text": "La séquence T1 est sensible au diagnostic",
         "Choice_A_isCorrect": false,
@@ -600,8 +600,8 @@
         "Choice_E_Image": "Radiologie-0253.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Hémorragie méningée",
         "QuestionText": "L'hémorragie méningée :",
         "Choice_A_Text": "Est hypodense en TDM.",
         "Choice_A_isCorrect": false,
@@ -625,8 +625,8 @@
         "Choice_E_Image": "Radiologie-0258.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Hypertension intra-crânienne",
         "QuestionText": "Patient Hamid, de 33 ans suivis pour la tuberculose pulmonaire dans un contexte d'infection rétrovirale. Il consulte pour syndrome d'HTIC dans un contexte fébrile. Quel examen faut-il réaliser en première intention :",
         "Choice_A_Text": "IRM cérébrale",
         "Choice_A_isCorrect": false,
@@ -650,8 +650,8 @@
         "Choice_E_Image": "Radiologie-0220.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Hypertension intra-crânienne",
         "QuestionText": "L'examen radiologique du même patient Hamid vous montre multiples lésions tissulaires sus et sous tentoriel avec rehaussement périphérique. Quels sont les deux diagnostics à évoquer en premier lieu :",
         "Choice_A_Text": "Kyste hydatique",
         "Choice_A_isCorrect": false,
@@ -675,8 +675,8 @@
         "Choice_E_Image": "Radiologie-0232.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Compressions médullaires",
         "QuestionText": "Dans la compression médullaire, l'IRM :",
         "Choice_A_Text": "Plus sensible que la TDM",
         "Choice_A_isCorrect": true,
@@ -700,8 +700,8 @@
         "Choice_E_Image": "Radiologie-0121.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Imagerie hépatique",
         "QuestionText": "Imagerie de la cirrhose hépatique :",
         "Choice_A_Text": "Aspect irrégulier des contours hépatique",
         "Choice_A_isCorrect": true,
@@ -725,8 +725,8 @@
         "Choice_E_Image": "Radiologie-0711.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Imagerie Pancréas et Rate",
         "QuestionText": "Dans les tumeurs du pancréas :",
         "Choice_A_Text": "L'échographie est l'examen de référence pour le bilan d'extension.",
         "Choice_A_isCorrect": false,
@@ -750,8 +750,8 @@
         "Choice_E_Image": "Radiologie-0364.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Imagerie Pancréas et Rate",
         "QuestionText": "Dans la pancréatite aiguë, le scanner abdominal :",
         "Choice_A_Text": "Est systématique quel que soit le délai d'évolution.",
         "Choice_A_isCorrect": false,
@@ -775,8 +775,8 @@
         "Choice_E_Image": "Radiologie-0312.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Imagerie de la pathologie du tube digestif",
         "QuestionText": "Dans le cadre de Recto colite hémorragique (RCH) :",
         "Choice_A_Text": "La colo IRM est une technique non irradiante qui permet d'assurer une surveillance de la maladie sous traitement médical.",
         "Choice_A_isCorrect": true,
@@ -800,8 +800,8 @@
         "Choice_E_Image": "Radiologie-0463.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Imagerie des urgences abdominales",
         "QuestionText": "Monsieur Badr âgée de 36 ans, sans antécédents, consulte aux urgences pour douleur aiguë de la fosse iliaque droite dans un contexte fébrile. Quels sont les diagnostics à évoquer :",
         "Choice_A_Text": "Colique néphrétique sur lithiase",
         "Choice_A_isCorrect": false,
@@ -825,8 +825,8 @@
         "Choice_E_Image": "Radiologie-0621.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Imagerie des urgences abdominales",
         "QuestionText": "Chez cette même patiente, quel examen indiquerez-vous en 1ère intention :",
         "Choice_A_Text": "Une IRM rénale.",
         "Choice_A_isCorrect": false,
@@ -850,8 +850,8 @@
         "Choice_E_Image": "Radiologie-0581.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Imagerie des urgences abdominales",
         "QuestionText": "Devant une occlusion intestinale :",
         "Choice_A_Text": "En ASP, les niveaux hydroaériques périphériques plus hauts que larges sont en faveur d'une occlusion colique",
         "Choice_A_isCorrect": true,
@@ -875,8 +875,8 @@
         "Choice_E_Image": "Radiologie-0649.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Imagerie Pancréas et Rate",
         "QuestionText": "L'échographie abdominale devant une pancréatite aiguë a but de :",
         "Choice_A_Text": "Confirmer le diagnostic.",
         "Choice_A_isCorrect": false,
@@ -900,8 +900,8 @@
         "Choice_E_Image": "Radiologie-0308.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Imagerie des urgences abdominales",
         "QuestionText": "Monsieur Badr âgé de 55 ans, présente une douleur abdominale diffuse avec arrêt des matières et des gaz depuis 3 jours et des vomissements, quels sont les deux examens à réaliser en urgence :",
         "Choice_A_Text": "Echographie abdominale.",
         "Choice_A_isCorrect": false,
@@ -925,8 +925,8 @@
         "Choice_E_Image": "Radiologie-0649.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Imagerie des urgences abdominales",
         "QuestionText": "Les examens de ce patient confirment le diagnostic d'occlusion intestinale aiguë, quels sont l'apport de TDM avec injection de produit de contraste :",
         "Choice_A_Text": "Diagnostic positif d'occlusion",
         "Choice_A_isCorrect": true,
@@ -950,8 +950,8 @@
         "Choice_E_Image": "Radiologie-0649.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Imagerie de la pathologie du tube digestif",
         "QuestionText": "Patient de 70 ans, tabagique non sevré qui présente des douleurs abdominales chroniques avec maelena et anémie. Quel examen confirme le diagnostic d'adénocarcinome colique :",
         "Choice_A_Text": "TDM Thoraco-abdomino-pelvienne",
         "Choice_A_isCorrect": false,
@@ -964,7 +964,7 @@
         "Choice_C_Explanation": "Utile pour le bilan mais ne permet pas de biopsie. (Source : Imagerie de la pathologie du tube digestif, Page Globale 511).",
         "Choice_D_Text": "Echographie abdominale",
         "Choice_D_isCorrect": false,
-        "Choice_D_Explanation": "Trop peu sensible pour le diagnostic de cancer colique débutant. (Source : Imagerie de la pathologie du tube digestif, Page Globale 485).",
+        "Choice_D_Explanation": "Too peu sensible pour le diagnostic de cancer colique débutant. (Source : Imagerie de la pathologie du tube digestif, Page Globale 485).",
         "Choice_E_Text": "Lavement baryté",
         "Choice_E_isCorrect": false,
         "Choice_E_Explanation": "N'est plus l'examen de référence et ne permet pas de biopsie. (Source : Imagerie de la pathologie du tube digestif, Page Globale 485).",
@@ -975,8 +975,8 @@
         "Choice_E_Image": "Radiologie-0485.avif"
     },
     {
-        "YearAsked": "2024",
-        "Subtopic": "Radiologie",
+        "YearAsked": "Novembre 2024 (Normale)",
+        "Subtopic": "Imagerie hépatique",
         "QuestionText": "Devant une lésion hépatique, l'IRM montre :",
         "Choice_A_Text": "L'angiome hépatique typique a une cinétique de rehaussement dynamique centrifuge.",
         "Choice_A_isCorrect": false,
