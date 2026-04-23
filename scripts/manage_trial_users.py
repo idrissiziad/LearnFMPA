@@ -34,6 +34,7 @@ from datetime import datetime, timedelta, timezone
 DEFAULT_API_URL = os.environ.get("API_URL", "https://www.learnfmpa.com")
 DEFAULT_ADMIN_SECRET = os.environ.get("ADMIN_SECRET", "learnfmpa2024")
 TRIAL_DAYS = 7
+DEFAULT_CONVERT_DAYS = 150
 
 
 def api_request(
@@ -234,26 +235,22 @@ def convert_trial_user(api_url: str, admin_secret: str, email: str, activation_d
         print(f"\n✗ User '{email}' is not a trial user.\n")
         return
 
+    final_days = activation_days if activation_days is not None else DEFAULT_CONVERT_DAYS
+
     payload = {
         "action": "update_user",
         "email": email,
         "is_trial": False,
         "trial_started_at": None,
+        "activation_days": final_days,
+        "has_paid": True,
+        "activated_at": datetime.now(timezone.utc).isoformat(),
     }
-
-    if activation_days is not None:
-        payload["activation_days"] = activation_days
-        payload["has_paid"] = True
-        payload["activated_at"] = datetime.now(timezone.utc).isoformat()
-    else:
-        payload["has_paid"] = True
-        payload["activated_at"] = datetime.now(timezone.utc).isoformat()
 
     update_result = api_request(api_url, admin_secret, "/api/admin/users", "POST", payload)
 
     if update_result.get("success"):
-        days_info = f" with {activation_days} days of access" if activation_days else ""
-        print(f"\n✓ Trial user '{email}' converted to regular user{days_info}.")
+        print(f"\n✓ Trial user '{email}' converted to regular user with {final_days} days of access.")
         print(f"  The user now has full access as a paid member.\n")
     else:
         print(f"\n✗ Error: {update_result.get('error', 'Unknown error')}\n")
@@ -451,7 +448,7 @@ Examples:
     convert_parser.add_argument("email", help="Trial user's email address")
     convert_parser.add_argument(
         "-d", "--days", type=int, default=None,
-        help="Activation days for the converted user (default: keep current)"
+        help=f"Activation days for the converted user (default: {DEFAULT_CONVERT_DAYS})"
     )
 
     extend_parser = subparsers.add_parser("extend", help="Extend a trial by extra days")

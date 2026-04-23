@@ -27,7 +27,7 @@ import argparse
 import urllib.request
 import urllib.error
 import urllib.parse
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 DEFAULT_API_URL = os.environ.get("API_URL", "https://www.learnfmpa.com")
 DEFAULT_ADMIN_SECRET = os.environ.get("ADMIN_SECRET", "learnfmpa2024")
@@ -164,11 +164,11 @@ def list_users(api_url: str, admin_secret: str):
             print("\nNo users found.\n")
             return
 
-        print(f"\n{'=' * 140}")
+        print(f"\n{'=' * 160}")
         print(
-            f"{'ID':<22} {'Name':<18} {'Email':<28} {'Year(s)':<30} {'Days':<6} {'Paid':<6} {'Status':<10}"
+            f"{'ID':<22} {'Name':<18} {'Email':<28} {'Year(s)':<30} {'Days':<6} {'Left':<12} {'Paid':<6} {'Status':<10}"
         )
-        print(f"{'=' * 140}")
+        print(f"{'=' * 160}")
 
         for user in users:
             status = "Pending" if user.get("must_change_password", False) else "Active"
@@ -183,25 +183,29 @@ def list_users(api_url: str, admin_secret: str):
             days = str(user.get("activation_days", 150))
             paid = "Yes" if user.get("has_paid", False) else "No"
 
+            remaining = "N/A"
             activated_at = user.get("activated_at")
             if activated_at and user.get("is_active", True):
                 try:
                     activated_date = datetime.fromisoformat(
                         activated_at.replace("Z", "+00:00")
                     )
-                    expiration = activated_date + timedelta(
-                        days=user.get("activation_days", 150)
-                    )
-                    if datetime.now(expiration.tzinfo) > expiration:
+                    activation_days = user.get("activation_days", 150)
+                    expiration = activated_date + timedelta(days=activation_days)
+                    if datetime.now(timezone.utc) > expiration:
                         status = "Expired"
+                        remaining = "0"
+                    else:
+                        left = expiration - datetime.now(timezone.utc)
+                        remaining = f"{left.days}d"
                 except:
                     pass
 
             print(
-                f"{user['id']:<22} {user['name']:<18} {user['email']:<28} {years_str:<30} {days:<6} {paid:<6} {status:<10}"
+                f"{user['id']:<22} {user['name']:<18} {user['email']:<28} {years_str:<30} {days:<6} {remaining:<12} {paid:<6} {status:<10}"
             )
 
-        print(f"{'=' * 140}")
+        print(f"{'=' * 160}")
         print(f"Total: {len(users)} users")
         print(f"API: {api_url}\n")
     else:
