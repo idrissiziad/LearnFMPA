@@ -72,7 +72,7 @@ export default function ModulePage() {
   const [timerSeconds, setTimerSeconds] = useState(60);
   const [randomizerEnabled, setRandomizerEnabled] = useState(false);
   const [examMode, setExamMode] = useState(false);
-  const [gdrMode, setGdrMode] = useState(false);
+  const [gdrMode, setGdrMode] = useState(true);
   const [examTimeLeft, setExamTimeLeft] = useState(3600);
   const [examAnswers, setExamAnswers] = useState<Record<number, number[]>>({});
   const [examFinished, setExamFinished] = useState(false);
