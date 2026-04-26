@@ -1,5 +1,4 @@
-{
-  "questions": [
+[
     {
       "YearAsked": "2024",
       "Subtopic": "Introduction a la biochimie clinique",
@@ -761,4 +760,3 @@
       "Choice_E_Explanation": "L'exophtalmie est un signe pathognomonique de la maladie de Basedow. (Source : Exploration biochimique des glandes thy�des, Page Globale 424)."
     }
   ]
-}

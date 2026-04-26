@@ -87,7 +87,7 @@ export default function Dashboard() {
     };
 
     loadModuleStats();
-  }, [userYears]);
+  }, [filteredModules]);
 
   useEffect(() => {
     if (user && !isFreeUser) {
