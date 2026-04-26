@@ -23,7 +23,7 @@ export default function ChapterNavigation({
 }: ChapterNavigationProps) {
   return (
     <div className={`mb-4 sm:mb-6 lg:mb-8 p-2 sm:p-4 lg:p-6 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'} border ${darkMode ? 'border-gray-700' : 'border-gray-200'} shadow-sm`}>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-1.5 sm:gap-3 lg:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1.5 sm:gap-3 lg:gap-4">
         {chapters.map((chapter) => {
           // Count correctly answered questions in this chapter
           const chapterQuestions = questions.filter(q => q.chapter === chapter.name);
@@ -53,7 +53,7 @@ export default function ChapterNavigation({
                 {chapter.id}
               </div>
               <div className="flex-1 min-w-0">
-                <div className={`font-semibold text-[11px] sm:text-base lg:text-lg ${darkMode ? 'text-white' : 'text-gray-900'} truncate`}>{chapter.name}</div>
+                <div className={`font-semibold text-[11px] sm:text-base lg:text-lg ${darkMode ? 'text-white' : 'text-gray-900'}`}>{chapter.name}</div>
                 <div className={`text-[10px] sm:text-sm lg:text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{chapterQuestions.length} q</div>
               </div>
               <div className={`ml-0.5 sm:ml-2 lg:ml-3 text-[10px] sm:text-xs lg:text-sm px-1 sm:px-2 lg:px-3 py-0.5 sm:py-1 lg:py-1.5 rounded-full flex-shrink-0 ${
