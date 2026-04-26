@@ -7,6 +7,7 @@ import { modules, getModuleQuestions, Question } from '@/data/modules';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
 import ThemeToggle from '@/components/ThemeToggle';
+import UpgradePrompt from '@/components/UpgradePrompt';
 
 interface ChapterProgress {
   name: string;
@@ -29,6 +30,7 @@ export default function ProgressPage() {
   const router = useRouter();
   const { theme } = useTheme();
   const { user, isLoading: authLoading, logout, getAllProgress, invalidateProgressCache, clearProgressAndStats } = useAuth();
+  const isFreeUser = user?.subscription_status === 'free';
   const isDarkMode = theme === 'dark';
   const [progress, setProgress] = useState<{ [key: string]: any }>({});
   const [moduleData, setModuleData] = useState<{ [moduleId: number]: Question[] }>({});
@@ -44,23 +46,57 @@ export default function ProgressPage() {
   useEffect(() => {
     const loadProgress = async () => {
       if (user) {
-        const allProgress = await getAllProgress();
-        setProgress(allProgress);
-
-        const data: { [moduleId: number]: Question[] } = {};
-        for (const module of modules) {
-          const moduleKey = `module_${module.id}`;
-          if (allProgress[moduleKey] && Object.keys(allProgress[moduleKey]).length > 0) {
-            const questions = await getModuleQuestions(module.id);
-            data[module.id] = questions;
+        if (isFreeUser) {
+          const localProgress: { [key: string]: any } = {};
+          if (typeof window !== 'undefined') {
+            for (const module of modules) {
+              const storageKey = `learnfmpa_answered_${module.id}`;
+              const stored = localStorage.getItem(storageKey);
+              if (stored) {
+                try {
+                  const parsed = JSON.parse(stored);
+                  const moduleProgress: { [key: string]: any } = {};
+                  Object.entries(parsed).forEach(([key, value]: [string, any]) => {
+                    moduleProgress[key.replace(`${module.id}_`, '')] = { is_correct: value, answered_at: new Date().toISOString() };
+                  });
+                  if (Object.keys(moduleProgress).length > 0) {
+                    localProgress[`module_${module.id}`] = moduleProgress;
+                  }
+                } catch {}
+              }
+            }
           }
+          setProgress(localProgress);
+
+          const data: { [moduleId: number]: Question[] } = {};
+          for (const module of modules) {
+            const moduleKey = `module_${module.id}`;
+            if (localProgress[moduleKey] && Object.keys(localProgress[moduleKey]).length > 0) {
+              const questions = await getModuleQuestions(module.id);
+              data[module.id] = questions;
+            }
+          }
+          setModuleData(data);
+          setIsLoading(false);
+        } else {
+          const allProgress = await getAllProgress();
+          setProgress(allProgress);
+
+          const data: { [moduleId: number]: Question[] } = {};
+          for (const module of modules) {
+            const moduleKey = `module_${module.id}`;
+            if (allProgress[moduleKey] && Object.keys(allProgress[moduleKey]).length > 0) {
+              const questions = await getModuleQuestions(module.id);
+              data[module.id] = questions;
+            }
+          }
+          setModuleData(data);
+          setIsLoading(false);
         }
-        setModuleData(data);
-        setIsLoading(false);
       }
     };
     loadProgress();
-  }, [user, getAllProgress]);
+  }, [user, getAllProgress, isFreeUser]);
 
   const handleLogout = () => {
     logout();
@@ -208,6 +244,15 @@ export default function ProgressPage() {
           <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
             Suivez vos performances et identifiez vos points à améliorer.
           </p>
+          {isFreeUser && (
+            <div className="mt-4">
+              <UpgradePrompt
+                variant="card"
+                title="Suivi complet avec la version complète"
+                message="Soutenez LearnFMPA pour accéder au suivi de progression détaillé, aux explications et aux questions illimitées."
+              />
+            </div>
+          )}
         </div>
 
         {isLoading ? (

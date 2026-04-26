@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
+import { clearModuleLocalStorageCache } from '@/data/modules';
 
 interface User {
   id: string;
@@ -9,6 +10,9 @@ interface User {
   email: string;
   must_change_password: boolean;
   years: string[];
+  subscription_status: 'inactive' | 'free' | 'paid';
+  daily_answer_count: number;
+  trial_days_left: number | null;
 }
 
 interface QuestionStats {
@@ -44,6 +48,7 @@ const API_BASE = '/api';
 const PROGRESS_CACHE_TTL = 300000;
 const FLUSH_INTERVAL = 3000;
 const STATS_CACHE_TTL = 120000;
+const FREE_FLUSH_INTERVAL = 10000;
 const LOCAL_PROGRESS_KEY = 'learnfmpa_progress_cache';
 const LOCAL_STATS_KEY = 'learnfmpa_stats_cache';
 
@@ -129,6 +134,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       localStorage.removeItem(LOCAL_PROGRESS_KEY);
       localStorage.removeItem(LOCAL_STATS_KEY);
+      clearModuleLocalStorageCache();
     } catch {}
   }, []);
 
@@ -266,8 +272,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (flushTimerRef.current) {
       clearTimeout(flushTimerRef.current);
     }
-    flushTimerRef.current = setTimeout(flushPendingAnswers, FLUSH_INTERVAL);
-  }, [flushPendingAnswers]);
+    const interval = user?.subscription_status === 'free' ? FREE_FLUSH_INTERVAL : FLUSH_INTERVAL;
+    flushTimerRef.current = setTimeout(flushPendingAnswers, interval);
+  }, [flushPendingAnswers, user]);
 
   const login = async (email: string, password: string) => {
     try {
@@ -283,12 +290,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { success: false, error: data.error || 'Login failed' };
       }
 
-      const userInfo = {
+const userInfo = {
         id: data.user.id,
         name: data.user.name,
         email: data.user.email,
         must_change_password: data.user.must_change_password,
-        years: data.user.years || ['3ème année']
+        years: data.user.years || ['3ème année'],
+        subscription_status: data.user.subscription_status || 'free',
+        daily_answer_count: data.user.daily_answer_count || 0,
+        trial_days_left: data.user.trial_days_left ?? null,
       };
 
       setUser(userInfo);
@@ -326,7 +336,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const keysToRemove: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key && key.startsWith('learnfmpa_answered_')) {
+      if (key && (key.startsWith('learnfmpa_answered_') || key.startsWith('learnfmpa_module_cache_'))) {
         keysToRemove.push(key);
       }
     }
@@ -354,7 +364,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       if (user) {
-        const updatedUser = { ...user, must_change_password: false };
+        const updatedUser = { ...user, must_change_password: false, subscription_status: data.subscription_status || user.subscription_status };
         setUser(updatedUser);
         localStorage.setItem('learnfmpa_user', JSON.stringify(updatedUser));
       }

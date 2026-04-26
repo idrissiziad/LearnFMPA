@@ -13,6 +13,8 @@ async function getRedis() {
   return redis;
 }
 
+export type SubscriptionStatus = 'inactive' | 'free' | 'paid';
+
 export interface User {
   id: string;
   name: string;
@@ -28,6 +30,9 @@ export interface User {
   has_paid: boolean;
   is_trial?: boolean;
   trial_started_at?: string | null;
+  subscription_status?: SubscriptionStatus;
+  daily_answer_count?: number;
+  daily_answer_reset?: string;
 }
 
 export interface UsersData {

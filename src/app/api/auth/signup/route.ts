@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { loadUsers, saveUsers, getSignupOpen } from '@/lib/user-store';
+import { loadUsers, saveUsers } from '@/lib/user-store';
 
 function hashPassword(password: string): string {
   return crypto.createHash('sha256').update(password).digest('hex');
@@ -8,6 +8,16 @@ function hashPassword(password: string): string {
 
 function generateId(): string {
   return `user_${crypto.randomBytes(4).toString('hex')}`;
+}
+
+function generateTempPassword(): string {
+  const chars = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let password = '';
+  const bytes = crypto.randomBytes(12);
+  for (let i = 0; i < 10; i++) {
+    password += chars[bytes[i] % chars.length];
+  }
+  return password;
 }
 
 const VALID_YEARS = [
@@ -19,31 +29,22 @@ const VALID_YEARS = [
   '6ème année',
 ];
 
-const TRIAL_DAYS = 7;
-
 export async function POST(request: NextRequest) {
   try {
-    const signupOpen = await getSignupOpen();
-    if (!signupOpen) {
-      return NextResponse.json(
-        { error: 'Les inscriptions sont actuellement fermées.' },
-        { status: 403 }
-      );
-    }
-
     const body = await request.json();
-    const { name, email, password, year } = body;
+    const { name, email, year } = body;
 
-    if (!name || !email || !password) {
+    if (!name || !email) {
       return NextResponse.json(
-        { error: 'Nom, email et mot de passe requis.' },
+        { error: 'Nom et email requis.' },
         { status: 400 }
       );
     }
 
-    if (password.length < 8) {
+    const emailLower = email.toLowerCase();
+    if (!emailLower.endsWith('@edu.uiz.ac.ma')) {
       return NextResponse.json(
-        { error: 'Le mot de passe doit contenir au moins 8 caractères.' },
+        { error: 'Seules les adresses email @edu.uiz.ac.ma sont autorisées pour l\'inscription.' },
         { status: 400 }
       );
     }
@@ -58,7 +59,7 @@ export async function POST(request: NextRequest) {
     const usersData = await loadUsers();
 
     for (const user of Object.values(usersData.users)) {
-      if (user.email.toLowerCase() === email.toLowerCase()) {
+      if (user.email.toLowerCase() === emailLower) {
         return NextResponse.json(
           { error: 'Un utilisateur avec cet email existe déjà.' },
           { status: 400 }
@@ -68,36 +69,31 @@ export async function POST(request: NextRequest) {
 
     const userId = generateId();
     const now = new Date().toISOString();
+    const tempPassword = generateTempPassword();
 
     usersData.users[userId] = {
       id: userId,
       name,
-      email: email.toLowerCase(),
-      password_hash: hashPassword(password),
-      must_change_password: false,
+      email: emailLower,
+      password_hash: hashPassword(tempPassword),
+      must_change_password: true,
       created_at: now,
       last_login: null,
-      is_active: true,
+      is_active: false,
       years: resolvedYears,
-      activation_days: TRIAL_DAYS,
-      activated_at: now,
+      activation_days: 7,
+      activated_at: null,
       has_paid: false,
-      is_trial: true,
-      trial_started_at: now,
+      subscription_status: 'inactive',
+      daily_answer_count: 0,
+      daily_answer_reset: now,
     };
 
     await saveUsers(usersData);
 
     return NextResponse.json({
       success: true,
-      user: {
-        id: userId,
-        name,
-        email: email.toLowerCase(),
-        years: resolvedYears,
-        activation_days: TRIAL_DAYS,
-        is_trial: true,
-      },
+      message: 'Compte créé avec succès. Vous recevrez un email avec vos identifiants lorsque votre compte sera activé.',
     });
   } catch (error) {
     console.error('Signup error:', error);

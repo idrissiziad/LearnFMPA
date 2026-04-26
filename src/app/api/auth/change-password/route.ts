@@ -59,12 +59,17 @@ export async function POST(request: NextRequest) {
 
     usersData.users[foundUserId].password_hash = hashPassword(new_password);
     usersData.users[foundUserId].must_change_password = false;
-    
+
+    if (usersData.users[foundUserId].subscription_status === 'inactive') {
+      usersData.users[foundUserId].subscription_status = 'paid';
+    }
+
     await saveUsers(usersData);
 
     return NextResponse.json({
       success: true,
-      message: 'Mot de passe changé avec succès'
+      message: 'Mot de passe changé avec succès',
+      subscription_status: usersData.users[foundUserId].subscription_status || 'free'
     });
 
   } catch (error) {

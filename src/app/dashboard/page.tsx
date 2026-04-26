@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
 import ThemeToggle from '@/components/ThemeToggle';
+import UpgradePrompt from '@/components/UpgradePrompt';
 
 interface ModuleStats {
   questionCount: number;
@@ -30,6 +31,7 @@ export default function Dashboard() {
   const { theme } = useTheme();
   const { user, isLoading: authLoading, logout, getAllProgress } = useAuth();
   const isDarkMode = theme === 'dark';
+  const isFreeUser = user?.subscription_status === 'free';
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -86,10 +88,10 @@ export default function Dashboard() {
   }, [userYears]);
 
   useEffect(() => {
-    if (user) {
+    if (user && !isFreeUser) {
       getAllProgress().catch(() => {});
     }
-  }, [user, getAllProgress]);
+  }, [user, getAllProgress, isFreeUser]);
 
   const totalQuestions = Array.from(moduleStats.values()).reduce((sum, s) => sum + s.questionCount, 0);
   const totalChapters = Array.from(moduleStats.values()).reduce((sum, s) => sum + s.chapterCount, 0);
@@ -256,6 +258,32 @@ export default function Dashboard() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
+        {isFreeUser && (
+          <div className="mb-6">
+            <UpgradePrompt
+              variant="card"
+              title="Soutenez LearnFMPA"
+              message="Vous utilisez la version gratuite avec 10 questions par jour. Soutenez le projet pour accéder à toutes les fonctionnalités : questions illimitées, explications détaillées et suivi de progression complet."
+            />
+          </div>
+        )}
+        {user?.subscription_status === 'paid' && user?.trial_days_left !== null && user?.trial_days_left !== undefined && user.trial_days_left <= 7 && (
+          <div className={`mb-6 rounded-xl p-4 border ${isDarkMode ? 'bg-amber-900/20 border-amber-700/50' : 'bg-amber-50 border-amber-200'}`}>
+            <div className="flex items-center gap-3">
+              <svg className={`w-5 h-5 flex-shrink-0 ${isDarkMode ? 'text-amber-400' : 'text-amber-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <p className={`text-sm font-semibold ${isDarkMode ? 'text-amber-300' : 'text-amber-800'}`}>
+                  Essai Premium : {user.trial_days_left} jour{user.trial_days_left !== 1 ? 's' : ''} restant{user.trial_days_left !== 1 ? 's' : ''}
+                </p>
+                <p className={`text-xs ${isDarkMode ? 'text-amber-400' : 'text-amber-600'}`}>
+                  Après votre essai, vous passerez au plan gratuit (10 questions/jour).
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
         <div className={`relative overflow-hidden rounded-2xl mb-8 ${isDarkMode ? 'bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600' : 'bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500'} p-6 sm:p-8`}>
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIyIi8+PC9nPjwvZz48L3N2Zz4=')] opacity-30"></div>
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>

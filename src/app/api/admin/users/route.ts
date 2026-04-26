@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { loadUsers, saveUsers } from '@/lib/user-store';
-import { loadUserProgress } from '@/lib/user-store';
 
 function hashPassword(password: string): string {
   return crypto.createHash('sha256').update(password).digest('hex');
@@ -36,25 +35,69 @@ function migrateUser(user: any): any {
   if (user.years.length === 0) user.years = ['3ème année'];
   user.years = user.years.filter((y: string) => VALID_YEARS.includes(y));
   if (user.years.length === 0) user.years = ['3ème année'];
-  if (user.activation_days === undefined || user.activation_days === null) user.activation_days = 150;
-  if (!user.activated_at) user.activated_at = user.created_at || new Date().toISOString();
+  if (user.activation_days === undefined || user.activation_days === null) user.activation_days = 7;
+  if (!user.activated_at) user.activated_at = user.created_at;
   if (user.has_paid === undefined || user.has_paid === null) user.has_paid = false;
   if (user.is_trial === undefined || user.is_trial === null) { user.is_trial = false; }
   if (user.trial_started_at === undefined) { user.trial_started_at = null; }
+
+  if (!user.subscription_status) {
+    if (user.has_paid) {
+      user.subscription_status = 'paid';
+    } else if (user.is_active) {
+      user.subscription_status = 'free';
+    } else {
+      user.subscription_status = 'inactive';
+    }
+  }
+  if (user.daily_answer_count === undefined) user.daily_answer_count = 0;
+  if (!user.daily_answer_reset) user.daily_answer_reset = user.activated_at || user.created_at;
+
   return user;
 }
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { action, name, email, password, admin_secret, new_password, is_active, year, years, activation_days, has_paid, is_trial, trial_started_at } = body;
+    const { action, name, email, password, admin_secret, new_password, is_active, year, years, activation_days, has_paid, is_trial, trial_started_at, subscription_status } = body;
 
     if (!validateAdmin(admin_secret)) {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 403 });
     }
 
-    // Update user properties (year, activation_days, has_paid)
-    if (action === 'update_user' || (!action && email && !name && !password && !new_password && is_active === undefined && (year !== undefined || years !== undefined || activation_days !== undefined || has_paid !== undefined || is_trial !== undefined))) {
+    // Activate user: set is_active=true and subscription_status='paid' (7-day premium trial)
+    if (action === 'activate') {
+      if (!email) {
+        return NextResponse.json({ error: 'Email requis' }, { status: 400 });
+      }
+      const usersData = await loadUsers();
+      let found = false;
+
+      for (const [userId, user] of Object.entries(usersData.users)) {
+        if (user.email.toLowerCase() === email.toLowerCase()) {
+          const migrated = migrateUser(usersData.users[userId]);
+          migrated.is_active = true;
+          migrated.activated_at = new Date().toISOString();
+          if (!migrated.subscription_status || migrated.subscription_status === 'inactive') {
+            migrated.subscription_status = 'paid';
+          }
+          migrated.daily_answer_count = 0;
+          migrated.daily_answer_reset = new Date().toISOString();
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
+        return NextResponse.json({ error: 'Utilisateur non trouvé' }, { status: 404 });
+      }
+
+      await saveUsers(usersData);
+      return NextResponse.json({ success: true, message: 'Compte activé avec succès' });
+    }
+
+    // Update user properties
+    if (action === 'update_user' || (!action && email && !name && !password && !new_password && is_active === undefined && (year !== undefined || years !== undefined || activation_days !== undefined || has_paid !== undefined || is_trial !== undefined || subscription_status !== undefined))) {
       const usersData = await loadUsers();
       let found = false;
       
@@ -84,6 +127,21 @@ export async function POST(request: NextRequest) {
           }
           if (trial_started_at !== undefined) {
             migrated.trial_started_at = trial_started_at;
+          }
+          if (subscription_status !== undefined && ['inactive', 'free', 'paid'].includes(subscription_status)) {
+            migrated.subscription_status = subscription_status;
+            if (subscription_status === 'paid') {
+              migrated.has_paid = true;
+              migrated.is_active = true;
+            }
+            if (subscription_status === 'free') {
+              migrated.is_active = true;
+              migrated.has_paid = false;
+            }
+            if (subscription_status === 'inactive') {
+              migrated.is_active = false;
+              migrated.has_paid = false;
+            }
           }
           found = true;
           break;
@@ -128,6 +186,14 @@ export async function POST(request: NextRequest) {
       for (const [userId, user] of Object.entries(usersData.users)) {
         if (user.email.toLowerCase() === email.toLowerCase()) {
           usersData.users[userId].is_active = is_active;
+          if (is_active) {
+            const migrated = migrateUser(usersData.users[userId]);
+            if (!migrated.subscription_status || migrated.subscription_status === 'inactive') {
+              migrated.subscription_status = 'free';
+            }
+          } else {
+            usersData.users[userId].subscription_status = 'inactive';
+          }
           found = true;
           break;
         }
@@ -141,7 +207,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, message: `Utilisateur ${is_active ? 'activé' : 'désactivé'}` });
     }
 
-    // Create user (default when action is 'create' or no action specified with name+email+password)
+    // Create user
     if (!name || !email || !password) {
       return NextResponse.json(
         { error: 'Nom, email et mot de passe requis' },
@@ -153,7 +219,7 @@ export async function POST(request: NextRequest) {
       ? years.filter((y: string) => VALID_YEARS.includes(y))
       : (year && VALID_YEARS.includes(year) ? [year] : ['3ème année']);
     if (resolvedYears.length === 0) resolvedYears.push('3ème année');
-    const userActivationDays = (activation_days && typeof activation_days === 'number' && activation_days > 0) ? activation_days : 150;
+    const userActivationDays = (activation_days && typeof activation_days === 'number' && activation_days > 0) ? activation_days : 7;
 
     const usersData = await loadUsers();
     
@@ -181,7 +247,10 @@ export async function POST(request: NextRequest) {
       years: resolvedYears,
       activation_days: userActivationDays,
       activated_at: now,
-      has_paid: has_paid === true
+      has_paid: has_paid === true,
+      subscription_status: has_paid ? 'paid' : 'free',
+      daily_answer_count: 0,
+      daily_answer_reset: now,
     };
 
     await saveUsers(usersData);
@@ -194,7 +263,8 @@ export async function POST(request: NextRequest) {
         email: email.toLowerCase(),
         years: resolvedYears,
         activation_days: userActivationDays,
-        has_paid: has_paid === true
+        has_paid: has_paid === true,
+        subscription_status: has_paid ? 'paid' : 'free',
       },
       temp_password: password
     });
@@ -220,7 +290,7 @@ export async function GET(request: NextRequest) {
 
     for (const [userId, user] of Object.entries(usersData.users)) {
       const userAny = user as any;
-      if (!user.years || !Array.isArray(user.years) || userAny.year || user.activation_days === undefined || user.has_paid === undefined) {
+      if (!user.years || !Array.isArray(user.years) || userAny.year || user.activation_days === undefined || user.has_paid === undefined || !user.subscription_status) {
         migrateUser(usersData.users[userId]);
         needsMigration = true;
       }
@@ -230,7 +300,6 @@ export async function GET(request: NextRequest) {
       await saveUsers(usersData);
     }
 
-    // Get user details
     if (email) {
       for (const user of Object.values(usersData.users)) {
         if (user.email.toLowerCase() === email.toLowerCase()) {
@@ -249,7 +318,10 @@ export async function GET(request: NextRequest) {
               activated_at: user.activated_at,
               has_paid: user.has_paid,
               is_trial: user.is_trial || false,
-              trial_started_at: user.trial_started_at || null
+              trial_started_at: user.trial_started_at || null,
+              subscription_status: user.subscription_status || (user.has_paid ? 'paid' : user.is_active ? 'free' : 'inactive'),
+              daily_answer_count: user.daily_answer_count || 0,
+              daily_answer_reset: user.daily_answer_reset || null,
             }
           });
         }
@@ -257,7 +329,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Utilisateur non trouvé' }, { status: 404 });
     }
 
-    // List all users
     const users = Object.values(usersData.users).map(user => ({
       id: user.id,
       name: user.name,
@@ -271,7 +342,10 @@ export async function GET(request: NextRequest) {
       activated_at: user.activated_at,
       has_paid: user.has_paid,
       is_trial: user.is_trial || false,
-      trial_started_at: user.trial_started_at || null
+      trial_started_at: user.trial_started_at || null,
+      subscription_status: user.subscription_status || (user.has_paid ? 'paid' : user.is_active ? 'free' : 'inactive'),
+      daily_answer_count: user.daily_answer_count || 0,
+      daily_answer_reset: user.daily_answer_reset || null,
     }));
 
     return NextResponse.json({

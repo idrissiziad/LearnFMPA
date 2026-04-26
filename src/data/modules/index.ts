@@ -5,6 +5,53 @@ export const moduleQuestionsCache = new Map<number, Question[]>();
 export const moduleChaptersCache = new Map<number, Chapter[]>();
 const moduleRawJsonCache = new Map<number, JsonQuestion[]>();
 
+const MODULE_CACHE_KEY = 'learnfmpa_module_cache';
+const MODULE_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+
+interface ModuleCacheEntry {
+  questions: Question[];
+  chapters: Chapter[];
+  timestamp: number;
+}
+
+function loadModuleCache(moduleId: number): ModuleCacheEntry | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const stored = localStorage.getItem(`${MODULE_CACHE_KEY}_${moduleId}`);
+    if (!stored) return null;
+    const entry: ModuleCacheEntry = JSON.parse(stored);
+    if (Date.now() - entry.timestamp > MODULE_CACHE_TTL) {
+      localStorage.removeItem(`${MODULE_CACHE_KEY}_${moduleId}`);
+      return null;
+    }
+    return entry;
+  } catch {
+    return null;
+  }
+}
+
+function saveModuleCache(moduleId: number, questions: Question[], chapters: Chapter[]) {
+  if (typeof window === 'undefined') return;
+  try {
+    const entry: ModuleCacheEntry = { questions, chapters, timestamp: Date.now() };
+    localStorage.setItem(`${MODULE_CACHE_KEY}_${moduleId}`, JSON.stringify(entry));
+  } catch {}
+}
+
+export function clearModuleLocalStorageCache() {
+  if (typeof window === 'undefined') return;
+  try {
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith(MODULE_CACHE_KEY)) {
+        keysToRemove.push(key);
+      }
+    }
+    keysToRemove.forEach(key => localStorage.removeItem(key));
+  } catch {}
+}
+
 export interface Module {
   id: number;
   title: string;
@@ -361,6 +408,13 @@ export const getModuleQuestions = async (moduleId: number): Promise<Question[]> 
     return moduleQuestionsCache.get(moduleId)!;
   }
 
+  const cached = loadModuleCache(moduleId);
+  if (cached) {
+    moduleQuestionsCache.set(moduleId, cached.questions);
+    moduleChaptersCache.set(moduleId, cached.chapters);
+    return cached.questions;
+  }
+
   const jsonQuestions = await getModuleRawJson(moduleId);
   
   // Convert JSON questions to the Question interface
@@ -438,12 +492,16 @@ export const clearModuleCache = (moduleId: number): void => {
   moduleQuestionsCache.delete(moduleId);
   moduleChaptersCache.delete(moduleId);
   moduleRawJsonCache.delete(moduleId);
+  if (typeof window !== 'undefined') {
+    try { localStorage.removeItem(`${MODULE_CACHE_KEY}_${moduleId}`); } catch {}
+  }
 };
 
 export const clearAllModuleCache = (): void => {
   moduleQuestionsCache.clear();
   moduleChaptersCache.clear();
   moduleRawJsonCache.clear();
+  clearModuleLocalStorageCache();
 };
 
 export const preloadModuleData = async (moduleId: number): Promise<{ questions: Question[], chapters: Chapter[] }> => {
@@ -451,6 +509,8 @@ export const preloadModuleData = async (moduleId: number): Promise<{ questions: 
     getModuleQuestions(moduleId),
     getModuleChapters(moduleId)
   ]);
+  
+  saveModuleCache(moduleId, questions, chapters);
   
   return { questions, chapters };
 };

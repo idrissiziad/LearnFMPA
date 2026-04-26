@@ -34,7 +34,9 @@ export async function GET(request: NextRequest) {
         name: user.name,
         email: user.email,
         must_change_password: user.must_change_password,
-        last_login: user.last_login
+        last_login: user.last_login,
+        subscription_status: user.subscription_status || (user.has_paid ? 'paid' : user.is_active ? 'free' : 'inactive'),
+        daily_answer_count: user.daily_answer_count || 0,
       }
     });
 

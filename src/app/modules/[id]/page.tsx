@@ -8,6 +8,7 @@ import { getModuleById, getModuleQuestions, getModuleChapters, preloadModuleData
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
 import ThemeToggle from '@/components/ThemeToggle';
+import UpgradePrompt from '@/components/UpgradePrompt';
 import { Warp } from '@paper-design/shaders-react';
 
 const ChapterNavigation = lazy(() => import('@/components/ChapterNavigation'));
@@ -28,6 +29,10 @@ export default function ModulePage() {
   const { theme } = useTheme();
   const { user, isLoading: authLoading, submitAnswer, getProgress, invalidateProgressCache, clearProgressAndStats, flushAnswers } = useAuth();
   const isDarkMode = theme === 'dark';
+  const isFreeUser = user?.subscription_status === 'free';
+  const FREE_DAILY_LIMIT = 10;
+  const [freeAnswersCount, setFreeAnswersCount] = useState(user?.daily_answer_count || 0);
+  const showExplanations = !isFreeUser || freeAnswersCount <= FREE_DAILY_LIMIT;
   const [allQuestions, setAllQuestions] = useState<ExtendedQuestion[]>([]);
   const [questions, setQuestions] = useState<ExtendedQuestion[]>([]);
   const [chapters, setChapters] = useState<Chapter[]>([]);
@@ -126,17 +131,21 @@ export default function ModulePage() {
 
         if (user && typeof window !== 'undefined') {
           try {
-            const dbProgress = await getProgress(moduleId);
-            const serverProgress: { [key: string]: boolean } = {};
-            Object.entries(dbProgress).forEach(([key, value]: [string, any]) => {
-              if (value?.is_correct) {
-                serverProgress[`${moduleId}_${key}`] = true;
-              }
-            });
-            setCorrectlyAnsweredQuestions(serverProgress);
-            const storageKey = `learnfmpa_answered_${moduleId}`;
-            localStorage.setItem(storageKey, JSON.stringify(serverProgress));
-            localProgress = serverProgress;
+            if (isFreeUser) {
+              setCorrectlyAnsweredQuestions(localProgress);
+            } else {
+              const dbProgress = await getProgress(moduleId);
+              const serverProgress: { [key: string]: boolean } = {};
+              Object.entries(dbProgress).forEach(([key, value]: [string, any]) => {
+                if (value?.is_correct) {
+                  serverProgress[`${moduleId}_${key}`] = true;
+                }
+              });
+              setCorrectlyAnsweredQuestions(serverProgress);
+              const storageKey = `learnfmpa_answered_${moduleId}`;
+              localStorage.setItem(storageKey, JSON.stringify(serverProgress));
+              localProgress = serverProgress;
+            }
           } catch (e) {
             setCorrectlyAnsweredQuestions(localProgress);
           }
@@ -709,11 +718,15 @@ export default function ModulePage() {
       
       if (user) {
         submitAnswer(moduleId, currentQuestion.id.toString(), isCorrect, mappedSelectedAnswers);
-        const flushResult = await flushAnswers();
-        if (flushResult?.statistics) {
-          setQuestionStats(flushResult.statistics);
+        if (isFreeUser) {
+          setFreeAnswersCount(prev => prev + 1);
         } else {
-          setQuestionStats(null);
+          const flushResult = await flushAnswers();
+          if (flushResult?.statistics) {
+            setQuestionStats(flushResult.statistics);
+          } else {
+            setQuestionStats(null);
+          }
         }
       }
     }
@@ -1439,7 +1452,7 @@ export default function ModulePage() {
                     );
                   })()}
 
-                  {!isCollapsed && showAnswer && answerExplanation && (
+                  {!isCollapsed && showAnswer && answerExplanation && showExplanations && (
                     <div className={`px-4 sm:px-5 pb-4 sm:pb-5 pt-3 border-t ${gdrMode && showAnswer && isCorrect ? 'border-white/20' : gdrMode && showAnswer && !isCorrect ? 'border-white/20' : showCorrectFeedback ? 'border-white/20' : showIncorrectFeedback || showMissedCorrectFeedback ? 'border-red-200' : isDarkMode ? 'border-gray-600/50' : 'border-gray-100'}`}>
                       <p className={`text-xs sm:text-sm leading-relaxed ${gdrMode && showAnswer && isCorrect ? 'text-white/90' : gdrMode && showAnswer && !isCorrect ? 'text-white/90' : showCorrectFeedback ? 'text-white/90' : showMissedCorrectFeedback ? 'text-red-700' : showIncorrectFeedback ? 'text-white/90' : isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                         {answerExplanation.replace(/\s*\([^)]*\)\.?/g, '').replace(/\s*\[GDR\]/g, '')}
@@ -1451,7 +1464,7 @@ export default function ModulePage() {
             })}
           </div>
 
-          {showAnswer && currentQuestion?.overallExplanation && (
+          {showAnswer && currentQuestion?.overallExplanation && showExplanations && (
             <div className={`mx-4 sm:mx-6 sm:mx-8 mb-4 sm:mb-6 p-4 sm:p-5 rounded-xl sm:rounded-2xl ${isDarkMode ? 'bg-gray-700/50' : 'bg-gradient-to-r from-gray-50 to-gray-100'} border ${isDarkMode ? 'border-gray-600/30' : 'border-gray-200/50'}`}>
               <h4 className={`font-semibold mb-2 sm:mb-3 text-sm sm:text-base ${isDarkMode ? 'text-white' : 'text-gray-900'} flex items-center gap-2`}>
                 <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1465,6 +1478,17 @@ export default function ModulePage() {
             </div>
           )}
 
+          {showAnswer && !showExplanations && (
+            <div className={`mx-4 sm:mx-6 sm:mx-8 mb-4 sm:mb-6`}>
+              <UpgradePrompt
+                variant="card"
+                title="Explications disponibles avec la version complète"
+                message="Soutenez LearnFMPA pour accéder aux explications détaillées, au suivi de progression complet et à des questions illimitées."
+                dailyCount={freeAnswersCount}
+                dailyLimit={FREE_DAILY_LIMIT}
+              />
+            </div>
+          )}
 
           <div className={`p-4 sm:p-5 sm:p-6 border-t ${isDarkMode ? 'border-gray-700/50' : 'border-gray-100'} flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-6`}>
             <div className="w-full sm:w-auto flex justify-between sm:justify-start gap-3 sm:gap-4">

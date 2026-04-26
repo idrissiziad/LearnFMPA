@@ -108,44 +108,74 @@ export default function Pricing() {
 
   const comparisonRows = [
     {
-      feature: 'Accès à toutes les annales',
+      feature: 'Accès aux annales',
       paper: false,
       platform: true,
+      free: true,
+      paid: true,
     },
     {
-      feature: 'Corrections vérifiées',
+      feature: '10 questions/jour gratuites',
       paper: false,
       platform: true,
+      free: true,
+      paid: true,
+    },
+    {
+      feature: 'Questions illimitées',
+      paper: false,
+      platform: true,
+      free: false,
+      paid: true,
+    },
+    {
+      feature: 'Voir les bonnes/mauvaises réponses',
+      paper: false,
+      platform: true,
+      free: true,
+      paid: true,
     },
     {
       feature: 'Explications détaillées',
       paper: false,
       platform: true,
+      free: false,
+      paid: true,
+    },
+    {
+      feature: 'Corrections vérifiées par des experts',
+      paper: false,
+      platform: true,
+      free: false,
+      paid: true,
     },
     {
       feature: 'Suivi de progression',
       paper: false,
       platform: true,
+      free: false,
+      paid: true,
     },
     {
       feature: 'Accessible sur mobile',
       paper: false,
       platform: true,
+      free: true,
+      paid: true,
     },
     {
       feature: 'Toujours à jour',
       paper: false,
       platform: true,
-    },
-    {
-      feature: 'Organisation automatique',
-      paper: false,
-      platform: true,
+      free: true,
+      paid: true,
     },
     {
       feature: 'Gratuit',
       paper: true,
       platform: false,
+      free: true,
+      paid: false,
     },
   ];
 
@@ -359,18 +389,21 @@ export default function Pricing() {
             </div>
             
             <div className={`rounded-2xl overflow-hidden border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} shadow-lg`}>
-              <div className="grid grid-cols-3 gap-0">
+              <div className="grid grid-cols-4 gap-0">
                 <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'} p-4 sm:p-6`}></div>
                 <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'} p-4 sm:p-6 text-center`}>
                   <span className={`text-sm font-bold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Annales papier</span>
                 </div>
+                <div className={`${isDarkMode ? 'bg-blue-900/30' : 'bg-blue-50'} p-4 sm:p-6 text-center`}>
+                  <span className={`text-sm font-bold ${isDarkMode ? 'text-blue-400' : 'text-blue-700'}`}>Gratuit</span>
+                </div>
                 <div className={`bg-gradient-to-b ${isDarkMode ? 'from-green-900/50 to-green-800/30' : 'from-green-50 to-green-100'} p-4 sm:p-6 text-center`}>
-                  <span className={`text-sm font-bold ${isDarkMode ? 'text-green-400' : 'text-green-700'}`}>LearnFMPA</span>
+                  <span className={`text-sm font-bold ${isDarkMode ? 'text-green-400' : 'text-green-700'}`}>Complet</span>
                 </div>
               </div>
               
               {comparisonRows.map((row, i) => (
-                <div key={i} className={`grid grid-cols-3 gap-0 border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+                <div key={i} className={`grid grid-cols-4 gap-0 border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
                   <div className={`p-4 sm:p-5 ${i % 2 === 0 ? (isDarkMode ? 'bg-gray-800/30' : 'bg-gray-50/50') : ''}`}>
                     <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} font-medium`}>{row.feature}</span>
                   </div>
@@ -385,8 +418,19 @@ export default function Pricing() {
                       </svg>
                     )}
                   </div>
+                  <div className={`p-4 sm:p-5 flex items-center justify-center ${i % 2 === 0 ? (isDarkMode ? 'bg-blue-900/10' : 'bg-blue-50/50') : ''}`}>
+                    {row.free ? (
+                      <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    ) : (
+                      <svg className="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    )}
+                  </div>
                   <div className={`p-4 sm:p-5 flex items-center justify-center ${i % 2 === 0 ? (isDarkMode ? 'bg-green-900/10' : 'bg-green-50/30') : ''}`}>
-                    {row.platform ? (
+                    {row.paid ? (
                       <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
