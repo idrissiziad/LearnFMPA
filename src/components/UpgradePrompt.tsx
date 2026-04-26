@@ -2,11 +2,12 @@
 
 import Link from 'next/link';
 import { useTheme } from '@/contexts/ThemeContext';
+import { ReactNode } from 'react';
 
 interface UpgradePromptProps {
   variant?: 'inline' | 'card' | 'banner';
   title?: string;
-  message?: string;
+  message?: ReactNode;
   dailyCount?: number;
   dailyLimit?: number;
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { modules, preloadModuleData, Question } from '@/data/modules';
 import { useRouter } from 'next/navigation';
@@ -26,6 +26,8 @@ interface SearchResult {
   questionIndex?: number;
 }
 
+const DEFAULT_YEARS = ['3ème année'];
+
 export default function Dashboard() {
   const router = useRouter();
   const { theme } = useTheme();
@@ -41,8 +43,8 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  const userYears = user?.years || ['3ème année'];
-  const filteredModules = modules.filter(m => m.levels.some(level => userYears.includes(level)));
+  const userYears = useMemo(() => user?.years || DEFAULT_YEARS, [user?.years]);
+  const filteredModules = useMemo(() => modules.filter(m => m.levels.some(level => userYears.includes(level))), [userYears]);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -263,7 +265,7 @@ export default function Dashboard() {
             <UpgradePrompt
               variant="card"
               title="Soutenez LearnFMPA"
-              message="Vous utilisez la version gratuite : questions illimitées avec 10 explications détaillées par jour. Soutenez le projet pour accéder aux explications illimitées et au suivi de progression complet."
+              message={<>{'Vous utilisez la version gratuite : questions illimitées avec 10 explications détaillées par jour.'}<br/>{'Soutenez le projet pour accéder aux explications illimitées et au suivi de progression complet.'}</>}
             />
           </div>
         )}

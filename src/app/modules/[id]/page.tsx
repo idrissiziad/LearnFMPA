@@ -116,23 +116,23 @@ export default function ModulePage() {
           optionImages: q.optionImages || Array(q.options.length).fill('')
         }));
         
-        let localProgress: { [key: string]: boolean } = {};
-        if (typeof window !== 'undefined') {
-          const storageKey = `learnfmpa_answered_${moduleId}`;
-          const stored = localStorage.getItem(storageKey);
-          if (stored) {
-            try {
-              localProgress = JSON.parse(stored);
-              setCorrectlyAnsweredQuestions(localProgress);
-            } catch (e) {}
+        if (isFreeUser) {
+          setCorrectlyAnsweredQuestions({});
+        } else {
+          let localProgress: { [key: string]: boolean } = {};
+          if (typeof window !== 'undefined') {
+            const storageKey = `learnfmpa_answered_${moduleId}`;
+            const stored = localStorage.getItem(storageKey);
+            if (stored) {
+              try {
+                localProgress = JSON.parse(stored);
+                setCorrectlyAnsweredQuestions(localProgress);
+              } catch (e) {}
+            }
           }
-        }
 
-        if (user && typeof window !== 'undefined') {
-          try {
-            if (isFreeUser) {
-              setCorrectlyAnsweredQuestions(localProgress);
-            } else {
+          if (user && typeof window !== 'undefined') {
+            try {
               const dbProgress = await getProgress(moduleId);
               const serverProgress: { [key: string]: boolean } = {};
               Object.entries(dbProgress).forEach(([key, value]: [string, any]) => {
@@ -144,12 +144,12 @@ export default function ModulePage() {
               const storageKey = `learnfmpa_answered_${moduleId}`;
               localStorage.setItem(storageKey, JSON.stringify(serverProgress));
               localProgress = serverProgress;
+            } catch (e) {
+              setCorrectlyAnsweredQuestions(localProgress);
             }
-          } catch (e) {
+          } else {
             setCorrectlyAnsweredQuestions(localProgress);
           }
-        } else {
-          setCorrectlyAnsweredQuestions(localProgress);
         }
 
         setAllQuestions(extendedQuestions);
@@ -180,7 +180,7 @@ export default function ModulePage() {
           });
         setAvailableSessions(sessions);
         
-        filterQuestionsBySession(extendedQuestions, sessionFilter, localProgress);
+        filterQuestionsBySession(extendedQuestions, sessionFilter, isFreeUser ? {} : undefined);
       });
     }
   }, [moduleId, user]);
@@ -556,7 +556,7 @@ export default function ModulePage() {
       baseQuestions = baseQuestions.filter(q => q.chapter === chapterFilter);
     }
 
-    if (showAnsweredQuestions) {
+    if (showAnsweredQuestions || isFreeUser) {
       setQuestions(baseQuestions);
     } else {
       const unansweredQuestions = baseQuestions.filter(q => {
@@ -708,18 +708,21 @@ export default function ModulePage() {
     setShowAnswer(true);
     setAnsweredQuestions(new Set([...answeredQuestions, currentQuestionIndex]));
     
-    if (currentQuestion && typeof window !== 'undefined') {
-      const storageKey = `learnfmpa_answered_${moduleId}`;
-      const questionKey = `${moduleId}_${currentQuestion.id}`;
-      const newAnsweredQuestions = { ...correctlyAnsweredQuestions, [questionKey]: isCorrect };
-      setCorrectlyAnsweredQuestions(newAnsweredQuestions);
-      localStorage.setItem(storageKey, JSON.stringify(newAnsweredQuestions));
-      
-      if (user) {
-        submitAnswer(moduleId, currentQuestion.id.toString(), isCorrect, mappedSelectedAnswers);
-        if (isFreeUser) {
+    if (currentQuestion) {
+      if (isFreeUser) {
+        if (user) {
+          submitAnswer(moduleId, currentQuestion.id.toString(), isCorrect, mappedSelectedAnswers);
           setFreeAnswersCount(prev => prev + 1);
-        } else {
+        }
+      } else if (typeof window !== 'undefined') {
+        const storageKey = `learnfmpa_answered_${moduleId}`;
+        const questionKey = `${moduleId}_${currentQuestion.id}`;
+        const newAnsweredQuestions = { ...correctlyAnsweredQuestions, [questionKey]: isCorrect };
+        setCorrectlyAnsweredQuestions(newAnsweredQuestions);
+        localStorage.setItem(storageKey, JSON.stringify(newAnsweredQuestions));
+        
+        if (user) {
+          submitAnswer(moduleId, currentQuestion.id.toString(), isCorrect, mappedSelectedAnswers);
           const flushResult = await flushAnswers();
           if (flushResult?.statistics) {
             setQuestionStats(flushResult.statistics);
@@ -865,12 +868,14 @@ export default function ModulePage() {
                 )}
                 <h1 className={`text-base sm:text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{module.title}</h1>
               </div>
+              {!isFreeUser && (
               <button
                 onClick={() => setShowAnsweredQuestions(!showAnsweredQuestions)}
                 className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all shadow-sm ${showAnsweredQuestions ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-green-500/25' : isDarkMode ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50' : 'bg-gray-100/80 text-gray-700 hover:bg-gray-200/80'}`}
               >
                 {showAnsweredQuestions ? 'Masquer' : 'Voir répondues'}
               </button>
+              )}
             </div>
           </div>
         </header>
@@ -1068,20 +1073,24 @@ export default function ModulePage() {
                       <option key={session} value={session}>{session}</option>
                     ))}
                   </select>
-                  <button
-                    onClick={() => setShowAnsweredQuestions(!showAnsweredQuestions)}
-                    className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex-shrink-0 shadow-sm ${showAnsweredQuestions ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-green-500/25' : isDarkMode ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50' : 'bg-white/80 text-gray-700 hover:bg-gray-200/80'}`}
-                  >
-                    {showAnsweredQuestions ? 'Répondues' : 'Non répondues'}
-                  </button>
+                  {!isFreeUser && (
+                    <button
+                      onClick={() => setShowAnsweredQuestions(!showAnsweredQuestions)}
+                      className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex-shrink-0 shadow-sm ${showAnsweredQuestions ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-green-500/25' : isDarkMode ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50' : 'bg-white/80 text-gray-700 hover:bg-gray-200/80'}`}
+                    >
+                      {showAnsweredQuestions ? 'Répondues' : 'Non répondues'}
+                    </button>
+                  )}
                 </>
               )}
+              {!isFreeUser && (
               <button
                 onClick={handleResetProgress}
                 className="px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 transition-all flex-shrink-0 shadow-sm shadow-red-500/25"
               >
                 Reset
               </button>
+              )}
             </div>
           </div>
         </div>

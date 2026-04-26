@@ -47,36 +47,7 @@ export default function ProgressPage() {
     const loadProgress = async () => {
       if (user) {
         if (isFreeUser) {
-          const localProgress: { [key: string]: any } = {};
-          if (typeof window !== 'undefined') {
-            for (const module of modules) {
-              const storageKey = `learnfmpa_answered_${module.id}`;
-              const stored = localStorage.getItem(storageKey);
-              if (stored) {
-                try {
-                  const parsed = JSON.parse(stored);
-                  const moduleProgress: { [key: string]: any } = {};
-                  Object.entries(parsed).forEach(([key, value]: [string, any]) => {
-                    moduleProgress[key.replace(`${module.id}_`, '')] = { is_correct: value, answered_at: new Date().toISOString() };
-                  });
-                  if (Object.keys(moduleProgress).length > 0) {
-                    localProgress[`module_${module.id}`] = moduleProgress;
-                  }
-                } catch {}
-              }
-            }
-          }
-          setProgress(localProgress);
-
-          const data: { [moduleId: number]: Question[] } = {};
-          for (const module of modules) {
-            const moduleKey = `module_${module.id}`;
-            if (localProgress[moduleKey] && Object.keys(localProgress[moduleKey]).length > 0) {
-              const questions = await getModuleQuestions(module.id);
-              data[module.id] = questions;
-            }
-          }
-          setModuleData(data);
+          setProgress({});
           setIsLoading(false);
         } else {
           const allProgress = await getAllProgress();
@@ -574,7 +545,7 @@ export default function ProgressPage() {
           </>
         )}
 
-        {totalAnswered > 0 && (
+        {totalAnswered > 0 && !isFreeUser && (
           <div className="mt-8 flex justify-center">
             <button
               onClick={async () => {

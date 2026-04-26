@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { modules, getModuleQuestions, getModuleChapters } from '@/data/modules';
@@ -14,6 +14,8 @@ interface ModuleStats {
   loaded: boolean;
 }
 
+const DEFAULT_YEARS = ['3ème année'];
+
 export default function ModulesPage() {
   const router = useRouter();
   const { theme } = useTheme();
@@ -22,8 +24,8 @@ export default function ModulesPage() {
   const [moduleStats, setModuleStats] = useState<Map<number, ModuleStats>>(new Map());
   const [isLoading, setIsLoading] = useState(true);
 
-  const userYears = user?.years || ['3ème année'];
-  const filteredModules = modules.filter(m => m.levels.some(level => userYears.includes(level)));
+  const userYears = useMemo(() => user?.years || DEFAULT_YEARS, [user?.years]);
+  const filteredModules = useMemo(() => modules.filter(m => m.levels.some(level => userYears.includes(level))), [userYears]);
 
   useEffect(() => {
     if (!authLoading && !user) {
