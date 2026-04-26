@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     if (user.password_hash !== currentHash) {
       return NextResponse.json(
         { error: 'Mot de passe actuel incorrect' },
-        { status: 401 }
+        { status: 400 }
       );
     }
 

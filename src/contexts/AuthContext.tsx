@@ -353,8 +353,13 @@ const userInfo = {
       });
 
       if (response.status === 401) {
-        handleUnauthorized();
-        return { success: false, error: 'Session expirée' };
+        let data: any = {};
+        try { data = await response.json(); } catch {}
+        if (data.code === 'SESSION_INVALID') {
+          handleUnauthorized();
+          return { success: false, error: 'Session expirée' };
+        }
+        return { success: false, error: data.error || 'Non autorisé' };
       }
 
       const data = await response.json();

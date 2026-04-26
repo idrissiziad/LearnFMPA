@@ -7,7 +7,7 @@ Manages @edu.uiz.ac.ma accounts - activation, premium trials, and more.
 Subscription model:
   - New activated accounts get a 7-day premium trial (configurable with --days)
   - After the trial, accounts automatically downgrade to free tier
-  - Free tier: unlimited time, 10 questions/day, no explanations after 10
+  - Free tier: unlimited time, 10 questions expliquées/jour, pratique illimitée
   - Paid tier: unlimited questions, explanations, progress tracking
 
 Usage:
@@ -43,9 +43,6 @@ import webbrowser
 from datetime import datetime, timedelta, timezone
 
 
-EMAILS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "emails")
-os.makedirs(EMAILS_DIR, exist_ok=True)
-
 DEFAULT_API_URL = os.environ.get("API_URL", "https://www.learnfmpa.com")
 DEFAULT_ADMIN_SECRET = os.environ.get("ADMIN_SECRET", "learnfmpa2024")
 
@@ -64,363 +61,6 @@ VALID_STATUSES = ["inactive", "free", "paid"]
 def generate_temp_password(length: int = 12) -> str:
     alphabet = string.ascii_letters + string.digits + "!@#$%^&*"
     return "".join(secrets.choice(alphabet) for _ in range(length))
-
-
-def _esc(text):
-    return str(text).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
-
-
-def generate_email_html(*, email_type, user_name, email, temp_password, sub_display, login_url, api_url, plan_details=None, years_str=None, extra_lines=None):
-    accent = "#0d4f3c"
-    accent_light = "#e8f5f0"
-    accent_dark = "#093d2e"
-    gold = "#92400e"
-    gold_light = "#fef3c7"
-    blue = "#1e40af"
-    blue_light = "#dbeafe"
-
-    if email_type == "welcome":
-        title = "Bienvenue sur LearnFMPA !"
-        subtitle = "Votre compte a &#233;t&#233; cr&#233;&#233; avec succ&#232;s"
-        icon = "&#127891;"
-        icon_bg = accent
-    elif email_type == "activation":
-        title = "Votre compte LearnFMPA est activ&#233; !"
-        subtitle = "Vous pouvez d&#233;sormais vous connecter"
-        icon = "&#9989;"
-        icon_bg = accent
-    elif email_type == "reset":
-        title = "R&#233;initialisation de votre mot de passe"
-        subtitle = "Un nouveau mot de passe temporaire a &#233;t&#233; g&#233;n&#233;r&#233;"
-        icon = "&#128274;"
-        icon_bg = gold
-    else:
-        title = "LearnFMPA"
-        subtitle = ""
-        icon = "&#127891;"
-        icon_bg = accent
-
-    is_paid = sub_display and "PAID" in sub_display.upper()
-    is_trial = sub_display and "TRIAL" in sub_display.upper()
-
-    if is_paid:
-        badge_bg = gold
-        badge_text = "ACC&#200;S COMPLET"
-        plan_color = gold
-        plan_bg = gold_light
-    elif is_trial:
-        badge_bg = blue
-        badge_text = "ESSAI PREMIUM"
-        plan_color = blue
-        plan_bg = blue_light
-    else:
-        badge_bg = accent
-        badge_text = "GRATUIT"
-        plan_color = accent
-        plan_bg = accent_light
-
-    plan_section = ""
-    if plan_details:
-        plan_section = f"""
-      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 20px 0;">
-        <tr>
-          <td style="background:{plan_bg};border-left:4px solid {plan_color};padding:16px 20px;border-radius:0 8px 8px 0;">
-            <table cellpadding="0" cellspacing="0" border="0">
-              <tr>
-                <td><span style="display:inline-block;background:{badge_bg};color:#ffffff;font-size:11px;font-weight:700;letter-spacing:1px;padding:3px 10px;border-radius:4px;text-transform:uppercase;">{badge_text}</span></td>
-              </tr>
-              <tr>
-                <td style="padding-top:10px;color:#374151;font-size:15px;line-height:1.5;">{_esc(plan_details)}</td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-      </table>"""
-
-    years_section = ""
-    if years_str:
-        years_section = f"""
-      <tr>
-        <td style="padding:8px 16px;color:#6b7280;font-size:14px;width:35%;vertical-align:top;">Ann&#233;e(s)</td>
-        <td style="padding:8px 16px;color:#1f2937;font-size:14px;font-weight:600;width:65%;">{_esc(years_str)}</td>
-      </tr>"""
-
-    extra_section = ""
-    if extra_lines:
-        rows = ""
-        for line in extra_lines:
-            rows += f"""
-      <tr>
-        <td colspan="2" style="padding:8px 16px;color:#374151;font-size:14px;line-height:1.6;">{line}</td>
-      </tr>"""
-        extra_section = f'<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:12px 0 0 0;">{rows}</table>'
-
-    html = f"""<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{title}</title>
-<!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><![endif]-->
-<style type="text/css">
-  body{{margin:0;padding:0;background:#f3f4f6;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}}
-  a{{text-decoration:none}}
-  @media only screen and (max-width:600px){{
-    .card{{padding:24px 20px !important}}
-    .hero-title{{font-size:22px !important}}
-  }}
-</style>
-</head>
-<body style="margin:0;padding:0;background:#f3f4f6;">
-<center style="width:100%;background:#f3f4f6;padding:0;margin:0;">
-
-  <!-- Preheader (hidden preview text) -->
-  <div style="display:none;font-size:1px;color:#f3f4f6;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">
-    {subtitle} &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847;
-  </div>
-
-  <!-- Top accent line -->
-  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:{accent};">
-    <tr><td style="font-size:3px;line-height:3px;height:3px;">&nbsp;</td></tr>
-  </table>
-
-  <!-- Header -->
-  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:{accent};">
-    <tr>
-      <td align="center" style="padding:36px 20px 36px 20px;">
-        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
-          <tr>
-            <td align="center">
-              <table cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td style="background:rgba(255,255,255,0.15);width:64px;height:64px;border-radius:16px;text-align:center;vertical-align:middle;">
-                    <span style="font-size:32px;line-height:64px;">{icon}</span>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <td align="center" style="padding-top:20px;">
-              <h1 style="margin:0;font-family:'Helvetica Neue',Arial,sans-serif;color:#ffffff;font-size:26px;font-weight:700;letter-spacing:-0.5px;line-height:1.3;">
-                LearnFMPA
-              </h1>
-            </td>
-          </tr>
-          <tr>
-            <td align="center" style="padding-top:6px;">
-              <span style="font-family:'Helvetica Neue',Arial,sans-serif;color:rgba(255,255,255,0.8);font-size:14px;font-weight:400;letter-spacing:0.5px;">
-                R&#233;visez efficacement les annales de m&#233;decine
-              </span>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-
-  <!-- Decorative wave -->
-  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:{accent};">
-    <tr>
-      <td align="center" style="padding:0;margin:0;">
-        <div style="max-width:600px;margin:0 auto;">
-          <svg viewBox="0 0 600 30" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto;">
-            <path d="M0,0 L0,10 Q150,30 300,20 Q450,10 600,25 L600,0 Z" fill="{accent}"/>
-            <path d="M0,12 Q150,35 300,22 Q450,12 600,30 L600,30 L0,30 Z" fill="#f3f4f6"/>
-          </svg>
-        </div>
-      </td>
-    </tr>
-  </table>
-
-  <!-- Main Card -->
-  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f3f4f6;">
-    <tr>
-      <td align="center" style="padding:0 20px 40px 20px;">
-        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;background:#ffffff;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.08);overflow:hidden;" class="card">
-          <tr>
-            <td style="padding:40px 40px 32px 40px;" class="card">
-
-              <!-- Greeting -->
-              <p style="margin:0 0 8px 0;font-family:'Helvetica Neue',Arial,sans-serif;font-size:24px;font-weight:700;color:#1f2937;line-height:1.3;">
-                Bonjour {_esc(user_name)} &#x1F44B;
-              </p>
-              <p style="margin:0 0 28px 0;font-family:'Helvetica Neue',Arial,sans-serif;font-size:15px;color:#6b7280;line-height:1.6;">
-                {subtitle}
-              </p>
-
-              <!-- Plan info -->
-              {plan_section}
-
-              <!-- Credentials box -->
-              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;">
-                <tr>
-                  <td style="padding:20px 24px;">
-                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                      <tr>
-                        <td colspan="2" style="padding:4px 0 14px 0;font-family:'Helvetica Neue',Arial,sans-serif;font-size:12px;font-weight:700;color:{accent};letter-spacing:1.5px;text-transform:uppercase;">
-                          Vos identifiants
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="padding:10px 16px;color:#6b7280;font-size:14px;width:35%;vertical-align:top;border-top:1px solid #e5e7eb;">Email</td>
-                        <td style="padding:10px 16px;color:#1f2937;font-size:14px;font-weight:600;width:65%;border-top:1px solid #e5e7eb;word-break:break-all;">{_esc(email)}</td>
-                      </tr>
-                      <tr>
-                        <td style="padding:10px 16px;color:#6b7280;font-size:14px;width:35%;vertical-align:top;border-top:1px solid #e5e7eb;">Mot de passe</td>
-                        <td style="padding:10px 16px;color:#1f2937;font-size:14px;font-weight:600;width:65%;border-top:1px solid #e5e7eb;font-family:'Courier New',Consolas,monospace;background:#fff;border-radius:4px;">{_esc(temp_password)}</td>
-                      </tr>
-                      {years_section}
-                    </table>
-                  </td>
-                </tr>
-              </table>
-
-              <!-- Extra content -->
-              {extra_section}
-
-              <!-- Warning box -->
-              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;margin:24px 0 0 0;">
-                <tr>
-                  <td style="padding:14px 18px;">
-                    <span style="font-size:14px;line-height:1.5;">&#9888;&#65039;</span>
-                    <span style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;color:#92400e;line-height:1.6;padding-left:4px;">
-                      <strong>Important :</strong> Vous devez changer ce mot de passe lors de votre premi&#232;re connexion.
-                    </span>
-                  </td>
-                </tr>
-              </table>
-
-              <!-- CTA Button -->
-              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:32px 0 0 0;">
-                <tr>
-                  <td align="center">
-                    <a href="{_esc(login_url)}" target="_blank" style="display:inline-block;background:{accent};color:#ffffff;font-family:'Helvetica Neue',Arial,sans-serif;font-size:16px;font-weight:700;padding:14px 40px;border-radius:10px;text-decoration:none;mso-padding-alt:0;text-align:center;">
-                      <!--[if mso]><i style="mso-font-width:300%;mso-text-raise:21pt" hidden>&nbsp;</i><![endif]-->
-                      <span style="mso-text-raise:10pt;">Se connecter &rarr;</span>
-                      <!--[if mso]><i style="mso-font-width:300%;" hidden>&nbsp;</i><![endif]-->
-                    </a>
-                  </td>
-                </tr>
-              </table>
-
-              <!-- Fallback link -->
-              <p style="margin:16px 0 0 0;text-align:center;font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;color:#9ca3af;line-height:1.5;">
-                Si le bouton ne fonctionne pas, copiez ce lien :<br>
-                <a href="{_esc(login_url)}" style="color:{accent};word-break:break-all;">{_esc(login_url)}</a>
-              </p>
-
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-
-  <!-- Features section -->
-  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f3f4f6;">
-    <tr>
-      <td align="center" style="padding:0 20px 40px 20px;">
-        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
-          <tr>
-            <td width="33%" align="center" style="padding:0 8px;vertical-align:top;">
-              <table cellpadding="0" cellspacing="0" border="0" style="background:#ffffff;border-radius:12px;width:100%;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
-                <tr>
-                  <td align="center" style="padding:20px 12px;">
-                    <div style="font-size:28px;line-height:1;margin-bottom:8px;">&#128218;</div>
-                    <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:12px;font-weight:700;color:{accent};letter-spacing:0.5px;text-transform:uppercase;margin-bottom:4px;">Annales</div>
-                    <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;color:#6b7280;line-height:1.4;">Des milliers de questions corrig&#233;es</div>
-                  </td>
-                </tr>
-              </table>
-            </td>
-            <td width="33%" align="center" style="padding:0 8px;vertical-align:top;">
-              <table cellpadding="0" cellspacing="0" border="0" style="background:#ffffff;border-radius:12px;width:100%;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
-                <tr>
-                  <td align="center" style="padding:20px 12px;">
-                    <div style="font-size:28px;line-height:1;margin-bottom:8px;">&#128200;</div>
-                    <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:12px;font-weight:700;color:{accent};letter-spacing:0.5px;text-transform:uppercase;margin-bottom:4px;">Progression</div>
-                    <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;color:#6b7280;line-height:1.4;">Suivez votre avancement</div>
-                  </td>
-                </tr>
-              </table>
-            </td>
-            <td width="33%" align="center" style="padding:0 8px;vertical-align:top;">
-              <table cellpadding="0" cellspacing="0" border="0" style="background:#ffffff;border-radius:12px;width:100%;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
-                <tr>
-                  <td align="center" style="padding:20px 12px;">
-                    <div style="font-size:28px;line-height:1;margin-bottom:8px;">&#127891;</div>
-                    <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:12px;font-weight:700;color:{accent};letter-spacing:0.5px;text-transform:uppercase;margin-bottom:4px;">Explications</div>
-                    <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;color:#6b7280;line-height:1.4;">Corrig&#233;s d&#233;taill&#233;s par experts</div>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-
-  <!-- Footer -->
-  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#1f2937;">
-    <tr>
-      <td align="center" style="padding:32px 20px;">
-        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
-          <tr>
-            <td align="center">
-              <p style="margin:0 0 4px 0;font-family:'Helvetica Neue',Arial,sans-serif;font-size:15px;font-weight:700;color:#ffffff;letter-spacing:0.5px;">
-                LearnFMPA
-              </p>
-              <p style="margin:0 0 16px 0;font-family:'Helvetica Neue',Arial,sans-serif;font-size:12px;color:#9ca3af;">
-                R&#233;visez efficacement les annales de m&#233;decine au Maroc
-              </p>
-              <table cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;">
-                <tr>
-                  <td style="padding:0 12px;">
-                    <a href="{_esc(login_url)}" style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;color:#34d399;text-decoration:none;font-weight:600;">Se connecter</a>
-                  </td>
-                  <td style="color:#4b5563;font-size:13px;">|</td>
-                  <td style="padding:0 12px;">
-                    <a href="{_esc(api_url)}/contact" style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;color:#34d399;text-decoration:none;font-weight:600;">Contact</a>
-                  </td>
-                  <td style="color:#4b5563;font-size:13px;">|</td>
-                  <td style="padding:0 12px;">
-                    <a href="{_esc(api_url)}/faq" style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;color:#34d399;text-decoration:none;font-weight:600;">FAQ</a>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <td align="center" style="padding-top:20px;border-top:1px solid #374151;">
-              <p style="margin:0;font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;color:#6b7280;line-height:1.6;">
-                Ce message a &#233;t&#233; envoy&#233; &#224; {_esc(email)}.<br>
-                Si vous n'&#234;tes pas &#224; l'origine de cette demande, ignorez cet email.
-              </p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-
-  <!-- Bottom accent line -->
-  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:{accent};">
-    <tr><td style="font-size:3px;line-height:3px;height:3px;">&nbsp;</td></tr>
-  </table>
-
-</center>
-</body>
-</html>"""
-    return html
-
-
-def save_and_open_email(html_content, filename):
-    filepath = os.path.join(EMAILS_DIR, filename)
-    with open(filepath, "w", encoding="utf-8") as f:
-        f.write(html_content)
-    return filepath
 
 
 def api_request(api_url, admin_secret, endpoint, method="GET", data=None):
@@ -478,43 +118,38 @@ def add_user(api_url, admin_secret, name, email, temp_password=None, years=None,
         login_url = f"{api_url}/login"
 
         if sub == "paid":
-            plan_details = "Acc\u00e8s complet et illimit\u00e9 \u2014 questions, explications et suivi de progression."
+            plan_line = "\U0001f451 Acc\u00e8s complet et illimit\u00e9 \u2014 questions, explications et suivi de progression"
         else:
-            plan_details = f"Essai Premium de {trial_days} jours, puis acc\u00e8s gratuit (10 questions/jour)."
+            plan_line = f"\u2728 Essai Premium de {trial_days} jours, puis acc\u00e8s gratuit (10 questions expliqu\u00e9es/jour, pratique illimit\u00e9e)"
 
-        subject = "Bienvenue sur LearnFMPA \u2014 Vos identifiants de connexion"
+        subject = "\u2764\ufe0f Bienvenue sur LearnFMPA \u2014 Votre compte est pr\u00eat !"
         body = (
             f"Bonjour {name},\n\n"
-            f"Votre compte LearnFMPA a \u00e9t\u00e9 cr\u00e9\u00e9 avec succ\u00e8s !\n\n"
-            f"Voici vos identifiants de connexion :\n\n"
-            f"  \u2022 Email : {email}\n"
-            f"  \u2022 Mot de passe temporaire : {temp_password}\n"
-            f"  \u2022 Ann\u00e9e(s) : {years_str}\n"
-            f"  \u2022 Abonnement : {sub_display}\n\n"
-            f"\u26a0\ufe0f IMPORTANT : Vous devrez changer ce mot de passe lors de votre premi\u00e8re connexion.\n\n"
-            f"Connectez-vous sur : {login_url}\n\n"
-            f"Bonnes r\u00e9visions !\n"
-            f"L'\u00e9quipe LearnFMPA"
+            f"\U0001f389 Bienvenue sur LearnFMPA ! Je suis ravi de vous compter parmi nous.\n\n"
+            f"J'ai cr\u00e9\u00e9 LearnFMPA pour aider les \u00e9tudiants en m\u00e9decine au Maroc \u00e0 r\u00e9viser les annales dans les meilleures conditions. Des milliers de questions corrig\u00e9es, des explications d\u00e9taill\u00e9es, et un suivi de progression \u2014 tout ce qu'il faut pour r\u00e9ussir.\n\n"
+            f"\U0001f511 Vos identifiants de connexion :\n"
+            f"   \U0001f4e7  Email : {email}\n"
+            f"   \U0001f510  Mot de passe temporaire : {temp_password}\n"
+            f"   \U0001f4da  Ann\u00e9e(s) : {years_str}\n"
+            f"   {plan_line}\n\n"
+            f"\u26a0\ufe0f  Important : veuillez changer ce mot de passe lors de votre premi\u00e8re connexion.\n\n"
+            f"\U0001f449 Connectez-vous ici : {login_url}\n\n"
+            f"\U0001f4ab Ce qui vous attend sur LearnFMPA :\n"
+            f"   \u2022 Des annales class\u00e9es par module et par ann\u00e9e\n"
+            f"   \u2022 Des corrections r\u00e9dig\u00e9es par des enseignants\n"
+            f"   \u2022 Un tableau de bord pour suivre votre progression\n"
+            f"   \u2022 Un mode entra\u00eenement pour vous tester\n\n"
+            f"Si vous avez la moindre question, n'h\u00e9sitez pas \u00e0 me contacter. Je suis l\u00e0 pour vous aider.\n\n"
+            f"\U0001f4aa Bonnes r\u00e9visions et beaucoup de r\u00e9ussite !\n\n"
+            f"Cherellement,\n"
+            f"Le cr\u00e9ateur de LearnFMPA"
         )
 
         encoded_subject = urllib.parse.quote(subject)
         encoded_body = urllib.parse.quote(body)
         mailto_link = f"mailto:{email}?subject={encoded_subject}&body={encoded_body}"
 
-        html = generate_email_html(
-            email_type="welcome",
-            user_name=name,
-            email=email,
-            temp_password=temp_password,
-            sub_display=sub_display,
-            login_url=login_url,
-            api_url=api_url,
-            plan_details=plan_details,
-            years_str=years_str,
-        )
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        safe_name = name.replace(" ", "_").lower()
-        filepath = save_and_open_email(html, f"welcome_{safe_name}_{timestamp}.html")
+        webbrowser.open(mailto_link)
 
         print(f"\n  \u2705 User created successfully!")
         print(f"  {'=' * 48}")
@@ -525,13 +160,7 @@ def add_user(api_url, admin_secret, name, email, temp_password=None, years=None,
         print(f"  Subscription:       {sub_display}")
         print(f"  User ID:            {result.get('user', {}).get('id', 'N/A')}")
         print(f"  {'=' * 48}")
-        print(f"\n  \ud83d\udce7 HTML email saved:")
-        print(f"  {filepath}")
-        print(f"\n  \u2709\ufe0f  Plain text mailto link:")
-        print(f"  {mailto_link}")
-        print(f"\n  Open the HTML file in your browser, copy the content,")
-        print(f"  and paste it into your email client (which supports HTML).")
-        print(f"  Or use the mailto link for plain text.\n")
+        print(f"\n  \u2709\ufe0f  Email client opened with pre-filled message for {email}\n")
     else:
         print(f"\n  Error: {result.get('error', 'Unknown error')}\n")
 
@@ -581,44 +210,44 @@ def activate_user(api_url, admin_secret, email, paid=False, days=None):
             return
         sub = "PAID"
         sub_display = "PAID (acc\u00e8s complet)"
-        plan_details = "Acc\u00e8s complet et illimit\u00e9 \u2014 questions, explications et suivi de progression."
     else:
         sub = f"TRIAL ({duration} jours)"
         sub_display = f"Essai Premium ({duration} jours, puis acc\u00e8s gratuit)"
-        plan_details = f"Essai Premium de {duration} jours, puis acc\u00e8s gratuit (10 questions/jour)."
 
     login_url = f"{api_url}/login"
-    subject = f"Votre compte LearnFMPA est activ\u00e9 \u2014 Vos identifiants"
+
+    if paid:
+        plan_line = "\U0001f451 Acc\u00e8s complet et illimit\u00e9 \u2014 questions, explications et suivi de progression"
+    else:
+        plan_line = f"\u2728 Essai Premium de {duration} jours, puis acc\u00e8s gratuit (10 questions expliqu\u00e9es/jour, pratique illimit\u00e9e)"
+
+    subject = "\U0001f680 Votre compte LearnFMPA est activ\u00e9 !"
     body = (
         f"Bonjour {user_name},\n\n"
-        f"Votre compte LearnFMPA est maintenant activ\u00e9 !\n\n"
-        f"Voici vos identifiants de connexion :\n\n"
-        f"  \u2022 Email : {email}\n"
-        f"  \u2022 Mot de passe temporaire : {temp_password}\n"
-        f"  \u2022 Abonnement : {sub_display}\n\n"
-        f"\u26a0\ufe0f IMPORTANT : Vous devez changer ce mot de passe lors de votre premi\u00e8re connexion.\n\n"
-        f"Connectez-vous sur : {login_url}\n\n"
-        f"Bonnes r\u00e9visions !\n"
-        f"L'\u00e9quipe LearnFMPA"
+        f"\U0001f389 Bonne nouvelle : votre compte LearnFMPA est maintenant activ\u00e9 !\n\n"
+        f"Vous pouvez d\u00e8s \u00e0 pr\u00e9sent acc\u00e9der \u00e0 toutes les annales de m\u00e9decine et commencer \u00e0 r\u00e9viser efficacement. J'ai con\u00e7u cette plateforme pour que chaque \u00e9tudiant puisse progresser \u00e0 son rythme, avec des outils pens\u00e9s pour la r\u00e9ussite.\n\n"
+        f"\U0001f511 Vos identifiants de connexion :\n"
+        f"   \U0001f4e7  Email : {email}\n"
+        f"   \U0001f510  Mot de passe temporaire : {temp_password}\n"
+        f"   {plan_line}\n\n"
+        f"\u26a0\ufe0f  Important : veuillez changer ce mot de passe lors de votre premi\u00e8re connexion.\n\n"
+        f"\U0001f449 Connectez-vous ici : {login_url}\n\n"
+        f"\U0001f4ab Ce qui vous attend :\n"
+        f"   \u2022 Des annales class\u00e9es par module et par ann\u00e9e\n"
+        f"   \u2022 Des corrections r\u00e9dig\u00e9es par des enseignants\n"
+        f"   \u2022 Un tableau de bord pour suivre votre progression\n"
+        f"   \u2022 Un mode entra\u00eenement pour vous tester\n\n"
+        f"Si vous avez besoin d'aide, n'h\u00e9sitez pas \u00e0 me contacter. Je suis l\u00e0 pour \u00e7a.\n\n"
+        f"\U0001f4aa Bonnes r\u00e9visions !\n\n"
+        f"Cherellement,\n"
+        f"Le cr\u00e9ateur de LearnFMPA"
     )
 
     encoded_subject = urllib.parse.quote(subject)
     encoded_body = urllib.parse.quote(body)
     mailto_link = f"mailto:{email}?subject={encoded_subject}&body={encoded_body}"
 
-    html = generate_email_html(
-        email_type="activation",
-        user_name=user_name,
-        email=email,
-        temp_password=temp_password,
-        sub_display=sub_display,
-        login_url=login_url,
-        api_url=api_url,
-        plan_details=plan_details,
-    )
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    safe_name = user_name.replace(" ", "_").lower()
-    filepath = save_and_open_email(html, f"activation_{safe_name}_{timestamp}.html")
+    webbrowser.open(mailto_link)
 
     print(f"\n  \u2705 Account activated successfully!")
     print(f"  {'=' * 48}")
@@ -628,13 +257,7 @@ def activate_user(api_url, admin_secret, email, paid=False, days=None):
     print(f"  Duration:      {duration} jours")
     print(f"  Temp Password: {temp_password}")
     print(f"  {'=' * 48}")
-    print(f"\n  \ud83d\udce7 HTML email saved:")
-    print(f"  {filepath}")
-    print(f"\n  \u2709\ufe0f  Plain text mailto link:")
-    print(f"  {mailto_link}")
-    print(f"\n  Open the HTML file in your browser, copy the content,")
-    print(f"  and paste it into your email client (which supports HTML).")
-    print(f"  Or use the mailto link for plain text.\n")
+    print(f"\n  \u2709\ufe0f  Email client opened with pre-filled message for {email}\n")
 
 
 def activate_batch(api_url, admin_secret, emails, paid=False, edu_only=False, days=None):
@@ -656,18 +279,16 @@ def activate_batch(api_url, admin_secret, emails, paid=False, edu_only=False, da
 
     success = 0
     failed = 0
-    mailto_links = []
-    html_files = []
     duration_num = days if days else 7
     duration = f"{duration_num} jours"
     login_url = f"{api_url}/login"
 
     if paid:
         sub_display = "PAID (acc\u00e8s complet)"
-        plan_details = "Acc\u00e8s complet et illimit\u00e9 \u2014 questions, explications et suivi de progression."
+        plan_line = "\U0001f451 Acc\u00e8s complet et illimit\u00e9 \u2014 questions, explications et suivi de progression"
     else:
         sub_display = f"Essai Premium ({duration}, puis acc\u00e8s gratuit)"
-        plan_details = f"Essai Premium de {duration_num} jours, puis acc\u00e8s gratuit (10 questions/jour)."
+        plan_line = f"\u2728 Essai Premium de {duration_num} jours, puis acc\u00e8s gratuit (10 questions expliqu\u00e9es/jour, pratique illimit\u00e9e)"
 
     for email in emails:
         activate_result = api_request(api_url, admin_secret, "/api/admin/users", "POST", {
@@ -713,56 +334,38 @@ def activate_batch(api_url, admin_secret, emails, paid=False, edu_only=False, da
         if user_result.get("success"):
             user_name = user_result.get("user", {}).get("name", email)
 
-        subject = f"Votre compte LearnFMPA est activ\u00e9 \u2014 Vos identifiants"
+        subject = "\U0001f680 Votre compte LearnFMPA est activ\u00e9 !"
         body = (
             f"Bonjour {user_name},\n\n"
-            f"Votre compte LearnFMPA est maintenant activ\u00e9 !\n\n"
-            f"Voici vos identifiants de connexion :\n\n"
-            f"  \u2022 Email : {email}\n"
-            f"  \u2022 Mot de passe temporaire : {temp_password}\n"
-            f"  \u2022 Abonnement : {sub_display}\n\n"
-            f"\u26a0\ufe0f IMPORTANT : Vous devez changer ce mot de passe lors de votre premi\u00e8re connexion.\n\n"
-            f"Connectez-vous sur : {login_url}\n\n"
-            f"Bonnes r\u00e9visions !\n"
-            f"L'\u00e9quipe LearnFMPA"
+            f"\U0001f389 Bonne nouvelle : votre compte LearnFMPA est maintenant activ\u00e9 !\n\n"
+            f"Vous pouvez d\u00e8s \u00e0 pr\u00e9sent acc\u00e9der \u00e0 toutes les annales de m\u00e9decine et commencer \u00e0 r\u00e9viser efficacement. J'ai con\u00e7u cette plateforme pour que chaque \u00e9tudiant puisse progresser \u00e0 son rythme, avec des outils pens\u00e9s pour la r\u00e9ussite.\n\n"
+            f"\U0001f511 Vos identifiants de connexion :\n"
+            f"   \U0001f4e7  Email : {email}\n"
+            f"   \U0001f510  Mot de passe temporaire : {temp_password}\n"
+            f"   {plan_line}\n\n"
+            f"\u26a0\ufe0f  Important : veuillez changer ce mot de passe lors de votre premi\u00e8re connexion.\n\n"
+            f"\U0001f449 Connectez-vous ici : {login_url}\n\n"
+            f"\U0001f4ab Ce qui vous attend :\n"
+            f"   \u2022 Des annales class\u00e9es par module et par ann\u00e9e\n"
+            f"   \u2022 Des corrections r\u00e9dig\u00e9es par des enseignants\n"
+            f"   \u2022 Un tableau de bord pour suivre votre progression\n"
+            f"   \u2022 Un mode entra\u00eenement pour vous tester\n\n"
+            f"Si vous avez besoin d'aide, n'h\u00e9sitez pas \u00e0 me contacter. Je suis l\u00e0 pour \u00e7a.\n\n"
+            f"\U0001f4aa Bonnes r\u00e9visions !\n\n"
+            f"Cherellement,\n"
+            f"Le cr\u00e9ateur de LearnFMPA"
         )
 
         encoded_subject = urllib.parse.quote(subject)
         encoded_body = urllib.parse.quote(body)
-        mailto_links.append(f"mailto:{email}?subject={encoded_subject}&body={encoded_body}")
-
-        html = generate_email_html(
-            email_type="activation",
-            user_name=user_name,
-            email=email,
-            temp_password=temp_password,
-            sub_display=sub_display,
-            login_url=login_url,
-            api_url=api_url,
-            plan_details=plan_details,
-        )
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        safe_name = user_name.replace(" ", "_").lower()
-        filepath = save_and_open_email(html, f"activation_{safe_name}_{timestamp}.html")
-        html_files.append(filepath)
+        mailto_link = f"mailto:{email}?subject={encoded_subject}&body={encoded_body}"
+        webbrowser.open(mailto_link)
 
         success += 1
 
     sub_type = "PAID" if paid else f"TRIAL ({duration})"
     print(f"\n  \u2705 Batch activation complete ({sub_type}): {success} activated, {failed} failed.")
-
-    if html_files:
-        print(f"\n  \ud83d\udce7 HTML emails saved:")
-        for fp in html_files:
-            print(f"    {fp}")
-    if mailto_links:
-        print(f"\n  \u2709\ufe0f  Plain text mailto links:")
-        for link in mailto_links:
-            print(f"    {link}")
-    if html_files or mailto_links:
-        print(f"\n  Open the HTML files in your browser, copy the content,")
-        print(f"  and paste it into your email client (which supports HTML).")
-        print(f"  Or use the mailto links for plain text.\n")
+    print(f"  \u2709\ufe0f  Email client opened for each activated user.\n")
 
 
 def list_users(api_url, admin_secret, edu_only=False):
@@ -862,7 +465,7 @@ def set_subscription(api_url, admin_secret, email, status):
     result = api_request(api_url, admin_secret, "/api/admin/users", "POST", payload)
 
     if result.get("success"):
-        status_desc = {"inactive": "Inactive (cannot log in)", "free": "Free (10 questions/day)", "paid": "Paid (unlimited access)"}.get(status, status)
+        status_desc = {"inactive": "Inactive (cannot log in)", "free": "Free (10 questions expliquées/jour, pratique illimitée)", "paid": "Paid (unlimited access)"}.get(status, status)
         print(f"\n  User '{email}' subscription set to: {status_desc}\n")
     else:
         print(f"\n  Error: {result.get('error', 'Unknown error')}\n")
@@ -932,49 +535,33 @@ def reset_password(api_url, admin_secret, email, new_password=None):
             user_name = user_result.get("user", {}).get("name", email)
 
         login_url = f"{api_url}/login"
-        subject = "LearnFMPA \u2014 R\u00e9initialisation de votre mot de passe"
+        subject = "\U0001f512 R\u00e9initialisation de votre mot de passe LearnFMPA"
         body = (
             f"Bonjour {user_name},\n\n"
-            f"Votre mot de passe LearnFMPA a \u00e9t\u00e9 r\u00e9initialis\u00e9.\n\n"
-            f"Voici vos identifiants de connexion :\n\n"
-            f"  \u2022 Email : {email}\n"
-            f"  \u2022 Nouveau mot de passe temporaire : {new_password}\n\n"
-            f"\u26a0\ufe0f IMPORTANT : Vous devez changer ce mot de passe lors de votre prochaine connexion.\n\n"
-            f"Connectez-vous sur : {login_url}\n\n"
-            f"Cordialement,\n"
-            f"L'\u00e9quipe LearnFMPA"
+            f"\U0001f512 Votre mot de passe LearnFMPA a \u00e9t\u00e9 r\u00e9initialis\u00e9.\n\n"
+            f"Voici vos nouveaux identifiants de connexion :\n\n"
+            f"   \U0001f4e7  Email : {email}\n"
+            f"   \U0001f510  Nouveau mot de passe temporaire : {new_password}\n\n"
+            f"\u26a0\ufe0f  Important : veuillez changer ce mot de passe lors de votre prochaine connexion.\n\n"
+            f"\U0001f449 Connectez-vous ici : {login_url}\n\n"
+            f"Si vous n'\u00eates pas \u00e0 l'origine de cette r\u00e9initialisation, veuillez me contacter imm\u00e9diatement.\n\n"
+            f"\U0001f4aa \u00c0 tr\u00e8s vite sur LearnFMPA !\n\n"
+            f"Cherellement,\n"
+            f"Le cr\u00e9ateur de LearnFMPA"
         )
 
         encoded_subject = urllib.parse.quote(subject)
         encoded_body = urllib.parse.quote(body)
         mailto_link = f"mailto:{email}?subject={encoded_subject}&body={encoded_body}"
 
-        html = generate_email_html(
-            email_type="reset",
-            user_name=user_name,
-            email=email,
-            temp_password=new_password,
-            sub_display="",
-            login_url=login_url,
-            api_url=api_url,
-            plan_details="Si vous n'\u00eates pas \u00e0 l'origine de cette r\u00e9initialisation, veuillez nous contacter imm\u00e9diatement.",
-        )
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        safe_name = user_name.replace(" ", "_").lower()
-        filepath = save_and_open_email(html, f"reset_{safe_name}_{timestamp}.html")
+        webbrowser.open(mailto_link)
 
         print(f"\n  \u2705 Password reset successfully!")
         print(f"  {'=' * 48}")
         print(f"  Email:                    {email}")
         print(f"  New Temporary Password:   {new_password}")
         print(f"  {'=' * 48}")
-        print(f"\n  \ud83d\udce7 HTML email saved:")
-        print(f"  {filepath}")
-        print(f"\n  \u2709\ufe0f  Plain text mailto link:")
-        print(f"  {mailto_link}")
-        print(f"\n  Open the HTML file in your browser, copy the content,")
-        print(f"  and paste it into your email client (which supports HTML).")
-        print(f"  Or use the mailto link for plain text.\n")
+        print(f"\n  \u2709\ufe0f  Email client opened with pre-filled message for {email}\n")
     else:
         print(f"\n  Error: {result.get('error', 'Unknown error')}\n")
 
@@ -1034,7 +621,7 @@ def main():
 Subscription Tiers:
   inactive  - Account not yet activated (cannot log in)
   paid      - Premium access: unlimited questions, explanations, progress tracking
-  free      - Free tier: 10 questions/day, no explanations after 10, no progress tracking
+  free      - Free tier: 10 questions expliquées/jour, pratique illimitée, pas de suivi de progression
 
 Premium Trial:
   Every newly activated account gets a 7-day premium trial (configurable with --days).

@@ -278,7 +278,7 @@ export default function Dashboard() {
                   Essai Premium : {user.trial_days_left} jour{user.trial_days_left !== 1 ? 's' : ''} restant{user.trial_days_left !== 1 ? 's' : ''}
                 </p>
                 <p className={`text-xs ${isDarkMode ? 'text-amber-400' : 'text-amber-600'}`}>
-                  Après votre essai, vous passerez au plan gratuit (10 questions/jour).
+                  Après votre essai, vous passerez au plan gratuit : 10 questions expliquées par jour, mais pratique illimitée sans explications après.
                 </p>
               </div>
             </div>
