@@ -115,17 +115,10 @@ export default function Pricing() {
       paid: true,
     },
     {
-      feature: '10 questions/jour gratuites',
-      paper: false,
-      platform: true,
-      free: true,
-      paid: true,
-    },
-    {
       feature: 'Questions illimitées',
       paper: false,
       platform: true,
-      free: false,
+      free: true,
       paid: true,
     },
     {
@@ -136,7 +129,14 @@ export default function Pricing() {
       paid: true,
     },
     {
-      feature: 'Explications détaillées',
+      feature: '10 explications/jour gratuites',
+      paper: false,
+      platform: true,
+      free: true,
+      paid: true,
+    },
+    {
+      feature: 'Explications détaillées illimitées',
       paper: false,
       platform: true,
       free: false,

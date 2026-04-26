@@ -16,7 +16,7 @@ export default function UpgradePrompt({ variant = 'card', title, message, dailyC
   const isDarkMode = theme === 'dark';
 
   const defaultTitle = 'Soutenez le projet';
-  const defaultMessage = 'Vous avez atteint la limite quotidienne de questions gratuites. Soutenez LearnFMPA pour accéder à toutes les fonctionnalités et continuer à réviser sans limites.';
+  const defaultMessage = 'Vous avez atteint la limite quotidienne d\'explications gratuites. Soutenez LearnFMPA pour accéder aux explications détaillées illimitées et au suivi de progression complet.';
 
   const displayTitle = title || defaultTitle;
   const displayMessage = message || defaultMessage;

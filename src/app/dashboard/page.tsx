@@ -263,7 +263,7 @@ export default function Dashboard() {
             <UpgradePrompt
               variant="card"
               title="Soutenez LearnFMPA"
-              message="Vous utilisez la version gratuite avec 10 questions par jour. Soutenez le projet pour accéder à toutes les fonctionnalités : questions illimitées, explications détaillées et suivi de progression complet."
+              message="Vous utilisez la version gratuite : questions illimitées avec 10 explications détaillées par jour. Soutenez le projet pour accéder aux explications illimitées et au suivi de progression complet."
             />
           </div>
         )}

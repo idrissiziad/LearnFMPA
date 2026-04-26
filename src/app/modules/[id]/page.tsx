@@ -1483,7 +1483,7 @@ export default function ModulePage() {
               <UpgradePrompt
                 variant="card"
                 title="Explications disponibles avec la version complète"
-                message="Soutenez LearnFMPA pour accéder aux explications détaillées, au suivi de progression complet et à des questions illimitées."
+                message="Soutenez LearnFMPA pour accéder aux explications détaillées illimitées et au suivi de progression complet."
                 dailyCount={freeAnswersCount}
                 dailyLimit={FREE_DAILY_LIMIT}
               />
