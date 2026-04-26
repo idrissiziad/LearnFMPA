@@ -102,10 +102,10 @@ export default function SignUp() {
               </div>
 
               <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} mb-3`}>
-                Inscription enregistree
+                Inscription enregistrée
               </h2>
               <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'} mb-6 leading-relaxed`}>
-                Votre demande d&apos;inscription pour <span className="font-semibold text-green-600">{formData.email}</span> a bien ete enregistree.
+                Votre demande d&apos;inscription pour <span className="font-semibold text-green-600">{formData.email}</span> a bien été enregistrée.
               </p>
 
               <div className={`${isDarkMode ? 'bg-blue-900/20 border-blue-700/50' : 'bg-blue-50 border-blue-200'} border rounded-xl p-4 mb-6`}>
@@ -116,7 +116,7 @@ export default function SignUp() {
                   <div className="text-left">
                     <p className={`text-sm font-medium ${isDarkMode ? 'text-blue-300' : 'text-blue-800'} mb-1`}>Et maintenant ?</p>
                     <p className={`text-sm ${isDarkMode ? 'text-blue-200/70' : 'text-blue-700'}`}>
-                      L&apos;administrateur activera votre compte et vous enverra un mot de passe temporaire a votre adresse universitaire. Vous pourrez ensuite vous connecter et changer ce mot de passe.
+                      L&apos;administrateur activera votre compte et vous enverra un mot de passe temporaire à votre adresse universitaire. Vous pourrez ensuite vous connecter et changer ce mot de passe.
                     </p>
                   </div>
                 </div>
@@ -126,7 +126,7 @@ export default function SignUp() {
                 href="/login"
                 className="block w-full py-4 bg-gradient-to-r from-green-600 to-green-700 text-white text-lg font-bold rounded-xl hover:from-green-700 hover:to-green-800 transition-all shadow-lg shadow-green-800/25 text-center"
               >
-                Aller a la page de connexion
+                Aller à la page de connexion
               </Link>
             </div>
           </div>
@@ -186,7 +186,7 @@ export default function SignUp() {
                 Rejoignez LearnFMPA
               </h1>
               <p className="text-lg text-green-100 mb-10">
-                Inscrivez-vous avec votre email universitaire. Vous recevrez vos identifiants par email une fois votre compte active.
+                Inscrivez-vous avec votre email universitaire. Vous recevrez vos identifiants par email une fois votre compte activé.
               </p>
               <div className="space-y-4">
                 <div className="flex items-center text-white">
@@ -203,7 +203,7 @@ export default function SignUp() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
                   </div>
-                  <span>Mot de passe envoye par email</span>
+                  <span>Mot de passe envoyé par email</span>
                 </div>
                 <div className="flex items-center text-white">
                   <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center mr-4">
@@ -211,7 +211,7 @@ export default function SignUp() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                     </svg>
                   </div>
-                  <span>Compte active par l&apos;administrateur</span>
+                  <span>Compte activé par l&apos;administrateur</span>
                 </div>
               </div>
             </div>
@@ -231,7 +231,7 @@ export default function SignUp() {
 
             <div className="mb-8">
               <h2 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} mb-2`}>
-                Creer un compte
+                Créer un compte
               </h2>
               <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                 Vous recevrez vos identifiants par email
@@ -244,7 +244,7 @@ export default function SignUp() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div className="text-left">
-                  <p className={`text-sm font-medium ${isDarkMode ? 'text-blue-300' : 'text-blue-800'} mb-1`}>Comment ca marche ?</p>
+                  <p className={`text-sm font-medium ${isDarkMode ? 'text-blue-300' : 'text-blue-800'} mb-1`}>Comment ça marche ?</p>
                   <div className={`text-sm ${isDarkMode ? 'text-blue-200/70' : 'text-blue-700'} space-y-1`}>
                     <p>1. Inscrivez-vous avec votre email @edu.uiz.ac.ma</p>
                     <p>2. L&apos;administrateur active votre compte</p>
@@ -310,13 +310,13 @@ export default function SignUp() {
                   />
                 </div>
                 <p className={`text-xs mt-1.5 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                  Seules les adresses @edu.uiz.ac.ma sont acceptees
+                  Seules les adresses @edu.uiz.ac.ma sont acceptées
                 </p>
               </div>
 
               <div>
                 <label htmlFor="year" className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
-                  Annee d&apos;etude
+                  Année d&apos;étude
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -363,15 +363,15 @@ export default function SignUp() {
             </form>
 
             <p className={`text-xs text-center mt-4 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-              En creant un compte, vous acceptez nos{' '}
+              En créant un compte, vous acceptez nos{' '}
               <Link href="/terms" className="text-green-600 hover:text-green-700 underline">conditions d&apos;utilisation</Link>
               {' '}et notre{' '}
-              <Link href="/privacy" className="text-green-600 hover:text-green-700 underline">politique de confidentialite</Link>.
+              <Link href="/privacy" className="text-green-600 hover:text-green-700 underline">politique de confidentialité</Link>.
             </p>
 
             <div className="mt-8 text-center">
               <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                Deja un compte ?{' '}
+                Déjà un compte ?{' '}
                 <Link href="/login" className="text-green-600 hover:text-green-700 font-semibold">
                   Se connecter
                 </Link>
