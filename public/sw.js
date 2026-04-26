@@ -1,18 +1,10 @@
-const CACHE_NAME = "learnfmpa-v4";
-const STATIC_CACHE = "learnfmpa-static-v4";
-const API_CACHE = "learnfmpa-api-v4";
-const PAGE_CACHE = "learnfmpa-pages-v4";
+const CACHE_NAME = "learnfmpa-v5";
+const STATIC_CACHE = "learnfmpa-static-v5";
+const API_CACHE = "learnfmpa-api-v5";
+const PAGE_CACHE = "learnfmpa-pages-v5";
 
-const PRECACHE_URLS = [
-  "/",
-  "/dashboard",
-  "/modules",
-  "/progress",
-  "/login",
-];
-
-const API_CACHE_TTL = 120000;
-const PAGE_CACHE_TTL = 300000;
+const API_CACHE_TTL = 300000;
+const PAGE_CACHE_TTL = 600000;
 
 function isNavigationRequest(request) {
   return (
@@ -62,18 +54,26 @@ async function cleanupOldCaches() {
   );
 }
 
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(async (cache) => {
-      for (const url of PRECACHE_URLS) {
-        try {
-          await cache.add(url);
-        } catch (e) {
-          console.warn("Failed to precache", url, e);
+function lazyPrecachePages() {
+  const pagesToCache = ["/", "/dashboard", "/modules", "/login"];
+  caches.open(PAGE_CACHE).then((cache) => {
+    for (const url of pagesToCache) {
+      cache.match(url).then((cached) => {
+        if (!cached) {
+          fetch(url, { mode: "navigate" })
+            .then((response) => {
+              if (response.ok) {
+                cache.put(url, response);
+              }
+            })
+            .catch(() => {});
         }
-      }
-    })
-  );
+      });
+    }
+  });
+}
+
+self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
@@ -81,14 +81,17 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(
     Promise.all([
       cleanupOldCaches(),
-      caches.open(STATIC_CACHE).then((cache) =>
-        caches.open(API_CACHE).then((apiCache) =>
-          caches.open(PAGE_CACHE)
-        )
-      ),
+      caches.open(STATIC_CACHE),
+      caches.open(API_CACHE),
+      caches.open(PAGE_CACHE),
     ])
   );
   self.clients.claim();
+  self.clients.matchAll().then((clients) => {
+    if (clients.length > 0) {
+      setTimeout(lazyPrecachePages, 30000);
+    }
+  });
 });
 
 self.addEventListener("fetch", (event) => {
@@ -195,14 +198,17 @@ self.addEventListener("fetch", (event) => {
   }
 
   event.respondWith(
-    fetch(request)
-      .then((response) => {
-        if (response.ok) {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-        }
-        return response;
-      })
-      .catch(() => caches.match(request))
+    caches.match(request).then((cached) => {
+      if (cached) return cached;
+      return fetch(request)
+        .then((response) => {
+          if (response.ok) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match("/"));
+    })
   );
 });

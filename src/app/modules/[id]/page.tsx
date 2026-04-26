@@ -9,9 +9,8 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
 import ThemeToggle from '@/components/ThemeToggle';
 import UpgradePrompt from '@/components/UpgradePrompt';
-import { Warp } from '@paper-design/shaders-react';
-
 const ChapterNavigation = lazy(() => import('@/components/ChapterNavigation'));
+const Warp = lazy(() => import('@paper-design/shaders-react').then(mod => ({ default: mod.Warp })));
 
 export interface ExtendedQuestion extends Question {
   isMultipleChoice: boolean;
@@ -913,22 +912,24 @@ export default function ModulePage() {
     <div className={`min-h-screen relative overflow-hidden ${isDarkMode ? 'bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800' : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'}`}>
       {shaderEnabled && (
         <div className="absolute inset-0 z-0">
-          <Warp
-            width={1920}
-            height={1080}
-            colors={["#a7e58b", "#324471", "#0b190e"]}
-            proportion={0.64}
-            softness={1}
-            distortion={0.2}
-            swirl={0.86}
-            swirlIterations={7}
-            shape="edge"
-            shapeScale={0.6}
-            speed={10}
-            scale={0.9}
-            rotation={160}
-            style={{ width: '100%', height: '100%' }}
-          />
+          <Suspense fallback={null}>
+            <Warp
+              width={1920}
+              height={1080}
+              colors={["#a7e58b", "#324471", "#0b190e"]}
+              proportion={0.64}
+              softness={1}
+              distortion={0.2}
+              swirl={0.86}
+              swirlIterations={7}
+              shape="edge"
+              shapeScale={0.6}
+              speed={10}
+              scale={0.9}
+              rotation={160}
+              style={{ width: '100%', height: '100%' }}
+            />
+          </Suspense>
         </div>
       )}
       <div className={`absolute inset-0 ${isDarkMode ? 'opacity-30' : 'opacity-50'}`}>

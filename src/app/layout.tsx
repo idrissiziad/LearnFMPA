@@ -3,12 +3,14 @@ import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar";
-import { Analytics } from "@vercel/analytics/react";
+import LazyAnalytics from "@/components/LazyAnalytics";
 import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -43,7 +45,7 @@ export default function RootLayout({
         <ThemeProvider>
           <AuthProvider>
             <ServiceWorkerRegistrar />
-            <Analytics />
+            <LazyAnalytics />
             {children}
           </AuthProvider>
         </ThemeProvider>
