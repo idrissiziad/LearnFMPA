@@ -273,12 +273,9 @@ export default function ModulePage() {
   const activeQuestions = examMode ? examQuestions : questions;
   const currentQuestion = activeQuestions[currentQuestionIndex];
   const currentQuestionHasGDR = !!(currentQuestion?.answerExplanations?.some(expl => expl?.includes('[GDR]')));
+  
 
-  useEffect(() => {
-    if (!currentQuestionHasGDR && gdrMode) {
-      setGdrMode(false);
-    }
-  }, [currentQuestionHasGDR, gdrMode]);
+  
 
   useEffect(() => {
     if (currentQuestion) {
@@ -498,11 +495,9 @@ export default function ModulePage() {
       setOriginalSelectedAnswers([]);
       setCollapsedChoices(new Set());
       setQuestionStats(null);
-      setGdrMode(false);
       applyAnsweredQuestionsFilter();
       return;
     }
-    setGdrMode(false);
     const pool = allQuestions.length >= 50 ? shuffleArray(allQuestions).slice(0, 50) : shuffleArray(allQuestions);
     setExamQuestions(pool);
     setExamMode(true);
@@ -1134,7 +1129,7 @@ export default function ModulePage() {
                 </svg>
                 <span className="hidden sm:inline">Examen</span>
               </button>
-{!examMode && currentQuestionHasGDR && (
+{!examMode && (
                <button
                  onClick={handleToggleGdrMode}
                  title="Mode GDR - Réponse du professeur"
@@ -1153,7 +1148,7 @@ export default function ModulePage() {
                 </svg>
                 <span className="hidden sm:inline">Shader</span>
               </button>
-              {!examMode && (
+{!examMode && currentQuestionHasGDR && (
                 <>
                   <select
                     className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl border text-xs sm:text-sm flex-shrink-0 ${isDarkMode ? 'bg-gray-700/50 border-gray-600/50 text-white' : 'bg-white/80 border-gray-200/50 text-gray-700'} cursor-pointer shadow-sm backdrop-blur-sm`}
