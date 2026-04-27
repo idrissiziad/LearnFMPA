@@ -18,6 +18,13 @@ function isTrialExpired(user: User): boolean {
   return new Date() > expirationDate;
 }
 
+const FREE_DAILY_WINDOW_MS = 24 * 60 * 60 * 1000;
+
+function shouldResetDailyCount(user: User): boolean {
+  const resetTime = user.daily_answer_reset ? new Date(user.daily_answer_reset).getTime() : 0;
+  return Date.now() - resetTime >= FREE_DAILY_WINDOW_MS;
+}
+
 function migrateUser(user: any): any {
   if (!Array.isArray(user.years)) {
     if (user.year && typeof user.year === 'string') {
@@ -127,16 +134,25 @@ export async function POST(request: NextRequest) {
     if (usersData.users[foundUserId!].activation_days === undefined || usersData.users[foundUserId!].activation_days === null) usersData.users[foundUserId!].activation_days = 7;
     if (!usersData.users[foundUserId!].activated_at) usersData.users[foundUserId!].activated_at = usersData.users[foundUserId!].created_at;
     if (usersData.users[foundUserId!].has_paid === undefined || usersData.users[foundUserId!].has_paid === null) usersData.users[foundUserId!].has_paid = false;
+
+    const effectiveStatus = usersData.users[foundUserId!].subscription_status || 'free';
+    if (effectiveStatus !== 'paid' && shouldResetDailyCount(usersData.users[foundUserId!])) {
+      usersData.users[foundUserId!].daily_answer_count = 0;
+      usersData.users[foundUserId!].daily_answer_reset = null;
+    }
+
     await saveUsers(usersData);
+
+    const finalUser = usersData.users[foundUserId!];
 
     const token = generateToken();
     await createSession(foundUserId!, token);
 
-    const effectiveStatus = migrated.subscription_status || 'free';
+    const statusValue = finalUser.subscription_status || 'free';
     let trialDaysLeft: number | null = null;
-    if (effectiveStatus === 'paid' && migrated.activated_at) {
-      const activatedDate = new Date(migrated.activated_at);
-      const expirationDate = new Date(activatedDate.getTime() + migrated.activation_days * 24 * 60 * 60 * 1000);
+    if (statusValue === 'paid' && finalUser.activated_at) {
+      const activatedDate = new Date(finalUser.activated_at);
+      const expirationDate = new Date(activatedDate.getTime() + finalUser.activation_days * 24 * 60 * 60 * 1000);
       const now = new Date();
       const msLeft = expirationDate.getTime() - now.getTime();
       trialDaysLeft = Math.max(0, Math.ceil(msLeft / (24 * 60 * 60 * 1000)));
@@ -145,13 +161,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       user: {
-        id: migrated.id,
-        name: migrated.name,
-        email: migrated.email,
-        must_change_password: migrated.must_change_password,
-        years: migrated.years || ['3ème année'],
-        subscription_status: effectiveStatus,
-        daily_answer_count: migrated.daily_answer_count || 0,
+        id: finalUser.id,
+        name: finalUser.name,
+        email: finalUser.email,
+        must_change_password: finalUser.must_change_password,
+        years: finalUser.years || ['3ème année'],
+        subscription_status: statusValue,
+        daily_answer_count: finalUser.daily_answer_count || 0,
+        daily_answer_reset: finalUser.daily_answer_reset || null,
         trial_days_left: trialDaysLeft,
         token
       }

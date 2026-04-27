@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useTheme } from '@/contexts/ThemeContext';
-import { ReactNode } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 
 interface UpgradePromptProps {
   variant?: 'inline' | 'card' | 'banner';
@@ -10,11 +10,40 @@ interface UpgradePromptProps {
   message?: ReactNode;
   dailyCount?: number;
   dailyLimit?: number;
+  resetTime?: string | null;
 }
 
-export default function UpgradePrompt({ variant = 'card', title, message, dailyCount, dailyLimit }: UpgradePromptProps) {
+function formatTimeRemaining(ms: number): string {
+  if (ms <= 0) return '';
+  const hours = Math.floor(ms / (1000 * 60 * 60));
+  const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+  if (hours > 0) {
+    return `${hours}h${minutes > 0 ? ` ${minutes}min` : ''}`;
+  }
+  return `${minutes}min`;
+}
+
+export default function UpgradePrompt({ variant = 'card', title, message, dailyCount, dailyLimit, resetTime }: UpgradePromptProps) {
   const { theme } = useTheme();
   const isDarkMode = theme === 'dark';
+
+  const [timeRemaining, setTimeRemaining] = useState<string>('');
+
+  useEffect(() => {
+    if (!resetTime) return;
+    const resetTs = new Date(resetTime).getTime();
+    const update = () => {
+      const remaining = resetTs + 24 * 60 * 60 * 1000 - Date.now();
+      if (remaining > 0) {
+        setTimeRemaining(formatTimeRemaining(remaining));
+      } else {
+        setTimeRemaining('');
+      }
+    };
+    update();
+    const interval = setInterval(update, 60000);
+    return () => clearInterval(interval);
+  }, [resetTime]);
 
   const defaultTitle = 'Soutenez le projet';
   const defaultMessage = 'Vous avez atteint la limite quotidienne d\'explications gratuites. Soutenez LearnFMPA pour accéder aux explications détaillées illimitées et au suivi de progression complet.';
@@ -74,6 +103,9 @@ export default function UpgradePrompt({ variant = 'card', title, message, dailyC
       {dailyCount !== undefined && dailyLimit !== undefined && (
         <p className={`text-xs mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
           {dailyCount}/{dailyLimit} questions aujourd&apos;hui
+          {timeRemaining && (
+            <> &middot; R&eacute;initialisation dans {timeRemaining}</>
+          )}
         </p>
       )}
       <div className="flex flex-col sm:flex-row gap-3 justify-center">

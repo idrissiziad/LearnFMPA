@@ -3,10 +3,7 @@ import { loadUserProgress, saveUserProgress, loadQuestionStats, saveQuestionStat
 import { requireAuth } from '@/lib/auth';
 
 const FREE_DAILY_LIMIT = 10;
-
-function getTodayString(): string {
-  return new Date().toISOString().split('T')[0];
-}
+const FREE_DAILY_WINDOW_MS = 24 * 60 * 60 * 1000;
 
 export async function POST(request: NextRequest) {
   const authResult = await requireAuth(request);
@@ -33,15 +30,17 @@ export async function POST(request: NextRequest) {
     let dailyAnswerCount = user.daily_answer_count || 0;
     const dailyAnswerReset = user.daily_answer_reset || user.activated_at || user.created_at;
 
-    const today = getTodayString();
-    const resetDate = dailyAnswerReset ? dailyAnswerReset.split('T')[0] : today;
-    if (resetDate !== today) {
+    const now = Date.now();
+    const resetTime = dailyAnswerReset ? new Date(dailyAnswerReset).getTime() : 0;
+    if (now - resetTime >= FREE_DAILY_WINDOW_MS) {
       dailyAnswerCount = 0;
+      usersData.users[user_id].daily_answer_reset = new Date().toISOString();
+    } else if (!user.daily_answer_reset) {
+      usersData.users[user_id].daily_answer_reset = new Date().toISOString();
     }
 
     dailyAnswerCount += answers.length;
     usersData.users[user_id].daily_answer_count = dailyAnswerCount;
-    usersData.users[user_id].daily_answer_reset = new Date().toISOString();
     usersData.users[user_id].subscription_status = subscriptionStatus;
     await saveUsers(usersData);
 
@@ -86,8 +85,10 @@ export async function POST(request: NextRequest) {
       statistics: isPaid ? lastStats : null,
       progress: isPaid ? progress : {},
       free_limit_reached: freeLimitReached,
+      explanations_visible: isPaid || dailyAnswerCount <= FREE_DAILY_LIMIT,
       daily_answer_count: dailyAnswerCount,
       daily_limit: FREE_DAILY_LIMIT,
+      daily_answer_reset: usersData.users[user_id].daily_answer_reset || null,
     });
   } catch (error) {
     console.error('Batch answer error:', error);

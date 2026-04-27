@@ -12,6 +12,7 @@ interface User {
   years: string[];
   subscription_status: 'inactive' | 'free' | 'paid';
   daily_answer_count: number;
+  daily_answer_reset: string | null;
   trial_days_left: number | null;
 }
 
@@ -24,6 +25,9 @@ interface QuestionStats {
 interface FlushResult {
   statistics?: QuestionStats | null;
   progress?: Record<string, unknown> | null;
+  free_limit_reached?: boolean;
+  explanations_visible?: boolean;
+  daily_answer_count?: number;
 }
 
 interface AuthContextType {
@@ -249,9 +253,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             progressCacheRef.current = { data: null, timestamp: 0 };
           }
 
+          if (data.daily_answer_count !== undefined && user) {
+            const updatedUser = {
+              ...user,
+              daily_answer_count: data.daily_answer_count,
+              daily_answer_reset: data.daily_answer_reset || user.daily_answer_reset,
+            };
+            setUser(updatedUser);
+            localStorage.setItem('learnfmpa_user', JSON.stringify(updatedUser));
+
+            if (updatedUser.subscription_status === 'free') {
+              try {
+                const resetTime = updatedUser.daily_answer_reset ? new Date(updatedUser.daily_answer_reset).getTime() : Date.now();
+                localStorage.setItem(`learnfmpa_free_cache_${updatedUser.id}`, JSON.stringify({
+                  count: updatedUser.daily_answer_count,
+                  resetTime,
+                }));
+              } catch {}
+            }
+          }
+
           return {
             statistics: data.statistics || null,
             progress: data.progress || null,
+            free_limit_reached: data.free_limit_reached || false,
+            explanations_visible: data.explanations_visible ?? true,
+            daily_answer_count: data.daily_answer_count,
           };
         }
 
@@ -298,6 +325,7 @@ const userInfo = {
         years: data.user.years || ['3ème année'],
         subscription_status: data.user.subscription_status || 'free',
         daily_answer_count: data.user.daily_answer_count || 0,
+        daily_answer_reset: data.user.daily_answer_reset || null,
         trial_days_left: data.user.trial_days_left ?? null,
       };
 
@@ -305,6 +333,16 @@ const userInfo = {
       localStorage.setItem('learnfmpa_user', JSON.stringify(userInfo));
       localStorage.setItem('learnfmpa_token', data.user.token);
       setKickedOut(false);
+
+      if (userInfo.subscription_status === 'free') {
+        try {
+          const resetTime = userInfo.daily_answer_reset ? new Date(userInfo.daily_answer_reset).getTime() : Date.now();
+          localStorage.setItem(`learnfmpa_free_cache_${userInfo.id}`, JSON.stringify({
+            count: userInfo.daily_answer_count,
+            resetTime,
+          }));
+        } catch {}
+      }
 
       progressCacheRef.current = { data: null, timestamp: 0 };
 

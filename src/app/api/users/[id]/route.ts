@@ -37,6 +37,7 @@ export async function GET(request: NextRequest) {
         last_login: user.last_login,
         subscription_status: user.subscription_status || (user.has_paid ? 'paid' : user.is_active ? 'free' : 'inactive'),
         daily_answer_count: user.daily_answer_count || 0,
+        daily_answer_reset: user.daily_answer_reset || null,
       }
     });
 

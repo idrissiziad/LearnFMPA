@@ -32,7 +32,7 @@ export interface User {
   trial_started_at?: string | null;
   subscription_status?: SubscriptionStatus;
   daily_answer_count?: number;
-  daily_answer_reset?: string;
+  daily_answer_reset?: string | null;
 }
 
 export interface UsersData {

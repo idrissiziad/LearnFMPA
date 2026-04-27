@@ -31,8 +31,40 @@ export default function ModulePage() {
   const isDarkMode = theme === 'dark';
   const isFreeUser = user?.subscription_status === 'free';
   const FREE_DAILY_LIMIT = 10;
-  const [freeAnswersCount, setFreeAnswersCount] = useState(user?.daily_answer_count || 0);
+  const FREE_DAILY_WINDOW_MS = 24 * 60 * 60 * 1000;
+
+  const initialFreeAnswersCount = (() => {
+    if (!user) return 0;
+    if (typeof window !== 'undefined') {
+      try {
+        const cached = localStorage.getItem(`learnfmpa_free_cache_${user.id}`);
+        if (cached) {
+          const { count, resetTime } = JSON.parse(cached);
+          if (resetTime && Date.now() - resetTime >= FREE_DAILY_WINDOW_MS) {
+            localStorage.removeItem(`learnfmpa_free_cache_${user.id}`);
+          } else {
+            return count || 0;
+          }
+        }
+      } catch {}
+    }
+    const resetTime = user.daily_answer_reset ? new Date(user.daily_answer_reset).getTime() : 0;
+    if (resetTime && Date.now() - resetTime >= FREE_DAILY_WINDOW_MS) {
+      return 0;
+    }
+    return user.daily_answer_count || 0;
+  })();
+
+  const [freeAnswersCount, setFreeAnswersCount] = useState(initialFreeAnswersCount);
   const showExplanations = !isFreeUser || freeAnswersCount <= FREE_DAILY_LIMIT;
+
+  const updateFreeAnswerCache = useCallback((count: number) => {
+    if (!user) return;
+    try {
+      const resetTime = user.daily_answer_reset ? new Date(user.daily_answer_reset).getTime() : Date.now();
+      localStorage.setItem(`learnfmpa_free_cache_${user.id}`, JSON.stringify({ count, resetTime }));
+    } catch {}
+  }, [user]);
   const [allQuestions, setAllQuestions] = useState<ExtendedQuestion[]>([]);
   const [questions, setQuestions] = useState<ExtendedQuestion[]>([]);
   const [chapters, setChapters] = useState<Chapter[]>([]);
@@ -97,6 +129,36 @@ export default function ModulePage() {
       router.push('/login');
     }
   }, [user, authLoading, router]);
+
+  useEffect(() => {
+    if (!user) return;
+    const resetTime = user.daily_answer_reset ? new Date(user.daily_answer_reset).getTime() : 0;
+    if (resetTime && Date.now() - resetTime >= FREE_DAILY_WINDOW_MS) {
+      setFreeAnswersCount(0);
+      updateFreeAnswerCache(0);
+      try { localStorage.removeItem(`learnfmpa_free_cache_${user.id}`); } catch {}
+    } else {
+      setFreeAnswersCount((prev: number) => {
+        const serverCount = user.daily_answer_count || 0;
+        const newCount = Math.max(prev, serverCount);
+        updateFreeAnswerCache(newCount);
+        return newCount;
+      });
+    }
+  }, [user?.daily_answer_count, user?.daily_answer_reset, updateFreeAnswerCache]);
+
+  useEffect(() => {
+    if (!isFreeUser || !user?.daily_answer_reset) return;
+    const resetTime = new Date(user.daily_answer_reset).getTime();
+    const msUntilReset = resetTime + FREE_DAILY_WINDOW_MS - Date.now();
+    if (msUntilReset <= 0) return;
+    const timer = setTimeout(() => {
+      setFreeAnswersCount(0);
+      updateFreeAnswerCache(0);
+      try { localStorage.removeItem(`learnfmpa_free_cache_${user.id}`); } catch {}
+    }, msUntilReset);
+    return () => clearTimeout(timer);
+  }, [isFreeUser, user?.daily_answer_reset, updateFreeAnswerCache]);
 
   useEffect(() => {
     return () => {
@@ -715,8 +777,12 @@ export default function ModulePage() {
     if (currentQuestion) {
       if (isFreeUser) {
         if (user) {
-          submitAnswer(moduleId, currentQuestion.id.toString(), isCorrect, mappedSelectedAnswers);
-          setFreeAnswersCount(prev => prev + 1);
+          const newCount = freeAnswersCount + 1;
+          if (newCount <= FREE_DAILY_LIMIT) {
+            submitAnswer(moduleId, currentQuestion.id.toString(), isCorrect, mappedSelectedAnswers);
+          }
+          setFreeAnswersCount(newCount);
+          updateFreeAnswerCache(newCount);
         }
       } else if (typeof window !== 'undefined') {
         const storageKey = `learnfmpa_answered_${moduleId}`;
@@ -1536,6 +1602,7 @@ export default function ModulePage() {
                 message="Soutenez LearnFMPA pour accéder aux explications détaillées illimitées et au suivi de progression complet."
                 dailyCount={freeAnswersCount}
                 dailyLimit={FREE_DAILY_LIMIT}
+                resetTime={user?.daily_answer_reset}
               />
             </div>
           )}
