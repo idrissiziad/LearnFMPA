@@ -247,7 +247,7 @@ export default function ModulePage() {
         filterQuestionsBySession(extendedQuestions, sessionFilter, isFreeUser ? {} : undefined);
       });
     }
-  }, [moduleId, user]);
+  }, [moduleId, user?.id]);
 
   useEffect(() => {
     if (allQuestions.length > 0) {
