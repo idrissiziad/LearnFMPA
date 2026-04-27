@@ -274,7 +274,11 @@ export default function ModulePage() {
   const currentQuestion = activeQuestions[currentQuestionIndex];
   const currentQuestionHasGDR = !!(currentQuestion?.answerExplanations?.some(expl => expl?.includes('[GDR]')));
 
-  
+  useEffect(() => {
+    if (!currentQuestionHasGDR && gdrMode) {
+      setGdrMode(false);
+    }
+  }, [currentQuestionHasGDR, gdrMode]);
 
   useEffect(() => {
     if (currentQuestion) {
@@ -1130,15 +1134,15 @@ export default function ModulePage() {
                 </svg>
                 <span className="hidden sm:inline">Examen</span>
               </button>
-{!examMode && (
+{!examMode && currentQuestionHasGDR && (
                <button
-                onClick={handleToggleGdrMode}
-                title="Mode GDR - Réponse du professeur"
-                className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex-shrink-0 shadow-sm flex items-center gap-1 ${gdrMode ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-green-500/25' : 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-red-500/25'}`}
-              >
-                <span className="text-sm sm:text-base">📖</span>
-              </button>
-              )}
+                 onClick={handleToggleGdrMode}
+                 title="Mode GDR - Réponse du professeur"
+                 className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex-shrink-0 shadow-sm flex items-center gap-1 ${gdrMode ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-green-500/25' : 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-red-500/25'}`}
+               >
+                 <span className="text-sm sm:text-base">📖</span>
+               </button>
+               )}
               <button
                 onClick={() => setShaderEnabled(prev => { const next = !prev; localStorage.setItem('shaderEnabled', String(next)); return next; })}
                 title="Shader"

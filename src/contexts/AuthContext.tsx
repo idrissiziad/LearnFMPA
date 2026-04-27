@@ -374,7 +374,7 @@ const userInfo = {
     const keysToRemove: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key && (key.startsWith('learnfmpa_answered_') || key.startsWith('learnfmpa_module_cache_'))) {
+      if (key && (key.startsWith('learnfmpa_answered_') || key.startsWith('learnfmpa_module_cache_') || key.startsWith('learnfmpa_free_cache_'))) {
         keysToRemove.push(key);
       }
     }
