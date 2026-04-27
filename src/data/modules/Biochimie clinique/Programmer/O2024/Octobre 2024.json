@@ -1,0 +1,153 @@
+[
+    {
+        "YearAsked": "Octobre 2024",
+        "Subtopic": "Exploration biochimique des glandes thyroïdes",
+        "QuestionText": "Nommer les structures des hormones thyroïdiennes présentées sur le schéma de la question 1.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "La première structure est la Thyroxine (T4) avec 4 atomes d'iode, la seconde est la Triiodothyronine (T3) avec 3 atomes d'iode (3, 5, 3'), et la troisième est la rT3 (reverse T3) inactive (3, 3', 5'). (Source : Exploration biochimique des glandes thyroïdes, Page Globale 383).",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Les structures sont identifiées par le nombre et la position des atomes d'iode sur les noyaux phénoliques : T4 (4 iodes), T3 (3 iodes en 3, 5, 3') et rT3 (3 iodes en 3, 3', 5'). (Source : Exploration biochimique des glandes thyroïdes, Page Globale 383).",
+        "Choice_A_Image": "Bioclinique-0383.avif",
+        "Choice_B_Image": "Bioclinique-0383.avif"
+    },
+    {
+        "YearAsked": "Octobre 2024",
+        "Subtopic": "Exploration biochimique des glandes thyroïdes",
+        "QuestionText": "Expliquer les effets des hormones thyroïdiennes sur le métabolisme glucidique, lipidique, hydrominéral et protéique.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Les hormones thyroïdiennes sont hyperglycémiantes, hypocholestérolémiantes, augmentent la filtration glomérulaire et ont un effet catabolisant protéique à doses supraphysiologiques. (Source : Exploration biochimique des glandes thyroïdes, Page Globale 401-402).",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Elles favorisent l'absorption intestinale du glucose, augmentent les récepteurs LDL (effet hypocholestérolémiant) et stimulent le catabolisme des protéines. (Source : Exploration biochimique des glandes thyroïdes, Page Globale 401-402).",
+        "Choice_A_Image": [
+            "Bioclinique-0401.avif",
+            "Bioclinique-0402.avif"
+        ],
+        "Choice_B_Image": [
+            "Bioclinique-0401.avif",
+            "Bioclinique-0402.avif"
+        ]
+    },
+    {
+        "YearAsked": "Octobre 2024",
+        "Subtopic": "Exploration du métabolisme glucidique",
+        "QuestionText": "Décrire les étapes pré-analytiques, analytiques et post-analytiques pour le dosage de la glycémie.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Le prélèvement se fait à jeun, l'analyse utilise la méthode glucose oxydase/peroxydase, et les valeurs normales sont entre 0,70 et 1,10 g/L. (Source : Exploration du métabolisme glucidique, Page Globale 501-504).",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "En pré-analytique, il faut éviter la glycolyse in vitro (tube fluorure) ; en analytique, la réaction GOD/POD forme un complexe coloré proportionnel à la glycémie. (Source : Exploration du métabolisme glucidique, Page Globale 501-502).",
+        "Choice_A_Image": [
+            "Bioclinique-0501.avif",
+            "Bioclinique-0504.avif"
+        ],
+        "Choice_B_Image": [
+            "Bioclinique-0501.avif",
+            "Bioclinique-0502.avif"
+        ]
+    },
+    {
+        "YearAsked": "Octobre 2024",
+        "Subtopic": "TP",
+        "QuestionText": "Énoncer la réaction de Biuret pour le dosage des protéines plasmatiques.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "La méthode repose sur la réaction entre les liaisons peptidiques et le sulfate de cuivre en milieu alcalin pour former un complexe violet. (Source : TP, Page Globale 851).",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "L'intensité de la coloration violette obtenue est directement proportionnelle à la concentration en protéines de l'échantillon. (Source : TP, Page Globale 851).",
+        "Choice_A_Image": "Bioclinique-0851.avif",
+        "Choice_B_Image": "Bioclinique-0851.avif"
+    },
+    {
+        "YearAsked": "Octobre 2024",
+        "Subtopic": "Exploration biochimique des glandes thyroïdes",
+        "QuestionText": "Décrire à travers un schéma commenter la biosynthèse des hormones thyroïdiennes.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "La biosynthèse inclut la captation des iodures, l'organification de l'iode par la TPO sur la thyroglobuline, le couplage des MIT/DIT, le stockage colloïde et la protéolyse finale. (Source : Exploration biochimique des glandes thyroïdes, Page Globale 386).",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Le processus se déroule au pôle apical de la cellule thyroïdienne, avec un couplage de deux DIT pour former T4 ou d'un MIT et un DIT pour T3. (Source : Exploration biochimique des glandes thyroïdes, Page Globale 385-386).",
+        "Choice_A_Image": "Bioclinique-0386.avif",
+        "Choice_B_Image": [
+            "Bioclinique-0385.avif",
+            "Bioclinique-0386.avif"
+        ]
+    },
+    {
+        "YearAsked": "Octobre 2024",
+        "Subtopic": "Introduction à la biochimie clinique",
+        "QuestionText": "Donner la réaction du dosage de la procalcitonine, ainsi que ses limites du dosage.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Le texte fourni mentionne la prescription de la procalcitonine dans le formulaire de demande mais ne décrit pas sa réaction chimique spécifique ni ses limites détaillées. (Source : Introduction à la biochimie clinique, Page Globale 555).",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Bien que listée comme paramètre biologique, la description méthodologique complète du dosage de la procalcitonine n'est pas présente dans les sources textuelles fournies. (Source : Introduction à la biochimie clinique, Page Globale 555).",
+        "Choice_A_Image": "Bioclinique-0555.avif",
+        "Choice_B_Image": "Bioclinique-0555.avif"
+    },
+    {
+        "YearAsked": "Octobre 2024",
+        "Subtopic": "Métabolisme phospho-calcique",
+        "QuestionText": "Donnez la définition et les principales étiologies de l'hypercalcémie.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'hypercalcémie est définie par un calcium total > 105 mg/L ; les causes majeures sont l'hyperparathyroïdie primitive (40%) et les néoplasies (60%). (Source : Métabolisme phospho-calcique, Page Globale 767).",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "D'autres causes incluent l'intoxication à la vitamine D, les granulomatoses comme la sarcoïdose et l'immobilisation prolongée. (Source : Métabolisme phospho-calcique, Page Globale 768-769).",
+        "Choice_A_Image": "Bioclinique-0767.avif",
+        "Choice_B_Image": [
+            "Bioclinique-0768.avif",
+            "Bioclinique-0769.avif"
+        ]
+    },
+    {
+        "YearAsked": "Octobre 2024",
+        "Subtopic": "Équilibre hydro-électrolytique",
+        "QuestionText": "Citez les signes cliniques et biologiques de la déshydratation intracellulaire.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Les signes incluent la soif, la sécheresse des muqueuses, une hypernatrémie (> 145 mmol/L) et une hyperosmolalité (> 295 mOsm/kg). (Source : Équilibre hydro-électrolytique, Page Globale 975).",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "On peut également observer une perte de poids et des signes neuropsychiques comme la confusion ou les convulsions en cas de DIC sévère. (Source : Équilibre hydro-électrolytique, Page Globale 975).",
+        "Choice_A_Image": "Bioclinique-0975.avif",
+        "Choice_B_Image": "Bioclinique-0975.avif"
+    },
+    {
+        "YearAsked": "Octobre 2024",
+        "Subtopic": "Équilibre hydro-électrolytique",
+        "QuestionText": "Décrire la phase pré-analytique et analytique du dosage de potassium sanguin.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Il faut éviter le garrot serré et l'hémolyse (pré-analytique) ; l'analyse se fait principalement par potentiométrie avec des électrodes sélectives. (Source : Équilibre hydro-électrolytique, Page Globale 964-965).",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "L'hémolyse est une erreur majeure car elle libère le potassium intracellulaire, faussant la kaliémie. (Source : Équilibre hydro-électrolytique, Page Globale 991).",
+        "Choice_A_Image": [
+            "Bioclinique-0964.avif",
+            "Bioclinique-0965.avif"
+        ],
+        "Choice_B_Image": "Bioclinique-0991.avif"
+    },
+    {
+        "YearAsked": "Octobre 2024",
+        "Subtopic": "TP",
+        "QuestionText": "Commentez le profil électrophorétique suivant (Image 2) : Protéines totales : 34 g/L, rapport albumine/globulines : 0,70.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Le profil montre une hypoprotéinémie sévère (34 g/L, Norme : 65-80 g/L) associée à une diminution globale de l'albumine et des gamma-globulines. (Source : TP, Page Globale 852).",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Les valeurs de référence pour les protéines totales chez l'adulte sont de 65 à 80 g/L ; une valeur de 34 g/L est très pathologique. (Source : TP, Page Globale 852).",
+        "Choice_A_Image": "Bioclinique-0852.avif",
+        "Choice_B_Image": "Bioclinique-0852.avif"
+    }
+]

@@ -1,0 +1,181 @@
+[
+    {
+        "YearAsked": "Juin 2024",
+        "Subtopic": "Métabolisme glucidique",
+        "QuestionText": "Décrire les étapes pré-analytiques, analytiques (les deux réactions avec les valeurs de références) et post-analytiques pour le dosage de la glycémie.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Le dosage nécessite un prélèvement à jeun (8-12h) sur tube fluorure pour stabiliser le glucose. (Source : Métabolisme glucidique, Page Globale 501).",
+        "Choice_B_Text": "Je ne comprends pas ?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "L'étape analytique utilise l'Hexokinase (méthode de référence) ou la Glucose Oxydase. Les valeurs de référence à jeun sont de 0,70 à 1,05 g/L (HK) ou 0,75 à 1,10 g/L (GOD). (Source : Métabolisme glucidique, Page Globale 502-504).",
+        "Choice_A_Image": "Bioclinique-0501.avif",
+        "Choice_B_Image": [
+            "Bioclinique-0502.avif",
+            "Bioclinique-0504.avif"
+        ]
+    },
+    {
+        "YearAsked": "Juin 2024",
+        "Subtopic": "Bilan lipidique",
+        "QuestionText": "Énoncez la réaction du dosage des triglycérides (pré-analytiques, analytiques et post-analytique).",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Le prélèvement doit être fait sur un sujet à jeun depuis 12 heures sur sérum ou plasma hépariné. (Source : Bilan lipidique, Page Globale 49).",
+        "Choice_B_Text": "Je ne comprends pas ?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "La réaction utilise une Lipase pour libérer le Glycérol, suivi de la Glycérol Kinase et de la Glycérol Phosphate Déshydrogénase (mesure du NADH à 340 nm). Les valeurs normales sont comprises entre 0,50 et 1,50 g/L. (Source : Bilan lipidique, Page Globale 54).",
+        "Choice_A_Image": "Bioclinique-0049.avif",
+        "Choice_B_Image": "Bioclinique-0054.avif"
+    },
+    {
+        "YearAsked": "Juin 2024",
+        "Subtopic": "Bilan lipidique",
+        "QuestionText": "Énoncez la formule de Friedewald et la condition de validité.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Cette formule permet l'estimation du cholestérol LDL sans dosage direct. (Source : Bilan lipidique, Page Globale 60).",
+        "Choice_B_Text": "Je ne comprends pas ?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "La formule est : C-LDL = CT - (C-HDL + TG/5) en g/L. Elle n'est valide que si le taux de triglycérides (TG) est inférieur à 3,4 g/L. (Source : Bilan lipidique, Page Globale 60).",
+        "Choice_A_Image": "Bioclinique-0060.avif",
+        "Choice_B_Image": "Bioclinique-0060.avif"
+    },
+    {
+        "YearAsked": "Juin 2024",
+        "Subtopic": "TP",
+        "QuestionText": "Énumérez les rôles de l'albumine plasmatique.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'albumine est la protéine majoritaire du plasma. (Source : TP, Page Globale 851).",
+        "Choice_B_Text": "Je ne comprends pas ?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Ses rôles incluent le maintien de la pression oncotique, le transport non spécifique (bilirubine, fer, médicaments) et la participation aux systèmes tampons sanguins. (Source : TP, Page Globale 851).",
+        "Choice_A_Image": "Bioclinique-0851.avif",
+        "Choice_B_Image": "Bioclinique-0851.avif"
+    },
+    {
+        "YearAsked": "Juin 2024",
+        "Subtopic": "Glandes thyroïdes",
+        "QuestionText": "Décrire la biosynthèse des hormones thyroïdiennes.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "La synthèse se déroule dans le follicule thyroïdien. (Source : Glandes thyroïdes, Page Globale 386).",
+        "Choice_B_Text": "Je ne comprends pas ?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Les étapes sont : 1. Captation des iodures ; 2. Organification par la TPO ; 3. Couplage des iodotyrosines (MIT/DIT) ; 4. Stockage dans la colloïde sur la thyroglobuline ; 5. Mobilisation et sécrétion par hydrolyse lysosomiale. (Source : Glandes thyroïdes, Page Globale 386-391).",
+        "Choice_A_Image": "Bioclinique-0386.avif",
+        "Choice_B_Image": [
+            "Bioclinique-0386.avif",
+            "Bioclinique-0391.avif"
+        ]
+    },
+    {
+        "YearAsked": "Juin 2024",
+        "Subtopic": "Constituants azotés non protéiques",
+        "QuestionText": "Décrire le catabolisme de l'hème.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'hème est dégradé par le système réticulo-endothélial. (Source : Constituants azotés non protéiques, Page Globale 129).",
+        "Choice_B_Text": "Je ne comprends pas ?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "L'hème est transformé en biliverdine par l'hème oxygénase, puis en bilirubine non conjuguée (BNC) par la biliverdine réductase. La BNC est ensuite transportée par l'albumine vers le foie. (Source : Constituants azotés non protéiques, Page Globale 129-130).",
+        "Choice_A_Image": "Bioclinique-0129.avif",
+        "Choice_B_Image": [
+            "Bioclinique-0129.avif",
+            "Bioclinique-0130.avif"
+        ]
+    },
+    {
+        "YearAsked": "Juin 2024",
+        "Subtopic": "Introduction à la biochimie clinique",
+        "QuestionText": "Citez cinq causes de non-conformité d'un prélèvement veineux.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "La phase pré-analytique est la source majeure d'erreurs. (Source : Introduction à la biochimie clinique, Page Globale 557).",
+        "Choice_B_Text": "Je ne comprends pas ?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Les causes incluent : 1. Hémolyse ; 2. Tube inadéquat (ex: EDTA pour calcémie) ; 3. Volume insuffisant ; 4. Erreur d'identification ; 5. Délai de transport dépassé. (Source : Introduction à la biochimie clinique, Page Globale 551, 559, 563).",
+        "Choice_A_Image": "Bioclinique-0557.avif",
+        "Choice_B_Image": "Bioclinique-0551.avif"
+    },
+    {
+        "YearAsked": "Juin 2024",
+        "Subtopic": "Enzymes",
+        "QuestionText": "Quels sont les mécanismes par lesquels l'hémolyse influence les résultats de certains paramètres sanguins biochimiques ?",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'hémolyse libère le contenu des globules rouges dans le plasma. (Source : Enzymes, Page Globale 161).",
+        "Choice_B_Text": "Je ne comprends pas ?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Elle provoque une fausse augmentation des ions intracellulaires (K+) et des enzymes (LDH, ASAT, PAL). Elle crée également une interférence optique lors des dosages colorimétriques. (Source : Enzymes, Page Globale 161, 180, 190).",
+        "Choice_A_Image": "Bioclinique-0161.avif",
+        "Choice_B_Image": "Bioclinique-0161.avif"
+    },
+    {
+        "YearAsked": "Juin 2024",
+        "Subtopic": "Métabolisme phospho-calcique",
+        "QuestionText": "Décrivez la phase pré-analytique du dosage de la calcémie totale.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "La calcémie est sensible aux conditions de prélèvement. (Source : Métabolisme phospho-calcique, Page Globale 755).",
+        "Choice_B_Text": "Je ne comprends pas ?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Prélèvement le matin à jeun, sur tube sec ou hépariné. Il faut proscrire l'EDTA, le citrate ou l'oxalate et éviter un garrot prolongé qui augmente artificiellement la calcémie liée aux protéines. (Source : Métabolisme phospho-calcique, Page Globale 755).",
+        "Choice_A_Image": "Bioclinique-0755.avif",
+        "Choice_B_Image": "Bioclinique-0755.avif"
+    },
+    {
+        "YearAsked": "Juin 2024",
+        "Subtopic": "Équilibre hydro-électrolytique",
+        "QuestionText": "Décrivez brièvement la démarche à conduire devant une hyperkaliémie.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'hyperkaliémie est une urgence vitale à cause du risque cardiaque. (Source : Équilibre hydro-électrolytique, Page Globale 990).",
+        "Choice_B_Text": "Je ne comprends pas ?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "1. Éliminer une fausse hyperkaliémie (hémolyse) ; 2. Réaliser un ECG en urgence ; 3. Évaluer l'origine par la kaliurèse ; 4. Traiter (sels de calcium si troubles ECG, insuline+glucose, résines échangeuses). (Source : Équilibre hydro-électrolytique, Page Globale 991-994).",
+        "Choice_A_Image": "Bioclinique-0990.avif",
+        "Choice_B_Image": [
+            "Bioclinique-0991.avif",
+            "Bioclinique-0994.avif"
+        ]
+    },
+    {
+        "YearAsked": "Juin 2024",
+        "Subtopic": "Marqueurs tumoraux",
+        "QuestionText": "Interprétez le profil suivant : patient de 65 ans, douleurs osseuses, protéines totales = 82 g/L, Hb = 9,5 g/dL, calcémie = 120 mg/L, créatininémie = 30 mg/L. Interprétez ce profil électrophorétique (pic étroit en gamma).",
+        "Choice_A_Text": "Myélome multiple.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'association d'un pic monoclonal (pic étroit), d'une hypercalcémie, d'une anémie et d'une insuffisance rénale chez un sujet âgé évoque un myélome multiple. (Source : Marqueurs tumoraux, Page Globale 592).",
+        "Choice_B_Text": "Cirrhose hépatique.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "La cirrhose présenterait un bloc bêta-gamma et non un pic étroit monoclonal, avec une baisse de l'albumine. (Source : Introduction à la biochimie clinique, Page Globale 585).",
+        "Choice_C_Text": "Syndrome néphrotique.",
+        "Choice_C_isCorrect": false,
+        "Choice_C_Explanation": "Le syndrome néphrotique se caractérise par une hypoprotidémie sévère et une augmentation des alpha-2, contrairement à ce cas. (Source : Équilibre hydro-électrolytique, Page Globale 988).",
+        "Choice_D_Text": "Inflammation aiguë.",
+        "Choice_D_isCorrect": false,
+        "Choice_D_Explanation": "L'inflammation aiguë montre une augmentation des protéines de la phase positive (alpha-1 et alpha-2) et non un pic gamma monoclonal. (Source : Équilibre hydro-électrolytique, Page Globale 970).",
+        "Choice_A_Image": "Bioclinique-0592.avif",
+        "Choice_B_Image": "Bioclinique-0585.avif",
+        "Choice_C_Image": "Bioclinique-0988.avif",
+        "Choice_D_Image": "Bioclinique-0970.avif"
+    },
+    {
+        "YearAsked": "Juin 2024",
+        "Subtopic": "TP",
+        "QuestionText": "Donner le principe de la réaction de Jaffé compensée.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "La méthode de Jaffé dose la créatinine par colorimétrie. (Source : TP, Page Globale 849).",
+        "Choice_B_Text": "Je ne comprends pas ?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "La créatinine réagit avec le picrate en milieu alcalin pour donner un complexe jaune orangé. La compensation (facteur de correction de 0,37 ou standardisation IDMS) permet de minimiser les interférences des pseudo-chromogènes protéiques. (Source : TP, Page Globale 849-850).",
+        "Choice_A_Image": "Bioclinique-0849.avif",
+        "Choice_B_Image": [
+            "Bioclinique-0849.avif",
+            "Bioclinique-0850.avif"
+        ]
+    }
+]

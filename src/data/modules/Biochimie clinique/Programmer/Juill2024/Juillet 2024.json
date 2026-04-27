@@ -1,0 +1,179 @@
+[
+    {
+        "YearAsked": "Juillet 2024",
+        "Subtopic": "Enzymes",
+        "QuestionText": "Décrire les étapes pré-analytiques, analytiques et post-analytiques pour le dosage de la lactate déshydrogénase.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Cette option confirme votre compréhension des phases du dosage de la LDH. (Source : Enzymes, Page 190)",
+        "Choice_B_Text": "Je ne comprends pas?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Le dosage de la LDH nécessite un tube hépariné ou sec sans hémolyse (pré-analytique), se base sur l'oxydation du L-lactate en pyruvate à 340 nm (analytique) et augmente notamment lors d'infarctus du myocarde ou d'anémies (post-analytique). (Source : Enzymes, Pages 190-193)",
+        "Choice_A_Image": "Bioclinique-0190.avif",
+        "Choice_B_Image": [
+            "Bioclinique-0190.avif",
+            "Bioclinique-0193.avif"
+        ]
+    },
+    {
+        "YearAsked": "Juillet 2024",
+        "Subtopic": "Enzymes",
+        "QuestionText": "Énoncez la réaction du dosage de la Créatine kinase.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Cette option valide votre maîtrise de la réaction enzymatique complexe de la CK. (Source : Enzymes, Page 198)",
+        "Choice_B_Text": "Je ne comprends pas?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "La réaction utilise la CK pour former de l'ATP, qui permet ensuite via l'hexokinase et la G6-PD de produire du NADPH mesurable à 340 nm. (Source : Enzymes, Page 198)",
+        "Choice_A_Image": "Bioclinique-0198.avif",
+        "Choice_B_Image": "Bioclinique-0198.avif"
+    },
+    {
+        "YearAsked": "Juillet 2024",
+        "Subtopic": "Bilan lipidique",
+        "QuestionText": "Énoncez la définition du syndrome néphrotique, qui est une définition strictement biologique.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Cette option confirme que vous identifiez le syndrome néphrotique comme une cause de dyslipidémie secondaire. (Source : Bilan lipidique, Page 68)",
+        "Choice_B_Text": "Je ne comprends pas?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Le syndrome néphrotique est une pathologie rénale entraînant une hyperlipoprotéinémie secondaire de type IIb ou IV. (Source : Bilan lipidique, Page 68)",
+        "Choice_A_Image": "Bioclinique-0068.avif",
+        "Choice_B_Image": "Bioclinique-0068.avif"
+    },
+    {
+        "YearAsked": "Juillet 2024",
+        "Subtopic": "Métabolisme du fer",
+        "QuestionText": "Énumérez les situations où la prescription de la Protéine C réactive est indiquée.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Cette option valide l'usage de la CRP comme marqueur d'inflammation accompagnant le bilan martial. (Source : Métabolisme du fer, Page 685)",
+        "Choice_B_Text": "Je ne comprends pas?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "La CRP est indiquée pour identifier un syndrome inflammatoire, notamment lors du diagnostic différentiel des anémies hypochromes aux côtés de la ferritine. (Source : Métabolisme du fer, Pages 679-685)",
+        "Choice_A_Image": "Bioclinique-0685.avif",
+        "Choice_B_Image": [
+            "Bioclinique-0679.avif",
+            "Bioclinique-0685.avif"
+        ]
+    },
+    {
+        "YearAsked": "Juillet 2024",
+        "Subtopic": "Bilan lipidique",
+        "QuestionText": "Bilan lipidique : Décrire comment on réalise et on interprète le test de crémage.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Cette option confirme votre maîtrise de la réalisation technique du test de crémage. (Source : Bilan lipidique, Page 51)",
+        "Choice_B_Text": "Je ne comprends pas?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Le test consiste à laisser le sérum 12h à +4 °C : un surnageant crémeux indique un excès de chylomicrons, tandis qu'un aspect trouble signale un excès de VLDL ou IDL. (Source : Bilan lipidique, Pages 51-52)",
+        "Choice_A_Image": "Bioclinique-0051.avif",
+        "Choice_B_Image": [
+            "Bioclinique-0051.avif",
+            "Bioclinique-0052.avif"
+        ]
+    },
+    {
+        "YearAsked": "Juillet 2024",
+        "Subtopic": "Exploration biochimique des glandes thyroïdes",
+        "QuestionText": "À l'aide d'un schéma commenté, expliquez la régulation des hormones thyroïdiennes.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Cette option valide votre compréhension de l'axe hypothalamo-hypophysothyroïdien. (Source : Exploration biochimique des glandes thyroïdes, Page 397)",
+        "Choice_B_Text": "Je ne comprends pas?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "La régulation repose sur la TRH stimulant la TSH, qui active la production de T3/T4 par la thyroïde, ces dernières exerçant un rétrocontrôle négatif sur l'axe. (Source : Exploration biochimique des glandes thyroïdes, Page 397)",
+        "Choice_A_Image": "Bioclinique-0397.avif",
+        "Choice_B_Image": "Bioclinique-0397.avif"
+    },
+    {
+        "YearAsked": "Juillet 2024",
+        "Subtopic": "Métabolisme du fer",
+        "QuestionText": "Expliquez le rôle de la Céruléoplasmine.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Cette option confirme votre connaissance du rôle enzymatique de la céruléoplasmine. (Source : Métabolisme du fer, Page 656)",
+        "Choice_B_Text": "Je ne comprends pas?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "La céruléoplasmine intervient dans le recyclage des érythrocytes par les macrophages en assurant l'oxydation du fer ferreux (Fe2+) en fer ferrique (Fe3+). (Source : Métabolisme du fer, Page 656)",
+        "Choice_A_Image": "Bioclinique-0656.avif",
+        "Choice_B_Image": "Bioclinique-0656.avif"
+    },
+    {
+        "YearAsked": "Juillet 2024",
+        "Subtopic": "Équilibre acido-basique",
+        "QuestionText": "Acidose métabolique : Donner sa définition.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Cette option valide votre définition biologique de l'acidose métabolique. (Source : Équilibre acido-basique, Page 933)",
+        "Choice_B_Text": "Je ne comprends pas?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "L'acidose métabolique se définit par une baisse primitive du taux de bicarbonates plasmatiques (inférieur à 23 mmol/L) et un pH artériel inférieur à 7,38. (Source : Équilibre acido-basique, Page 933)",
+        "Choice_A_Image": "Bioclinique-0933.avif",
+        "Choice_B_Image": "Bioclinique-0933.avif"
+    },
+    {
+        "YearAsked": "Juillet 2024",
+        "Subtopic": "Équilibre acido-basique",
+        "QuestionText": "Acidose métabolique : Citer ces étiologies.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Cette option confirme que vous connaissez les causes majeures des acidoses métaboliques. (Source : Équilibre acido-basique, Page 934)",
+        "Choice_B_Text": "Je ne comprends pas?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Les étiologies incluent les surcharges en acides (acidocétose, acidose lactique, toxiques), l'insuffisance rénale terminale et les pertes de bicarbonates (diarrhées). (Source : Équilibre acido-basique, Pages 934-936)",
+        "Choice_A_Image": "Bioclinique-0934.avif",
+        "Choice_B_Image": [
+            "Bioclinique-0934.avif",
+            "Bioclinique-0936.avif"
+        ]
+    },
+    {
+        "YearAsked": "Juillet 2024",
+        "Subtopic": "Constituants azotés non protéiques",
+        "QuestionText": "Dosage de l’urée sanguin : Donner la phase pré-analytique, analytique et les variations physiopathologiques.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Cette option valide votre compréhension globale du dosage de l'urée. (Source : Constituants azotés non protéiques, Page 80)",
+        "Choice_B_Text": "Je ne comprends pas?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Le dosage nécessite un tube sans fluorure (pré-analytique), utilise la méthode enzymatique à l'uréase (analytique) et augmente en cas d'insuffisance rénale ou déshydratation (physiopathologique). (Source : Constituants azotés non protéiques, Pages 80-86)",
+        "Choice_A_Image": "Bioclinique-0080.avif",
+        "Choice_B_Image": [
+            "Bioclinique-0080.avif",
+            "Bioclinique-0086.avif"
+        ]
+    },
+    {
+        "YearAsked": "Juillet 2024",
+        "Subtopic": "Équilibre hydro-électrolytique",
+        "QuestionText": "La déshydratation extracellulaire : donner sa définition biologique et ces principales causes.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Cette option confirme votre maîtrise de la DEC. (Source : Équilibre hydro-électrolytique, Page 983)",
+        "Choice_B_Text": "Je ne comprends pas?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "La DEC est une réduction du VEC avec natrémie normale mais hémoconcentration (protides et hématocrite élevés), causée par des pertes rénales ou extra-rénales (digestives, brûlures). (Source : Équilibre hydro-électrolytique, Pages 983-985)",
+        "Choice_A_Image": "Bioclinique-0983.avif",
+        "Choice_B_Image": [
+            "Bioclinique-0983.avif",
+            "Bioclinique-0985.avif"
+        ]
+    },
+    {
+        "YearAsked": "Juillet 2024",
+        "Subtopic": "Équilibre hydro-électrolytique",
+        "QuestionText": "Hypokaliémie : donner sa définition et ces principales causes sous-jacentes.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Cette option valide votre définition de l'hypokaliémie. (Source : Équilibre hydro-électrolytique, Page 995)",
+        "Choice_B_Text": "Je ne comprends pas?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "L'hypokaliémie est une concentration plasmatique de K+ inférieure à 3,5 mmol/L, causée par des pertes digestives, rénales ou un transfert intracellulaire (insuline, alcalose). (Source : Équilibre hydro-électrolytique, Pages 995-998)",
+        "Choice_A_Image": "Bioclinique-0995.avif",
+        "Choice_B_Image": [
+            "Bioclinique-0995.avif",
+            "Bioclinique-0998.avif"
+        ]
+    }
+]

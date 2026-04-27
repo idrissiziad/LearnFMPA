@@ -30,9 +30,9 @@ def process_pharmacology_data():
         return
 
     # 2. Get user configuration
-    base_name = input("Enter the base image name (e.g., pharmaco): ").strip()
+    base_name = input("Enter the base image name (e.g., Bioclinique): ").strip()
     try:
-        padding_count = int(input("How many digits should the page number contain (e.g., 4 for '0002')? "))
+        padding_count = int(input("How many digits should the page number contain (e.g., 4 for '0685')? "))
     except ValueError:
         print("Invalid input. Padding must be a number.")
         return
@@ -46,10 +46,10 @@ def process_pharmacology_data():
             return
 
     # UPDATED REGEX: 
-    # 1. Matches "Page"
-    # 2. Optionally matches " Global" or " Globale" (the 'e' is now optional)
-    # 3. Captures the digits/ranges
-    page_regex = re.compile(r"Page\s+(?:Global[e]?\s+)?([\d\-/]+)", re.IGNORECASE)
+    # 1. Matches "Page" or "Pages" (s is optional)
+    # 2. Optionally matches " Global" or " Globale"
+    # 3. Captures digits, hyphens, or slashes
+    page_regex = re.compile(r"Pages?\s+(?:Global[e]?\s+)?([\d\-/]+)", re.IGNORECASE)
 
     # 4. Process the entries
     for entry in data:
@@ -58,14 +58,13 @@ def process_pharmacology_data():
             explanation_key = f"Choice_{char}_Explanation"
             image_key = f"Choice_{char}_Image"
             
-            # Ensure the key exists in the JSON entry
             if explanation_key in entry:
                 explanation_text = entry.get(explanation_key, "")
                 match = page_regex.search(explanation_text)
                 
                 if match:
                     raw_pages = match.group(1)
-                    # Split by hyphen or slash (handles 659-660 or 636/649)
+                    # Split by hyphen or slash (handles 679-685 or 636/649)
                     page_parts = re.split(r'[-/]', raw_pages)
                     
                     # Clean, pad, and add extension
@@ -79,9 +78,11 @@ def process_pharmacology_data():
                     elif len(formatted_images) > 1:
                         entry[image_key] = formatted_images
                     else:
-                        entry[image_key] = ""
+                        # If no digits found, we don't overwrite if there's an existing value
+                        if image_key not in entry: entry[image_key] = ""
                 else:
-                    entry[image_key] = ""
+                    # If no "Page" text found, only set empty if it doesn't exist
+                    if image_key not in entry: entry[image_key] = ""
 
     # 5. Save the result
     output_file = input_file.replace('.json', '_Updated.json')
@@ -92,7 +93,7 @@ def process_pharmacology_data():
     print(f"SUCCESS!")
     print(f"Input file:  {input_file}")
     print(f"Output file: {output_file}")
-    print(f"Format Example: {base_name}-{'2'.zfill(padding_count)}.avif")
+    print(f"Format Example: {base_name}-{'685'.zfill(padding_count)}.avif")
     print("-" * 40)
 
 if __name__ == "__main__":
