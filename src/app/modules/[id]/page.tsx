@@ -11,6 +11,7 @@ import ThemeToggle from '@/components/ThemeToggle';
 import UpgradePrompt from '@/components/UpgradePrompt';
 const ChapterNavigation = lazy(() => import('@/components/ChapterNavigation'));
 const Warp = lazy(() => import('@paper-design/shaders-react').then(mod => ({ default: mod.Warp })));
+const GrainGradient = lazy(() => import('@paper-design/shaders-react').then(mod => ({ default: mod.GrainGradient })));
 
 export interface ExtendedQuestion extends Question {
   isMultipleChoice: boolean;
@@ -1351,8 +1352,8 @@ export default function ModulePage() {
               }
 
               const getOptionStyle = () => {
-                if (gdrMode && showAnswer && isCorrect) return 'bg-gradient-to-r from-blue-500 to-blue-600 text-white border-blue-500 shadow-lg shadow-blue-500/30';
-                if (gdrMode && showAnswer && !isCorrect) return 'bg-gradient-to-r from-orange-400 to-orange-500 text-white border-orange-400 shadow-lg shadow-orange-400/30';
+                if (gdrMode && showAnswer && isCorrect) return 'bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-500 shadow-lg shadow-green-500/30';
+                if (gdrMode && showAnswer && !isCorrect) return 'bg-gradient-to-r from-red-500 to-red-600 text-white border-red-500 shadow-lg shadow-red-500/30';
                 if (showCorrectFeedback) return 'bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-500 shadow-lg shadow-green-500/30';
                 if (showMissedCorrectFeedback) return 'bg-gradient-to-r from-red-50 to-red-100 text-red-800 border-red-300';
                 if (showIncorrectFeedback) return 'bg-gradient-to-r from-red-500 to-red-600 text-white border-red-500 shadow-lg shadow-red-500/30';
@@ -1375,11 +1376,27 @@ export default function ModulePage() {
               return (
                 <div
                   key={index}
-                  className={`rounded-xl sm:rounded-2xl border-2 transition-all duration-200 ${getOptionStyle()} ${!showAnswer && 'cursor-pointer hover:scale-[1.01] active:scale-[0.99]'} ${isStrikethrough ? 'opacity-40' : ''} ${isCollapsed ? 'opacity-70' : ''}`}
+                  className={`rounded-xl sm:rounded-2xl border-2 transition-all duration-200 relative overflow-hidden ${getOptionStyle()} ${!showAnswer && 'cursor-pointer hover:scale-[1.01] active:scale-[0.99]'} ${isStrikethrough ? 'opacity-40' : ''} ${isCollapsed ? 'opacity-70' : ''}`}
                   onContextMenu={(e) => handleOptionRightClick(e, index)}
                   onClick={() => !showAnswer && handleAnswerSelect(index)}
                 >
-                  <div className="p-4 sm:p-5 flex flex-wrap items-center gap-3 sm:gap-4">
+                  {gdrMode && showAnswer && (
+                    <Suspense fallback={null}>
+                      <GrainGradient
+                        width={1280}
+                        height={720}
+                        colors={isCorrect ? ["#7300ff", "#40ff87", "#00bfff", "#2bff00"] : ["#7300ff", "#ff6688", "#00bfff", "#ff0044"]}
+                        colorBack="#000000"
+                        softness={0.5}
+                        intensity={0.5}
+                        noise={0.25}
+                        shape="corners"
+                        speed={1}
+                        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.4, pointerEvents: 'none' }}
+                      />
+                    </Suspense>
+                  )}
+                  <div className={`p-4 sm:p-5 flex flex-wrap items-center gap-3 sm:gap-4 ${gdrMode && showAnswer ? 'relative z-10' : ''}`}>
                     <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm sm:text-base ${
                       gdrMode && showAnswer && isCorrect ? 'bg-white/20' :
                       gdrMode && showAnswer && !isCorrect ? 'bg-white/20' :
@@ -1449,7 +1466,7 @@ export default function ModulePage() {
                     const imagePaths = (Array.isArray(optionImage) ? optionImage.join(',') : String(optionImage)).split(',').map(img => img.trim()).filter(img => img);
                     if (imagePaths.length === 0) return null;
                     return (
-                      <div className={`px-4 sm:px-5 pb-4 sm:pb-5 ${imagePaths.length > 1 ? 'grid grid-cols-2 gap-2' : ''}`}>
+                      <div className={`px-4 sm:px-5 pb-4 sm:pb-5 ${imagePaths.length > 1 ? 'grid grid-cols-2 gap-2' : ''} ${gdrMode && showAnswer ? 'relative z-10' : ''}`}>
                         {imagePaths.map((imgPath, imgIndex) => (
                           <button
                             key={imgIndex}
@@ -1470,7 +1487,7 @@ export default function ModulePage() {
                   })()}
 
                   {!isCollapsed && showAnswer && answerExplanation && showExplanations && (
-                    <div className={`px-4 sm:px-5 pb-4 sm:pb-5 pt-3 border-t ${gdrMode && showAnswer && isCorrect ? 'border-white/20' : gdrMode && showAnswer && !isCorrect ? 'border-white/20' : showCorrectFeedback ? 'border-white/20' : showIncorrectFeedback || showMissedCorrectFeedback ? 'border-red-200' : isDarkMode ? 'border-gray-600/50' : 'border-gray-100'}`}>
+                    <div className={`px-4 sm:px-5 pb-4 sm:pb-5 pt-3 border-t ${gdrMode && showAnswer && isCorrect ? 'border-white/20' : gdrMode && showAnswer && !isCorrect ? 'border-white/20' : showCorrectFeedback ? 'border-white/20' : showIncorrectFeedback || showMissedCorrectFeedback ? 'border-red-200' : isDarkMode ? 'border-gray-600/50' : 'border-gray-100'} ${gdrMode && showAnswer ? 'relative z-10' : ''}`}>
                       <p className={`text-xs sm:text-sm leading-relaxed ${gdrMode && showAnswer && isCorrect ? 'text-white/90' : gdrMode && showAnswer && !isCorrect ? 'text-white/90' : showCorrectFeedback ? 'text-white/90' : showMissedCorrectFeedback ? 'text-red-700' : showIncorrectFeedback ? 'text-white/90' : isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                         {answerExplanation.replace(/\s*\([^)]*\)\.?/g, '').replace(/\s*\[GDR\]/g, '')}
                       </p>
