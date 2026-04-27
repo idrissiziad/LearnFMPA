@@ -1068,9 +1068,9 @@ export default function ModulePage() {
                <button
                 onClick={handleToggleGdrMode}
                 title="Mode GDR - Réponse du professeur"
-                className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex-shrink-0 shadow-sm flex items-center gap-1 ${gdrMode ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-blue-500/25' : isDarkMode ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50' : 'bg-white/80 text-gray-700 hover:bg-gray-200/80'}`}
+                className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex-shrink-0 shadow-sm flex items-center gap-1 ${gdrMode ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-green-500/25' : 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-red-500/25'}`}
               >
-                {gdrMode ? <span className="text-sm sm:text-base">📖</span> : <span className="hidden sm:inline">GDR</span>}
+                <span className="text-sm sm:text-base">📖</span>
               </button>
               )}
               <button
@@ -1369,7 +1369,7 @@ export default function ModulePage() {
                 if (gdrMode && showAnswer && isCorrect) return 'bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-500 shadow-lg shadow-green-500/30';
                 if (gdrMode && showAnswer && !isCorrect) return 'bg-gradient-to-r from-red-500 to-red-600 text-white border-red-500 shadow-lg shadow-red-500/30';
                 if (showCorrectFeedback) return 'bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-500 shadow-lg shadow-green-500/30';
-                if (showMissedCorrectFeedback) return 'bg-gradient-to-r from-red-50 to-red-100 text-red-800 border-red-300';
+                if (showMissedCorrectFeedback) return 'bg-gradient-to-r from-red-500 to-red-600 text-white border-red-500 shadow-lg shadow-red-500/30';
                 if (showIncorrectFeedback) return 'bg-gradient-to-r from-red-500 to-red-600 text-white border-red-500 shadow-lg shadow-red-500/30';
                 if (isSelected) return 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border-green-400';
                 return isDarkMode ? 'bg-gray-700/50 text-gray-200 border-gray-600/50 hover:border-gray-500/50 hover:bg-gray-700/70' : 'bg-white/80 text-gray-800 border-gray-200/50 hover:border-gray-300/50 hover:bg-white';
@@ -1399,7 +1399,7 @@ export default function ModulePage() {
                       gdrMode && showAnswer && isCorrect ? 'bg-white/20' :
                       gdrMode && showAnswer && !isCorrect ? 'bg-white/20' :
                       showCorrectFeedback ? 'bg-white/20' :
-                      showMissedCorrectFeedback ? 'bg-red-200' :
+                      showMissedCorrectFeedback ? 'bg-white/20' :
                       showIncorrectFeedback ? 'bg-white/20' :
                       isSelected ? 'bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-sm' :
                       isDarkMode ? 'bg-gray-600/50' : 'bg-gray-100'
@@ -1421,10 +1421,17 @@ export default function ModulePage() {
                         </svg>
                       </div>
                     )}
-                    {(!gdrMode && showAnswer && (showCorrectFeedback || showMissedCorrectFeedback)) && (
+                    {!gdrMode && showAnswer && showCorrectFeedback && (
                       <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
                         <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                    )}
+                    {!gdrMode && showAnswer && showMissedCorrectFeedback && (
+                      <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                        <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                         </svg>
                       </div>
                     )}
@@ -1450,8 +1457,8 @@ export default function ModulePage() {
                     {showAnswer && questionStats && questionStats.total_answers > 0 && (() => {
                       const statCount = questionStats.option_counts[index] || 0;
                       const statPct = questionStats.total_answers > 0 ? Math.round((statCount / questionStats.total_answers) * 100) : 0;
-                      const statTextColor = gdrMode && showAnswer && isCorrect ? 'text-white/80' : gdrMode && showAnswer && !isCorrect ? 'text-white/80' : showCorrectFeedback ? 'text-white/80' : showIncorrectFeedback ? 'text-white/80' : showMissedCorrectFeedback ? 'text-red-600' : isDarkMode ? 'text-gray-400' : 'text-gray-500';
-                      const statBgColor = gdrMode && showAnswer && isCorrect ? 'bg-white/15' : gdrMode && showAnswer && !isCorrect ? 'bg-white/15' : showCorrectFeedback ? 'bg-white/15' : showIncorrectFeedback ? 'bg-white/15' : showMissedCorrectFeedback ? 'bg-red-200/60' : isDarkMode ? 'bg-gray-600/50' : 'bg-gray-100';
+                      const statTextColor = gdrMode && showAnswer && isCorrect ? 'text-white/80' : gdrMode && showAnswer && !isCorrect ? 'text-white/80' : showCorrectFeedback ? 'text-white/80' : showIncorrectFeedback ? 'text-white/80' : showMissedCorrectFeedback ? 'text-white/80' : isDarkMode ? 'text-gray-400' : 'text-gray-500';
+                      const statBgColor = gdrMode && showAnswer && isCorrect ? 'bg-white/15' : gdrMode && showAnswer && !isCorrect ? 'bg-white/15' : showCorrectFeedback ? 'bg-white/15' : showIncorrectFeedback ? 'bg-white/15' : showMissedCorrectFeedback ? 'bg-white/15' : isDarkMode ? 'bg-gray-600/50' : 'bg-gray-100';
                       return (
                         <span className={`basis-full sm:basis-auto flex-shrink-0 px-2.5 py-1 rounded-md text-xs font-semibold ${statTextColor} ${statBgColor}`}>
                           {statPct}% des réponses
@@ -1485,8 +1492,8 @@ export default function ModulePage() {
                   })()}
 
                   {!isCollapsed && showAnswer && answerExplanation && showExplanations && (
-                    <div className={`px-4 sm:px-5 pb-4 sm:pb-5 pt-3 border-t ${gdrMode && showAnswer && isCorrect ? 'border-white/20' : gdrMode && showAnswer && !isCorrect ? 'border-white/20' : showCorrectFeedback ? 'border-white/20' : showIncorrectFeedback || showMissedCorrectFeedback ? 'border-red-200' : isDarkMode ? 'border-gray-600/50' : 'border-gray-100'}`}>
-                      <p className={`text-xs sm:text-sm leading-relaxed ${gdrMode && showAnswer && isCorrect ? 'text-white/90' : gdrMode && showAnswer && !isCorrect ? 'text-white/90' : showCorrectFeedback ? 'text-white/90' : showMissedCorrectFeedback ? 'text-red-700' : showIncorrectFeedback ? 'text-white/90' : isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    <div className={`px-4 sm:px-5 pb-4 sm:pb-5 pt-3 border-t ${gdrMode && showAnswer && isCorrect ? 'border-white/20' : gdrMode && showAnswer && !isCorrect ? 'border-white/20' : showCorrectFeedback ? 'border-white/20' : showIncorrectFeedback || showMissedCorrectFeedback ? 'border-white/20' : isDarkMode ? 'border-gray-600/50' : 'border-gray-100'}`}>
+                      <p className={`text-xs sm:text-sm leading-relaxed ${gdrMode && showAnswer && isCorrect ? 'text-white/90' : gdrMode && showAnswer && !isCorrect ? 'text-white/90' : showCorrectFeedback ? 'text-white/90' : showMissedCorrectFeedback ? 'text-white/90' : showIncorrectFeedback ? 'text-white/90' : isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                         {answerExplanation.replace(/\s*\([^)]*\)\.?/g, '').replace(/\s*\[GDR\]/g, '')}
                       </p>
                     </div>
