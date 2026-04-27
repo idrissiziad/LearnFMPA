@@ -209,6 +209,13 @@ export default function ModulePage() {
 
   const activeQuestions = examMode ? examQuestions : questions;
   const currentQuestion = activeQuestions[currentQuestionIndex];
+  const currentQuestionHasGDR = !!(currentQuestion?.answerExplanations?.some(expl => expl?.includes('[GDR]')));
+
+  useEffect(() => {
+    if (!currentQuestionHasGDR && gdrMode) {
+      setGdrMode(false);
+    }
+  }, [currentQuestionHasGDR]);
 
   useEffect(() => {
     if (currentQuestion) {
@@ -1042,7 +1049,7 @@ export default function ModulePage() {
                 </svg>
                 <span className="hidden sm:inline">Examen</span>
               </button>
-              {!examMode && (
+              {!examMode && currentQuestionHasGDR && (
               <button
                 onClick={handleToggleGdrMode}
                 title="Mode GDR - Réponse du professeur"
