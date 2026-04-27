@@ -1621,7 +1621,7 @@ const statTextColor = effectiveGdrMode && showAnswer && isCorrect && isSelected 
                     })()}
                   </div>
                   
-                  {!isCollapsed && showAnswer && optionImage && (() => {
+                  {!isCollapsed && showAnswer && optionImage && showExplanations && (() => {
                     const imagePaths = (Array.isArray(optionImage) ? optionImage.join(',') : String(optionImage)).split(',').map(img => img.trim()).filter(img => img);
                     if (imagePaths.length === 0) return null;
                     return (
