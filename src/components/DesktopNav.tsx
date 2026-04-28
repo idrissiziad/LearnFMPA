@@ -23,7 +23,7 @@ export default function DesktopNav() {
           isDarkMode ? 'text-gray-300' : 'text-gray-700'
         }`}
       >
-        Tarifs
+        Soutenir
       </Link>
       <Link
         href="/faq"

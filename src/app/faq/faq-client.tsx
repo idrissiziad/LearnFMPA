@@ -47,23 +47,23 @@ const faqCategories = [
     ],
   },
   {
-    title: 'Abonnement & Paiement',
+    title: 'Don & Accès',
     questions: [
       {
-        q: 'Combien coûte LearnFMPA ?',
-        a: "L'abonnement semestriel coûte 50 MAD et l'abonnement annuel coûte 100 MAD. Cela représente moins de 6 MAD par mois — moins qu'un café par semaine.",
+        q: 'Combien coûte une contribution ?',
+        a: "Le don semestriel est de 50 MAD et le don annuel de 100 MAD. Cela représente moins de 6 MAD par mois — le prix d'un café par semaine pour garder la plateforme en vie.",
       },
       {
-        q: 'Existe-t-il une version gratuite ?',
-        a: "Vous pouvez créer un compte gratuitement et explorer la plateforme. L'accès complet à toutes les questions, corrections et fonctionnalités de suivi nécessite un abonnement.",
+        q: 'LearnFMPA est-il vraiment gratuit ?',
+        a: "Oui, l'accès de base est gratuit pour tout le monde : questions, réponses et 10 explications par jour. Si 20% des utilisateurs contribuent, les 80% restants peuvent profiter de la plateforme gratuitement.",
+      },
+      {
+        q: 'Pourquoi demander un don alors que le contenu est gratuit ?',
+        a: "Faire tourner LearnFMPA coûte de l'argent : serveurs, contenu vérifié par des experts, développement et maintenance. Sans les contributions des donateurs, la plateforme ne pourrait pas exister.",
       },
       {
         q: 'Quels moyens de paiement acceptez-vous ?',
         a: "Nous acceptons les paiements par carte bancaire et les méthodes de paiement locales marocaines. Le processus de paiement est sécurisé et chiffré.",
-      },
-      {
-        q: 'Puis-je annuler mon abonnement ?',
-        a: "Oui, vous pouvez annuler votre abonnement à tout moment. L'accès reste actif jusqu'à la fin de la période payée.",
       },
     ],
   },
