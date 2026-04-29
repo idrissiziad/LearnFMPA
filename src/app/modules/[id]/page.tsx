@@ -1648,7 +1648,7 @@ const statTextColor = effectiveGdrMode && showAnswer && isCorrect && isSelected 
                   {!isCollapsed && showAnswer && answerExplanation && showExplanations && (
                     <div className={`px-4 sm:px-5 pb-4 sm:pb-5 pt-3 border-t ${effectiveGdrMode && showAnswer && isCorrect && isSelected ? 'border-white/20' : effectiveGdrMode && showAnswer && isCorrect && !isSelected ? 'border-green-500/40' : effectiveGdrMode && showAnswer && !isCorrect && isSelected ? 'border-white/20' : showCorrectFeedback ? 'border-white/20' : showMissedCorrectFeedback ? 'border-green-500/40' : showIncorrectFeedback ? 'border-white/20' : isDarkMode ? 'border-gray-600/50' : 'border-gray-100'}`}>
                       <p className={`text-xs sm:text-sm leading-relaxed ${effectiveGdrMode && showAnswer && isCorrect && isSelected ? 'text-white/90' : effectiveGdrMode && showAnswer && isCorrect && !isSelected ? (isDarkMode ? 'text-green-400/90' : 'text-green-700') : effectiveGdrMode && showAnswer && !isCorrect && isSelected ? 'text-white/90' : showCorrectFeedback ? 'text-white/90' : showMissedCorrectFeedback ? (isDarkMode ? 'text-green-400/90' : 'text-green-700') : showIncorrectFeedback ? 'text-white/90' : isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                        {answerExplanation.replace(/\s*\([^)]*\)\.?/g, '').replace(/\s*\[GDR\]/g, '')}
+                        {answerExplanation.replace(/\s*\((?:[^()]|\([^()]*\))*\)\.?/g, '').replace(/\s*\[GDR\]/g, '')}
                       </p>
                     </div>
                   )}
