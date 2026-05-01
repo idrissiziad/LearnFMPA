@@ -20,6 +20,7 @@ Usage:
   python manage_users.py list
   python manage_users.py details "student@edu.uiz.ac.ma"
   python manage_users.py set-subscription "student@edu.uiz.ac.ma" paid
+  python manage_users.py rename "student@edu.uiz.ac.ma" "New Name"
   python manage_users.py set-days "student@edu.uiz.ac.ma" 30
   python manage_users.py reset "student@edu.uiz.ac.ma"
   python manage_users.py deactivate "student@edu.uiz.ac.ma"
@@ -471,6 +472,17 @@ def set_subscription(api_url, admin_secret, email, status):
         print(f"\n  Error: {result.get('error', 'Unknown error')}\n")
 
 
+def rename_user(api_url, admin_secret, email, new_name):
+    result = api_request(api_url, admin_secret, "/api/admin/users", "POST", {
+        "action": "update_user", "email": email, "name": new_name,
+    })
+
+    if result.get("success"):
+        print(f"\n  User '{email}' name changed to '{new_name}'.\n")
+    else:
+        print(f"\n  Error: {result.get('error', 'Unknown error')}\n")
+
+
 def set_user_years(api_url, admin_secret, email, years):
     invalid = [y for y in years if y not in VALID_YEARS]
     if invalid:
@@ -670,6 +682,9 @@ Examples:
   # Batch activate specific emails
   python manage_users.py activate-batch a@edu.uiz.ac.ma b@edu.uiz.ac.ma
 
+  # Rename a user
+  python manage_users.py rename "a.benali@edu.uiz.ac.ma" "Nouveau Nom"
+
   # Change subscription tier permanently
   python manage_users.py set-subscription "a.benali@edu.uiz.ac.ma" paid
   python manage_users.py set-subscription "a.benali@edu.uiz.ac.ma" free
@@ -724,6 +739,10 @@ Examples:
     details_parser = subparsers.add_parser("details", help="Get detailed user info")
     details_parser.add_argument("email", help="User's email")
 
+    rename_parser = subparsers.add_parser("rename", help="Change a user's name")
+    rename_parser.add_argument("email", help="User's email")
+    rename_parser.add_argument("new_name", help="New name for the user")
+
     sub_parser = subparsers.add_parser("set-subscription", help="Set subscription status (inactive/free/paid)")
     sub_parser.add_argument("email", help="User's email")
     sub_parser.add_argument("status", choices=VALID_STATUSES, help="Subscription status")
@@ -772,6 +791,8 @@ Examples:
         reset_password(api_url, admin_secret, args.email, args.password)
     elif args.command == "details":
         get_user_details(api_url, admin_secret, args.email)
+    elif args.command == "rename":
+        rename_user(api_url, admin_secret, args.email, args.new_name)
     elif args.command == "set-subscription":
         set_subscription(api_url, admin_secret, args.email, args.status)
     elif args.command == "set-year":
