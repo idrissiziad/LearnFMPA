@@ -178,6 +178,15 @@ export const modules: Module[] = [
     levels: ['2ème année'],
     gradient: 'from-yellow-400 to-yellow-600',
     json_filename: 'Biochimie clinique'
+  },
+  {
+    id: 7,
+    title: 'Histologie Embryologie',
+    subtitle: 'Histologie Embryologie',
+    description: '',
+    levels: ['1ère année'],
+    gradient: 'from-blue-400 to-blue-600',
+    json_filename: 'Histologie Embryologie'
   }
 ];
 
@@ -407,6 +416,40 @@ const getModuleRawJson = async (moduleId: number): Promise<JsonQuestion[]> => {
     case 6:
       const BiochimiecliniqueModule = await import('./Biochimie clinique.json', { with: { type: 'json' } });
       jsonQuestions = (BiochimiecliniqueModule.default as any[]).map((item: any) => ({
+        YearAsked: item.YearAsked || '',
+        Subtopic: item.Subtopic || '',
+        QuestionText: item.QuestionText || '',
+        QuestionImage: item.QuestionImage,
+        Choice_A_Text: item.Choice_A_Text || '',
+        Choice_A_isCorrect: !!item.Choice_A_isCorrect,
+        Choice_A_Explanation: item.Choice_A_Explanation || '',
+        Choice_A_Image: item.Choice_A_Image,
+        Choice_B_Text: item.Choice_B_Text || '',
+        Choice_B_isCorrect: !!item.Choice_B_isCorrect,
+        Choice_B_Explanation: item.Choice_B_Explanation || '',
+        Choice_B_Image: item.Choice_B_Image,
+        Choice_C_Text: item.Choice_C_Text || '',
+        Choice_C_isCorrect: !!item.Choice_C_isCorrect,
+        Choice_C_Explanation: item.Choice_C_Explanation || '',
+        Choice_C_Image: item.Choice_C_Image,
+        Choice_D_Text: item.Choice_D_Text || '',
+        Choice_D_isCorrect: !!item.Choice_D_isCorrect,
+        Choice_D_Explanation: item.Choice_D_Explanation || '',
+        Choice_D_Image: item.Choice_D_Image,
+        Choice_E_Text: item.Choice_E_Text || '',
+        Choice_E_isCorrect: !!item.Choice_E_isCorrect,
+        Choice_E_Explanation: item.Choice_E_Explanation || '',
+        Choice_E_Image: item.Choice_E_Image,
+        OverallExplanation: item.OverallExplanation || '',
+        IsChapterStart: item.IsChapterStart,
+        ChapterName: item.ChapterName,
+        ChapterColor: item.ChapterColor,
+        Confirmed: item.Confirmed,
+      }));
+      break;
+    case 7:
+      const HistologieEmbryologieModule = await import('./Histologie Embryologie.json', { with: { type: 'json' } });
+      jsonQuestions = (HistologieEmbryologieModule.default as any[]).map((item: any) => ({
         YearAsked: item.YearAsked || '',
         Subtopic: item.Subtopic || '',
         QuestionText: item.QuestionText || '',
