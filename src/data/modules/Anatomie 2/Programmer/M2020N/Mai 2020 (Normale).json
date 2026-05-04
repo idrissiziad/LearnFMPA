@@ -17,7 +17,12 @@
         "Choice_D_Explanation": "Le côlon sigmoïde est l'un des segments du côlon gauche. (Source : Côlon, Page Globale 187). [GDR]",
         "Choice_E_Text": "Le sigmoïde est mobile.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "Le côlon sigmoïde est amarré par un long méso libre, ce qui le rend mobile. (Source : Côlon, Page Globale 201). [GDR]"
+        "Choice_E_Explanation": "Le côlon sigmoïde est amarré par un long méso libre, ce qui le rend mobile. (Source : Côlon, Page Globale 201). [GDR]",
+        "Choice_A_Image": "Anato2-198.avif",
+        "Choice_B_Image": "Anato2-197.avif",
+        "Choice_C_Image": "Anato2-187.avif",
+        "Choice_D_Image": "Anato2-187.avif",
+        "Choice_E_Image": "Anato2-201.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -37,7 +42,12 @@
         "Choice_D_Explanation": "Le canal cystique appartient à la voie biliaire accessoire. (Source : Foie et voies biliaires, Page Globale 292).",
         "Choice_E_Text": "Le canal cystique constitue la voie biliaire accessoire.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "La voie biliaire accessoire comprend la vésicule biliaire et le canal cystique. (Source : Foie et voies biliaires, Page Globale 292). [GDR]"
+        "Choice_E_Explanation": "La voie biliaire accessoire comprend la vésicule biliaire et le canal cystique. (Source : Foie et voies biliaires, Page Globale 292). [GDR]",
+        "Choice_A_Image": "Anato2-292.avif",
+        "Choice_B_Image": "Anato2-225.avif",
+        "Choice_C_Image": "Anato2-218.avif",
+        "Choice_D_Image": "Anato2-292.avif",
+        "Choice_E_Image": "Anato2-292.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -57,7 +67,12 @@
         "Choice_D_Explanation": "Le foie gauche portal comprend les segments II, III et IV. (Source : Foie et voies biliaires, Page Globale 295).",
         "Choice_E_Text": "Le lobe gauche correspond aux segments II et III.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "Le lobe gauche anatomique est constitué des segments II et III. (Source : Foie et voies biliaires, Page Globale 295). [GDR]"
+        "Choice_E_Explanation": "Le lobe gauche anatomique est constitué des segments II et III. (Source : Foie et voies biliaires, Page Globale 295). [GDR]",
+        "Choice_A_Image": "Anato2-295.avif",
+        "Choice_B_Image": "Anato2-294.avif",
+        "Choice_C_Image": "Anato2-294.avif",
+        "Choice_D_Image": "Anato2-295.avif",
+        "Choice_E_Image": "Anato2-295.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -77,7 +92,12 @@
         "Choice_D_Explanation": "Dans le pédicule hépatique, la veine porte se situe en arrière de l'artère hépatique et de la voie biliaire. (Source : Foie et voies biliaires, Page Globale 297). [GDR]",
         "Choice_E_Text": "C'est l'élément antérieur du pédicule hépatique.",
         "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "La voie biliaire constitue l'élément le plus antérieur du pédicule hépatique. (Source : Foie et voies biliaires, Page Globale 297)."
+        "Choice_E_Explanation": "La voie biliaire constitue l'élément le plus antérieur du pédicule hépatique. (Source : Foie et voies biliaires, Page Globale 297).",
+        "Choice_A_Image": "Anato2-230.avif",
+        "Choice_B_Image": "Anato2-230.avif",
+        "Choice_C_Image": "Anato2-298.avif",
+        "Choice_D_Image": "Anato2-297.avif",
+        "Choice_E_Image": "Anato2-297.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -97,7 +117,12 @@
         "Choice_D_Explanation": "L'artère gastroduodénale fournit les artères pancréatico-duodénales supérieures. (Source : Duodéno-pancréas, Page Globale 233). [GDR]",
         "Choice_E_Text": "Le plexus solaire en assure l'innervation.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "L'innervation sympathique du pancréas provient du plexus solaire (ou cœliaque). (Source : Duodéno-pancréas, Page Globale 237). [GDR]"
+        "Choice_E_Explanation": "L'innervation sympathique du pancréas provient du plexus solaire (ou cœliaque). (Source : Duodéno-pancréas, Page Globale 237). [GDR]",
+        "Choice_A_Image": "Anato2-256.avif",
+        "Choice_B_Image": "Anato2-256.avif",
+        "Choice_C_Image": "Anato2-233.avif",
+        "Choice_D_Image": "Anato2-233.avif",
+        "Choice_E_Image": "Anato2-237.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -117,7 +142,12 @@
         "Choice_D_Explanation": "L'angle duodéno-jéjunal est également appelé angle de Treitz. (Source : Duodéno-pancréas, Page Globale 212). [GDR]",
         "Choice_E_Text": "D1 est sous mésocolique.",
         "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "D1 (le bulbe) est situé dans l'étage sus-mésocolique. (Source : Duodéno-pancréas, Page Globale 209)."
+        "Choice_E_Explanation": "D1 (le bulbe) est situé dans l'étage sus-mésocolique. (Source : Duodéno-pancréas, Page Globale 209).",
+        "Choice_A_Image": "Anato2-210.avif",
+        "Choice_B_Image": "Anato2-215.avif",
+        "Choice_C_Image": "Anato2-215.avif",
+        "Choice_D_Image": "Anato2-212.avif",
+        "Choice_E_Image": "Anato2-209.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -137,7 +167,12 @@
         "Choice_D_Explanation": "Le canal cholédoque constitue l'élément le plus antérieur du pédicule hépatique. (Source : Foie et voies biliaires, Page Globale 297). [GDR]",
         "Choice_E_Text": "Les veines sus hépatiques se drainent dans la veine cave inférieure.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "Les trois veines hépatiques (droite, sagittale, gauche) se jettent dans la VCI. (Source : Foie et voies biliaires, Page Globale 288). [GDR]"
+        "Choice_E_Explanation": "Les trois veines hépatiques (droite, sagittale, gauche) se jettent dans la VCI. (Source : Foie et voies biliaires, Page Globale 288). [GDR]",
+        "Choice_A_Image": "Anato2-288.avif",
+        "Choice_B_Image": "Anato2-288.avif",
+        "Choice_C_Image": "Anato2-297.avif",
+        "Choice_D_Image": "Anato2-297.avif",
+        "Choice_E_Image": "Anato2-288.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -157,7 +192,12 @@
         "Choice_D_Explanation": "Le cercle artériel de la petite courbure est formé par les artères gastriques gauche et droite. (Source : Estomac, Page Globale 260). [GDR]",
         "Choice_E_Text": "Le duodénum se prolonge par l'iléon au niveau de l'angle de Treitz.",
         "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "Le duodénum se prolonge par le jéjunum au niveau de l'angle de Treitz. (Source : Anses et mésenteres, Page Globale 56)."
+        "Choice_E_Explanation": "Le duodénum se prolonge par le jéjunum au niveau de l'angle de Treitz. (Source : Anses et mésenteres, Page Globale 56).",
+        "Choice_A_Image": "Anato2-247.avif",
+        "Choice_B_Image": "Anato2-252.avif",
+        "Choice_C_Image": "Anato2-261.avif",
+        "Choice_D_Image": "Anato2-260.avif",
+        "Choice_E_Image": "Anato2-056.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -177,7 +217,12 @@
         "Choice_D_Explanation": "Le tronc cœliaque se divise en artères gastrique gauche, splénique et hépatique commune. (Source : Estomac, Page Globale 259). [GDR]",
         "Choice_E_Text": "Donne comme collatérale l'artère gastroduodénale.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "L'artère gastroduodénale est l'une des branches de l'artère hépatique commune. (Source : Estomac, Page Globale 259). [GDR]"
+        "Choice_E_Explanation": "L'artère gastroduodénale est l'une des branches de l'artère hépatique commune. (Source : Estomac, Page Globale 259). [GDR]",
+        "Choice_A_Image": "Anato2-259.avif",
+        "Choice_B_Image": "Anato2-259.avif",
+        "Choice_C_Image": "Anato2-259.avif",
+        "Choice_D_Image": "Anato2-259.avif",
+        "Choice_E_Image": "Anato2-259.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -197,7 +242,12 @@
         "Choice_D_Explanation": "L'AMS ne participe pas à la vascularisation du rectum ; celle-ci dépend de l'AMI et de l'iliaque interne. (Source : Rectum, Page Globale 375).",
         "Choice_E_Text": "Sa vascularisation est assurée uniquement par les artères mésentériques inférieures.",
         "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "Sa vascularisation est assurée par trois pédicules : AMI (rectale supérieure), et iliaque interne (rectales moyennes et inférieures). (Source : Rectum, Page Globale 375)."
+        "Choice_E_Explanation": "Sa vascularisation est assurée par trois pédicules : AMI (rectale supérieure), et iliaque interne (rectales moyennes et inférieures). (Source : Rectum, Page Globale 375).",
+        "Choice_A_Image": "Anato2-360.avif",
+        "Choice_B_Image": "Anato2-360.avif",
+        "Choice_C_Image": "Anato2-365.avif",
+        "Choice_D_Image": "Anato2-375.avif",
+        "Choice_E_Image": "Anato2-375.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -217,7 +267,12 @@
         "Choice_D_Explanation": "Le rein gauche est situé en arrière du corps du pancréas. (Source : Duodéno-pancréas, Page Globale 232).",
         "Choice_E_Text": "Le lobe droit du foie.",
         "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "Le foie répond à la face supérieure, pas directement en antérieur strict de la tête. (Source : Duodéno-pancréas, Page Globale 227). [GDR]"
+        "Choice_E_Explanation": "Le foie répond à la face supérieure, pas directement en antérieur strict de la tête. (Source : Duodéno-pancréas, Page Globale 227). [GDR]",
+        "Choice_A_Image": "Anato2-227.avif",
+        "Choice_B_Image": "Anato2-230.avif",
+        "Choice_C_Image": "Anato2-232.avif",
+        "Choice_D_Image": "Anato2-232.avif",
+        "Choice_E_Image": "Anato2-227.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -237,7 +292,12 @@
         "Choice_D_Explanation": "L'AMS vascularise la partie droite du côlon transverse. (Source : Anses et mésenteres, Page Globale 75). [GDR]",
         "Choice_E_Text": "Donne l'artère rectale supérieure.",
         "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "L'artère rectale supérieure naît de l'AMI. (Source : Rectum, Page Globale 375)."
+        "Choice_E_Explanation": "L'artère rectale supérieure naît de l'AMI. (Source : Rectum, Page Globale 375).",
+        "Choice_A_Image": "Anato2-075.avif",
+        "Choice_B_Image": "Anato2-075.avif",
+        "Choice_C_Image": "Anato2-375.avif",
+        "Choice_D_Image": "Anato2-075.avif",
+        "Choice_E_Image": "Anato2-375.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -257,7 +317,12 @@
         "Choice_D_Explanation": "La surface colique répond à l'angle colique gauche. (Source : Rate, Page Globale 349).",
         "Choice_E_Text": "La région hilaire répond à l'arrivée du pédicule hépatique.",
         "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "Le hile splénique reçoit le pédicule splénique, pas hépatique. (Source : Rate, Page Globale 350)."
+        "Choice_E_Explanation": "Le hile splénique reçoit le pédicule splénique, pas hépatique. (Source : Rate, Page Globale 350).",
+        "Choice_A_Image": "Anato2-349.avif",
+        "Choice_B_Image": "Anato2-349.avif",
+        "Choice_C_Image": "Anato2-349.avif",
+        "Choice_D_Image": "Anato2-349.avif",
+        "Choice_E_Image": "Anato2-350.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -277,7 +342,12 @@
         "Choice_D_Explanation": "L'union de la veine splénique et de la VMI constitue le tronc spléno-mésaraïque. (Source : Rate, Page Globale 355). [GDR]",
         "Choice_E_Text": "La veine mésentérique supérieure passe devant D3.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "La veine mésentérique supérieure devient pré-duodénale en passant devant D3. (Source : Anses et mésenteres, Page Globale 77). [GDR]"
+        "Choice_E_Explanation": "La veine mésentérique supérieure devient pré-duodénale en passant devant D3. (Source : Anses et mésenteres, Page Globale 77). [GDR]",
+        "Choice_A_Image": "Anato2-225.avif",
+        "Choice_B_Image": "Anato2-197.avif",
+        "Choice_C_Image": "Anato2-263.avif",
+        "Choice_D_Image": "Anato2-355.avif",
+        "Choice_E_Image": "Anato2-077.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -297,7 +367,12 @@
         "Choice_D_Explanation": "L'artère gastrique droite naît de l'artère hépatique. (Source : Estomac, Page Globale 259).",
         "Choice_E_Text": "Vascularise une partie de l'estomac, le foie et la rate.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "Les branches du tronc cœliaque assurent la vascularisation de ces organes. (Source : Estomac, Page Globale 259). [GDR]"
+        "Choice_E_Explanation": "Les branches du tronc cœliaque assurent la vascularisation de ces organes. (Source : Estomac, Page Globale 259). [GDR]",
+        "Choice_A_Image": "Anato2-259.avif",
+        "Choice_B_Image": "Anato2-259.avif",
+        "Choice_C_Image": "Anato2-259.avif",
+        "Choice_D_Image": "Anato2-259.avif",
+        "Choice_E_Image": "Anato2-259.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -317,7 +392,12 @@
         "Choice_D_Explanation": "Les veines rectales inférieures rejoignent les veines pudendales internes (système cave). (Source : Rectum, Page Globale 376).",
         "Choice_E_Text": "L'artère rectale inférieure est issue d'une branche de l'artère hypogastrique.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "Elle est issue de l'artère pudendale interne, branche de l'artère iliaque interne. (Source : Rectum, Page Globale 375). [GDR]"
+        "Choice_E_Explanation": "Elle est issue de l'artère pudendale interne, branche de l'artère iliaque interne. (Source : Rectum, Page Globale 375). [GDR]",
+        "Choice_A_Image": "Anato2-376.avif",
+        "Choice_B_Image": "Anato2-375.avif",
+        "Choice_C_Image": "Anato2-375.avif",
+        "Choice_D_Image": "Anato2-376.avif",
+        "Choice_E_Image": "Anato2-375.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -337,7 +417,12 @@
         "Choice_D_Explanation": "L'estomac se projette dans l'épigastre et l'hypochondre gauche. (Source : Estomac, Page Globale 243).",
         "Choice_E_Text": "La ligne inter-épineuse est un plan passant par les épines iliaques antéro-inférieures.",
         "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "Le plan inter-tuberculaire passe par les tubercules des crêtes iliaques (L5). (Source : Côlon, Page Globale 188)."
+        "Choice_E_Explanation": "Le plan inter-tuberculaire passe par les tubercules des crêtes iliaques (L5). (Source : Côlon, Page Globale 188).",
+        "Choice_A_Image": "Anato2-188.avif",
+        "Choice_B_Image": "Anato2-188.avif",
+        "Choice_C_Image": "Anato2-188.avif",
+        "Choice_D_Image": "Anato2-243.avif",
+        "Choice_E_Image": "Anato2-188.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -357,7 +442,12 @@
         "Choice_D_Explanation": "Il permet la flexion du tronc mais aussi le maintien des viscères. (Source : Introduction a l'abdomen, Page Globale 306).",
         "Choice_E_Text": "Est situé en avant du muscle pyramidal.",
         "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "Le muscle pyramidal est situé en avant de la partie inférieure du muscle droit. (Source : Introduction a l'abdomen, Page Globale 307)."
+        "Choice_E_Explanation": "Le muscle pyramidal est situé en avant de la partie inférieure du muscle droit. (Source : Introduction a l'abdomen, Page Globale 307).",
+        "Choice_A_Image": "Anato2-306.avif",
+        "Choice_B_Image": "Anato2-306.avif",
+        "Choice_C_Image": "Anato2-306.avif",
+        "Choice_D_Image": "Anato2-306.avif",
+        "Choice_E_Image": "Anato2-307.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -377,7 +467,12 @@
         "Choice_D_Explanation": "Son aponévrose participe à la formation de la gaine rectusienne. (Source : Introduction a l'abdomen, Page Globale 310).",
         "Choice_E_Text": "Permet la flexion du tronc.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "Il participe à la flexion du tronc et au maintien des viscères. (Source : Introduction a l'abdomen, Page Globale 310). [GDR]"
+        "Choice_E_Explanation": "Il participe à la flexion du tronc et au maintien des viscères. (Source : Introduction a l'abdomen, Page Globale 310). [GDR]",
+        "Choice_A_Image": "Anato2-310.avif",
+        "Choice_B_Image": "Anato2-310.avif",
+        "Choice_C_Image": "Anato2-310.avif",
+        "Choice_D_Image": "Anato2-310.avif",
+        "Choice_E_Image": "Anato2-310.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -397,7 +492,12 @@
         "Choice_D_Explanation": "Il est situé dans la région moyenne de la ligne xipho-pubienne. (Source : Introduction a l'abdomen, Page Globale 312).",
         "Choice_E_Text": "Le tubercule ombilical constitue la partie profonde de l'anneau ombilical.",
         "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "Le tubercule est superficiel, la cicatrice fibreuse est profonde. (Source : Introduction a l'abdomen, Page Globale 312)."
+        "Choice_E_Explanation": "Le tubercule est superficiel, la cicatrice fibreuse est profonde. (Source : Introduction a l'abdomen, Page Globale 312).",
+        "Choice_A_Image": "Anato2-312.avif",
+        "Choice_B_Image": "Anato2-312.avif",
+        "Choice_C_Image": "Anato2-175.avif",
+        "Choice_D_Image": "Anato2-312.avif",
+        "Choice_E_Image": "Anato2-312.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -417,7 +517,12 @@
         "Choice_D_Explanation": "Les artères honteuses (pudentales) externes naissent de l'artère fémorale. (Source : Appareil génital féminin, Page Globale 148).",
         "Choice_E_Text": "Les artères lombaires proviennent de l'aorte abdominale.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "Les artères lombaires sont des branches pariétales de l'aorte abdominale. (Source : Introduction a l'abdomen, Page Globale 317). [GDR]"
+        "Choice_E_Explanation": "Les artères lombaires sont des branches pariétales de l'aorte abdominale. (Source : Introduction a l'abdomen, Page Globale 317). [GDR]",
+        "Choice_A_Image": "Anato2-317.avif",
+        "Choice_B_Image": "Anato2-317.avif",
+        "Choice_C_Image": "Anato2-317.avif",
+        "Choice_D_Image": "Anato2-148.avif",
+        "Choice_E_Image": "Anato2-317.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -437,7 +542,12 @@
         "Choice_D_Explanation": "Son action principale est l'inclinaison homolatérale du tronc. (Source : Introduction a l'abdomen, Page Globale 320).",
         "Choice_E_Text": "A une action d'inclinaison homolatérale du tronc.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "C'est l'action motrice principale de ce muscle. (Source : Introduction a l'abdomen, Page Globale 320). [GDR]"
+        "Choice_E_Explanation": "C'est l'action motrice principale de ce muscle. (Source : Introduction a l'abdomen, Page Globale 320). [GDR]",
+        "Choice_A_Image": "Anato2-320.avif",
+        "Choice_B_Image": "Anato2-320.avif",
+        "Choice_C_Image": "Anato2-320.avif",
+        "Choice_D_Image": "Anato2-320.avif",
+        "Choice_E_Image": "Anato2-320.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -457,7 +567,12 @@
         "Choice_D_Explanation": "Le muscle iliopsoas appartient à la paroi abdominale/lombaire. (Source : Introduction a l'abdomen, Page Globale 320).",
         "Choice_E_Text": "Le muscle coccygien.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "Le muscle coccygien participe à la constitution du bassin mou. (Source : Anatomie du pelvis, Page Globale 23). [GDR]"
+        "Choice_E_Explanation": "Le muscle coccygien participe à la constitution du bassin mou. (Source : Anatomie du pelvis, Page Globale 23). [GDR]",
+        "Choice_A_Image": "Anato2-023.avif",
+        "Choice_B_Image": "Anato2-023.avif",
+        "Choice_C_Image": "Anato2-023.avif",
+        "Choice_D_Image": "Anato2-320.avif",
+        "Choice_E_Image": "Anato2-023.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -477,7 +592,12 @@
         "Choice_D_Explanation": "Le faisceau latéro-rectal gagne le sphincter strié de l'anus. (Source : Anatomie du pelvis, Page Globale 27). [GDR]",
         "Choice_E_Text": "Sa partie statique se termine sur le centre tendineux du périnée.",
         "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "Elle se termine sur le ligament ano-coccygien et les bords du coccyx. (Source : Anatomie du pelvis, Page Globale 27)."
+        "Choice_E_Explanation": "Elle se termine sur le ligament ano-coccygien et les bords du coccyx. (Source : Anatomie du pelvis, Page Globale 27).",
+        "Choice_A_Image": "Anato2-027.avif",
+        "Choice_B_Image": "Anato2-027.avif",
+        "Choice_C_Image": "Anato2-027.avif",
+        "Choice_D_Image": "Anato2-027.avif",
+        "Choice_E_Image": "Anato2-027.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -497,7 +617,12 @@
         "Choice_D_Explanation": "Le bord inférieur de la symphyse pubienne limite le détroit inférieur en avant. (Source : Anatomie du pelvis, Page Globale 17). [GDR]",
         "Choice_E_Text": "L'engagement est quand le grand diamètre de la tête du fœtus dépasse le détroit supérieur lors d'un accouchement normal.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "L'engagement correspond au franchissement du détroit supérieur par le fœtus. (Source : Anatomie du pelvis, Page Globale 15). [GDR]"
+        "Choice_E_Explanation": "L'engagement correspond au franchissement du détroit supérieur par le fœtus. (Source : Anatomie du pelvis, Page Globale 15). [GDR]",
+        "Choice_A_Image": "Anato2-015.avif",
+        "Choice_B_Image": "Anato2-017.avif",
+        "Choice_C_Image": "Anato2-016.avif",
+        "Choice_D_Image": "Anato2-017.avif",
+        "Choice_E_Image": "Anato2-015.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -517,7 +642,12 @@
         "Choice_D_Explanation": "L'artère obturatrice passe par le canal obturateur. (Source : Anatomie du pelvis, Page Globale 39).",
         "Choice_E_Text": "L'artère rectale moyenne.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "Le pédicule pudental interne (incluant le nerf rectal) emprunte ce canal. (Source : Anatomie du pelvis, Page Globale 37)."
+        "Choice_E_Explanation": "Le pédicule pudental interne (incluant le nerf rectal) emprunte ce canal. (Source : Anatomie du pelvis, Page Globale 37).",
+        "Choice_A_Image": "Anato2-166.avif",
+        "Choice_B_Image": "Anato2-037.avif",
+        "Choice_C_Image": "Anato2-037.avif",
+        "Choice_D_Image": "Anato2-039.avif",
+        "Choice_E_Image": "Anato2-037.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -537,7 +667,12 @@
         "Choice_D_Explanation": "La vertèbre L2 correspond à la projection du pôle inférieur du rein gauche. (Source : Appareil urinaire & génital masculin, Page Globale 165).",
         "Choice_E_Text": "Est plus basse que le rein gauche.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "Le rein droit est situé plus bas que le gauche à cause de la présence du foie. (Source : Appareil urinaire & génital masculin, Page Globale 163). [GDR]"
+        "Choice_E_Explanation": "Le rein droit est situé plus bas que le gauche à cause de la présence du foie. (Source : Appareil urinaire & génital masculin, Page Globale 163). [GDR]",
+        "Choice_A_Image": "Anato2-165.avif",
+        "Choice_B_Image": "Anato2-165.avif",
+        "Choice_C_Image": "Anato2-165.avif",
+        "Choice_D_Image": "Anato2-165.avif",
+        "Choice_E_Image": "Anato2-163.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -557,7 +692,12 @@
         "Choice_D_Explanation": "Les calices majeurs naissent de la confluence des calices mineurs. (Source : Appareil urinaire & génital masculin, Page Globale 164). [GDR]",
         "Choice_E_Text": "L'unité anatomique du rein est constituée par le néphron.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "Le néphron est l'unité structurelle et fonctionnelle du parenchyme rénal. (Source : Appareil urinaire & génital masculin, Page Globale 164)."
+        "Choice_E_Explanation": "Le néphron est l'unité structurelle et fonctionnelle du parenchyme rénal. (Source : Appareil urinaire & génital masculin, Page Globale 164).",
+        "Choice_A_Image": "Anato2-163.avif",
+        "Choice_B_Image": "Anato2-164.avif",
+        "Choice_C_Image": "Anato2-164.avif",
+        "Choice_D_Image": "Anato2-164.avif",
+        "Choice_E_Image": "Anato2-164.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -577,7 +717,12 @@
         "Choice_D_Explanation": "Les veines se regroupent en plans dont le plan postérieur (rétro-pyélique). (Source : Appareil urinaire & génital masculin, Page Globale 167).",
         "Choice_E_Text": "C'est une vascularisation de type terminale.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "La distribution artérielle intraparenchymateuse est terminale. (Source : Appareil urinaire & génital masculin, Page Globale 167). [GDR]"
+        "Choice_E_Explanation": "La distribution artérielle intraparenchymateuse est terminale. (Source : Appareil urinaire & génital masculin, Page Globale 167). [GDR]",
+        "Choice_A_Image": "Anato2-167.avif",
+        "Choice_B_Image": "Anato2-167.avif",
+        "Choice_C_Image": "Anato2-167.avif",
+        "Choice_D_Image": "Anato2-167.avif",
+        "Choice_E_Image": "Anato2-167.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -597,7 +742,12 @@
         "Choice_D_Explanation": "Elle croise le duodénum D2 et la tête du pancréas. (Source : Duodéno-pancréas, Page Globale 223). [GDR]",
         "Choice_E_Text": "Le corps vertébral de L1 en regard du hile du rein droit.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "Les artères rénales naissent au niveau du tiers inférieur de L1. (Source : Appareil urinaire & génital masculin, Page Globale 166). [GDR]"
+        "Choice_E_Explanation": "Les artères rénales naissent au niveau du tiers inférieur de L1. (Source : Appareil urinaire & génital masculin, Page Globale 166). [GDR]",
+        "Choice_A_Image": "Anato2-165.avif",
+        "Choice_B_Image": "Anato2-165.avif",
+        "Choice_C_Image": "Anato2-166.avif",
+        "Choice_D_Image": "Anato2-223.avif",
+        "Choice_E_Image": "Anato2-166.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -617,7 +767,12 @@
         "Choice_D_Explanation": "Le dôme vésical est extensible et contractile lors du remplissage. (Source : Appareil urinaire & génital masculin, Page Globale 174). [GDR]",
         "Choice_E_Text": "La situation de la vessie est toujours pelvienne.",
         "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "Pleine, elle remonte pour devenir abdomino-pelvienne. (Source : Appareil urinaire & génital masculin, Page Globale 173)."
+        "Choice_E_Explanation": "Pleine, elle remonte pour devenir abdomino-pelvienne. (Source : Appareil urinaire & génital masculin, Page Globale 173).",
+        "Choice_A_Image": "Anato2-174.avif",
+        "Choice_B_Image": "Anato2-173.avif",
+        "Choice_C_Image": "Anato2-171.avif",
+        "Choice_D_Image": "Anato2-174.avif",
+        "Choice_E_Image": "Anato2-173.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -637,7 +792,12 @@
         "Choice_D_Explanation": "Il est situé au niveau de la base (face postéro-inférieure). (Source : Appareil urinaire & génital masculin, Page Globale 174).",
         "Choice_E_Text": "La vessie a une forme de pyramide.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "Vide, elle a une forme de cupule aplatie ou pyramide. (Source : Appareil urinaire & génital masculin, Page Globale 173). [GDR]"
+        "Choice_E_Explanation": "Vide, elle a une forme de cupule aplatie ou pyramide. (Source : Appareil urinaire & génital masculin, Page Globale 173). [GDR]",
+        "Choice_A_Image": "Anato2-175.avif",
+        "Choice_B_Image": "Anato2-174.avif",
+        "Choice_C_Image": "Anato2-175.avif",
+        "Choice_D_Image": "Anato2-174.avif",
+        "Choice_E_Image": "Anato2-173.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -657,7 +817,12 @@
         "Choice_D_Explanation": "L'uretère commence au niveau du bassinet (jonction pyélo-urétérale). (Source : Appareil urinaire & génital masculin, Page Globale 168).",
         "Choice_E_Text": "Uretère iliaque.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "L'uretère iliaque appartient à la portion abdominale (ou lombo-iliaque). (Source : Appareil urinaire & génital masculin, Page Globale 169). [GDR]"
+        "Choice_E_Explanation": "L'uretère iliaque appartient à la portion abdominale (ou lombo-iliaque). (Source : Appareil urinaire & génital masculin, Page Globale 169). [GDR]",
+        "Choice_A_Image": "Anato2-169.avif",
+        "Choice_B_Image": "Anato2-169.avif",
+        "Choice_C_Image": "Anato2-169.avif",
+        "Choice_D_Image": "Anato2-168.avif",
+        "Choice_E_Image": "Anato2-169.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -677,7 +842,12 @@
         "Choice_D_Explanation": "Elles sont paires et situées en dérivation des conduits spermatiques. (Source : Appareil urinaire & génital masculin, Page Globale 155). [GDR]",
         "Choice_E_Text": "Urètre.",
         "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "L'urètre est un conduit excréteur mixte terminal. (Source : Appareil urinaire & génital masculin, Page Globale 179)."
+        "Choice_E_Explanation": "L'urètre est un conduit excréteur mixte terminal. (Source : Appareil urinaire & génital masculin, Page Globale 179).",
+        "Choice_A_Image": "Anato2-162.avif",
+        "Choice_B_Image": "Anato2-157.avif",
+        "Choice_C_Image": "Anato2-149.avif",
+        "Choice_D_Image": "Anato2-155.avif",
+        "Choice_E_Image": "Anato2-179.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -697,7 +867,12 @@
         "Choice_D_Explanation": "La partie marginale postérieure est longée par le conduit déférent. (Source : Appareil urinaire & génital masculin, Page Globale 149). [GDR]",
         "Choice_E_Text": "Le médiastinum testis est situé à la partie supérieure et postérieure du testicule.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "L'albuginée augmente d'épaisseur au niveau du pôle supérieur pour former le médiastinum testis. (Source : Appareil urinaire & génital masculin, Page Globale 151). [GDR]"
+        "Choice_E_Explanation": "L'albuginée augmente d'épaisseur au niveau du pôle supérieur pour former le médiastinum testis. (Source : Appareil urinaire & génital masculin, Page Globale 151). [GDR]",
+        "Choice_A_Image": "Anato2-151.avif",
+        "Choice_B_Image": "Anato2-151.avif",
+        "Choice_C_Image": "Anato2-151.avif",
+        "Choice_D_Image": "Anato2-149.avif",
+        "Choice_E_Image": "Anato2-151.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -717,7 +892,12 @@
         "Choice_D_Explanation": "La cryptorchidie correspond à l'arrêt du testicule lors de sa migration. (Source : Appareil urinaire & génital masculin, Page Globale 155). [GDR]",
         "Choice_E_Text": "L'artère testiculaire est située dans la partie supérieure du cordon spermatique.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "L'artère testiculaire chemine dans le cordon vers le testicule. (Source : Appareil urinaire & génital masculin, Page Globale 153). [GDR]"
+        "Choice_E_Explanation": "L'artère testiculaire chemine dans le cordon vers le testicule. (Source : Appareil urinaire & génital masculin, Page Globale 153). [GDR]",
+        "Choice_A_Image": "Anato2-123.avif",
+        "Choice_B_Image": "Anato2-153.avif",
+        "Choice_C_Image": "Anato2-149.avif",
+        "Choice_D_Image": "Anato2-155.avif",
+        "Choice_E_Image": "Anato2-153.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -737,7 +917,12 @@
         "Choice_D_Explanation": "Les vésicules séminales sont des glandes exocrines dont les sécrétions forment le sperme. (Source : Appareil urinaire & génital masculin, Page Globale 155).",
         "Choice_E_Text": "Les vésicules séminales sont des structures coudées.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "Chaque vésicule séminale est décrite comme un sac tortueux. (Source : Appareil urinaire & génital masculin, Page Globale 155). [GDR]"
+        "Choice_E_Explanation": "Chaque vésicule séminale est décrite comme un sac tortueux. (Source : Appareil urinaire & génital masculin, Page Globale 155). [GDR]",
+        "Choice_A_Image": "Anato2-153.avif",
+        "Choice_B_Image": "Anato2-109.avif",
+        "Choice_C_Image": "Anato2-162.avif",
+        "Choice_D_Image": "Anato2-155.avif",
+        "Choice_E_Image": "Anato2-155.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -757,7 +942,12 @@
         "Choice_D_Explanation": "Le segment funiculaire est situé dans le cordon entre le testicule et le canal inguinal. (Source : Appareil urinaire & génital masculin, Page Globale 153). [GDR]",
         "Choice_E_Text": "Segment rétrovésical.",
         "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "C'est un segment du conduit déférent, pas du cordon. (Source : Appareil urinaire & génital masculin, Page Globale 154). [GDR]"
+        "Choice_E_Explanation": "C'est un segment du conduit déférent, pas du cordon. (Source : Appareil urinaire & génital masculin, Page Globale 154). [GDR]",
+        "Choice_A_Image": "Anato2-153.avif",
+        "Choice_B_Image": "Anato2-153.avif",
+        "Choice_C_Image": "Anato2-180.avif",
+        "Choice_D_Image": "Anato2-153.avif",
+        "Choice_E_Image": "Anato2-154.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -777,7 +967,12 @@
         "Choice_D_Explanation": "Elle est traversée par l'urètre prostatique. (Source : Appareil urinaire & génital masculin, Page Globale 159).",
         "Choice_E_Text": "Présente une zone centrale où se développent les adénomes prostatiques.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "Les pathologies (Kc et HBP) se développent dans des zones spécifiques (centrale/périphérique). (Source : Appareil urinaire & génital masculin, Page Globale 157). [GDR]"
+        "Choice_E_Explanation": "Les pathologies (Kc et HBP) se développent dans des zones spécifiques (centrale/périphérique). (Source : Appareil urinaire & génital masculin, Page Globale 157). [GDR]",
+        "Choice_A_Image": "Anato2-157.avif",
+        "Choice_B_Image": "Anato2-157.avif",
+        "Choice_C_Image": "Anato2-162.avif",
+        "Choice_D_Image": "Anato2-159.avif",
+        "Choice_E_Image": "Anato2-157.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -797,7 +992,12 @@
         "Choice_D_Explanation": "L'albuginée est la membrane fibreuse entourant les corps érectiles. (Source : Appareil urinaire & génital masculin, Page Globale 150).",
         "Choice_E_Text": "Présente une artère profonde du pénis pour chaque corps spongieux.",
         "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "Les artères profondes cheminent dans les corps caverneux. (Source : Appareil urinaire & génital masculin, Page Globale 143)."
+        "Choice_E_Explanation": "Les artères profondes cheminent dans les corps caverneux. (Source : Appareil urinaire & génital masculin, Page Globale 143).",
+        "Choice_A_Image": "Anato2-050.avif",
+        "Choice_B_Image": "Anato2-145.avif",
+        "Choice_C_Image": "Anato2-185.avif",
+        "Choice_D_Image": "Anato2-150.avif",
+        "Choice_E_Image": "Anato2-143.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -817,7 +1017,12 @@
         "Choice_D_Explanation": "Sa vascularisation dépend de l'artère ovarique et de l'artère utérine (anastomose). (Source : Appareil génital féminin, Page Globale 123).",
         "Choice_E_Text": "Présente 2 faces : latérale et médiale.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "On lui décrit deux faces : externe (latérale) et interne (médiale). (Source : Appareil génital féminin, Page Globale 118). [GDR]"
+        "Choice_E_Explanation": "On lui décrit deux faces : externe (latérale) et interne (médiale). (Source : Appareil génital féminin, Page Globale 118). [GDR]",
+        "Choice_A_Image": "Anato2-118.avif",
+        "Choice_B_Image": "Anato2-118.avif",
+        "Choice_C_Image": "Anato2-116.avif",
+        "Choice_D_Image": "Anato2-123.avif",
+        "Choice_E_Image": "Anato2-118.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -837,7 +1042,12 @@
         "Choice_D_Explanation": "L'utérus est également en antéflexion (angle corps/col de 110°). (Source : Appareil génital féminin, Page Globale 91). [GDR]",
         "Choice_E_Text": "Présente l'insertion du ligament rond en arrière de la corne utérine.",
         "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "Le ligament rond s'insère au niveau de la corne utérine en avant. (Source : Appareil génital féminin, Page Globale 136)."
+        "Choice_E_Explanation": "Le ligament rond s'insère au niveau de la corne utérine en avant. (Source : Appareil génital féminin, Page Globale 136).",
+        "Choice_A_Image": "Anato2-084.avif",
+        "Choice_B_Image": "Anato2-088.avif",
+        "Choice_C_Image": "Anato2-091.avif",
+        "Choice_D_Image": "Anato2-091.avif",
+        "Choice_E_Image": "Anato2-136.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -857,7 +1067,12 @@
         "Choice_D_Explanation": "L'artère du fond utérin est une branche terminale. (Source : Appareil génital féminin, Page Globale 99). [GDR]",
         "Choice_E_Text": "Donne comme collatérale, l'artère vésico-vaginale.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "Elle fournit des branches vésicales et vaginales. (Source : Appareil génital féminin, Page Globale 131)."
+        "Choice_E_Explanation": "Elle fournit des branches vésicales et vaginales. (Source : Appareil génital féminin, Page Globale 131).",
+        "Choice_A_Image": "Anato2-098.avif",
+        "Choice_B_Image": "Anato2-098.avif",
+        "Choice_C_Image": "Anato2-098.avif",
+        "Choice_D_Image": "Anato2-099.avif",
+        "Choice_E_Image": "Anato2-131.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -877,7 +1092,12 @@
         "Choice_D_Explanation": "Sa vascularisation provient des artères vaginale, utérine et rectale moyenne. (Source : Appareil génital féminin, Page Globale 131).",
         "Choice_E_Text": "Présente des plexus veineux latéralement.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "Les veines s'organisent en plexus latéralement (plexus utéro-vaginal). (Source : Appareil génital féminin, Page Globale 178). [GDR]"
+        "Choice_E_Explanation": "Les veines s'organisent en plexus latéralement (plexus utéro-vaginal). (Source : Appareil génital féminin, Page Globale 178). [GDR]",
+        "Choice_A_Image": "Anato2-129.avif",
+        "Choice_B_Image": "Anato2-125.avif",
+        "Choice_C_Image": "Anato2-128.avif",
+        "Choice_D_Image": "Anato2-131.avif",
+        "Choice_E_Image": "Anato2-178.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -897,7 +1117,12 @@
         "Choice_D_Explanation": "La nidation se fait normalement dans la cavité utérine. (Source : Appareil génital féminin, Page Globale 84).",
         "Choice_E_Text": "N'est pas d'attache péritonéale.",
         "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "Elle est située dans le ligament large et possède un méso (mésosalpinx). (Source : Appareil génital féminin, Page Globale 108)."
+        "Choice_E_Explanation": "Elle est située dans le ligament large et possède un méso (mésosalpinx). (Source : Appareil génital féminin, Page Globale 108).",
+        "Choice_A_Image": "Anato2-110.avif",
+        "Choice_B_Image": "Anato2-112.avif",
+        "Choice_C_Image": "Anato2-108.avif",
+        "Choice_D_Image": "Anato2-084.avif",
+        "Choice_E_Image": "Anato2-108.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -917,7 +1142,12 @@
         "Choice_D_Explanation": "Le dartos est le muscle peaucier du scrotum. (Source : Appareil urinaire & génital masculin, Page Globale 152).",
         "Choice_E_Text": "Le scrotum.",
         "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "Le scrotum est la peau des bourses. (Source : Appareil urinaire & génital masculin, Page Globale 152)."
+        "Choice_E_Explanation": "Le scrotum est la peau des bourses. (Source : Appareil urinaire & génital masculin, Page Globale 152).",
+        "Choice_A_Image": "Anato2-151.avif",
+        "Choice_B_Image": "Anato2-150.avif",
+        "Choice_C_Image": "Anato2-152.avif",
+        "Choice_D_Image": "Anato2-152.avif",
+        "Choice_E_Image": "Anato2-152.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -937,7 +1167,12 @@
         "Choice_D_Explanation": "Le dartos est une membrane fibreuse contractile située sous la peau. (Source : Appareil urinaire & génital masculin, Page Globale 152). [GDR]",
         "Choice_E_Text": "Le scrotum.",
         "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "Le scrotum est la peau. (Source : Appareil urinaire & génital masculin, Page Globale 152)."
+        "Choice_E_Explanation": "Le scrotum est la peau. (Source : Appareil urinaire & génital masculin, Page Globale 152).",
+        "Choice_A_Image": "Anato2-397.avif",
+        "Choice_B_Image": "Anato2-397.avif",
+        "Choice_C_Image": "Anato2-397.avif",
+        "Choice_D_Image": "Anato2-152.avif",
+        "Choice_E_Image": "Anato2-152.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -957,7 +1192,12 @@
         "Choice_D_Explanation": "Il unit le pôle inférieur au scrotum. (Source : Appareil urinaire & génital masculin, Page Globale 149).",
         "Choice_E_Text": "Le scrotum.",
         "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "C'est l'enveloppe cutanée. (Source : Appareil urinaire & génital masculin, Page Globale 152)."
+        "Choice_E_Explanation": "C'est l'enveloppe cutanée. (Source : Appareil urinaire & génital masculin, Page Globale 152).",
+        "Choice_A_Image": "Anato2-397.avif",
+        "Choice_B_Image": "Anato2-311.avif",
+        "Choice_C_Image": "Anato2-149.avif",
+        "Choice_D_Image": "Anato2-149.avif",
+        "Choice_E_Image": "Anato2-152.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -977,7 +1217,12 @@
         "Choice_D_Explanation": "Ce ligament est situé entre la vessie et le vagin. (Source : Appareil génital féminin, Page Globale 176).",
         "Choice_E_Text": "Le ligament large.",
         "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "Le ligament large est un repli péritonéal latéral. (Source : Appareil génital féminin, Page Globale 134)."
+        "Choice_E_Explanation": "Le ligament large est un repli péritonéal latéral. (Source : Appareil génital féminin, Page Globale 134).",
+        "Choice_A_Image": "Anato2-102.avif",
+        "Choice_B_Image": "Anato2-102.avif",
+        "Choice_C_Image": "Anato2-125.avif",
+        "Choice_D_Image": "Anato2-176.avif",
+        "Choice_E_Image": "Anato2-134.avif"
     },
     {
         "YearAsked": "Mars 2020 (Normale)",
@@ -997,6 +1242,11 @@
         "Choice_D_Explanation": "Le vestibule est situé entre les petites lèvres. (Source : Appareil génital féminin, Page Globale 143).",
         "Choice_E_Text": "Le fornix postérieur.",
         "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "C'est le cul-de-sac vaginal profond. (Source : Appareil génital féminin, Page Globale 129)."
+        "Choice_E_Explanation": "C'est le cul-de-sac vaginal profond. (Source : Appareil génital féminin, Page Globale 129).",
+        "Choice_A_Image": "Anato2-407.avif",
+        "Choice_B_Image": "Anato2-092.avif",
+        "Choice_C_Image": "Anato2-092.avif",
+        "Choice_D_Image": "Anato2-143.avif",
+        "Choice_E_Image": "Anato2-129.avif"
     }
 ]
