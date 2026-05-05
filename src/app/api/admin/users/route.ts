@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { loadUsers, saveUsers } from '@/lib/user-store';
+import { loadUsers, saveUsers, isTrialExpired } from '@/lib/user-store';
 
 function hashPassword(password: string): string {
   return crypto.createHash('sha256').update(password).digest('hex');
@@ -297,6 +297,18 @@ export async function GET(request: NextRequest) {
     }
 
     if (needsMigration) {
+      await saveUsers(usersData);
+    }
+
+    let needsDowngrade = false;
+    for (const [userId, user] of Object.entries(usersData.users)) {
+      if (isTrialExpired(user)) {
+        usersData.users[userId].subscription_status = 'free';
+        usersData.users[userId].has_paid = false;
+        needsDowngrade = true;
+      }
+    }
+    if (needsDowngrade) {
       await saveUsers(usersData);
     }
 

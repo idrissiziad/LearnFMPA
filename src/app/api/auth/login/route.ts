@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { loadUsers, saveUsers, User } from '@/lib/user-store';
+import { loadUsers, saveUsers, User, isTrialExpired } from '@/lib/user-store';
 import { createSession } from '@/lib/session-store';
 
 function hashPassword(password: string): string {
@@ -9,13 +9,6 @@ function hashPassword(password: string): string {
 
 function generateToken(): string {
   return crypto.randomBytes(32).toString('hex');
-}
-
-function isTrialExpired(user: User): boolean {
-  if (!user.activated_at) return false;
-  const activatedDate = new Date(user.activated_at);
-  const expirationDate = new Date(activatedDate.getTime() + user.activation_days * 24 * 60 * 60 * 1000);
-  return new Date() > expirationDate;
 }
 
 const FREE_DAILY_WINDOW_MS = 24 * 60 * 60 * 1000;

@@ -39,6 +39,14 @@ export interface UsersData {
   users: { [key: string]: User };
 }
 
+export function isTrialExpired(user: User): boolean {
+  if (!user.activated_at) return false;
+  if (user.subscription_status !== 'paid') return false;
+  const activatedDate = new Date(user.activated_at);
+  const expirationDate = new Date(activatedDate.getTime() + user.activation_days * 24 * 60 * 60 * 1000);
+  return new Date() > expirationDate;
+}
+
 export async function loadUsers(): Promise<UsersData> {
   try {
     const client = await getRedis();

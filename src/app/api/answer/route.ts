@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { loadUserProgress, saveUserProgress, loadQuestionStats, saveQuestionStats, loadUsers, saveUsers } from '@/lib/user-store';
+import { loadUserProgress, saveUserProgress, loadQuestionStats, saveQuestionStats, loadUsers, saveUsers, isTrialExpired } from '@/lib/user-store';
 import { requireAuth } from '@/lib/auth';
 
 const FREE_DAILY_LIMIT = 10;
@@ -24,6 +24,13 @@ export async function POST(request: NextRequest) {
     const user = usersData.users[user_id];
     if (!user) {
       return NextResponse.json({ error: 'Utilisateur non trouvé' }, { status: 404 });
+    }
+
+    if (isTrialExpired(user)) {
+      usersData.users[user_id].subscription_status = 'free';
+      usersData.users[user_id].has_paid = false;
+      user.subscription_status = 'free';
+      user.has_paid = false;
     }
 
     const subscriptionStatus = user.subscription_status || (user.has_paid ? 'paid' : (user.is_active ? 'free' : 'inactive'));

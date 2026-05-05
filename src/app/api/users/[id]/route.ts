@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { loadUsers } from '@/lib/user-store';
+import { loadUsers, saveUsers, isTrialExpired } from '@/lib/user-store';
 import { requireAuth } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
@@ -27,6 +27,12 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    if (isTrialExpired(user)) {
+      usersData.users[userId].subscription_status = 'free';
+      usersData.users[userId].has_paid = false;
+      await saveUsers(usersData);
+    }
+
     return NextResponse.json({
       success: true,
       user: {
@@ -35,7 +41,7 @@ export async function GET(request: NextRequest) {
         email: user.email,
         must_change_password: user.must_change_password,
         last_login: user.last_login,
-        subscription_status: user.subscription_status || (user.has_paid ? 'paid' : user.is_active ? 'free' : 'inactive'),
+        subscription_status: usersData.users[userId].subscription_status || (usersData.users[userId].has_paid ? 'paid' : usersData.users[userId].is_active ? 'free' : 'inactive'),
         daily_answer_count: user.daily_answer_count || 0,
         daily_answer_reset: user.daily_answer_reset || null,
       }

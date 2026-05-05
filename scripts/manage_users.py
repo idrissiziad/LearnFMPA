@@ -380,9 +380,9 @@ def list_users(api_url, admin_secret, edu_only=False):
             print("\n  No users found.\n")
             return
 
-        print(f"\n{'=' * 130}")
-        print(f"{'Email':<36} {'Name':<18} {'Sub':<10} {'Year(s)':<26} {'Active':<8} {'Days':<6} {'Ans':<5}")
-        print(f"{'=' * 130}")
+        print(f"\n{'=' * 140}")
+        print(f"{'Email':<36} {'Name':<18} {'Sub':<10} {'Year(s)':<26} {'Active':<8} {'Left':<10} {'Ans':<5}")
+        print(f"{'=' * 140}")
 
         for user in users:
             sub_raw = user.get("subscription_status", "?")
@@ -391,11 +391,29 @@ def list_users(api_url, admin_secret, edu_only=False):
             years_str = ", ".join(years_list) if isinstance(years_list, list) else str(years_list)
             active = "Yes" if user.get("is_active", True) else "No"
             daily = str(user.get("daily_answer_count", 0))
-            days = str(user.get("activation_days", 150))
 
-            print(f"{user['email']:<36} {user['name']:<18} {sub:<10} {years_str:<26} {active:<8} {days:<6} {daily:<5}")
+            activated_at = user.get("activated_at")
+            activation_days = user.get("activation_days", 150)
+            if sub_raw == "inactive":
+                left = "  N/A"
+            elif activated_at:
+                try:
+                    activated_dt = datetime.fromisoformat(activated_at.replace("Z", "+00:00"))
+                    expiry_dt = activated_dt + timedelta(days=activation_days)
+                    now = datetime.now(activated_dt.tzinfo) if activated_dt.tzinfo else datetime.now()
+                    remaining = (expiry_dt - now).days
+                    if remaining > 0:
+                        left = f"  {remaining}d"
+                    else:
+                        left = "EXPIRED"
+                except Exception:
+                    left = "  N/A"
+            else:
+                left = f"  {activation_days}d"
 
-        print(f"{'=' * 130}")
+            print(f"{user['email']:<36} {user['name']:<18} {sub:<10} {years_str:<26} {active:<8} {left:<10} {daily:<5}")
+
+        print(f"{'=' * 140}")
         if edu_only:
             print(f"Edu accounts: {len(users)}")
         else:
