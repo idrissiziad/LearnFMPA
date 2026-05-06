@@ -137,6 +137,48 @@ export async function setSignupOpen(open: boolean): Promise<void> {
   }
 }
 
+export async function loadOptOuts(): Promise<string[]> {
+  try {
+    const client = await getRedis();
+    const data = await client.get('email_opt_outs');
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error('Redis load opt-outs error:', error);
+    return [];
+  }
+}
+
+export async function addOptOut(email: string): Promise<void> {
+  try {
+    const client = await getRedis();
+    const optOuts = await loadOptOuts();
+    const normalized = email.toLowerCase().trim();
+    if (!optOuts.includes(normalized)) {
+      optOuts.push(normalized);
+      await client.set('email_opt_outs', JSON.stringify(optOuts));
+    }
+  } catch (error) {
+    console.error('Redis add opt-out error:', error);
+  }
+}
+
+export async function removeOptOut(email: string): Promise<void> {
+  try {
+    const client = await getRedis();
+    const optOuts = await loadOptOuts();
+    const normalized = email.toLowerCase().trim();
+    const filtered = optOuts.filter(e => e !== normalized);
+    await client.set('email_opt_outs', JSON.stringify(filtered));
+  } catch (error) {
+    console.error('Redis remove opt-out error:', error);
+  }
+}
+
+export async function isOptedOut(email: string): Promise<boolean> {
+  const optOuts = await loadOptOuts();
+  return optOuts.includes(email.toLowerCase().trim());
+}
+
 export async function recordAnswerStat(
   moduleId: number,
   questionId: string,

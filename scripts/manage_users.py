@@ -26,6 +26,8 @@ Usage:
   python manage_users.py deactivate "student@edu.uiz.ac.ma"
   python manage_users.py delete "student@edu.uiz.ac.ma"
   python manage_users.py progress "student@edu.uiz.ac.ma"
+  python manage_users.py mail-bcc
+  python manage_users.py mail-bcc --edu
 
 Environment Variables:
   API_URL       - API endpoint (default: https://www.learnfmpa.com)
@@ -380,9 +382,9 @@ def list_users(api_url, admin_secret, edu_only=False):
             print("\n  No users found.\n")
             return
 
-        print(f"\n{'=' * 140}")
-        print(f"{'Email':<36} {'Name':<18} {'Sub':<10} {'Year(s)':<26} {'Active':<8} {'Left':<10} {'Ans':<5}")
-        print(f"{'=' * 140}")
+        print(f"\n{'=' * 150}")
+        print(f"{'Email':<36} {'Name':<18} {'Sub':<10} {'Year(s)':<26} {'Active':<8} {'Left':<10} {'Ans':<5} {'OptOut':<7}")
+        print(f"{'=' * 150}")
 
         for user in users:
             sub_raw = user.get("subscription_status", "?")
@@ -391,6 +393,7 @@ def list_users(api_url, admin_secret, edu_only=False):
             years_str = ", ".join(years_list) if isinstance(years_list, list) else str(years_list)
             active = "Yes" if user.get("is_active", True) else "No"
             daily = str(user.get("daily_answer_count", 0))
+            opted_out = "Yes" if user.get("opted_out", False) else "No"
 
             activated_at = user.get("activated_at")
             activation_days = user.get("activation_days", 150)
@@ -411,13 +414,38 @@ def list_users(api_url, admin_secret, edu_only=False):
             else:
                 left = f"  {activation_days}d"
 
-            print(f"{user['email']:<36} {user['name']:<18} {sub:<10} {years_str:<26} {active:<8} {left:<10} {daily:<5}")
+            print(f"{user['email']:<36} {user['name']:<18} {sub:<10} {years_str:<26} {active:<8} {left:<10} {daily:<5} {opted_out:<7}")
 
-        print(f"{'=' * 140}")
+        now = datetime.now(timezone.utc)
+        start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        start_of_week = now - timedelta(days=now.weekday())
+        start_of_week = start_of_week.replace(hour=0, minute=0, second=0, microsecond=0)
+
+        active_today = 0
+        active_this_week = 0
+        active_subs = set()
+
+        for user in users:
+            last_login = user.get("last_login")
+            if not last_login or last_login == "Never":
+                continue
+            try:
+                login_dt = datetime.fromisoformat(last_login.replace("Z", "+00:00"))
+                if login_dt >= start_of_day:
+                    active_today += 1
+                    active_subs.add(user.get("subscription_status", "?"))
+                if login_dt >= start_of_week:
+                    active_this_week += 1
+            except Exception:
+                pass
+
+        print(f"{'=' * 150}")
         if edu_only:
             print(f"Edu accounts: {len(users)}")
         else:
             print(f"Total: {len(users)} users")
+        print(f"Active today:     {active_today} users")
+        print(f"Active this week: {active_this_week} users")
         print(f"API: {api_url}\n")
     else:
         print(f"\n  Error: {result.get('error', 'Unknown error')}\n")
@@ -468,6 +496,7 @@ def get_user_details(api_url, admin_secret, email):
         print(f"  Daily Answers:        {daily} (resets daily)")
         print(f"  Daily Reset Date:     {daily_reset}")
         print(f"  Password Change:      {'Required' if user.get('must_change_password', False) else 'Not required'}")
+        print(f"  Opted Out:            {'Yes' if user.get('opted_out', False) else 'No'}")
         print(f"  Created:              {user.get('created_at', 'N/A')}")
         print(f"  Last Login:           {user.get('last_login', 'Never')}")
         print(f"{'=' * 50}\n")
@@ -621,6 +650,143 @@ def delete_user(api_url, admin_secret, email):
         print(f"\n  Error: {result.get('error', 'Unknown error')}\n")
 
 
+def list_opt_outs(api_url, admin_secret):
+    result = api_request(api_url, admin_secret, "/api/admin/opt-outs", "GET")
+
+    if not result.get("success"):
+        print(f"\n  Error: {result.get('error', 'Unknown error')}\n")
+        return
+
+    opt_outs = result.get("opt_outs", [])
+    if not opt_outs:
+        print("\n  No opt-outs found.\n")
+        return
+
+    print(f"\n  Found {len(opt_outs)} opt-out(s):")
+    for e in opt_outs:
+        print(f"    - {e}")
+    print()
+
+
+def remove_opt_out(api_url, admin_secret, email):
+    import json as _json
+    url = f"{api_url}/api/opt-out"
+    headers = {"Content-Type": "application/json"}
+    data = _json.dumps({"email": email, "action": "opt-in"}).encode("utf-8")
+    req = urllib.request.Request(url, data=data, headers=headers, method="POST")
+    try:
+        with urllib.request.urlopen(req, timeout=30) as response:
+            result = _json.loads(response.read().decode("utf-8"))
+            if result.get("success"):
+                print(f"\n  '{email}' has been removed from opt-outs (re-subscribed).\n")
+            else:
+                print(f"\n  Error: {result.get('error', 'Failed to remove opt-out')}\n")
+    except urllib.error.HTTPError as e:
+        error_body = e.read().decode("utf-8")
+        try:
+            result = _json.loads(error_body)
+            print(f"\n  Error: {result.get('error', 'Unknown error')}\n")
+        except Exception:
+            print(f"\n  Error: {error_body}\n")
+    except Exception as e:
+        print(f"\n  Error: {e}\n")
+
+
+def mail_bcc(api_url, admin_secret, edu_only=False):
+    result = api_request(api_url, admin_secret, "/api/admin/users", "GET")
+
+    if not result.get("success"):
+        print(f"\n  Error: {result.get('error', 'Unknown error')}\n")
+        return
+
+    users = result.get("users", [])
+    if edu_only:
+        users = [u for u in users if u.get("email", "").endswith("@edu.uiz.ac.ma")]
+
+    opt_out_result = api_request(api_url, admin_secret, "/api/admin/opt-outs", "GET")
+    opt_outs = set()
+    if opt_out_result.get("success"):
+        opt_outs = set(e.lower() for e in opt_out_result.get("opt_outs", []))
+
+    skipped_optout = []
+    skipped_paid = []
+    recipient_emails = []
+
+    for u in users:
+        email = u.get("email", "")
+        if not email:
+            continue
+        if email.lower() in opt_outs:
+            skipped_optout.append(email)
+            continue
+        sub = u.get("subscription_status", "")
+        if sub == "paid":
+            activated_at = u.get("activated_at")
+            activation_days = u.get("activation_days", 7)
+            remaining = None
+            if activated_at:
+                try:
+                    activated_dt = datetime.fromisoformat(activated_at.replace("Z", "+00:00"))
+                    expiry_dt = activated_dt + timedelta(days=activation_days)
+                    now = datetime.now(activated_dt.tzinfo) if activated_dt.tzinfo else datetime.now()
+                    remaining = (expiry_dt - now).days
+                except Exception:
+                    pass
+            if remaining is None or remaining > 30:
+                skipped_paid.append(email)
+                continue
+        recipient_emails.append(email)
+
+    if not recipient_emails:
+        print("\n  No recipients found (all users opted out or paid with 30+ days).\n")
+        return
+
+    bcc_list = ",".join(recipient_emails)
+
+    print(f"\n  Found {len(recipient_emails)} recipient(s):")
+    for e in recipient_emails:
+        print(f"    - {e}")
+    if skipped_optout:
+        print(f"\n  Skipped opt-outs ({len(skipped_optout)}):")
+        for e in skipped_optout:
+            print(f"    - {e}")
+    if skipped_paid:
+        print(f"\n  Skipped paid (>30d remaining) ({len(skipped_paid)}):")
+        for e in skipped_paid:
+            print(f"    - {e}")
+
+    copied = False
+    try:
+        import subprocess
+        subprocess.run(["xclip", "-selection", "clipboard"], input=bcc_list.encode(), check=True)
+        copied = True
+    except Exception:
+        pass
+    if not copied:
+        try:
+            import subprocess
+            subprocess.run(["xsel", "--clipboard", "--input"], input=bcc_list.encode(), check=True)
+            copied = True
+        except Exception:
+            pass
+    if not copied:
+        try:
+            import subprocess
+            subprocess.run(["wl-copy"], input=bcc_list.encode(), check=True)
+            copied = True
+        except Exception:
+            pass
+
+    webbrowser.open("mailto:")
+
+    if copied:
+        print(f"\n  BCC list copied to clipboard ({len(recipient_emails)} emails).")
+    else:
+        print(f"\n  BCC list (copy manually):")
+        print(f"  {bcc_list}")
+    print("  Compose window opened — paste the BCC list into the BCC field.\n")
+
+
 def show_progress(api_url, admin_secret, email):
     result = api_request(api_url, admin_secret, f"/api/admin/users/progress?email={email}", "GET")
 
@@ -719,6 +885,18 @@ Examples:
 
   # View user progress
   python manage_users.py progress "a.benali@edu.uiz.ac.ma"
+
+  # Open email client with all user emails as BCC (opt-outs excluded)
+  python manage_users.py mail-bcc
+
+  # Open email client with only edu emails as BCC (opt-outs excluded)
+  python manage_users.py mail-bcc --edu
+
+  # List all email opt-outs
+  python manage_users.py opt-outs
+
+  # Remove an email from opt-outs (re-subscribe)
+  python manage_users.py opt-in "student@edu.uiz.ac.ma"
 """,
     )
 
@@ -779,6 +957,13 @@ Examples:
     delete_parser = subparsers.add_parser("delete", help="Permanently delete a user")
     delete_parser.add_argument("email", help="User's email")
 
+    mail_bcc_parser = subparsers.add_parser("mail-bcc", help="Open email client with all user emails as BCC (excludes opt-outs)")
+    mail_bcc_parser.add_argument("--edu", action="store_true", help="Only include @edu.uiz.ac.ma accounts")
+
+    opt_outs_parser = subparsers.add_parser("opt-outs", help="List all email opt-outs")
+    opt_in_parser = subparsers.add_parser("opt-in", help="Remove an email from opt-outs (re-subscribe)")
+    opt_in_parser.add_argument("email", help="Email address to re-subscribe")
+
     progress_parser = subparsers.add_parser("progress", help="Show user progress")
     progress_parser.add_argument("email", help="User's email")
 
@@ -821,6 +1006,12 @@ Examples:
         set_user_status(api_url, admin_secret, args.email, False)
     elif args.command == "delete":
         delete_user(api_url, admin_secret, args.email)
+    elif args.command == "mail-bcc":
+        mail_bcc(api_url, admin_secret, args.edu)
+    elif args.command == "opt-outs":
+        list_opt_outs(api_url, admin_secret)
+    elif args.command == "opt-in":
+        remove_opt_out(api_url, admin_secret, args.email)
     elif args.command == "progress":
         show_progress(api_url, admin_secret, args.email)
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { loadUsers, saveUsers, isTrialExpired } from '@/lib/user-store';
+import { loadUsers, saveUsers, isTrialExpired, loadOptOuts } from '@/lib/user-store';
 
 function hashPassword(password: string): string {
   return crypto.createHash('sha256').update(password).digest('hex');
@@ -315,6 +315,8 @@ export async function GET(request: NextRequest) {
     if (email) {
       for (const user of Object.values(usersData.users)) {
         if (user.email.toLowerCase() === email.toLowerCase()) {
+          const optOuts = await loadOptOuts();
+          const userOptOut = optOuts.includes(user.email.toLowerCase());
           return NextResponse.json({
             success: true,
             user: {
@@ -334,6 +336,7 @@ export async function GET(request: NextRequest) {
               subscription_status: user.subscription_status || (user.has_paid ? 'paid' : user.is_active ? 'free' : 'inactive'),
               daily_answer_count: user.daily_answer_count || 0,
               daily_answer_reset: user.daily_answer_reset || null,
+              opted_out: userOptOut,
             }
           });
         }
@@ -341,6 +344,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Utilisateur non trouvé' }, { status: 404 });
     }
 
+    const optOuts = await loadOptOuts();
     const users = Object.values(usersData.users).map(user => ({
       id: user.id,
       name: user.name,
@@ -358,6 +362,7 @@ export async function GET(request: NextRequest) {
       subscription_status: user.subscription_status || (user.has_paid ? 'paid' : user.is_active ? 'free' : 'inactive'),
       daily_answer_count: user.daily_answer_count || 0,
       daily_answer_reset: user.daily_answer_reset || null,
+      opted_out: optOuts.includes(user.email.toLowerCase()),
     }));
 
     return NextResponse.json({
