@@ -312,6 +312,22 @@ export async function GET(request: NextRequest) {
       await saveUsers(usersData);
     }
 
+    const UNCONFIRMED_TTL_MS = 48 * 60 * 60 * 1000;
+    const now = Date.now();
+    let needsCleanup = false;
+    for (const [userId, user] of Object.entries(usersData.users)) {
+      if (user.must_change_password) {
+        const createdAt = new Date(user.created_at).getTime();
+        if (!isNaN(createdAt) && (now - createdAt) > UNCONFIRMED_TTL_MS) {
+          delete usersData.users[userId];
+          needsCleanup = true;
+        }
+      }
+    }
+    if (needsCleanup) {
+      await saveUsers(usersData);
+    }
+
     if (email) {
       for (const user of Object.values(usersData.users)) {
         if (user.email.toLowerCase() === email.toLowerCase()) {

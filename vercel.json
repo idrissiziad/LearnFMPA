@@ -1,10 +1,4 @@
 {
-  "crons": [
-    {
-      "path": "/api/cron/cleanup-unconfirmed",
-      "schedule": "0 */6 * * *"
-    }
-  ],
   "headers": [
     {
       "source": "/_next/static/(.*)",
