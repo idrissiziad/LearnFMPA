@@ -787,6 +787,36 @@ def mail_bcc(api_url, admin_secret, edu_only=False):
     print("  Compose window opened — paste the BCC list into the BCC field.\n")
 
 
+def cleanup_unconfirmed(api_url, admin_secret, dry_run=False):
+    if dry_run:
+        result = api_request(api_url, admin_secret, "/api/admin/cleanup-unconfirmed", "GET")
+    else:
+        result = api_request(api_url, admin_secret, "/api/admin/cleanup-unconfirmed", "POST", {})
+
+    if result.get("success"):
+        if dry_run:
+            unconfirmed = result.get("unconfirmed", [])
+            if not unconfirmed:
+                print("\n  No unconfirmed accounts older than 48 hours found.\n")
+            else:
+                print(f"\n  Found {len(unconfirmed)} unconfirmed account(s) older than 48 hours:")
+                for u in unconfirmed:
+                    print(f"    - {u['email']} ({u['name']}) created {u['hours_ago']}h ago")
+                print(f"\n  Run 'cleanup-unconfirmed --force' to delete them.\n")
+        else:
+            deleted = result.get("deleted", 0)
+            emails = result.get("emails", [])
+            if deleted == 0:
+                print("\n  No unconfirmed accounts older than 48 hours to remove.\n")
+            else:
+                print(f"\n  Removed {deleted} unconfirmed account(s):")
+                for e in emails:
+                    print(f"    - {e}")
+                print()
+    else:
+        print(f"\n  Error: {result.get('error', 'Unknown error')}\n")
+
+
 def show_progress(api_url, admin_secret, email):
     result = api_request(api_url, admin_secret, f"/api/admin/users/progress?email={email}", "GET")
 
@@ -897,6 +927,12 @@ Examples:
 
   # Remove an email from opt-outs (re-subscribe)
   python manage_users.py opt-in "student@edu.uiz.ac.ma"
+
+  # Preview unconfirmed accounts older than 48 hours
+  python manage_users.py cleanup-unconfirmed
+
+  # Force delete unconfirmed accounts older than 48 hours
+  python manage_users.py cleanup-unconfirmed --force
 """,
     )
 
@@ -967,6 +1003,9 @@ Examples:
     progress_parser = subparsers.add_parser("progress", help="Show user progress")
     progress_parser.add_argument("email", help="User's email")
 
+    cleanup_parser = subparsers.add_parser("cleanup-unconfirmed", help="Remove accounts created >48h ago that never confirmed (must_change_password=true)")
+    cleanup_parser.add_argument("--force", action="store_true", help="Actually delete unconfirmed accounts (default: dry-run preview)")
+
     args = parser.parse_args()
 
     if not args.command:
@@ -1014,6 +1053,8 @@ Examples:
         remove_opt_out(api_url, admin_secret, args.email)
     elif args.command == "progress":
         show_progress(api_url, admin_secret, args.email)
+    elif args.command == "cleanup-unconfirmed":
+        cleanup_unconfirmed(api_url, admin_secret, dry_run=not args.force)
 
 
 if __name__ == "__main__":
