@@ -9,8 +9,11 @@ const UNCONFIRMED_TTL_MS = 48 * 60 * 60 * 1000;
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { admin_secret } = body;
+    let body: Record<string, string> = {};
+    try {
+      body = await request.json();
+    } catch {}
+    const admin_secret = body.admin_secret;
 
     if (!validateAdmin(admin_secret || '')) {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 403 });

@@ -791,7 +791,7 @@ def cleanup_unconfirmed(api_url, admin_secret, dry_run=False):
     if dry_run:
         result = api_request(api_url, admin_secret, "/api/admin/cleanup-unconfirmed", "GET")
     else:
-        result = api_request(api_url, admin_secret, "/api/admin/cleanup-unconfirmed", "POST", {})
+        result = api_request(api_url, admin_secret, "/api/admin/cleanup-unconfirmed", "POST", {"action": "cleanup_unconfirmed"})
 
     if result.get("success"):
         if dry_run:
