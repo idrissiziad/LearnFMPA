@@ -19,12 +19,13 @@ export interface YearData {
 export const yearData: YearData[] = [
   {
     year: '1ère année',
-    totalQuestions: 1317,
-    moduleCount: 3,
+    totalQuestions: 1809,
+    moduleCount: 4,
     modules: [
     { id: 7, title: 'Histologie Embryologie', questionCount: 125, chapterCount: 19, gradient: 'from-blue-400 to-blue-600' },
     { id: 8, title: 'Anatomie 2', questionCount: 513, chapterCount: 20, gradient: 'from-green-400 to-green-600' },
-    { id: 9, title: 'Physiologie 1', questionCount: 679, chapterCount: 30, gradient: 'from-purple-400 to-purple-600' }
+    { id: 9, title: 'Physiologie 1', questionCount: 679, chapterCount: 30, gradient: 'from-purple-400 to-purple-600' },
+    { id: 10, title: 'Hématologie', questionCount: 492, chapterCount: 32, gradient: 'from-red-400 to-red-600' }
     ]
   },
   {
@@ -52,6 +53,6 @@ export const yearData: YearData[] = [
   },
 ];
 
-export const totalQuestions = 4406;
-export const totalModules = 9;
+export const totalQuestions = 4898;
+export const totalModules = 10;
 export const totalYears = 3;
