@@ -121,6 +121,12 @@ export default function ModulePage() {
   const [examIncorrectCount, setExamIncorrectCount] = useState(0);
   const [examUnansweredCount, setExamUnansweredCount] = useState(0);
   const [showExamGdrPrompt, setShowExamGdrPrompt] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportReason, setReportReason] = useState('');
+  const [reportSuggestedCorrect, setReportSuggestedCorrect] = useState<number[]>([]);
+  const [reportSuggestedIncorrect, setReportSuggestedIncorrect] = useState<number[]>([]);
+  const [reportSubmitting, setReportSubmitting] = useState(false);
+  const [reportSubmitted, setReportSubmitted] = useState(false);
   const examTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const handleShowAnswerRef = useRef<() => void>(() => {});
 
@@ -1404,6 +1410,22 @@ export default function ModulePage() {
                     <span className="hidden sm:inline">Cours</span>
                   </button>
                 )}
+                <button
+                  onClick={() => {
+                    setReportReason('');
+                    setReportSuggestedCorrect([]);
+                    setReportSuggestedIncorrect([]);
+                    setReportSubmitted(false);
+                    setShowReportModal(true);
+                  }}
+                  className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-1.5 ${isDarkMode ? 'bg-gradient-to-r from-red-900/40 to-orange-900/40 text-red-400 hover:from-red-900/60 hover:to-orange-900/60' : 'bg-gradient-to-r from-red-100 to-orange-100 text-red-600 hover:from-red-200 hover:to-orange-200'} shadow-sm transition-colors`}
+                  title="Signaler cette question"
+                >
+                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  <span className="hidden sm:inline">Signaler</span>
+                </button>
               </div>
             </div>
             <p className={`text-base sm:text-lg sm:text-xl leading-relaxed ${isDarkMode ? 'text-gray-100' : 'text-gray-800'} font-medium`}>
@@ -1823,6 +1845,171 @@ const statTextColor = effectiveGdrMode && showAnswer && isCorrect && isSelected 
           initialPage={imageViewerPage}
           onClose={() => setShowImageViewer(false)}
         />
+      )}
+
+      {showReportModal && currentQuestion && (
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={() => setShowReportModal(false)}
+        >
+          <div
+            className={`w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className={`p-5 sm:p-6 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+              <div className="flex items-center justify-between">
+                <h3 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                  Signaler cette question
+                </h3>
+                <button
+                  onClick={() => setShowReportModal(false)}
+                  className={`p-2 rounded-xl ${isDarkMode ? 'hover:bg-gray-700 text-gray-400' : 'hover:bg-gray-100 text-gray-500'} transition-colors`}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                Question {currentQuestionIndex + 1} - {module?.title || `Module ${moduleId}`}
+              </p>
+            </div>
+
+            <div className="p-5 sm:p-6 space-y-4">
+              {reportSubmitted ? (
+                <div className="text-center py-6">
+                  <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-lg shadow-green-500/30">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <h4 className={`text-lg font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                    Rapport envoyé !
+                  </h4>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                    Merci pour votre signalement. Notre équipe va examiner la question.
+                  </p>
+                  <button
+                    onClick={() => setShowReportModal(false)}
+                    className="mt-4 px-6 py-2.5 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-medium hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg shadow-green-500/30"
+                  >
+                    Fermer
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className={`p-3 rounded-xl text-xs leading-relaxed ${isDarkMode ? 'bg-gray-700/50 text-gray-300' : 'bg-gray-50 text-gray-600'}`}>
+                    <p className={`font-medium mb-1 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Question :</p>
+                    <p className="line-clamp-3">{currentQuestion.question}</p>
+                  </div>
+
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                      Quels choix devraient être corrects ?
+                    </label>
+                    <div className="space-y-1.5">
+                      {(showAnswer ? currentQuestion.options : (shuffledOptions[currentQuestionIndex] || [])).map((option, index) => {
+                        const originalIdx = showAnswer ? index : (optionMapping[currentQuestionIndex]?.[index] ?? index);
+                        const isSuggestedCorrect = reportSuggestedCorrect.includes(originalIdx);
+                        return (
+                          <button
+                            key={index}
+                            onClick={() => {
+                              if (isSuggestedCorrect) {
+                                setReportSuggestedCorrect(prev => prev.filter(i => i !== originalIdx));
+                                setReportSuggestedIncorrect(prev => prev.includes(originalIdx) ? prev : [...prev, originalIdx]);
+                              } else {
+                                setReportSuggestedCorrect(prev => [...prev, originalIdx]);
+                                setReportSuggestedIncorrect(prev => prev.filter(i => i !== originalIdx));
+                              }
+                            }}
+                            className={`w-full text-left p-2.5 rounded-xl border-2 transition-all text-xs sm:text-sm ${isSuggestedCorrect ? 'border-green-500 bg-gradient-to-r from-green-50 to-emerald-50 text-green-700' : reportSuggestedIncorrect.includes(originalIdx) ? 'border-red-500 bg-gradient-to-r from-red-50 to-orange-50 text-red-700' : isDarkMode ? 'border-gray-600 bg-gray-700/50 text-gray-300 hover:border-gray-500' : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'}`}
+                          >
+                            <span className={`font-bold mr-1.5 ${isSuggestedCorrect ? 'text-green-600' : reportSuggestedIncorrect.includes(originalIdx) ? 'text-red-600' : isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                              {String.fromCharCode(65 + index)}
+                            </span>
+                            {option.length > 80 ? option.substring(0, 80) + '...' : option}
+                            {isSuggestedCorrect && <span className="float-right font-semibold text-green-600">✓ Correct</span>}
+                            {reportSuggestedIncorrect.includes(originalIdx) && <span className="float-right font-semibold text-red-600">✗ Incorrect</span>}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <p className={`text-xs mt-1.5 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                      Cliquez pour indiquer si un choix devrait être correct (vert) ou incorrect (rouge).
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                      Justification *
+                    </label>
+                    <textarea
+                      value={reportReason}
+                      onChange={(e) => setReportReason(e.target.value)}
+                      placeholder="Expliquez pourquoi cette question contient une erreur..."
+                      rows={4}
+                      className={`w-full p-3 rounded-xl border-2 text-sm resize-none ${isDarkMode ? 'bg-gray-700/50 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500' : 'bg-white border-gray-200 text-gray-900 placeholder-gray-400 focus:border-blue-500'} focus:outline-none transition-colors`}
+                    />
+                  </div>
+
+                  <div className="flex gap-3 pt-2">
+                    <button
+                      onClick={() => setShowReportModal(false)}
+                      className={`flex-1 py-2.5 rounded-xl font-medium text-sm ${isDarkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'} transition-colors`}
+                    >
+                      Annuler
+                    </button>
+                    <button
+                      onClick={async () => {
+                        if (!reportReason.trim()) return;
+                        setReportSubmitting(true);
+                        try {
+                          const res = await fetch('/api/report', {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json',
+                              'Authorization': `Bearer ${localStorage.getItem('learnfmpa_token') || ''}`,
+                            },
+                            body: JSON.stringify({
+                              user_id: user?.id,
+                              module_id: moduleId,
+                              question_id: currentQuestion.id,
+                              reason: reportReason,
+                              suggested_correct: reportSuggestedCorrect,
+                              suggested_incorrect: reportSuggestedIncorrect,
+                              original_correct: currentQuestion.correctAnswers,
+                              original_options: currentQuestion.options,
+                              question_text: currentQuestion.question,
+                            }),
+                          });
+                          if (res.ok) {
+                            setReportSubmitted(true);
+                          }
+                        } catch {
+                        } finally {
+                          setReportSubmitting(false);
+                        }
+                      }}
+                      disabled={!reportReason.trim() || reportSubmitting}
+                      className={`flex-1 py-2.5 rounded-xl font-medium text-sm transition-all ${!reportReason.trim() || reportSubmitting ? 'opacity-50 cursor-not-allowed bg-gradient-to-r from-red-400 to-orange-400 text-white' : 'bg-gradient-to-r from-red-600 to-orange-600 text-white hover:from-red-700 hover:to-orange-700 shadow-lg shadow-red-500/30'}`}
+                    >
+                      {reportSubmitting ? (
+                        <span className="flex items-center justify-center gap-2">
+                          <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                          </svg>
+                          Envoi...
+                        </span>
+                      ) : 'Envoyer le signalement'}
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
