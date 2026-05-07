@@ -9,6 +9,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
 import ThemeToggle from '@/components/ThemeToggle';
 import UpgradePrompt from '@/components/UpgradePrompt';
+import ImageViewer, { MODULE_IMAGE_CONFIGS, extractPageFromImagePath } from '@/components/ImageViewer';
 const ChapterNavigation = lazy(() => import('@/components/ChapterNavigation'));
 const Warp = lazy(() => import('@paper-design/shaders-react').then(mod => ({ default: mod.Warp })));
 const GrainGradient = lazy(() => import('@paper-design/shaders-react').then(mod => ({ default: mod.GrainGradient })));
@@ -98,6 +99,8 @@ export default function ModulePage() {
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [initialQuestionSet, setInitialQuestionSet] = useState(false);
+  const [showImageViewer, setShowImageViewer] = useState(false);
+  const [imageViewerPage, setImageViewerPage] = useState<number>(1);
   const [collapsedChoices, setCollapsedChoices] = useState<Set<number>>(new Set());
   const [questionStats, setQuestionStats] = useState<{
     total_answers: number;
@@ -1383,11 +1386,25 @@ export default function ModulePage() {
                   </span>
                 )}
               </div>
-              {currentQuestion?.chapter && (
-                <span className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium truncate max-w-[50%] ${isDarkMode ? 'bg-gradient-to-r from-green-900/40 to-emerald-900/40 text-green-400' : 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-700'} shadow-sm`}>
-                  {currentQuestion.chapter}
-                </span>
-              )}
+              <div className="flex items-center gap-2">
+                {currentQuestion?.chapter && (
+                  <span className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium truncate ${isDarkMode ? 'bg-gradient-to-r from-green-900/40 to-emerald-900/40 text-green-400' : 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-700'} shadow-sm`}>
+                    {currentQuestion.chapter}
+                  </span>
+                )}
+                {MODULE_IMAGE_CONFIGS[moduleId] && (
+                  <button
+                    onClick={() => { setImageViewerPage(1); setShowImageViewer(true); }}
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-1.5 ${isDarkMode ? 'bg-gradient-to-r from-blue-900/40 to-indigo-900/40 text-blue-400 hover:from-blue-900/60 hover:to-indigo-900/60' : 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 hover:from-blue-200 hover:to-indigo-200'} shadow-sm transition-colors`}
+                    title="Ouvrir le cours"
+                  >
+                    <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                    <span className="hidden sm:inline">Cours</span>
+                  </button>
+                )}
+              </div>
             </div>
             <p className={`text-base sm:text-lg sm:text-xl leading-relaxed ${isDarkMode ? 'text-gray-100' : 'text-gray-800'} font-medium`}>
               {currentQuestion?.question}
@@ -1553,6 +1570,28 @@ export default function ModulePage() {
                     </div>
                     <div className={`flex-1 min-w-0 ${isStrikethrough ? 'line-through' : ''}`}>
                       <p className={`text-sm sm:text-base leading-relaxed break-words ${isCollapsed ? 'line-clamp-1' : ''}`}>{option}</p>
+                      {optionImage && MODULE_IMAGE_CONFIGS[moduleId] && (() => {
+                        const imgStr = Array.isArray(optionImage) ? optionImage[0] : String(optionImage);
+                        const imgPath = imgStr.split(',')[0].trim();
+                        const pageNum = extractPageFromImagePath(imgPath);
+                        if (!pageNum) return null;
+                        return (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setImageViewerPage(pageNum); setShowImageViewer(true); }}
+                            className={`inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-md text-xs font-medium transition-colors ${
+                              isDarkMode
+                                ? 'bg-blue-900/30 text-blue-400 hover:bg-blue-900/50'
+                                : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
+                            }`}
+                            title={`Ouvrir à la page ${pageNum}`}
+                          >
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                            p.{pageNum}
+                          </button>
+                        );
+                      })()}
                     </div>
 {(effectiveGdrMode && showAnswer && isCorrect && isSelected) && (
                        <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
@@ -1776,6 +1815,14 @@ const statTextColor = effectiveGdrMode && showAnswer && isCorrect && isSelected 
             onClick={(e) => e.stopPropagation()}
           />
         </div>
+      )}
+
+      {showImageViewer && MODULE_IMAGE_CONFIGS[moduleId] && (
+        <ImageViewer
+          moduleId={moduleId}
+          initialPage={imageViewerPage}
+          onClose={() => setShowImageViewer(false)}
+        />
       )}
     </div>
   );
