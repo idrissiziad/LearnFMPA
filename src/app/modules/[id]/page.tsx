@@ -1139,7 +1139,7 @@ export default function ModulePage() {
       )}
 
       <header className={`${isDarkMode ? 'bg-gray-800/80 border-gray-700/50' : 'bg-white/80 border-gray-200/50'} backdrop-blur-xl border-b sticky top-0 z-10 shadow-sm`}>
-        <div className="px-3 sm:px-4 py-2 sm:py-3">
+        <div className="px-2 sm:px-4 py-1.5 sm:py-3">
           <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center">
             <div data-tutorial="module-header" className="flex justify-between items-center">
               <div className="flex items-center space-x-2 sm:space-x-3">
@@ -1271,7 +1271,7 @@ export default function ModulePage() {
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6 relative z-10">
+      <div className="max-w-4xl mx-auto px-2 sm:px-4 py-2 sm:py-6 relative z-10">
         {!examMode && sessionFilter === 'Toutes les sessions' && (
           <div data-tutorial="module-chapters" className="mb-3 sm:mb-4">
             <button
@@ -1389,10 +1389,10 @@ export default function ModulePage() {
            </div>
         ) : (
         <div data-tutorial="module-question" className={`${isDarkMode ? 'bg-gray-800/60' : 'bg-white/80'} backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl border ${isDarkMode ? 'border-gray-700/50' : 'border-gray-200/50'} overflow-hidden transition-all duration-300 ${isTransitioning ? 'opacity-0 scale-[0.98]' : 'opacity-100 scale-100'}`}>
-          <div className={`p-5 sm:p-8 border-b ${isDarkMode ? 'border-gray-700/50' : 'border-gray-100'}`}>
-            <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <div className={`p-3 sm:p-8 border-b ${isDarkMode ? 'border-gray-700/50' : 'border-gray-100'}`}>
+            <div className="flex items-center justify-between mb-2 sm:mb-6">
               <div className="flex items-center gap-2.5 sm:gap-4">
-                <span className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-base sm:text-lg font-bold ${isDarkMode ? 'bg-gradient-to-r from-gray-700 to-gray-600 text-white' : 'bg-gradient-to-r from-gray-100 to-gray-50 text-gray-900'} shadow-sm`}>
+                <span className={`px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-xl text-sm sm:text-lg font-bold ${isDarkMode ? 'bg-gradient-to-r from-gray-700 to-gray-600 text-white' : 'bg-gradient-to-r from-gray-100 to-gray-50 text-gray-900'} shadow-sm`}>
                   {currentQuestionIndex + 1}/{activeQuestions.length}
                 </span>
                 {timerEnabled && !examMode && (
@@ -1404,8 +1404,8 @@ export default function ModulePage() {
                   </span>
                 )}
                 {currentQuestion && correctlyAnsweredQuestions[`${moduleId}_${currentQuestion.id}`] && (
-                  <span className="w-7 h-7 sm:w-9 sm:h-9 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/30">
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <span className="w-6 h-6 sm:w-9 sm:h-9 bg-gradient-to-br from-green-400 to-green-600 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg shadow-green-500/30">
+                    <svg className="w-3 h-3 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   </span>
@@ -1447,7 +1447,7 @@ export default function ModulePage() {
                 </button>
               </div>
             </div>
-            <p className={`text-base sm:text-lg sm:text-xl leading-relaxed ${isDarkMode ? 'text-gray-100' : 'text-gray-800'} font-medium`}>
+            <p className={`text-sm sm:text-lg sm:text-xl leading-relaxed ${isDarkMode ? 'text-gray-100' : 'text-gray-800'} font-medium`}>
               {currentQuestion?.question}
             </p>
             <p className={`text-xs mt-3 sm:mt-4 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'} flex items-center gap-1.5`}>
@@ -1485,8 +1485,8 @@ export default function ModulePage() {
           })()}
 
           {showAnswer && currentQuestion && (
-            <div className={`px-4 sm:px-8 py-3 sm:py-4 ${isDarkMode ? 'bg-gray-750/50' : 'bg-gray-50/50'} border-b ${isDarkMode ? 'border-gray-700/50' : 'border-gray-100'}`}>
-              <div className="flex flex-wrap gap-2 sm:gap-2.5">
+            <div className={`px-3 sm:px-8 py-2 sm:py-4 ${isDarkMode ? 'bg-gray-750/50' : 'bg-gray-50/50'} border-b ${isDarkMode ? 'border-gray-700/50' : 'border-gray-100'}`}>
+              <div className="flex flex-wrap gap-1.5 sm:gap-2.5">
                 {!showSimpleResult && showAnswer && (
                   <span className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold bg-gradient-to-r from-blue-500 to-blue-600 text-white flex items-center gap-1.5 shadow-lg shadow-blue-500/25">
                     <span>📖</span>
@@ -1535,7 +1535,7 @@ export default function ModulePage() {
             </div>
           )}
 
-          <div className="p-4 sm:p-5 sm:p-8 space-y-3 sm:space-y-4">
+          <div className="p-3 sm:p-5 sm:p-8 space-y-2 sm:space-y-4">
             {(showAnswer ? currentQuestion?.options : (shuffledOptions[currentQuestionIndex] || [])).map((option, index) => {
               const jsonIsCorrect = showAnswer
                 ? (currentQuestion?.correctAnswers || []).includes(index)
@@ -1596,8 +1596,8 @@ export default function ModulePage() {
                   onContextMenu={(e) => handleOptionRightClick(e, index)}
                   onClick={() => !showAnswer && handleAnswerSelect(index)}
                 >
-                  <div className="p-4 sm:p-5 flex flex-wrap items-center gap-3 sm:gap-4">
-                    <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm sm:text-base ${
+                  <div className="p-3 sm:p-5 flex flex-wrap items-center gap-2 sm:gap-4">
+                    <div className={`w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-xs sm:text-base ${
                       effectiveGdrMode && showAnswer && isCorrect && isSelected ? 'bg-white/20' :
                       effectiveGdrMode && showAnswer && isCorrect && !isSelected ? 'border-2 border-green-500' :
                       effectiveGdrMode && showAnswer && !isCorrect && isSelected ? 'bg-white/20' :
@@ -1610,7 +1610,7 @@ export default function ModulePage() {
                       {String.fromCharCode(65 + index)}
                     </div>
                     <div className={`flex-1 min-w-0 ${isStrikethrough ? 'line-through' : ''}`}>
-                      <p className={`text-sm sm:text-base leading-relaxed break-words ${isCollapsed ? 'line-clamp-1' : ''}`}>{option}</p>
+                      <p className={`text-xs sm:text-base leading-relaxed break-words ${isCollapsed ? 'line-clamp-1' : ''}`}>{option}</p>
                       {optionImage && MODULE_IMAGE_CONFIGS[moduleId] && (() => {
                         const imgStr = Array.isArray(optionImage) ? optionImage[0] : String(optionImage);
                         const imgPath = imgStr.split(',')[0].trim();
@@ -1635,43 +1635,43 @@ export default function ModulePage() {
                       })()}
                     </div>
 {(effectiveGdrMode && showAnswer && isCorrect && isSelected) && (
-                       <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                         <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <div className="w-5 h-5 sm:w-7 sm:h-7 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                          <svg className="w-3 h-3 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                          </svg>
                        </div>
                      )}
-                     {(effectiveGdrMode && showAnswer && isCorrect && !isSelected) && (
-                       <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 border-green-500 flex items-center justify-center flex-shrink-0">
-                         <svg className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+{(effectiveGdrMode && showAnswer && isCorrect && !isSelected) && (
+                        <div className="w-5 h-5 sm:w-7 sm:h-7 rounded-full border-2 border-green-500 flex items-center justify-center flex-shrink-0">
+                          <svg className="w-3 h-3 sm:w-5 sm:h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                          </svg>
                        </div>
                      )}
-                     {(effectiveGdrMode && showAnswer && !isCorrect && isSelected) && (
-                       <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                         <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+{(effectiveGdrMode && showAnswer && !isCorrect && isSelected) && (
+                        <div className="w-5 h-5 sm:w-7 sm:h-7 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                          <svg className="w-3 h-3 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                          </svg>
                        </div>
                      )}
-                     {!effectiveGdrMode && showAnswer && showCorrectFeedback && (
-                       <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                         <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+{!effectiveGdrMode && showAnswer && showCorrectFeedback && (
+                        <div className="w-5 h-5 sm:w-7 sm:h-7 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                          <svg className="w-3 h-3 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                          </svg>
                        </div>
                      )}
-                     {!effectiveGdrMode && showAnswer && showMissedCorrectFeedback && (
-                       <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 border-green-500 flex items-center justify-center flex-shrink-0">
-                         <svg className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+{!effectiveGdrMode && showAnswer && showMissedCorrectFeedback && (
+                        <div className="w-5 h-5 sm:w-7 sm:h-7 rounded-full border-2 border-green-500 flex items-center justify-center flex-shrink-0">
+                          <svg className="w-3 h-3 sm:w-5 sm:h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                          </svg>
                        </div>
                      )}
-                     {showIncorrectFeedback && (
-                       <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                         <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+{showIncorrectFeedback && (
+                        <div className="w-5 h-5 sm:w-7 sm:h-7 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                          <svg className="w-3 h-3 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                          </svg>
                        </div>
@@ -1738,7 +1738,7 @@ const statTextColor = effectiveGdrMode && showAnswer && isCorrect && isSelected 
           </div>
 
           {showAnswer && currentQuestion?.overallExplanation && showExplanations && (
-            <div className={`mx-4 sm:mx-6 sm:mx-8 mb-4 sm:mb-6 p-4 sm:p-5 rounded-xl sm:rounded-2xl ${isDarkMode ? 'bg-gray-700/50' : 'bg-gradient-to-r from-gray-50 to-gray-100'} border ${isDarkMode ? 'border-gray-600/30' : 'border-gray-200/50'}`}>
+            <div className={`mx-3 sm:mx-6 sm:mx-8 mb-3 sm:mb-6 p-3 sm:p-5 rounded-xl sm:rounded-2xl ${isDarkMode ? 'bg-gray-700/50' : 'bg-gradient-to-r from-gray-50 to-gray-100'} border ${isDarkMode ? 'border-gray-600/30' : 'border-gray-200/50'}`}>
               <h4 className={`font-semibold mb-2 sm:mb-3 text-sm sm:text-base ${isDarkMode ? 'text-white' : 'text-gray-900'} flex items-center gap-2`}>
                 <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
@@ -1752,7 +1752,7 @@ const statTextColor = effectiveGdrMode && showAnswer && isCorrect && isSelected 
           )}
 
           {showAnswer && !showExplanations && (
-            <div className={`mx-4 sm:mx-6 sm:mx-8 mb-4 sm:mb-6`}>
+            <div className={`mx-3 sm:mx-6 sm:mx-8 mb-3 sm:mb-6`}>
               <UpgradePrompt
                 variant="card"
                 title="Explications disponibles avec la version complète"
@@ -1764,12 +1764,12 @@ const statTextColor = effectiveGdrMode && showAnswer && isCorrect && isSelected 
             </div>
           )}
 
-          <div data-tutorial="module-actions" className={`p-4 sm:p-5 sm:p-6 border-t ${isDarkMode ? 'border-gray-700/50' : 'border-gray-100'} flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-6`}>
-            <div className="w-full sm:w-auto flex justify-between sm:justify-start gap-3 sm:gap-4">
+          <div data-tutorial="module-actions" className={`p-3 sm:p-5 sm:p-6 border-t ${isDarkMode ? 'border-gray-700/50' : 'border-gray-100'} flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-6`}>
+            <div className="w-full sm:w-auto flex justify-between sm:justify-start gap-2 sm:gap-4">
               <button
                 onClick={handlePreviousQuestion}
                 disabled={currentQuestionIndex === 0}
-                className={`px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl font-medium transition-all flex items-center gap-2 sm:gap-2.5 text-sm sm:text-base ${
+                className={`px-3 sm:px-6 py-2 sm:py-3.5 rounded-xl font-medium transition-all flex items-center gap-1.5 sm:gap-2.5 text-sm sm:text-base ${
                   currentQuestionIndex === 0
                     ? 'opacity-40 cursor-not-allowed'
                     : isDarkMode ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50' : 'bg-white text-gray-700 hover:bg-gray-50 shadow-sm border border-gray-200/50'
@@ -1786,14 +1786,14 @@ const statTextColor = effectiveGdrMode && showAnswer && isCorrect && isSelected 
                   {selectedAnswers.length > 0 && (
                     <button
                       onClick={handleShowAnswer}
-                      className="px-5 sm:px-7 py-2.5 sm:py-3.5 rounded-xl font-semibold bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg shadow-green-500/30 text-sm sm:text-base"
+                      className="px-4 sm:px-7 py-2 sm:py-3.5 rounded-xl font-semibold bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg shadow-green-500/30 text-sm sm:text-base"
                     >
                       Valider
                     </button>
                   )}
                   <button
                     onClick={handleNextQuestion}
-                    className={`px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl font-medium transition-all flex items-center gap-2 sm:gap-2.5 text-sm sm:text-base ${
+className={`px-3 sm:px-6 py-2 sm:py-3.5 rounded-xl font-medium transition-all flex items-center gap-1.5 sm:gap-2.5 text-sm sm:text-base ${
                       selectedAnswers.length === 0
                         ? isDarkMode ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50' : 'bg-white text-gray-700 hover:bg-gray-50 shadow-sm border border-gray-200/50'
                         : 'bg-gradient-to-r from-gray-500 to-gray-600 text-white hover:from-gray-600 hover:to-gray-700'
@@ -1808,7 +1808,7 @@ const statTextColor = effectiveGdrMode && showAnswer && isCorrect && isSelected 
               ) : (
                 <button
                   onClick={handleNextQuestion}
-                  className="px-5 sm:px-7 py-2.5 sm:py-3.5 rounded-xl font-semibold bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg shadow-green-500/30 flex items-center gap-2 sm:gap-2.5 text-sm sm:text-base"
+                  className="px-4 sm:px-7 py-2 sm:py-3.5 rounded-xl font-semibold bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg shadow-green-500/30 flex items-center gap-1.5 sm:gap-2.5 text-sm sm:text-base"
                 >
                   {currentQuestionIndex === activeQuestions.length - 1 ? 'Terminer' : 'Suivant'}
                   <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
