@@ -10,6 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import ThemeToggle from '@/components/ThemeToggle';
 import UpgradePrompt from '@/components/UpgradePrompt';
 import ImageViewer, { MODULE_IMAGE_CONFIGS, extractPageFromImagePath } from '@/components/ImageViewer';
+import TutorialOverlay, { MODULE_TUTORIAL_STEPS, shouldShowModuleTutorial } from '@/components/TutorialOverlay';
 const ChapterNavigation = lazy(() => import('@/components/ChapterNavigation'));
 const Warp = lazy(() => import('@paper-design/shaders-react').then(mod => ({ default: mod.Warp })));
 const GrainGradient = lazy(() => import('@paper-design/shaders-react').then(mod => ({ default: mod.GrainGradient })));
@@ -127,6 +128,7 @@ export default function ModulePage() {
   const [reportSuggestedIncorrect, setReportSuggestedIncorrect] = useState<number[]>([]);
   const [reportSubmitting, setReportSubmitting] = useState(false);
   const [reportSubmitted, setReportSubmitted] = useState(false);
+  const [showModuleTutorial, setShowModuleTutorial] = useState(false);
   const examTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const handleShowAnswerRef = useRef<() => void>(() => {});
 
@@ -139,6 +141,13 @@ export default function ModulePage() {
       router.push('/login');
     }
   }, [user, authLoading, router]);
+
+  useEffect(() => {
+    if (!authLoading && user && shouldShowModuleTutorial()) {
+      const timer = setTimeout(() => setShowModuleTutorial(true), 1200);
+      return () => clearTimeout(timer);
+    }
+  }, [user, authLoading]);
 
   useEffect(() => {
     if (!user) return;
@@ -1132,9 +1141,18 @@ export default function ModulePage() {
       <header className={`${isDarkMode ? 'bg-gray-800/80 border-gray-700/50' : 'bg-white/80 border-gray-200/50'} backdrop-blur-xl border-b sticky top-0 z-10 shadow-sm`}>
         <div className="px-3 sm:px-4 py-2 sm:py-3">
           <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center">
-            <div className="flex justify-between items-center">
+            <div data-tutorial="module-header" className="flex justify-between items-center">
               <div className="flex items-center space-x-2 sm:space-x-3">
                 <ThemeToggle />
+                <button
+                  onClick={() => setShowModuleTutorial(true)}
+                  className={`p-1.5 sm:p-2 rounded-xl transition-all ${isDarkMode ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50 hover:text-green-400' : 'bg-gray-100/80 text-gray-600 hover:bg-green-50 hover:text-green-600'} shadow-sm`}
+                  title="Tutoriel"
+                >
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.36-2 4.272-2C14.528 7 16 8.153 16 9.5c0 1.657-1.623 2.417-3.176 3.01-.842.326-1.475.77-1.475 1.49v.5M12 17h.01M9 12h6" />
+                  </svg>
+                </button>
                 <Link
                   href="/dashboard"
                   className={`p-1.5 sm:p-2.5 rounded-xl ${isDarkMode ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50' : 'bg-gray-100/80 text-gray-700 hover:bg-gray-200/80'} transition-all shadow-sm`}
@@ -1158,7 +1176,7 @@ export default function ModulePage() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 sm:pb-0">
+            <div data-tutorial="module-toolbar" className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 sm:pb-0">
               {examMode && (
                 <div className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-sm sm:text-base font-bold flex items-center gap-1.5 flex-shrink-0 ${examTimeLeft <= 300 ? 'bg-gradient-to-r from-red-500 to-red-600 text-white animate-pulse shadow-lg shadow-red-500/25' : isDarkMode ? 'bg-gradient-to-r from-amber-700/60 to-amber-600/60 text-amber-200' : 'bg-gradient-to-r from-amber-100 to-amber-200 text-amber-800'} shadow-sm`}>
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1218,8 +1236,9 @@ export default function ModulePage() {
                  <span className="hidden sm:inline">Shader</span>
                </button>
 {!examMode && (
-                <>
+                  <>
                   <select
+                    data-tutorial="module-filters"
                     className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl border text-xs sm:text-sm flex-shrink-0 ${isDarkMode ? 'bg-gray-700/50 border-gray-600/50 text-white' : 'bg-white/80 border-gray-200/50 text-gray-700'} cursor-pointer shadow-sm backdrop-blur-sm`}
                     value={sessionFilter}
                     onChange={(e) => handleSessionFilterChange(e.target.value)}
@@ -1237,8 +1256,8 @@ export default function ModulePage() {
                       {showAnsweredQuestions ? 'Répondues' : 'Non répondues'}
                     </button>
                   )}
-                </>
-              )}
+                  </>
+                )}
               {!isFreeUser && (
               <button
                 onClick={handleResetProgress}
@@ -1254,7 +1273,7 @@ export default function ModulePage() {
 
       <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6 relative z-10">
         {!examMode && sessionFilter === 'Toutes les sessions' && (
-          <div className="mb-3 sm:mb-4">
+          <div data-tutorial="module-chapters" className="mb-3 sm:mb-4">
             <button
               onClick={() => setShowChapters(!showChapters)}
               className={`w-full px-4 sm:px-5 py-3 sm:py-4 rounded-2xl font-medium transition-all flex items-center justify-between text-sm sm:text-base ${isDarkMode ? 'bg-gray-800/50 text-white hover:bg-gray-700/50' : 'bg-white/70 text-gray-900 hover:bg-white/90'} border ${isDarkMode ? 'border-gray-700/50' : 'border-gray-200/50'} shadow-sm backdrop-blur-sm`}
@@ -1369,7 +1388,7 @@ export default function ModulePage() {
              </div>
            </div>
         ) : (
-        <div className={`${isDarkMode ? 'bg-gray-800/60' : 'bg-white/80'} backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl border ${isDarkMode ? 'border-gray-700/50' : 'border-gray-200/50'} overflow-hidden transition-all duration-300 ${isTransitioning ? 'opacity-0 scale-[0.98]' : 'opacity-100 scale-100'}`}>
+        <div data-tutorial="module-question" className={`${isDarkMode ? 'bg-gray-800/60' : 'bg-white/80'} backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl border ${isDarkMode ? 'border-gray-700/50' : 'border-gray-200/50'} overflow-hidden transition-all duration-300 ${isTransitioning ? 'opacity-0 scale-[0.98]' : 'opacity-100 scale-100'}`}>
           <div className={`p-5 sm:p-8 border-b ${isDarkMode ? 'border-gray-700/50' : 'border-gray-100'}`}>
             <div className="flex items-center justify-between mb-4 sm:mb-6">
               <div className="flex items-center gap-2.5 sm:gap-4">
@@ -1392,7 +1411,7 @@ export default function ModulePage() {
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-2">
+              <div data-tutorial="module-report" className="flex items-center gap-2">
                 {currentQuestion?.chapter && (
                   <span className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium truncate ${isDarkMode ? 'bg-gradient-to-r from-green-900/40 to-emerald-900/40 text-green-400' : 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-700'} shadow-sm`}>
                     {currentQuestion.chapter}
@@ -1745,7 +1764,7 @@ const statTextColor = effectiveGdrMode && showAnswer && isCorrect && isSelected 
             </div>
           )}
 
-          <div className={`p-4 sm:p-5 sm:p-6 border-t ${isDarkMode ? 'border-gray-700/50' : 'border-gray-100'} flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-6`}>
+          <div data-tutorial="module-actions" className={`p-4 sm:p-5 sm:p-6 border-t ${isDarkMode ? 'border-gray-700/50' : 'border-gray-100'} flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-6`}>
             <div className="w-full sm:w-auto flex justify-between sm:justify-start gap-3 sm:gap-4">
               <button
                 onClick={handlePreviousQuestion}
@@ -2010,6 +2029,9 @@ const statTextColor = effectiveGdrMode && showAnswer && isCorrect && isSelected 
             </div>
           </div>
         </div>
+      )}
+    {showModuleTutorial && (
+        <TutorialOverlay isDarkMode={isDarkMode} onClose={() => setShowModuleTutorial(false)} steps={MODULE_TUTORIAL_STEPS} storageKey="learnfmpa_module_tutorial_done" />
       )}
     </div>
   );

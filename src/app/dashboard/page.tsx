@@ -8,6 +8,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
 import ThemeToggle from '@/components/ThemeToggle';
 import UpgradePrompt from '@/components/UpgradePrompt';
+import TutorialOverlay, { shouldShowTutorial } from '@/components/TutorialOverlay';
 
 interface ModuleStats {
   questionCount: number;
@@ -41,6 +42,7 @@ export default function Dashboard() {
   const [allModuleQuestions, setAllModuleQuestions] = useState<Map<number, Question[]>>(new Map());
   const [moduleStats, setModuleStats] = useState<Map<number, ModuleStats>>(new Map());
   const [isLoading, setIsLoading] = useState(true);
+  const [showTutorial, setShowTutorial] = useState(false);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   const userYears = useMemo(() => user?.years || DEFAULT_YEARS, [user?.years]);
@@ -51,6 +53,13 @@ export default function Dashboard() {
       router.push('/login');
     }
   }, [user, authLoading, router]);
+
+  useEffect(() => {
+    if (!authLoading && user && shouldShowTutorial()) {
+      const timer = setTimeout(() => setShowTutorial(true), 800);
+      return () => clearTimeout(timer);
+    }
+  }, [user, authLoading]);
 
   useEffect(() => {
     const loadModuleStats = async () => {
@@ -236,6 +245,15 @@ export default function Dashboard() {
             </nav>
 
             <div className="flex items-center space-x-2 sm:space-x-3">
+              <button
+                onClick={() => setShowTutorial(true)}
+                className={`flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-lg transition-all ${isDarkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-green-400' : 'bg-gray-100 text-gray-600 hover:bg-green-50 hover:text-green-600'}`}
+                title="Tutoriel"
+              >
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.36-2 4.272-2C14.528 7 16 8.153 16 9.5c0 1.657-1.623 2.417-3.176 3.01-.842.326-1.475.77-1.475 1.49v.5M12 17h.01M9 12h6" />
+                </svg>
+              </button>
               <ThemeToggle />
               <button
                 onClick={handleLogout}
@@ -286,7 +304,7 @@ export default function Dashboard() {
             </div>
           </div>
         )}
-        <div className={`relative overflow-hidden rounded-2xl mb-8 ${isDarkMode ? 'bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600' : 'bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500'} p-6 sm:p-8`}>
+        <div data-tutorial="greeting" className={`relative overflow-hidden rounded-2xl mb-8 ${isDarkMode ? 'bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600' : 'bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500'} p-6 sm:p-8`}>
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIyIi8+PC9nPjwvZz48L3N2Zz4=')] opacity-30"></div>
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
           <div className="relative z-10">
@@ -299,7 +317,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5 mb-8">
+        <div data-tutorial="quick-stats" className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5 mb-8">
           {quickStats.map((stat, index) => (
             <div
               key={index}
@@ -322,7 +340,7 @@ export default function Dashboard() {
 
         <div className="grid lg:grid-cols-3 gap-6 mb-8">
           <div className="lg:col-span-2">
-            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-5 sm:p-6 shadow-sm border overflow-hidden ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+            <div data-tutorial="search" className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-5 sm:p-6 shadow-sm border overflow-hidden ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
               <div className="flex items-center gap-3 mb-5">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isDarkMode ? 'bg-blue-900/30' : 'bg-blue-50'}`}>
                   <svg className={`w-5 h-5 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -452,7 +470,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-5 sm:p-6 shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+          <div data-tutorial="actions" className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-5 sm:p-6 shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
             <h2 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'} mb-4`}>
               Actions rapides
             </h2>
@@ -518,7 +536,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="mb-8">
+        <div data-tutorial="modules" className="mb-8">
           <div className="flex items-center justify-between mb-5">
             <h2 className={`text-lg sm:text-xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
               Modules populaires
@@ -562,7 +580,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className={`rounded-xl overflow-hidden bg-gradient-to-r ${isDarkMode ? 'from-green-600 via-emerald-600 to-teal-600' : 'from-green-500 via-emerald-500 to-teal-500'} shadow-lg`}>
+        <div data-tutorial="cta" className={`rounded-xl overflow-hidden bg-gradient-to-r ${isDarkMode ? 'from-green-600 via-emerald-600 to-teal-600' : 'from-green-500 via-emerald-500 to-teal-500'} shadow-lg`}>
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 sm:p-8 text-center sm:text-left">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
@@ -598,6 +616,10 @@ export default function Dashboard() {
           </div>
         </div>
       </footer>
+
+      {showTutorial && (
+        <TutorialOverlay isDarkMode={isDarkMode} onClose={() => setShowTutorial(false)} />
+      )}
     </div>
   );
 }
