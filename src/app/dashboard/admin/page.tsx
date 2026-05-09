@@ -947,12 +947,22 @@ export default function AdminPage() {
                 className={`px-4 py-3 rounded-xl text-sm font-medium ${isDarkMode ? 'bg-red-900/40 text-red-300 hover:bg-red-900/60 border border-red-800/50' : 'bg-red-50 text-red-700 hover:bg-red-100 border border-red-200'} transition-colors`}>
                 Supprimer
               </button>
-              <button onClick={() => {
+              <button onClick={async () => {
                 const u = selectedUser;
                 const pwd = generateTempPassword();
                 setEmailDraft(generateWelcomeEmail(u.name, u.email, pwd, u.subscription_status, u.activation_days));
                 setEmailConfirmed(false);
                 setEmailBodyCopied(false);
+                try {
+                  const data = await adminPost('users', { action: 'reset_password', email: u.email, new_password: pwd });
+                  if (!data.success) {
+                    showMsg('Erreur lors de la mise à jour du mot de passe: ' + (data.error || 'Erreur'), true);
+                    setEmailDraft(null);
+                  }
+                } catch {
+                  showMsg('Erreur de connexion lors de la mise à jour du mot de passe', true);
+                  setEmailDraft(null);
+                }
               }}
                 className={`px-4 py-3 rounded-xl text-sm font-medium ${isDarkMode ? 'bg-indigo-900/40 text-indigo-300 hover:bg-indigo-900/60 border border-indigo-800/50' : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200'} transition-colors`}>
                 Générer email bienvenue
@@ -963,6 +973,16 @@ export default function AdminPage() {
                 setEmailDraft(generateResetEmail(u.name, u.email, pwd));
                 setEmailConfirmed(false);
                 setEmailBodyCopied(false);
+                try {
+                  const data = await adminPost('users', { action: 'reset_password', email: u.email, new_password: pwd });
+                  if (!data.success) {
+                    showMsg('Erreur lors de la mise à jour du mot de passe: ' + (data.error || 'Erreur'), true);
+                    setEmailDraft(null);
+                  }
+                } catch {
+                  showMsg('Erreur de connexion lors de la mise à jour du mot de passe', true);
+                  setEmailDraft(null);
+                }
               }}
                 className={`px-4 py-3 rounded-xl text-sm font-medium ${isDarkMode ? 'bg-purple-900/40 text-purple-300 hover:bg-purple-900/60 border border-purple-800/50' : 'bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200'} transition-colors`}>
                 Générer email reset MDP
