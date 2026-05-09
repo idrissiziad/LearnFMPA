@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -84,6 +84,7 @@ export default function ReportsPage() {
   const [submitting, setSubmitting] = useState(false);
   const [voting, setVoting] = useState(false);
   const [questionYears, setQuestionYears] = useState<Map<string, string>>(new Map());
+  const questionCacheRef = useRef<Map<number, Question[]>>(new Map());
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -97,6 +98,7 @@ export default function ReportsPage() {
     const loadPromises = [...moduleIds].map(async (moduleId) => {
       try {
         const questions = await getModuleQuestions(moduleId);
+        questionCacheRef.current.set(moduleId, questions);
         for (const q of questions) {
           if (q.year) yearMap.set(`${moduleId}_${q.id}`, q.year);
         }
@@ -147,15 +149,23 @@ export default function ReportsPage() {
   const loadQuestionDetail = useCallback(async (report: CommunityReport) => {
     setSelectedReport(report);
     setCommentText('');
-    setLoadingQuestion(true);
-    try {
-      const questions = await getModuleQuestions(report.module_id);
-      const q = questions.find(q => q.id === report.question_id) || null;
+    const cached = questionCacheRef.current.get(report.module_id);
+    if (cached) {
+      const q = cached.find(q => q.id === report.question_id) || null;
       setQuestionData(q);
-    } catch {
-      setQuestionData(null);
-    } finally {
       setLoadingQuestion(false);
+    } else {
+      setLoadingQuestion(true);
+      try {
+        const questions = await getModuleQuestions(report.module_id);
+        questionCacheRef.current.set(report.module_id, questions);
+        const q = questions.find(q => q.id === report.question_id) || null;
+        setQuestionData(q);
+      } catch {
+        setQuestionData(null);
+      } finally {
+        setLoadingQuestion(false);
+      }
     }
   }, []);
 
@@ -273,6 +283,45 @@ export default function ReportsPage() {
       return scoreB - scoreA;
     });
 
+  const reportGroups = useMemo(() => {
+    const groups = new Map<string, CommunityReport[]>();
+    const seen = new Set<string>();
+    for (const report of filteredReports) {
+      const key = `${report.module_id}_${report.question_id}`;
+      if (!seen.has(report.id)) {
+        seen.add(report.id);
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key)!.push(report);
+      }
+    }
+    for (const [, group] of groups) {
+      group.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    }
+    return groups;
+  }, [filteredReports]);
+
+  const allQuestionReports = useMemo(() => {
+    if (!selectedReport) return [];
+    const key = `${selectedReport.module_id}_${selectedReport.question_id}`;
+    return reports.filter(r => `${r.module_id}_${r.question_id}` === key);
+  }, [selectedReport, reports]);
+
+  const mergedSuggestions = useMemo(() => {
+    const correct = new Set<number>();
+    const incorrect = new Set<number>();
+    for (const r of allQuestionReports) {
+      for (const idx of r.suggested_correct || []) correct.add(idx);
+      for (const idx of r.suggested_incorrect || []) incorrect.add(idx);
+    }
+    return { correct, incorrect };
+  }, [allQuestionReports]);
+
+  const getPrimaryReport = (group: CommunityReport[]): CommunityReport => {
+    const pending = group.filter(r => r.status === 'pending');
+    if (pending.length > 0) return pending[0];
+    return group[0];
+  };
+
   const getStatusColor = (status: string) => {
     if (status === 'pending') return isDarkMode ? 'bg-amber-900/40 text-amber-300' : 'bg-amber-100 text-amber-700';
     if (status === 'resolved') return isDarkMode ? 'bg-green-900/40 text-green-300' : 'bg-green-100 text-green-700';
@@ -361,8 +410,8 @@ export default function ReportsPage() {
                 <div className={`rounded-xl border overflow-hidden mb-6 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
                   <div className={`p-4 sm:p-5 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
                     <div className="flex flex-wrap items-center gap-2 mb-3">
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${getStatusColor(selectedReport.status)}`}>
-                        {getStatusLabel(selectedReport.status)}
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${getStatusColor(allQuestionReports.some(r => r.status === 'pending') ? 'pending' : allQuestionReports.some(r => r.status === 'resolved') ? 'resolved' : 'dismissed')}`}>
+                        {getStatusLabel(allQuestionReports.some(r => r.status === 'pending') ? 'pending' : allQuestionReports.some(r => r.status === 'resolved') ? 'resolved' : 'dismissed')}
                       </span>
                       <span className={`text-xs px-2 py-0.5 rounded-full ${isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-50 text-blue-700'}`}>
                         {MODULE_MAP.get(selectedReport.module_id) || `Module ${selectedReport.module_id}`}
@@ -370,6 +419,11 @@ export default function ReportsPage() {
                       {isAdmin && (
                         <span className={`text-xs px-2 py-0.5 rounded-full font-mono ${isDarkMode ? 'bg-rose-900/40 text-rose-300' : 'bg-rose-100 text-rose-700'}`}>
                           M{selectedReport.module_id}:Q{selectedReport.question_id}
+                        </span>
+                      )}
+                      {allQuestionReports.length > 1 && (
+                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${isDarkMode ? 'bg-amber-900/40 text-amber-300' : 'bg-amber-100 text-amber-700'}`}>
+                          {allQuestionReports.length} signalements
                         </span>
                       )}
                       {questionData?.year && (
@@ -383,10 +437,7 @@ export default function ReportsPage() {
                         </span>
                       )}
                       <span className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                        {timeAgo(selectedReport.created_at)}
-                      </span>
-                      <span className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                        par {selectedReport.display_name || `${selectedReport.user_id.slice(0, 12)}...`}
+                        {timeAgo(allQuestionReports.reduce((max, r) => new Date(r.created_at) > max ? new Date(r.created_at) : max, new Date(0)).toISOString())}
                       </span>
                     </div>
                     <div className="flex items-center gap-4">
@@ -444,7 +495,7 @@ export default function ReportsPage() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                         </svg>
                         <span className={`text-xs font-mono font-medium ${isDarkMode ? 'text-rose-300' : 'text-rose-700'}`}>
-                          Admin : report_id=&quot;{selectedReport.id}&quot; module_id={selectedReport.module_id} question_id=&quot;{selectedReport.question_id}&quot;
+                          Admin : module_id={selectedReport.module_id} question_id=&quot;{selectedReport.question_id}&quot; · {allQuestionReports.map(r => r.id).join(', ')}
                         </span>
                       </div>
                     )}
@@ -453,8 +504,8 @@ export default function ReportsPage() {
                       const options = questionData?.options || selectedReport.original_options || [];
                       const explanations = questionData?.answerExplanations || [];
                       const origCorrectSet = new Set(selectedReport.original_correct || []);
-                      const suggestedCorrectSet = new Set(selectedReport.suggested_correct || []);
-                      const suggestedIncorrectSet = new Set(selectedReport.suggested_incorrect || []);
+                      const suggestedCorrectSet = mergedSuggestions.correct;
+                      const suggestedIncorrectSet = mergedSuggestions.incorrect;
 
                       return options.length > 0 ? (
                         <div className="space-y-2 mb-4">
@@ -577,13 +628,53 @@ export default function ReportsPage() {
                     )}
 
                     <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-amber-900/20 border border-amber-800/50' : 'bg-amber-50 border border-amber-200'}`}>
-                      <h3 className={`text-sm font-medium mb-2 ${isDarkMode ? 'text-amber-300' : 'text-amber-800'}`}>Raison du signalement</h3>
-                      <p className={`text-sm ${isDarkMode ? 'text-amber-200' : 'text-amber-700'}`}>
-                        {selectedReport.reason}
-                      </p>
+                      {allQuestionReports.length === 1 ? (
+                        <>
+                          <h3 className={`text-sm font-medium mb-2 ${isDarkMode ? 'text-amber-300' : 'text-amber-800'}`}>Raison du signalement</h3>
+                          <p className={`text-sm ${isDarkMode ? 'text-amber-200' : 'text-amber-700'}`}>
+                            {selectedReport.reason}
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <h3 className={`text-sm font-medium mb-3 ${isDarkMode ? 'text-amber-300' : 'text-amber-800'}`}>Raisons des signalements</h3>
+                          <div className="space-y-2">
+                            {[...allQuestionReports].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()).map((r, idx) => (
+                              <div key={r.id} className={`pl-3 border-l-2 ${isDarkMode ? 'border-amber-700' : 'border-amber-300'}`}>
+                                <div className="flex flex-wrap items-center gap-2 mb-1">
+                                  <span className={`text-xs px-1.5 py-0.5 rounded ${getStatusColor(r.status)}`}>
+                                    {getStatusLabel(r.status)}
+                                  </span>
+                                  <span className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                                    {r.display_name || `${r.user_id.slice(0, 8)}...`} · {timeAgo(r.created_at)}
+                                  </span>
+                                  {r.suggested_correct.length > 0 && (
+                                    <span className={`text-xs ${isDarkMode ? 'text-emerald-400' : 'text-emerald-600'}`}>
+                                      +{r.suggested_correct.map(i => String.fromCharCode(65 + i)).join(', ')}
+                                    </span>
+                                  )}
+                                  {r.suggested_incorrect.length > 0 && (
+                                    <span className={`text-xs ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>
+                                      -{r.suggested_incorrect.map(i => String.fromCharCode(65 + i)).join(', ')}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className={`text-sm ${isDarkMode ? 'text-amber-200' : 'text-amber-700'}`}>
+                                  {r.reason}
+                                </p>
+                                {r.status === 'resolved' && r.resolution_note && (
+                                  <p className={`text-xs mt-1 ${isDarkMode ? 'text-green-300' : 'text-green-700'}`}>
+                                    Résolu : {r.resolution_note}
+                                  </p>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      )}
                     </div>
 
-                    {selectedReport.status === 'resolved' && selectedReport.resolution_note && (
+                    {allQuestionReports.length === 1 && selectedReport.status === 'resolved' && selectedReport.resolution_note && (
                       <div className={`mt-3 p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-800/50' : 'bg-green-50 border border-green-200'}`}>
                         <h3 className={`text-sm font-medium mb-2 ${isDarkMode ? 'text-green-300' : 'text-green-800'}`}>Note de résolution</h3>
                         <p className={`text-sm ${isDarkMode ? 'text-green-200' : 'text-green-700'}`}>
@@ -597,19 +688,22 @@ export default function ReportsPage() {
                 <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} overflow-hidden`}>
                   <div className={`p-4 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
                     <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                      {selectedReport.comments.length} commentaire{selectedReport.comments.length !== 1 ? 's' : ''}
+                      {allQuestionReports.reduce((sum, r) => sum + r.comments.length, 0)} commentaire{allQuestionReports.reduce((sum, r) => sum + r.comments.length, 0) !== 1 ? 's' : ''}
                     </h3>
                   </div>
 
                   <div className="p-4 space-y-3">
-                    {selectedReport.comments.length === 0 && (
+                    {allQuestionReports.reduce((sum, r) => sum + r.comments.length, 0) === 0 && (
                       <p className={`text-sm text-center py-4 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
                         Aucun commentaire pour le moment. Soyez le premier !
                       </p>
                     )}
-                    {selectedReport.comments.map(comment => {
-                            const displayName = comment.display_name || `${comment.user_id.slice(0, 12)}...`;
-                            return (
+                    {allQuestionReports
+                      .flatMap(r => r.comments.map(c => ({ ...c, _reportId: r.id })))
+                      .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+                      .map(comment => {
+                        const displayName = comment.display_name || `${comment.user_id.slice(0, 12)}...`;
+                        return (
                           <div key={comment.id} className={`rounded-lg p-3 ${isDarkMode ? 'bg-gray-750' : 'bg-gray-50'} border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
                             <div className="flex items-center gap-2 mb-1.5">
                               <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${comment.display_name ? (isDarkMode ? 'bg-green-900/40 text-green-400' : 'bg-green-100 text-green-700') : (isDarkMode ? 'bg-emerald-900/40 text-emerald-400' : 'bg-emerald-100 text-emerald-700')}`}>
@@ -622,11 +716,11 @@ export default function ReportsPage() {
                                 {timeAgo(comment.created_at)}
                               </span>
                             </div>
-                        <p className={`text-sm ml-9 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                          {comment.text}
-                        </p>
-                      </div>
-                    );
+                          <p className={`text-sm ml-9 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                            {comment.text}
+                          </p>
+                        </div>
+                      );
                     })}
 
                     <div className={`rounded-lg p-3 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'} border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
@@ -745,20 +839,25 @@ export default function ReportsPage() {
               </div>
             ) : (
               <div className="space-y-3">
-                {filteredReports.map(report => {
-                  const upvotes = Object.values(report.votes).filter(v => v === 1).length;
-                  const downvotes = Object.values(report.votes).filter(v => v === -1).length;
-                  const userVote = user ? (report.votes[user.id] || 0) : 0;
-                  const moduleName = MODULE_MAP.get(report.module_id) || `Module ${report.module_id}`;
-                  const origCount = (report.original_correct || []).length;
-                  const suggCorrect = (report.suggested_correct || []).filter(i => !(report.original_correct || []).includes(i)).length;
-                  const suggIncorrect = (report.suggested_incorrect || []).length;
-                  const reportYear = questionYears.get(`${report.module_id}_${report.question_id}`);
+                {[...reportGroups.entries()].map(([key, group]) => {
+                  const primary = getPrimaryReport(group);
+                  const moduleName = MODULE_MAP.get(primary.module_id) || `Module ${primary.module_id}`;
+                  const worstStatus = group.some(r => r.status === 'pending') ? 'pending' : group.some(r => r.status === 'resolved') ? 'resolved' : 'dismissed';
+                  const totalScore = group.reduce((sum, r) => sum + Object.values(r.votes).reduce((s, v) => s + v, 0), 0);
+                  const totalComments = group.reduce((sum, r) => sum + r.comments.length, 0);
+                  const origCorrect = primary.original_correct || [];
+                  const combinedCorrectSet = new Set(group.flatMap(r => r.suggested_correct || []));
+                  const combinedIncorrectSet = new Set(group.flatMap(r => r.suggested_incorrect || []));
+                  const suggCorrectCount = [...combinedCorrectSet].filter(i => !origCorrect.includes(i)).length;
+                  const suggIncorrectCount = combinedIncorrectSet.size;
+                  const origCount = origCorrect.length;
+                  const reportYear = questionYears.get(`${primary.module_id}_${primary.question_id}`);
+                  const userVote = user ? Math.max(...group.map(r => r.votes[user.id] || 0)) : 0;
 
                   return (
                     <button
-                      key={report.id}
-                      onClick={() => loadQuestionDetail(report)}
+                      key={key}
+                      onClick={() => loadQuestionDetail(primary)}
                       className={`w-full text-left ${isDarkMode ? 'bg-gray-800 border-gray-700 hover:border-gray-500' : 'bg-white border-gray-100 hover:border-gray-300'} rounded-xl border shadow-sm overflow-hidden transition-all cursor-pointer`}
                     >
                       <div className="p-4 sm:p-5">
@@ -768,7 +867,7 @@ export default function ReportsPage() {
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
                             </svg>
                             <span className={`text-sm font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                              {upvotes - downvotes}
+                              {totalScore}
                             </span>
                             <svg className={`w-5 h-5 ${userVote === -1 ? 'text-red-500' : isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} fill={userVote === -1 ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -777,20 +876,20 @@ export default function ReportsPage() {
 
                           <div className="flex-1 min-w-0">
                             <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${getStatusColor(report.status)}`}>
-                                {getStatusLabel(report.status)}
+                              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${getStatusColor(worstStatus)}`}>
+                                {getStatusLabel(worstStatus)}
                               </span>
                               <span className={`text-xs px-2 py-0.5 rounded-full ${isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-50 text-blue-700'}`}>
                                 {moduleName}
                               </span>
                               {isAdmin && (
                                 <span className={`text-xs px-2 py-0.5 rounded-full font-mono ${isDarkMode ? 'bg-rose-900/40 text-rose-300' : 'bg-rose-100 text-rose-700'}`}>
-                                  {report.id}
+                                  M{primary.module_id}:Q{primary.question_id}
                                 </span>
                               )}
-                              {isAdmin && (
-                                <span className={`text-xs px-2 py-0.5 rounded-full font-mono ${isDarkMode ? 'bg-rose-900/40 text-rose-300' : 'bg-rose-100 text-rose-700'}`}>
-                                  M{report.module_id}:Q{report.question_id}
+                              {group.length > 1 && (
+                                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${isDarkMode ? 'bg-amber-900/40 text-amber-300' : 'bg-amber-100 text-amber-700'}`}>
+                                  {group.length} signalements
                                 </span>
                               )}
                               {reportYear && (
@@ -799,32 +898,32 @@ export default function ReportsPage() {
                                 </span>
                               )}
                               <span className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                                {timeAgo(report.created_at)}
+                                {timeAgo(primary.created_at)}
                               </span>
                             </div>
 
                             <p className={`text-sm ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} line-clamp-2 mb-1.5`}>
-                              {report.question_text || report.reason}
+                              {primary.question_text || primary.reason}
                             </p>
 
                             <div className="flex flex-wrap items-center gap-2">
                               {origCount > 0 && (
                                 <span className={`text-xs px-1.5 py-0.5 rounded ${isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-50 text-blue-700'}`}>
-                                  Site : {report.original_options ? report.original_correct.map(i => String.fromCharCode(65 + i)).join(', ') : '?'}
+                                  Site : {primary.original_options ? primary.original_correct.map(i => String.fromCharCode(65 + i)).join(', ') : '?'}
                                 </span>
                               )}
-                              {suggCorrect > 0 && (
+                              {suggCorrectCount > 0 && (
                                 <span className={`text-xs px-1.5 py-0.5 rounded ${isDarkMode ? 'bg-green-900/30 text-green-300' : 'bg-green-50 text-green-700'}`}>
-                                  Suggéré +{suggCorrect}
+                                  Suggéré +{suggCorrectCount}
                                 </span>
                               )}
-                              {suggIncorrect > 0 && (
+                              {suggIncorrectCount > 0 && (
                                 <span className={`text-xs px-1.5 py-0.5 rounded ${isDarkMode ? 'bg-red-900/30 text-red-300' : 'bg-red-50 text-red-700'}`}>
-                                  Suggéré -{suggIncorrect}
+                                  Suggéré -{suggIncorrectCount}
                                 </span>
                               )}
                               <span className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                                {report.comments.length} commentaire{report.comments.length !== 1 ? 's' : ''}
+                                {totalComments} commentaire{totalComments !== 1 ? 's' : ''}
                               </span>
                             </div>
                           </div>
@@ -842,7 +941,7 @@ export default function ReportsPage() {
 
             <div className="mt-8 text-center">
               <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                {filteredReports.length} signalement{filteredReports.length !== 1 ? 's' : ''} affiché{filteredReports.length !== 1 ? 's' : ''}
+                {reportGroups.size} question{reportGroups.size !== 1 ? 's' : ''} · {filteredReports.length} signalement{filteredReports.length !== 1 ? 's' : ''}
               </p>
             </div>
           </>
