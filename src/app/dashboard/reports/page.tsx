@@ -434,6 +434,14 @@ export default function ReportsPage() {
               <Link href="/dashboard/reports" className={`${isDarkMode ? 'text-green-400' : 'text-green-600'} font-medium text-sm relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-0.5 after:bg-green-500 after:rounded-full`}>
                 Signalements
               </Link>
+              <Link href="/dashboard/reports" className={`${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors font-medium text-sm`}>
+                Signalements
+              </Link>
+              {isAdmin && (
+                <Link href="/dashboard/admin" className={`${isDarkMode ? 'text-green-400' : 'text-green-600'} font-medium text-sm relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-0.5 after:bg-green-500 after:rounded-full`}>
+                  Admin
+                </Link>
+              )}
             </nav>
 
             <div className="flex items-center space-x-2 sm:space-x-3">
