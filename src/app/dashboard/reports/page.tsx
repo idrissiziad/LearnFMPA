@@ -444,7 +444,7 @@ export default function ReportsPage() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                         </svg>
                         <span className={`text-xs font-mono font-medium ${isDarkMode ? 'text-rose-300' : 'text-rose-700'}`}>
-                          Admin : module_id={selectedReport.module_id} question_id=&quot;{selectedReport.question_id}&quot;
+                          Admin : report_id=&quot;{selectedReport.id}&quot; module_id={selectedReport.module_id} question_id=&quot;{selectedReport.question_id}&quot;
                         </span>
                       </div>
                     )}
@@ -783,6 +783,11 @@ export default function ReportsPage() {
                               <span className={`text-xs px-2 py-0.5 rounded-full ${isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-50 text-blue-700'}`}>
                                 {moduleName}
                               </span>
+                              {isAdmin && (
+                                <span className={`text-xs px-2 py-0.5 rounded-full font-mono ${isDarkMode ? 'bg-rose-900/40 text-rose-300' : 'bg-rose-100 text-rose-700'}`}>
+                                  {report.id}
+                                </span>
+                              )}
                               {isAdmin && (
                                 <span className={`text-xs px-2 py-0.5 rounded-full font-mono ${isDarkMode ? 'bg-rose-900/40 text-rose-300' : 'bg-rose-100 text-rose-700'}`}>
                                   M{report.module_id}:Q{report.question_id}
