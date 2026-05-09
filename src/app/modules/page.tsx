@@ -122,6 +122,9 @@ export default function ModulesPage() {
               <Link href="/progress" className={`${isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors font-medium`}>
                 Progression
               </Link>
+              <Link href="/dashboard/reports" className={`${isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors font-medium`}>
+                Signalements
+              </Link>
             </nav>
 
             <div className="flex items-center space-x-4">

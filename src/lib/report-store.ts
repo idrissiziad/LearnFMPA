@@ -12,6 +12,13 @@ async function getRedis() {
   return redis;
 }
 
+export interface Comment {
+  id: string;
+  user_id: string;
+  text: string;
+  created_at: string;
+}
+
 export interface Report {
   id: string;
   module_id: number;
@@ -30,17 +37,32 @@ export interface Report {
   resolved_at: string | null;
   resolved_by: string | null;
   resolution_note: string | null;
+  votes: { [user_id: string]: 1 | -1 };
+  comments: Comment[];
 }
 
 export interface ModuleReports {
   [questionId: string]: Report[];
 }
 
+function migrateReport(r: Report & { votes?: { [user_id: string]: 1 | -1 }; comments?: Comment[] }): Report {
+  return {
+    ...r,
+    votes: r.votes || {},
+    comments: r.comments || [],
+  };
+}
+
 async function loadModuleReports(moduleId: number): Promise<ModuleReports> {
   try {
     const client = await getRedis();
     const data = await client.get(`reports:module_${moduleId}`);
-    return data ? JSON.parse(data) : {};
+    if (!data) return {};
+    const parsed = JSON.parse(data) as ModuleReports;
+    for (const qId of Object.keys(parsed)) {
+      parsed[qId] = parsed[qId].map(migrateReport);
+    }
+    return parsed;
   } catch (error) {
     console.error('Redis load reports error:', error);
     return {};
@@ -56,7 +78,7 @@ async function saveModuleReports(moduleId: number, reports: ModuleReports): Prom
   }
 }
 
-export async function createReport(report: Omit<Report, 'id' | 'status' | 'resolved_at' | 'resolved_by' | 'resolution_note'>): Promise<Report> {
+export async function createReport(report: Omit<Report, 'id' | 'status' | 'resolved_at' | 'resolved_by' | 'resolution_note' | 'votes' | 'comments'>): Promise<Report> {
   const newReport: Report = {
     ...report,
     id: `report_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`,
@@ -64,6 +86,8 @@ export async function createReport(report: Omit<Report, 'id' | 'status' | 'resol
     resolved_at: null,
     resolved_by: null,
     resolution_note: null,
+    votes: {},
+    comments: [],
   };
 
   const moduleReports = await loadModuleReports(report.module_id);
@@ -139,8 +163,57 @@ export async function deleteAllReportsForModule(moduleId: number): Promise<boole
   }
 }
 
+export async function voteReport(
+  moduleId: number,
+  questionId: string,
+  reportId: string,
+  userId: string,
+  value: 1 | -1 | 0
+): Promise<Report | null> {
+  const moduleReports = await loadModuleReports(moduleId);
+  const reports = moduleReports[questionId];
+  if (!reports) return null;
+
+  const report = reports.find(r => r.id === reportId);
+  if (!report) return null;
+
+  if (value === 0) {
+    delete report.votes[userId];
+  } else {
+    report.votes[userId] = value;
+  }
+
+  await saveModuleReports(moduleId, moduleReports);
+  return report;
+}
+
+export async function addComment(
+  moduleId: number,
+  questionId: string,
+  reportId: string,
+  userId: string,
+  text: string
+): Promise<Report | null> {
+  const moduleReports = await loadModuleReports(moduleId);
+  const reports = moduleReports[questionId];
+  if (!reports) return null;
+
+  const report = reports.find(r => r.id === reportId);
+  if (!report) return null;
+
+  report.comments.push({
+    id: `comment_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`,
+    user_id: userId,
+    text,
+    created_at: new Date().toISOString(),
+  });
+
+  await saveModuleReports(moduleId, moduleReports);
+  return report;
+}
+
 export async function getAllReports(): Promise<{ moduleId: number; reports: ModuleReports }[]> {
-  const moduleIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const moduleIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
   const results: { moduleId: number; reports: ModuleReports }[] = [];
 
   for (const moduleId of moduleIds) {
