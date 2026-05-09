@@ -44,6 +44,15 @@ interface UserDetails extends User {
 
 type Tab = 'users' | 'add' | 'optouts' | 'cleanup' | 'mailbcc';
 
+interface EmailDraft {
+  to: string;
+  subject: string;
+  body: string;
+  type: 'welcome' | 'activation' | 'reset';
+  name: string;
+  password: string;
+}
+
 function generateTempPassword(): string {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
   let pwd = '';
@@ -96,6 +105,109 @@ function getExpiryDate(activatedAt: string | null, activationDays: number): stri
   } catch {
     return 'N/A';
   }
+}
+
+const SITE_URL = typeof window !== 'undefined' ? window.location.origin : 'https://www.learnfmpa.com';
+
+function generateWelcomeEmail(name: string, email: string, tempPassword: string, sub: string, activationDays: number): EmailDraft {
+  const loginUrl = `${SITE_URL}/login`;
+  const isPaid = sub === 'paid';
+  const planLine = isPaid
+    ? '\u{1F451} Acc\u00e8s complet et illimit\u00e9 \u2014 questions, explications et suivi de progression'
+    : `\u2728 Essai Premium de ${activationDays} jours, puis acc\u00e8s gratuit (10 questions expliqu\u00e9es/jour, pratique illimit\u00e9e)`;
+  const subject = '\u2764\uFE0F Bienvenue sur LearnFMPA \u2014 Votre compte est pr\u00eat !';
+  const body = `Bonjour ${name},
+
+\u{1F389} Bienvenue sur LearnFMPA ! Je suis ravi de vous compter parmi nous.
+
+J'ai cr\u00e9\u00e9 LearnFMPA pour aider les \u00e9tudiants en m\u00e9decine au Maroc \u00e0 r\u00e9viser les annales dans les meilleures conditions. Des milliers de questions corrig\u00e9es, des explications d\u00e9taill\u00e9es, et un suivi de progression \u2014 tout ce qu'il faut pour r\u00e9ussir.
+
+\u{1F511} Vos identifiants de connexion :
+   \u{1F4E7}  Email : ${email}
+   \u{1F510}  Mot de passe temporaire : ${tempPassword}
+   ${planLine}
+
+\u26A0\uFE0F  Important : veuillez changer ce mot de passe lors de votre premi\u00e8re connexion.
+
+\u{1F449} Connectez-vous ici : ${loginUrl}
+
+\u{1F4AB} Ce qui vous attend sur LearnFMPA :
+   \u2022 Des annales class\u00e9es par module et par ann\u00e9e
+   \u2022 Des corrections r\u00e9dig\u00e9es par des enseignants
+   \u2022 Un tableau de bord pour suivre votre progression
+   \u2022 Un mode entra\u00eenement pour vous tester
+
+Si vous avez la moindre question, n'h\u00e9sitez pas \u00e0 me contacter. Je suis l\u00e0 pour vous aider.
+
+\u{1F4AA} Bonnes r\u00e9visions et beaucoup de r\u00e9ussite !
+
+Cherellement,
+Le cr\u00e9ateur de LearnFMPA`;
+
+  return { to: email, subject, body, type: 'welcome', name, password: tempPassword };
+}
+
+function generateActivationEmail(name: string, email: string, tempPassword: string, paid: boolean, days: number): EmailDraft {
+  const loginUrl = `${SITE_URL}/login`;
+  const planLine = paid
+    ? '\u{1F451} Acc\u00e8s complet et illimit\u00e9 \u2014 questions, explications et suivi de progression'
+    : `\u2728 Essai Premium de ${days} jours, puis acc\u00e8s gratuit (10 questions expliqu\u00e9es/jour, pratique illimit\u00e9e)`;
+  const subject = '\u{1F680} Votre compte LearnFMPA est activ\u00e9 !';
+  const body = `Bonjour ${name},
+
+\u{1F389} Bonne nouvelle : votre compte LearnFMPA est maintenant activ\u00e9 !
+
+Vous pouvez d\u00e8s \u00e0 pr\u00e9sent acc\u00e9der \u00e0 toutes les annales de m\u00e9decine et commencer \u00e0 r\u00e9viser efficacement. J'ai con\u00e7u cette plateforme pour que chaque \u00e9tudiant puisse progresser \u00e0 son rythme, avec des outils pens\u00e9s pour la r\u00e9ussite.
+
+\u{1F511} Vos identifiants de connexion :
+   \u{1F4E7}  Email : ${email}
+   \u{1F510}  Mot de passe temporaire : ${tempPassword}
+   ${planLine}
+
+\u26A0\uFE0F  Important : veuillez changer ce mot de passe lors de votre premi\u00e8re connexion.
+
+\u{1F449} Connectez-vous ici : ${loginUrl}
+
+\u{1F4AB} Ce qui vous attend :
+   \u2022 Des annales class\u00e9es par module et par ann\u00e9e
+   \u2022 Des corrections r\u00e9dig\u00e9es par des enseignants
+   \u2022 Un tableau de bord pour suivre votre progression
+   \u2022 Un mode entra\u00eenement pour vous tester
+
+Si vous avez besoin d'aide, n'h\u00e9sitez pas \u00e0 me contacter. Je suis l\u00e0 pour \u00e7a.
+
+\u{1F4AA} Bonnes r\u00e9visions !
+
+Cherellement,
+Le cr\u00e9ateur de LearnFMPA`;
+
+  return { to: email, subject, body, type: 'activation', name, password: tempPassword };
+}
+
+function generateResetEmail(name: string, email: string, tempPassword: string): EmailDraft {
+  const loginUrl = `${SITE_URL}/login`;
+  const subject = '\u{1F512} R\u00e9initialisation de votre mot de passe LearnFMPA';
+  const body = `Bonjour ${name},
+
+\u{1F512} Votre mot de passe LearnFMPA a \u00e9t\u00e9 r\u00e9initialis\u00e9.
+
+Voici vos nouveaux identifiants de connexion :
+
+   \u{1F4E7}  Email : ${email}
+   \u{1F510}  Nouveau mot de passe temporaire : ${tempPassword}
+
+\u26A0\uFE0F  Important : veuillez changer ce mot de passe lors de votre prochaine connexion.
+
+\u{1F449} Connectez-vous ici : ${loginUrl}
+
+Si vous n'\u00eates pas \u00e0 l'origine de cette r\u00e9initialisation, veuillez me contacter imm\u00e9diatement.
+
+\u{1F4AA} \u00C0 tr\u00e8s vite sur LearnFMPA !
+
+Cherellement,
+Le cr\u00e9ateur de LearnFMPA`;
+
+  return { to: email, subject, body, type: 'reset', name, password: tempPassword };
 }
 
 async function adminGet(endpoint: string): Promise<any> {
@@ -168,6 +280,10 @@ export default function AdminPage() {
   const [mailBccEmails, setMailBccEmails] = useState<string[]>([]);
   const [mailBccSkipped, setMailBccSkipped] = useState<string[]>([]);
   const [mailBccCopied, setMailBccCopied] = useState(false);
+
+  const [emailDraft, setEmailDraft] = useState<EmailDraft | null>(null);
+  const [emailConfirmed, setEmailConfirmed] = useState(false);
+  const [emailBodyCopied, setEmailBodyCopied] = useState(false);
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -288,7 +404,10 @@ export default function AdminPage() {
         has_paid: addForm.subscription === 'paid',
       });
       if (data.success) {
-        showMsg(`Utilisateur créé ! Email: ${addForm.email}, Mot de passe: ${pwd}`);
+        const draft = generateWelcomeEmail(addForm.name || data.user?.name || addForm.email, addForm.email, pwd, addForm.subscription, addForm.days);
+        setEmailDraft(draft);
+        setEmailConfirmed(false);
+        setEmailBodyCopied(false);
         setAddForm({ name: '', email: '', password: '', subscription: 'free', years: ['3ème année'], days: 7 });
         fetchUsers();
       } else {
@@ -304,6 +423,8 @@ export default function AdminPage() {
   async function handleActivate(email: string, paid: boolean, days: number) {
     try {
       setActionLoading(true);
+      const userResult = await adminGet(`users?email=${encodeURIComponent(email)}`);
+      const userName = userResult.success ? (userResult.user?.name || email) : email;
       const activateRes = await adminPost('users', { action: 'activate', email });
       if (!activateRes.success) {
         showMsg(activateRes.error || "Erreur d'activation", true);
@@ -316,10 +437,11 @@ export default function AdminPage() {
       const resetRes = await adminPost('users', { action: 'reset_password', email, new_password: tempPwd });
       if (paid) {
         await adminPost('users', { action: 'update_user', email, subscription_status: 'paid' });
-        showMsg(`Activé (PAID) ! Mot de passe temp: ${resetRes.success ? tempPwd : 'échec reset'}`);
-      } else {
-        showMsg(`Activé (Essai ${days}j) ! Mot de passe temp: ${resetRes.success ? tempPwd : 'échec reset'}`);
       }
+      const draft = generateActivationEmail(userName, email, resetRes.success ? tempPwd : '(échec réinitialisation)', paid, days);
+      setEmailDraft(draft);
+      setEmailConfirmed(false);
+      setEmailBodyCopied(false);
       fetchUsers();
     } catch {
       showMsg('Erreur de connexion', true);
@@ -337,8 +459,9 @@ export default function AdminPage() {
         showMsg('Aucun compte edu inactif trouvé', true);
         return;
       }
-      let success = 0;
+      let succeeded = 0;
       let failed = 0;
+      const results: { email: string; name: string; password: string }[] = [];
       for (const u of inactiveEdu) {
         const res = await adminPost('users', { action: 'activate', email: u.email });
         if (!res.success) { failed++; continue; }
@@ -351,9 +474,22 @@ export default function AdminPage() {
         if (paid) {
           await adminPost('users', { action: 'update_user', email: u.email, subscription_status: 'paid' });
         }
-        success++;
+        results.push({ email: u.email, name: u.name, password: pwd });
+        succeeded++;
       }
-      showMsg(`Activation en lot: ${success} réussi(s), ${failed} échoué(s)`);
+      if (results.length > 0) {
+        const last = results[results.length - 1];
+        const draft = generateActivationEmail(last.name, last.email, last.password, paid, days);
+        const allLines = results.map(r => `${r.email} — Mot de passe : ${r.password}`).join('\n');
+        draft.body = `RÉSULTATS D'ACTIVATION EN LOT (${succeeded} réussi(s), ${failed} échoué(s))\n${'='.repeat(50)}\n\n${allLines}\n\n${'='.repeat(50)}\n\n--- Ci-dessous, un modèle d'email pour le dernier utilisateur ---\n\n${draft.body}`;
+        draft.subject = `Activation en lot — ${succeeded} compte(s) activé(s)`;
+        draft.name = `${succeeded} utilisateurs`;
+        setEmailDraft(draft);
+        setEmailConfirmed(false);
+        setEmailBodyCopied(false);
+      } else {
+        showMsg(`Aucune activation réussie (${failed} échoué(s))`, true);
+      }
       fetchUsers();
     } catch {
       showMsg('Erreur de connexion', true);
@@ -450,10 +586,15 @@ export default function AdminPage() {
   async function handleResetPassword(email: string) {
     try {
       setActionLoading(true);
+      const userResult = await adminGet(`users?email=${encodeURIComponent(email)}`);
+      const userName = userResult.success ? (userResult.user?.name || email) : email;
       const pwd = generateTempPassword();
       const data = await adminPost('users', { action: 'reset_password', email, new_password: pwd });
       if (data.success) {
-        showMsg(`Mot de passe réinitialisé ! Nouveau: ${pwd}`);
+        const draft = generateResetEmail(userName, email, pwd);
+        setEmailDraft(draft);
+        setEmailConfirmed(false);
+        setEmailBodyCopied(false);
       } else {
         showMsg(data.error || 'Erreur', true);
       }
@@ -770,7 +911,7 @@ export default function AdminPage() {
               )}
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               <button onClick={() => { setEditModal({ type: 'name', email: selectedUser.email, name: selectedUser.name }); setEditValue(selectedUser.name); }}
                 className={`px-4 py-3 rounded-xl text-sm font-medium ${isDarkMode ? 'bg-gray-800 text-white hover:bg-gray-700 border border-gray-700' : 'bg-white text-gray-800 hover:bg-gray-50 border border-gray-200'} transition-colors`}>
                 Renommer
@@ -805,6 +946,26 @@ export default function AdminPage() {
               <button onClick={() => setConfirmDelete(selectedUser.email)}
                 className={`px-4 py-3 rounded-xl text-sm font-medium ${isDarkMode ? 'bg-red-900/40 text-red-300 hover:bg-red-900/60 border border-red-800/50' : 'bg-red-50 text-red-700 hover:bg-red-100 border border-red-200'} transition-colors`}>
                 Supprimer
+              </button>
+              <button onClick={() => {
+                const u = selectedUser;
+                const pwd = generateTempPassword();
+                setEmailDraft(generateWelcomeEmail(u.name, u.email, pwd, u.subscription_status, u.activation_days));
+                setEmailConfirmed(false);
+                setEmailBodyCopied(false);
+              }}
+                className={`px-4 py-3 rounded-xl text-sm font-medium ${isDarkMode ? 'bg-indigo-900/40 text-indigo-300 hover:bg-indigo-900/60 border border-indigo-800/50' : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200'} transition-colors`}>
+                Générer email bienvenue
+              </button>
+              <button onClick={async () => {
+                const u = selectedUser;
+                const pwd = generateTempPassword();
+                setEmailDraft(generateResetEmail(u.name, u.email, pwd));
+                setEmailConfirmed(false);
+                setEmailBodyCopied(false);
+              }}
+                className={`px-4 py-3 rounded-xl text-sm font-medium ${isDarkMode ? 'bg-purple-900/40 text-purple-300 hover:bg-purple-900/60 border border-purple-800/50' : 'bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200'} transition-colors`}>
+                Générer email reset MDP
               </button>
             </div>
           </div>
@@ -1324,6 +1485,96 @@ export default function AdminPage() {
                   className="px-4 py-2 rounded-lg text-sm font-medium bg-orange-600 text-white hover:bg-orange-700 disabled:opacity-50 transition-colors">
                   {actionLoading ? 'Désactivation...' : 'Désactiver'}
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {emailDraft && (
+          <div className="fixed inset-0 z-[60] flex items-start justify-center p-4 pt-8 overflow-y-auto bg-black/50" onClick={() => { if (emailConfirmed) { setEmailDraft(null); } }}>
+            <div className={`w-full max-w-2xl rounded-xl shadow-2xl ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'} mb-8`} onClick={e => e.stopPropagation()}>
+              <div className={`p-5 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${emailDraft.type === 'welcome' ? (isDarkMode ? 'bg-green-900/40' : 'bg-green-100') : emailDraft.type === 'activation' ? (isDarkMode ? 'bg-blue-900/40' : 'bg-blue-100') : (isDarkMode ? 'bg-amber-900/40' : 'bg-amber-100')}`}>
+                    <span className="text-lg">{emailDraft.type === 'welcome' ? '✉️' : emailDraft.type === 'activation' ? '🚀' : '🔒'}</span>
+                  </div>
+                  <div>
+                    <h3 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                      {{ welcome: 'Email de bienvenue', activation: "Email d'activation", reset: 'Email de réinitialisation' }[emailDraft.type]}
+                    </h3>
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Pour : {emailDraft.to}</p>
+                  </div>
+                </div>
+                <div className={`flex items-center gap-2 px-3 py-2 rounded-lg ${isDarkMode ? 'bg-yellow-900/20 border border-yellow-800/50' : 'bg-amber-50 border border-amber-200'}`}>
+                  <svg className={`w-5 h-5 flex-shrink-0 ${isDarkMode ? 'text-yellow-400' : 'text-amber-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                  </svg>
+                  <p className={`text-sm ${isDarkMode ? 'text-yellow-300' : 'text-amber-700'}`}>
+                    Vous devez envoyer cet email manuellement. Copiez le contenu ou ouvrez votre client email ci-dessous.
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-5 space-y-4">
+                <div>
+                  <label className={`block text-xs font-medium mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Mot de passe temporaire</label>
+                  <div className="flex items-center gap-2">
+                    <code className={`flex-1 px-3 py-2 rounded-lg font-mono text-sm ${isDarkMode ? 'bg-gray-900 text-green-400 border border-gray-700' : 'bg-gray-50 text-green-700 border border-gray-200'}`}>
+                      {emailDraft.password}
+                    </code>
+                    <button onClick={() => { navigator.clipboard.writeText(emailDraft.password); }}
+                      className={`px-3 py-2 rounded-lg text-xs font-medium ${isDarkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'} transition-colors`}>
+                      Copier
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className={`block text-xs font-medium mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Sujet</label>
+                  <div className={`px-3 py-2 rounded-lg text-sm ${isDarkMode ? 'bg-gray-900 text-gray-200 border border-gray-700' : 'bg-gray-50 text-gray-800 border border-gray-200'}`}>
+                    {emailDraft.subject}
+                  </div>
+                </div>
+
+                <div>
+                  <label className={`block text-xs font-medium mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Corps de l&apos;email</label>
+                  <textarea readOnly value={emailDraft.body}
+                    className={`w-full h-64 px-3 py-2 rounded-lg text-sm border resize-none ${isDarkMode ? 'bg-gray-900 border-gray-700 text-gray-200' : 'bg-gray-50 border-gray-200 text-gray-800'} focus:outline-none`} />
+                  <div className="flex gap-2 mt-2">
+                    <button onClick={() => { navigator.clipboard.writeText(emailDraft.body); setEmailBodyCopied(true); setTimeout(() => setEmailBodyCopied(false), 3000); }}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${emailBodyCopied ? 'bg-green-600 text-white' : (isDarkMode ? 'bg-gray-700 text-gray-200 hover:bg-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200')}`}>
+                      {emailBodyCopied ? '✓ Copié !' : 'Copier le corps'}
+                    </button>
+                    <button onClick={() => {
+                      const mailto = `mailto:${encodeURIComponent(emailDraft.to)}?subject=${encodeURIComponent(emailDraft.subject)}&body=${encodeURIComponent(emailDraft.body)}`;
+                      window.open(mailto, '_blank');
+                    }}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 shadow-sm transition-all`}>
+                      📧 Ouvrir client email
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className={`p-5 border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+                <label className={`flex items-start gap-3 cursor-pointer ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <input type="checkbox" checked={emailConfirmed} onChange={e => setEmailConfirmed(e.target.checked)}
+                    className="mt-1 rounded border-gray-300 text-green-600 focus:ring-green-500" />
+                  <span className="text-sm">
+                    Je confirme avoir envoyé (ou avoir l&apos;intention d&apos;envoyer) cet email à <strong>{emailDraft.to}</strong>
+                  </span>
+                </label>
+                <div className="flex gap-2 mt-4 justify-end">
+                  <button onClick={() => setEmailDraft(null)}
+                    className={`px-4 py-2 rounded-lg text-sm ${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>
+                    Fermer sans confirmer
+                  </button>
+                  <button onClick={() => { setEmailDraft(null); showMsg('Email enregistré comme envoyé'); }}
+                    disabled={!emailConfirmed}
+                    className="px-4 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                    ✓ Confirmer l&apos;envoi
+                  </button>
+                </div>
               </div>
             </div>
           </div>
