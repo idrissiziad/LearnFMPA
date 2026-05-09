@@ -20,6 +20,7 @@ interface CommunityReport {
   id: string;
   module_id: number;
   question_id: string;
+  question_year: string;
   user_id: string;
   display_name: string | null;
   reason: string;
@@ -69,7 +70,7 @@ export default function ReportsPage() {
   const { theme } = useTheme();
   const { user, isLoading: authLoading } = useAuth();
   const isDarkMode = theme === 'dark';
-  const isAdmin = user ? ADMIN_EMAILS.includes(user.email.toLowerCase()) : false;
+  const isAdmin = user ? (ADMIN_EMAILS.includes(user.email.toLowerCase()) || user.is_admin) : false;
 
   const [reports, setReports] = useState<CommunityReport[]>([]);
   const [loading, setLoading] = useState(true);
@@ -96,8 +97,15 @@ export default function ReportsPage() {
 
   const loadQuestionYears = useCallback(async () => {
     const yearMap = new Map<string, string>();
-    const moduleIds = new Set(reports.map(r => r.module_id));
-    const loadPromises = [...moduleIds].map(async (moduleId) => {
+    const moduleIdsToLoad = new Set<number>();
+    for (const report of reports) {
+      if (report.question_year) {
+        yearMap.set(`${report.module_id}_${report.question_id}`, report.question_year);
+      } else {
+        moduleIdsToLoad.add(report.module_id);
+      }
+    }
+    const loadPromises = [...moduleIdsToLoad].map(async (moduleId) => {
       try {
         const questions = await getModuleQuestions(moduleId);
         questionCacheRef.current.set(moduleId, questions);
@@ -343,24 +351,31 @@ export default function ReportsPage() {
     const groups = new Map<string, CommunityReport[]>();
     const seen = new Set<string>();
     for (const report of filteredReports) {
-      const key = `${report.module_id}_${report.question_id}`;
-      if (!seen.has(report.id)) {
-        seen.add(report.id);
-        if (!groups.has(key)) groups.set(key, []);
-        groups.get(key)!.push(report);
-      }
+      if (seen.has(report.id)) continue;
+      seen.add(report.id);
+      const year = report.question_year || questionYears.get(`${report.module_id}_${report.question_id}`) || '';
+      const textKey = (report.question_text || '').trim().substring(0, 80);
+      const key = `${report.module_id}_${report.question_id}_${year}_${textKey}`;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key)!.push(report);
     }
     for (const [, group] of groups) {
       group.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     }
     return groups;
-  }, [filteredReports]);
+  }, [filteredReports, questionYears]);
 
   const allQuestionReports = useMemo(() => {
     if (!selectedReport) return [];
-    const key = `${selectedReport.module_id}_${selectedReport.question_id}`;
-    return reports.filter(r => `${r.module_id}_${r.question_id}` === key);
-  }, [selectedReport, reports]);
+    const year = selectedReport.question_year || questionYears.get(`${selectedReport.module_id}_${selectedReport.question_id}`) || '';
+    const textKey = (selectedReport.question_text || '').trim().substring(0, 80);
+    const key = `${selectedReport.module_id}_${selectedReport.question_id}_${year}_${textKey}`;
+    return reports.filter(r => {
+      const rYear = r.question_year || questionYears.get(`${r.module_id}_${r.question_id}`) || '';
+      const rTextKey = (r.question_text || '').trim().substring(0, 80);
+      return `${r.module_id}_${r.question_id}_${rYear}_${rTextKey}` === key;
+    });
+  }, [selectedReport, reports, questionYears]);
 
   const mergedSuggestions = useMemo(() => {
     const correct = new Set<number>();

@@ -23,6 +23,7 @@ export interface Report {
   id: string;
   module_id: number;
   question_id: string;
+  question_year: string;
   user_id: string;
   user_email: string;
   user_name: string;
@@ -45,9 +46,10 @@ export interface ModuleReports {
   [questionId: string]: Report[];
 }
 
-function migrateReport(r: Report & { votes?: { [user_id: string]: 1 | -1 }; comments?: Comment[] }): Report {
+function migrateReport(r: Report & { votes?: { [user_id: string]: 1 | -1 }; comments?: Comment[]; question_year?: string }): Report {
   return {
     ...r,
+    question_year: r.question_year || '',
     votes: r.votes || {},
     comments: r.comments || [],
   };
@@ -214,14 +216,14 @@ export async function addComment(
 
 export async function getAllReports(): Promise<{ moduleId: number; reports: ModuleReports }[]> {
   const moduleIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-  const results: { moduleId: number; reports: ModuleReports }[] = [];
-
-  for (const moduleId of moduleIds) {
-    const reports = await loadModuleReports(moduleId);
-    if (Object.keys(reports).length > 0) {
-      results.push({ moduleId, reports });
-    }
-  }
-
-  return results;
+  const results = await Promise.all(
+    moduleIds.map(async (moduleId) => {
+      const reports = await loadModuleReports(moduleId);
+      if (Object.keys(reports).length > 0) {
+        return { moduleId, reports };
+      }
+      return null;
+    })
+  );
+  return results.filter((r): r is { moduleId: number; reports: ModuleReports } => r !== null);
 }

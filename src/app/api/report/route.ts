@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     const token = authHeader?.replace('Bearer ', '');
 
     const body = await request.json();
-    const { user_id, module_id, question_id, reason, suggested_correct, suggested_incorrect, original_correct, original_options, question_text } = body;
+    const { user_id, module_id, question_id, question_year, reason, suggested_correct, suggested_incorrect, original_correct, original_options, question_text } = body;
 
     if (!user_id || !token) {
       return NextResponse.json(
@@ -40,6 +40,7 @@ export async function POST(request: NextRequest) {
     const report = await createReport({
       module_id: parseInt(String(module_id)),
       question_id: String(question_id),
+      question_year: String(question_year || ''),
       user_id: user.id,
       user_email: user.email,
       user_name: user.name,

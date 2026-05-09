@@ -122,6 +122,9 @@ def list_reports(args):
                 icon = status_icon(report.get('status', 'pending'))
                 print(f"\n  {icon} [{report.get('status', 'pending').upper()}] Question {qid}")
                 print(f"    ID: {report.get('id')}")
+                year = report.get('question_year', '')
+                if year:
+                    print(f"    Year: {year}")
                 print(f"    From: {report.get('user_name', 'Unknown')} ({report.get('user_email', 'N/A')})")
                 print(f"    Created: {format_datetime(report.get('created_at'))}")
                 reason = report.get('reason', '')
@@ -226,6 +229,9 @@ def show_details(args):
         icon = status_icon(report.get('status', 'pending'))
         print(f"\n  {icon} Report: {report.get('id')}")
         print(f"  Status: {report.get('status', 'pending').upper()}")
+        year = report.get('question_year', '')
+        if year:
+            print(f"  Year: {year}")
         print(f"  User: {report.get('user_name', 'Unknown')} ({report.get('user_email', 'N/A')})")
         print(f"  Created: {format_datetime(report.get('created_at'))}")
 

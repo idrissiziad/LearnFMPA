@@ -163,6 +163,7 @@ export async function POST(request: NextRequest) {
         daily_answer_count: finalUser.daily_answer_count || 0,
         daily_answer_reset: finalUser.daily_answer_reset || null,
         trial_days_left: trialDaysLeft,
+        is_admin: finalUser.is_admin || false,
         token
       }
     });

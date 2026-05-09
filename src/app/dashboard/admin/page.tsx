@@ -34,8 +34,9 @@ interface User {
   opted_out: boolean;
   created_at: string;
   last_login: string | null;
-  is_trial: boolean;
+is_trial: boolean;
   trial_started_at: string | null;
+  is_admin: boolean;
 }
 
 interface UserDetails extends User {
@@ -236,7 +237,7 @@ export default function AdminPage() {
   const { theme } = useTheme();
   const { user, isLoading: authLoading } = useAuth();
   const isDarkMode = theme === 'dark';
-  const isAdmin = user ? ADMIN_EMAILS.includes(user.email.toLowerCase()) : false;
+  const isAdmin = user ? (ADMIN_EMAILS.includes(user.email.toLowerCase()) || user.is_admin) : false;
 
   const [activeTab, setActiveTab] = useState<Tab>('users');
   const [users, setUsers] = useState<User[]>([]);
@@ -834,6 +835,9 @@ export default function AdminPage() {
                   {selectedUser.must_change_password && (
                     <span className="text-xs px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700">Mot de passe à changer</span>
                   )}
+                  {selectedUser.is_admin && (
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800 font-medium">Admin</span>
+                  )}
                 </div>
                 <h2 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                   {selectedUser.name}
@@ -881,6 +885,12 @@ export default function AdminPage() {
                 <div>
                   <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>Créé le</p>
                   <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{new Date(selectedUser.created_at).toLocaleDateString('fr-FR')}</p>
+                </div>
+                <div>
+                  <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>Administrateur</p>
+                  <p className={`text-sm font-semibold ${selectedUser.is_admin ? (isDarkMode ? 'text-yellow-300' : 'text-yellow-700') : (isDarkMode ? 'text-gray-300' : 'text-gray-700')}`}>
+                    {selectedUser.is_admin ? 'Oui' : 'Non'}
+                  </p>
                 </div>
                 <div className="col-span-1 sm:col-span-2 lg:col-span-3">
                   <button onClick={() => fetchUserProgress(selectedUser.email)}
@@ -986,6 +996,28 @@ export default function AdminPage() {
               }}
                 className={`px-4 py-3 rounded-xl text-sm font-medium ${isDarkMode ? 'bg-purple-900/40 text-purple-300 hover:bg-purple-900/60 border border-purple-800/50' : 'bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200'} transition-colors`}>
                 Générer email reset MDP
+              </button>
+              <button onClick={async () => {
+                if (!selectedUser) return;
+                const newAdmin = !selectedUser.is_admin;
+                try {
+                  setActionLoading(true);
+                  const data = await adminPost('users', { action: 'update_user', email: selectedUser.email, is_admin: newAdmin });
+                  if (data.success) {
+                    showMsg(newAdmin ? 'Admin accordé' : 'Admin retiré');
+                    fetchUserDetails(selectedUser.email);
+                    fetchUsers();
+                  } else {
+                    showMsg(data.error || 'Erreur', true);
+                  }
+                } catch {
+                  showMsg('Erreur de connexion', true);
+                } finally {
+                  setActionLoading(false);
+                }
+              }}
+                className={`px-4 py-3 rounded-xl text-sm font-medium ${selectedUser.is_admin ? (isDarkMode ? 'bg-yellow-900/40 text-yellow-300 hover:bg-yellow-900/60 border border-yellow-800/50' : 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100 border border-yellow-200') : (isDarkMode ? 'bg-violet-900/40 text-violet-300 hover:bg-violet-900/60 border border-violet-800/50' : 'bg-violet-50 text-violet-700 hover:bg-violet-100 border border-violet-200')} transition-colors`}>
+                {selectedUser.is_admin ? '✓ Admin — Retirer' : '✦ Donner Admin'}
               </button>
             </div>
           </div>

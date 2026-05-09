@@ -40,6 +40,7 @@ function migrateUser(user: any): any {
   if (user.has_paid === undefined || user.has_paid === null) user.has_paid = false;
   if (user.is_trial === undefined || user.is_trial === null) { user.is_trial = false; }
   if (user.trial_started_at === undefined) { user.trial_started_at = null; }
+  if (user.is_admin === undefined || user.is_admin === null) { user.is_admin = false; }
 
   if (!user.subscription_status) {
     if (user.has_paid) {
@@ -59,7 +60,7 @@ function migrateUser(user: any): any {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { action, name, email, password, admin_secret, new_password, is_active, year, years, activation_days, has_paid, is_trial, trial_started_at, subscription_status } = body;
+    const { action, name, email, password, admin_secret, new_password, is_active, year, years, activation_days, has_paid, is_trial, trial_started_at, subscription_status, is_admin } = body;
 
     if (!validateAdmin(admin_secret)) {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 403 });
@@ -97,7 +98,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Update user properties
-    if (action === 'update_user' || (!action && email && !name && !password && !new_password && is_active === undefined && (year !== undefined || years !== undefined || activation_days !== undefined || has_paid !== undefined || is_trial !== undefined || subscription_status !== undefined))) {
+    if (action === 'update_user' || (!action && email && !name && !password && !new_password && is_active === undefined && (year !== undefined || years !== undefined || activation_days !== undefined || has_paid !== undefined || is_trial !== undefined || subscription_status !== undefined || is_admin !== undefined))) {
       const usersData = await loadUsers();
       let found = false;
       
@@ -142,6 +143,9 @@ export async function POST(request: NextRequest) {
               migrated.is_active = false;
               migrated.has_paid = false;
             }
+          }
+          if (is_admin !== undefined && typeof is_admin === 'boolean') {
+            migrated.is_admin = is_admin;
           }
           found = true;
           break;
@@ -251,6 +255,7 @@ export async function POST(request: NextRequest) {
       subscription_status: has_paid ? 'paid' : 'free',
       daily_answer_count: 0,
       daily_answer_reset: now,
+      is_admin: false,
     };
 
     await saveUsers(usersData);
@@ -312,21 +317,7 @@ export async function GET(request: NextRequest) {
       await saveUsers(usersData);
     }
 
-    const UNCONFIRMED_TTL_MS = 48 * 60 * 60 * 1000;
-    const now = Date.now();
-    let needsCleanup = false;
-    for (const [userId, user] of Object.entries(usersData.users)) {
-      if (user.must_change_password) {
-        const createdAt = new Date(user.created_at).getTime();
-        if (!isNaN(createdAt) && (now - createdAt) > UNCONFIRMED_TTL_MS) {
-          delete usersData.users[userId];
-          needsCleanup = true;
-        }
-      }
-    }
-    if (needsCleanup) {
-      await saveUsers(usersData);
-    }
+    
 
     if (email) {
       for (const user of Object.values(usersData.users)) {
@@ -353,6 +344,7 @@ export async function GET(request: NextRequest) {
               daily_answer_count: user.daily_answer_count || 0,
               daily_answer_reset: user.daily_answer_reset || null,
               opted_out: userOptOut,
+              is_admin: user.is_admin || false,
             }
           });
         }
@@ -379,6 +371,7 @@ export async function GET(request: NextRequest) {
       daily_answer_count: user.daily_answer_count || 0,
       daily_answer_reset: user.daily_answer_reset || null,
       opted_out: optOuts.includes(user.email.toLowerCase()),
+      is_admin: user.is_admin || false,
     }));
 
     return NextResponse.json({

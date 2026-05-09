@@ -14,6 +14,7 @@ interface User {
   daily_answer_count: number;
   daily_answer_reset: string | null;
   trial_days_left: number | null;
+  is_admin: boolean;
 }
 
 interface QuestionStats {
@@ -327,6 +328,7 @@ const userInfo = {
         daily_answer_count: data.user.daily_answer_count || 0,
         daily_answer_reset: data.user.daily_answer_reset || null,
         trial_days_left: data.user.trial_days_left ?? null,
+        is_admin: data.user.is_admin || false,
       };
 
       setUser(userInfo);

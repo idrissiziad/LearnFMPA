@@ -33,6 +33,7 @@ export interface User {
   subscription_status?: SubscriptionStatus;
   daily_answer_count?: number;
   daily_answer_reset?: string | null;
+  is_admin?: boolean;
 }
 
 export interface UsersData {
