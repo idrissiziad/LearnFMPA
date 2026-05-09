@@ -83,6 +83,8 @@ export default function ReportsPage() {
   const [commentText, setCommentText] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [voting, setVoting] = useState(false);
+  const [resolving, setResolving] = useState(false);
+  const [resolveNote, setResolveNote] = useState('');
   const [questionYears, setQuestionYears] = useState<Map<string, string>>(new Map());
   const questionCacheRef = useRef<Map<number, Question[]>>(new Map());
 
@@ -268,6 +270,60 @@ export default function ReportsPage() {
       }
     } catch {} finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleResolve = async (reportIds: { moduleId: number; questionId: string; reportId: string }[], status: 'resolved' | 'dismissed') => {
+    if (!user || resolving) return;
+    setResolving(true);
+    try {
+      const token = localStorage.getItem('learnfmpa_token');
+      const results = await Promise.all(
+        reportIds.map(({ moduleId, questionId, reportId }) =>
+          fetch('/api/report', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              admin_secret: 'learnfmpa2024',
+              module_id: moduleId,
+              question_id: questionId,
+              report_id: reportId,
+              status,
+              resolution_note: resolveNote || undefined,
+            }),
+          }).then(r => r.json())
+        )
+      );
+      const allSuccess = results.every(r => r.success);
+      if (allSuccess) {
+        setReports(prev => prev.map(r => {
+          if (selectedReport && r.module_id === selectedReport.module_id && r.question_id === selectedReport.question_id) {
+            const match = reportIds.find(ri => ri.reportId === r.id);
+            if (match) {
+              return {
+                ...r,
+                status,
+                resolved_at: new Date().toISOString(),
+                resolution_note: resolveNote || null,
+              };
+            }
+          }
+          return r;
+        }));
+        if (selectedReport) {
+          setSelectedReport(prev => {
+            if (!prev) return prev;
+            const match = reportIds.find(ri => ri.reportId === prev.id);
+            if (match) {
+              return { ...prev, status, resolved_at: new Date().toISOString(), resolution_note: resolveNote || null };
+            }
+            return prev;
+          });
+        }
+        setResolveNote('');
+      }
+    } catch {} finally {
+      setResolving(false);
     }
   };
 
@@ -658,6 +714,24 @@ export default function ReportsPage() {
                                       -{r.suggested_incorrect.map(i => String.fromCharCode(65 + i)).join(', ')}
                                     </span>
                                   )}
+                                  {isAdmin && r.status === 'pending' && (
+                                    <span className="flex gap-1 ml-auto">
+                                      <button
+                                        onClick={(e) => { e.stopPropagation(); handleResolve([{ moduleId: r.module_id, questionId: r.question_id, reportId: r.id }], 'resolved'); }}
+                                        disabled={resolving}
+                                        className={`text-[10px] px-1.5 py-0.5 rounded font-medium transition-colors ${isDarkMode ? 'bg-green-900/50 text-green-300 hover:bg-green-900/70' : 'bg-green-100 text-green-700 hover:bg-green-200'}`}
+                                      >
+                                        Résoudre
+                                      </button>
+                                      <button
+                                        onClick={(e) => { e.stopPropagation(); handleResolve([{ moduleId: r.module_id, questionId: r.question_id, reportId: r.id }], 'dismissed'); }}
+                                        disabled={resolving}
+                                        className={`text-[10px] px-1.5 py-0.5 rounded font-medium transition-colors ${isDarkMode ? 'bg-red-900/50 text-red-300 hover:bg-red-900/70' : 'bg-red-100 text-red-700 hover:bg-red-200'}`}
+                                      >
+                                        Rejeter
+                                      </button>
+                                    </span>
+                                  )}
                                 </div>
                                 <p className={`text-sm ${isDarkMode ? 'text-amber-200' : 'text-amber-700'}`}>
                                   {r.reason}
@@ -665,6 +739,11 @@ export default function ReportsPage() {
                                 {r.status === 'resolved' && r.resolution_note && (
                                   <p className={`text-xs mt-1 ${isDarkMode ? 'text-green-300' : 'text-green-700'}`}>
                                     Résolu : {r.resolution_note}
+                                  </p>
+                                )}
+                                {r.status === 'dismissed' && r.resolution_note && (
+                                  <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                    Rejeté : {r.resolution_note}
                                   </p>
                                 )}
                               </div>
@@ -679,6 +758,58 @@ export default function ReportsPage() {
                         <h3 className={`text-sm font-medium mb-2 ${isDarkMode ? 'text-green-300' : 'text-green-800'}`}>Note de résolution</h3>
                         <p className={`text-sm ${isDarkMode ? 'text-green-200' : 'text-green-700'}`}>
                           {selectedReport.resolution_note}
+                        </p>
+                      </div>
+                    )}
+
+                    {isAdmin && allQuestionReports.some(r => r.status === 'pending') && (
+                      <div className={`mt-4 p-4 rounded-lg ${isDarkMode ? 'bg-indigo-900/20 border border-indigo-800/50' : 'bg-indigo-50 border border-indigo-200'}`}>
+                        <h3 className={`text-sm font-medium mb-3 ${isDarkMode ? 'text-indigo-300' : 'text-indigo-800'}`}>Actions administrateur</h3>
+                        <div className="mb-3">
+                          <textarea
+                            value={resolveNote}
+                            onChange={e => setResolveNote(e.target.value)}
+                            placeholder="Note de résolution (optionnel)..."
+                            maxLength={500}
+                            rows={2}
+                            className={`w-full px-3 py-2 text-sm rounded-lg border resize-none ${isDarkMode ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-indigo-200 text-gray-800 placeholder-gray-400'} focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+                          />
+                        </div>
+                        <div className="flex gap-2">
+                          {(() => {
+                            const pendingReports = allQuestionReports.filter(r => r.status === 'pending');
+                            const resolvePayloads = pendingReports.map(r => ({ moduleId: r.module_id, questionId: r.question_id, reportId: r.id }));
+                            const allPending = allQuestionReports.every(r => r.status === 'pending');
+                            return (
+                              <>
+                                <button
+                                  onClick={() => handleResolve(resolvePayloads, 'resolved')}
+                                  disabled={resolving}
+                                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                    resolving
+                                      ? isDarkMode ? 'bg-gray-700 text-gray-500' : 'bg-gray-200 text-gray-400'
+                                      : 'bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 shadow-sm'
+                                  }`}
+                                >
+                                  {resolving ? 'Traitement...' : allPending ? 'Résoudre tout' : `Résoudre (${pendingReports.length} en attente)`}
+                                </button>
+                                <button
+                                  onClick={() => handleResolve(resolvePayloads, 'dismissed')}
+                                  disabled={resolving}
+                                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                    resolving
+                                      ? isDarkMode ? 'bg-gray-700 text-gray-500' : 'bg-gray-200 text-gray-400'
+                                      : isDarkMode ? 'bg-red-900/40 text-red-300 hover:bg-red-900/60 border border-red-800/50' : 'bg-red-50 text-red-700 hover:bg-red-100 border border-red-200'
+                                  }`}
+                                >
+                                  {resolving ? 'Traitement...' : allPending ? 'Rejeter tout' : `Rejeter (${pendingReports.length} en attente)`}
+                                </button>
+                              </>
+                            );
+                          })()}
+                        </div>
+                        <p className={`text-xs mt-2 ${isDarkMode ? 'text-indigo-400/70' : 'text-indigo-500'}`}>
+                          S'applique aux {allQuestionReports.filter(r => r.status === 'pending').length} signalement{allQuestionReports.filter(r => r.status === 'pending').length !== 1 ? 's' : ''} en attente de cette question.
                         </p>
                       </div>
                     )}
