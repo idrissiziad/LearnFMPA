@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
 import ThemeToggle from '@/components/ThemeToggle';
-import { modules } from '@/data/modules';
+import { modules, getModuleQuestions, Question } from '@/data/modules';
 
 interface Comment {
   id: string;
@@ -40,7 +40,7 @@ function timeAgo(dateStr: string): string {
   const date = new Date(dateStr);
   const now = new Date();
   const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-  if (seconds < 60) return 'à l\'instant';
+  if (seconds < 60) return "à l'instant";
   const minutes = Math.floor(seconds / 60);
   if (minutes < 60) return `il y a ${minutes}min`;
   const hours = Math.floor(minutes / 60);
@@ -52,9 +52,12 @@ function timeAgo(dateStr: string): string {
   return `il y a ${Math.floor(months / 12)}an`;
 }
 
-function truncate(text: string, max: number): string {
-  if (text.length <= max) return text;
-  return text.substring(0, max) + '...';
+function hasGdr(explanation: string): boolean {
+  return explanation.toUpperCase().includes('[GDR]');
+}
+
+function stripGdr(explanation: string): string {
+  return explanation.replace(/\[GDR\]/gi, '').trim();
 }
 
 export default function ReportsPage() {
@@ -69,10 +72,12 @@ export default function ReportsPage() {
   const [sortBy, setSortBy] = useState<'recent' | 'votes'>('recent');
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'resolved' | 'dismissed'>('all');
   const [moduleFilter, setModuleFilter] = useState<number | 'all'>('all');
-  const [expandedReport, setExpandedReport] = useState<string | null>(null);
-  const [commentText, setCommentText] = useState<{ [key: string]: string }>({});
-  const [submitting, setSubmitting] = useState<{ [key: string]: boolean }>({});
-  const [voting, setVoting] = useState<{ [key: string]: boolean }>({});
+  const [selectedReport, setSelectedReport] = useState<CommunityReport | null>(null);
+  const [questionData, setQuestionData] = useState<Question | null>(null);
+  const [loadingQuestion, setLoadingQuestion] = useState(false);
+  const [commentText, setCommentText] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [voting, setVoting] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -114,11 +119,23 @@ export default function ReportsPage() {
     if (user) fetchReports();
   }, [user, fetchReports]);
 
-  const handleVote = async (report: CommunityReport, value: 1 | -1 | 0) => {
-    if (!user) return;
-    const key = report.id;
-    if (voting[key]) return;
+  const loadQuestionDetail = useCallback(async (report: CommunityReport) => {
+    setSelectedReport(report);
+    setCommentText('');
+    setLoadingQuestion(true);
+    try {
+      const questions = await getModuleQuestions(report.module_id);
+      const q = questions.find(q => q.id === report.question_id) || null;
+      setQuestionData(q);
+    } catch {
+      setQuestionData(null);
+    } finally {
+      setLoadingQuestion(false);
+    }
+  }, []);
 
+  const handleVote = async (report: CommunityReport, value: 1 | -1 | 0) => {
+    if (!user || voting) return;
     const currentVote: number = report.votes[user.id] || 0;
     const newValue = currentVote === value ? 0 : value;
 
@@ -133,7 +150,20 @@ export default function ReportsPage() {
       return { ...r, votes: newVotes };
     }));
 
-    setVoting(prev => ({ ...prev, [key]: true }));
+    if (selectedReport?.id === report.id) {
+      setSelectedReport(prev => {
+        if (!prev) return prev;
+        const newVotes = { ...prev.votes };
+        if (newValue === 0) {
+          delete newVotes[user.id];
+        } else {
+          newVotes[user.id] = newValue;
+        }
+        return { ...prev, votes: newVotes };
+      });
+    }
+
+    setVoting(true);
     try {
       const token = localStorage.getItem('learnfmpa_token');
       const res = await fetch('/api/report-community', {
@@ -173,18 +203,13 @@ export default function ReportsPage() {
         return { ...r, votes: revertVotes };
       }));
     } finally {
-      setVoting(prev => ({ ...prev, [key]: false }));
+      setVoting(false);
     }
   };
 
-  const handleComment = async (report: CommunityReport) => {
-    if (!user) return;
-    const text = commentText[report.id]?.trim();
-    if (!text) return;
-    const key = `comment-${report.id}`;
-    if (submitting[key]) return;
-
-    setSubmitting(prev => ({ ...prev, [key]: true }));
+  const handleComment = async () => {
+    if (!user || !selectedReport || !commentText.trim() || submitting) return;
+    setSubmitting(true);
     try {
       const token = localStorage.getItem('learnfmpa_token');
       const res = await fetch('/api/report-community', {
@@ -193,22 +218,21 @@ export default function ReportsPage() {
         body: JSON.stringify({
           user_id: user.id,
           action: 'comment',
-          module_id: report.module_id,
-          question_id: report.question_id,
-          report_id: report.id,
-          text,
+          module_id: selectedReport.module_id,
+          question_id: selectedReport.question_id,
+          report_id: selectedReport.id,
+          text: commentText.trim(),
         }),
       });
       const data = await res.json();
       if (data.success && data.comment) {
-        setReports(prev => prev.map(r => {
-          if (r.id !== report.id) return r;
-          return { ...r, comments: [...r.comments, data.comment] };
-        }));
-        setCommentText(prev => ({ ...prev, [report.id]: '' }));
+        const updatedReport = { ...selectedReport, comments: [...selectedReport.comments, data.comment] };
+        setSelectedReport(updatedReport);
+        setReports(prev => prev.map(r => r.id === selectedReport.id ? updatedReport : r));
+        setCommentText('');
       }
     } catch {} finally {
-      setSubmitting(prev => ({ ...prev, [key]: false }));
+      setSubmitting(false);
     }
   };
 
@@ -290,131 +314,66 @@ export default function ReportsPage() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-6 sm:py-8">
-        <div className="mb-6 sm:mb-8">
-          <h1 className={`text-2xl sm:text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} mb-2`}>
-            Signalements communautaires
-          </h1>
-          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-            Consultez les signalements de questions, votez et commentez de manière anonyme. Seul votre identifiant utilisateur est visible.
-          </p>
-        </div>
-
-        <div className={`flex flex-col sm:flex-row gap-3 mb-6 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-4 shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
-          <div className="flex gap-2 flex-1">
-            <select
-              value={statusFilter}
-              onChange={e => setStatusFilter(e.target.value as 'all' | 'pending' | 'resolved' | 'dismissed')}
-              className={`flex-1 px-3 py-2 rounded-lg text-sm border ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-800'} focus:outline-none focus:ring-2 focus:ring-green-500`}
-            >
-              <option value="all">Tous les statuts</option>
-              <option value="pending">En attente</option>
-              <option value="resolved">Résolus</option>
-              <option value="dismissed">Rejetés</option>
-            </select>
-            <select
-              value={moduleFilter === 'all' ? 'all' : String(moduleFilter)}
-              onChange={e => setModuleFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-              className={`flex-1 px-3 py-2 rounded-lg text-sm border ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-800'} focus:outline-none focus:ring-2 focus:ring-green-500`}
-            >
-              <option value="all">Tous les modules</option>
-              {getAuthenticatedModules().map(m => (
-                <option key={m.id} value={String(m.id)}>{m.title}</option>
-              ))}
-            </select>
-          </div>
-          <div className="flex gap-2">
+        {selectedReport ? (
+          <div>
             <button
-              onClick={() => setSortBy('recent')}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                sortBy === 'recent'
-                  ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-sm'
-                  : isDarkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
+              onClick={() => { setSelectedReport(null); setQuestionData(null); setCommentText(''); }}
+              className={`flex items-center gap-2 mb-4 ${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}
             >
-              Récents
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Retour aux signalements
             </button>
-            <button
-              onClick={() => setSortBy('votes')}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                sortBy === 'votes'
-                  ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-sm'
-                  : isDarkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              Populaires
-            </button>
-          </div>
-        </div>
 
-        {loading ? (
-          <div className="text-center py-16">
-            <div className="w-12 h-12 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Chargement des signalements...</p>
-          </div>
-        ) : error ? (
-          <div className={`rounded-xl p-6 text-center ${isDarkMode ? 'bg-red-900/20 border border-red-800' : 'bg-red-50 border border-red-200'}`}>
-            <svg className="w-10 h-10 mx-auto mb-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <p className={`font-medium ${isDarkMode ? 'text-red-300' : 'text-red-700'}`}>{error}</p>
-            <button onClick={fetchReports} className="mt-3 px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-              Réessayer
-            </button>
-          </div>
-        ) : filteredReports.length === 0 ? (
-          <div className={`rounded-xl p-8 text-center ${isDarkMode ? 'bg-gray-800' : 'bg-white'} border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
-            <svg className="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <p className={`font-medium mb-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Aucun signalement trouvé</p>
-            <p className={`text-sm ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-              {reports.length === 0 ? 'Aucun signalement n\'a été créé pour le moment.' : 'Aucun signalement ne correspond à vos filtres.'}
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {filteredReports.map(report => {
-              const upvotes = Object.values(report.votes).filter(v => v === 1).length;
-              const downvotes = Object.values(report.votes).filter(v => v === -1).length;
-              const userVote = user ? (report.votes[user.id] || 0) : 0;
-              const isExpanded = expandedReport === report.id;
-              const moduleName = MODULE_MAP.get(report.module_id) || `Module ${report.module_id}`;
-
-              return (
-                <div
-                  key={report.id}
-                  className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl border shadow-sm overflow-hidden transition-all`}
-                >
-                  <div className="p-4 sm:p-5">
-                    <div className="flex gap-3 sm:gap-4">
-                      <div className="flex flex-col items-center gap-1 flex-shrink-0">
+            {loadingQuestion ? (
+              <div className="text-center py-12">
+                <div className="w-10 h-10 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Chargement de la question...</p>
+              </div>
+            ) : (
+              <>
+                <div className={`rounded-xl border overflow-hidden mb-6 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
+                  <div className={`p-4 sm:p-5 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+                    <div className="flex flex-wrap items-center gap-2 mb-3">
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${getStatusColor(selectedReport.status)}`}>
+                        {getStatusLabel(selectedReport.status)}
+                      </span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-50 text-blue-700'}`}>
+                        {MODULE_MAP.get(selectedReport.module_id) || `Module ${selectedReport.module_id}`}
+                      </span>
+                      <span className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                        {timeAgo(selectedReport.created_at)}
+                      </span>
+                      <span className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                        par {selectedReport.user_id.slice(0, 12)}...
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="flex flex-col items-center gap-1">
                         <button
-                          onClick={() => handleVote(report, 1)}
-                          disabled={!!voting[report.id]}
-                          className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-all ${
-                            userVote === 1
+                          onClick={() => handleVote(selectedReport, 1)}
+                          disabled={voting}
+                          className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${
+                            (selectedReport.votes[user.id] || 0) === 1
                               ? 'bg-green-500/20 text-green-500'
-                              : isDarkMode
-                                ? 'bg-gray-700 text-gray-400 hover:bg-gray-600 hover:text-green-400'
-                                : 'bg-gray-100 text-gray-400 hover:bg-green-50 hover:text-green-600'
+                              : isDarkMode ? 'bg-gray-700 text-gray-400 hover:bg-gray-600 hover:text-green-400' : 'bg-gray-100 text-gray-400 hover:bg-green-50 hover:text-green-600'
                           }`}
                         >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
                           </svg>
                         </button>
-                        <span className={`text-sm font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                          {upvotes - downvotes}
+                        <span className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                          {Object.values(selectedReport.votes).filter(v => v === 1).length - Object.values(selectedReport.votes).filter(v => v === -1).length}
                         </span>
                         <button
-                          onClick={() => handleVote(report, -1)}
-                          disabled={!!voting[report.id]}
-                          className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-all ${
-                            userVote === -1
+                          onClick={() => handleVote(selectedReport, -1)}
+                          disabled={voting}
+                          className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${
+                            (selectedReport.votes[user.id] || 0) === -1
                               ? 'bg-red-500/20 text-red-500'
-                              : isDarkMode
-                                ? 'bg-gray-700 text-gray-400 hover:bg-gray-600 hover:text-red-400'
-                                : 'bg-gray-100 text-gray-400 hover:bg-red-50 hover:text-red-600'
+                              : isDarkMode ? 'bg-gray-700 text-gray-400 hover:bg-gray-600 hover:text-red-400' : 'bg-gray-100 text-gray-400 hover:bg-red-50 hover:text-red-600'
                           }`}
                         >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -422,129 +381,401 @@ export default function ReportsPage() {
                           </svg>
                         </button>
                       </div>
-
                       <div className="flex-1 min-w-0">
-                        <div className="flex flex-wrap items-center gap-2 mb-2">
-                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${getStatusColor(report.status)}`}>
-                            {getStatusLabel(report.status)}
-                          </span>
-                          <span className={`text-xs px-2 py-0.5 rounded-full ${isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-50 text-blue-700'}`}>
-                            {moduleName}
-                          </span>
-                          <span className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                            {timeAgo(report.created_at)}
-                          </span>
-                          <span className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                            par {report.user_id.slice(0, 16)}...
-                          </span>
-                        </div>
-
-                        {report.question_text && (
-                          <p className={`text-sm mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                            <span className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>Question :</span> {truncate(report.question_text, 150)}
-                          </p>
-                        )}
-
-                        <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                          {truncate(report.reason, isExpanded ? Infinity : 200)}
+                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                          {Object.values(selectedReport.votes).filter(v => v === 1).length} pour · {Object.values(selectedReport.votes).filter(v => v === -1).length} contre
                         </p>
-
-                        {report.status === 'resolved' && report.resolution_note && (
-                          <div className={`mt-2 p-2 rounded-lg text-sm ${isDarkMode ? 'bg-green-900/20 text-green-300' : 'bg-green-50 text-green-700'}`}>
-                            <span className="font-medium">Note de résolution :</span> {report.resolution_note}
-                          </div>
-                        )}
-
-                        <div className="flex items-center gap-4 mt-3">
-                          <button
-                            onClick={() => setExpandedReport(isExpanded ? null : report.id)}
-                            className={`flex items-center gap-1.5 text-sm transition-colors ${
-                              isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-700'
-                            }`}
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                            </svg>
-                            {report.comments.length} commentaire{report.comments.length !== 1 ? 's' : ''}
-                          </button>
-                          <span className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                            {upvotes} pour · {downvotes} contre
-                          </span>
-                        </div>
                       </div>
                     </div>
                   </div>
 
-                  {isExpanded && (
-                    <div className={`${isDarkMode ? 'bg-gray-750 border-gray-700' : 'bg-gray-50 border-gray-100'} border-t`}>
-                      <div className="p-4 sm:p-5 space-y-3">
-                        {report.comments.length === 0 && (
-                          <p className={`text-sm text-center py-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                            Aucun commentaire pour le moment.
-                          </p>
-                        )}
-                        {report.comments.map(comment => (
-                          <div key={comment.id} className={`rounded-lg p-3 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-                            <div className="flex items-center gap-2 mb-1">
-                              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${isDarkMode ? 'bg-emerald-900/40 text-emerald-400' : 'bg-emerald-100 text-emerald-700'}`}>
-                                {comment.user_id.slice(0, 2).toUpperCase()}
-                              </div>
-                              <span className={`text-xs font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                                {comment.user_id.slice(0, 16)}...
-                              </span>
-                              <span className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                                {timeAgo(comment.created_at)}
-                              </span>
-                            </div>
-                            <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} ml-8`}>
-                              {comment.text}
-                            </p>
-                          </div>
-                        ))}
+                  <div className={`p-4 sm:p-6 ${isDarkMode ? 'bg-gray-750' : 'bg-gray-50'}`}>
+                    <div className="mb-4">
+                      <h3 className={`text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Question</h3>
+                      <p className={`text-base leading-relaxed ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                        {selectedReport.question_text}
+                      </p>
+                    </div>
 
-                        <div className={`rounded-lg p-3 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-                          <div className="flex gap-2">
-                            <input
-                              type="text"
-                              value={commentText[report.id] || ''}
-                              onChange={e => setCommentText(prev => ({ ...prev, [report.id]: e.target.value }))}
-                              onKeyDown={e => {
-                                if (e.key === 'Enter' && !e.shiftKey && (commentText[report.id] || '').trim()) {
-                                  e.preventDefault();
-                                  handleComment(report);
-                                }
-                              }}
-                              placeholder="Ajouter un commentaire..."
-                              maxLength={500}
-                              className={`flex-1 px-3 py-2 text-sm rounded-lg border ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-gray-50 border-gray-200 text-gray-800 placeholder-gray-400'} focus:outline-none focus:ring-2 focus:ring-green-500`}
-                            />
-                            <button
-                              onClick={() => handleComment(report)}
-                              disabled={!!submitting[`comment-${report.id}`] || !(commentText[report.id] || '').trim()}
-                              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                                submitting[`comment-${report.id}`] || !(commentText[report.id] || '').trim()
-                                  ? isDarkMode ? 'bg-gray-700 text-gray-500' : 'bg-gray-200 text-gray-400'
-                                  : 'bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 shadow-sm'
-                              }`}
-                            >
-                              {submitting[`comment-${report.id}`] ? '...' : 'Envoyer'}
-                            </button>
+                    {(() => {
+                      const options = questionData?.options || selectedReport.original_options || [];
+                      const explanations = questionData?.answerExplanations || [];
+                      const origCorrectSet = new Set(selectedReport.original_correct || []);
+                      const suggestedCorrectSet = new Set(selectedReport.suggested_correct || []);
+                      const suggestedIncorrectSet = new Set(selectedReport.suggested_incorrect || []);
+
+                      return options.length > 0 ? (
+                        <div className="space-y-2 mb-4">
+                          <h3 className={`text-sm font-medium mb-3 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Options de réponse</h3>
+                          {options.map((option, idx) => {
+                            const letter = String.fromCharCode(65 + idx);
+                            const isOriginalCorrect = origCorrectSet.has(idx);
+                            const isSuggestedCorrect = suggestedCorrectSet.has(idx);
+                            const isSuggestedIncorrect = suggestedIncorrectSet.has(idx);
+                            const explanation = explanations[idx] || '';
+                            const isGdr = hasGdr(explanation);
+                            const cleanExplanation = stripGdr(explanation);
+
+                            let borderColor = isDarkMode ? 'border-gray-700' : 'border-gray-200';
+                            let bgColor = isDarkMode ? 'bg-gray-800' : 'bg-white';
+
+                            if (isOriginalCorrect) {
+                              borderColor = isDarkMode ? 'border-blue-500/50' : 'border-blue-300';
+                              bgColor = isDarkMode ? 'bg-blue-900/20' : 'bg-blue-50';
+                            }
+                            if (isSuggestedCorrect) {
+                              borderColor = isDarkMode ? 'border-green-500/50' : 'border-green-300';
+                              bgColor = isDarkMode ? 'bg-green-900/20' : 'bg-green-50';
+                            }
+                            if (isSuggestedIncorrect) {
+                              borderColor = isDarkMode ? 'border-red-500/50' : 'border-red-300';
+                              bgColor = isDarkMode ? 'bg-red-900/20' : 'bg-red-50';
+                            }
+                            if (isSuggestedCorrect && isOriginalCorrect) {
+                              borderColor = isDarkMode ? 'border-emerald-500/70' : 'border-emerald-400';
+                              bgColor = isDarkMode ? 'bg-emerald-900/30' : 'bg-emerald-50';
+                            }
+
+                            return (
+                              <div
+                                key={idx}
+                                className={`rounded-lg border-2 ${borderColor} ${bgColor} p-3 transition-all`}
+                              >
+                                <div className="flex items-start gap-2">
+                                  <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold ${
+                                    isOriginalCorrect
+                                      ? isDarkMode ? 'bg-blue-500/30 text-blue-300' : 'bg-blue-200 text-blue-800'
+                                      : isGdr
+                                        ? isDarkMode ? 'bg-green-500/30 text-green-300' : 'bg-green-200 text-green-800'
+                                        : isDarkMode ? 'bg-gray-700 text-gray-400' : 'bg-gray-200 text-gray-600'
+                                  }`}>
+                                    {letter}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <p className={`text-sm ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
+                                      {option}
+                                    </p>
+                                    <div className="flex flex-wrap gap-1.5 mt-1.5">
+                                      {isOriginalCorrect && (
+                                        <span className={`inline-flex items-center text-[10px] px-1.5 py-0.5 rounded-full font-medium ${isDarkMode ? 'bg-blue-500/20 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
+                                          Réponse du site
+                                        </span>
+                                      )}
+                                      {isGdr && (
+                                        <span className={`inline-flex items-center text-[10px] px-1.5 py-0.5 rounded-full font-medium ${isDarkMode ? 'bg-green-500/20 text-green-300' : 'bg-green-100 text-green-700'}`}>
+                                          GDR ✓
+                                        </span>
+                                      )}
+                                      {isSuggestedCorrect && !isOriginalCorrect && (
+                                        <span className={`inline-flex items-center text-[10px] px-1.5 py-0.5 rounded-full font-medium ${isDarkMode ? 'bg-emerald-500/20 text-emerald-300' : 'bg-emerald-100 text-emerald-700'}`}>
+                                          Suggestion : correct
+                                        </span>
+                                      )}
+                                      {isSuggestedIncorrect && isOriginalCorrect && (
+                                        <span className={`inline-flex items-center text-[10px] px-1.5 py-0.5 rounded-full font-medium ${isDarkMode ? 'bg-red-500/20 text-red-300' : 'bg-red-100 text-red-700'}`}>
+                                          Suggestion : incorrect
+                                        </span>
+                                      )}
+                                      {isSuggestedCorrect && isOriginalCorrect && (
+                                        <span className={`inline-flex items-center text-[10px] px-1.5 py-0.5 rounded-full font-medium ${isDarkMode ? 'bg-emerald-500/20 text-emerald-300' : 'bg-emerald-100 text-emerald-700'}`}>
+                                          Confirmé par le rapport
+                                        </span>
+                                      )}
+                                    </div>
+                                    {cleanExplanation && (
+                                      <p className={`text-xs mt-1.5 ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
+                                        {cleanExplanation}
+                                      </p>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+
+                          <div className={`flex flex-wrap gap-3 mt-3 pt-3 border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+                            <div className="flex items-center gap-1.5">
+                              <div className={`w-3 h-3 rounded border-2 ${isDarkMode ? 'border-blue-400' : 'border-blue-400'} ${isDarkMode ? 'bg-blue-900/30' : 'bg-blue-100'}`}></div>
+                              <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Réponse du site</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <div className={`w-3 h-3 rounded ${isDarkMode ? 'bg-green-500/30' : 'bg-green-100'} border-2 ${isDarkMode ? 'border-green-500' : 'border-green-500'}`}></div>
+                              <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>GDR (Grille de réponse)</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <div className={`w-3 h-3 rounded border-2 ${isDarkMode ? 'border-emerald-500' : 'border-emerald-400'} ${isDarkMode ? 'bg-emerald-900/30' : 'bg-emerald-50'}`}></div>
+                              <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Suggestion correct</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <div className={`w-3 h-3 rounded border-2 ${isDarkMode ? 'border-red-500' : 'border-red-400'} ${isDarkMode ? 'bg-red-900/30' : 'bg-red-50'}`}></div>
+                              <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Suggestion incorrect</span>
+                            </div>
                           </div>
                         </div>
+                      ) : null;
+                    })()}
+
+                    {questionData?.overallExplanation && (
+                      <div className={`mb-4 p-3 rounded-lg ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}>
+                        <h3 className={`text-sm font-medium mb-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Explication générale</h3>
+                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                          {questionData.overallExplanation}
+                        </p>
+                      </div>
+                    )}
+
+                    <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-amber-900/20 border border-amber-800/50' : 'bg-amber-50 border border-amber-200'}`}>
+                      <h3 className={`text-sm font-medium mb-2 ${isDarkMode ? 'text-amber-300' : 'text-amber-800'}`}>Raison du signalement</h3>
+                      <p className={`text-sm ${isDarkMode ? 'text-amber-200' : 'text-amber-700'}`}>
+                        {selectedReport.reason}
+                      </p>
+                    </div>
+
+                    {selectedReport.status === 'resolved' && selectedReport.resolution_note && (
+                      <div className={`mt-3 p-4 rounded-lg ${isDarkMode ? 'bg-green-900/20 border border-green-800/50' : 'bg-green-50 border border-green-200'}`}>
+                        <h3 className={`text-sm font-medium mb-2 ${isDarkMode ? 'text-green-300' : 'text-green-800'}`}>Note de résolution</h3>
+                        <p className={`text-sm ${isDarkMode ? 'text-green-200' : 'text-green-700'}`}>
+                          {selectedReport.resolution_note}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} overflow-hidden`}>
+                  <div className={`p-4 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+                    <h3 className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                      {selectedReport.comments.length} commentaire{selectedReport.comments.length !== 1 ? 's' : ''}
+                    </h3>
+                  </div>
+
+                  <div className="p-4 space-y-3">
+                    {selectedReport.comments.length === 0 && (
+                      <p className={`text-sm text-center py-4 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                        Aucun commentaire pour le moment. Soyez le premier !
+                      </p>
+                    )}
+                    {selectedReport.comments.map(comment => (
+                      <div key={comment.id} className={`rounded-lg p-3 ${isDarkMode ? 'bg-gray-750' : 'bg-gray-50'} border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${isDarkMode ? 'bg-emerald-900/40 text-emerald-400' : 'bg-emerald-100 text-emerald-700'}`}>
+                            {comment.user_id.slice(0, 2).toUpperCase()}
+                          </div>
+                          <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                            {comment.user_id.slice(0, 12)}...
+                          </span>
+                          <span className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                            {timeAgo(comment.created_at)}
+                          </span>
+                        </div>
+                        <p className={`text-sm ml-9 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                          {comment.text}
+                        </p>
+                      </div>
+                    ))}
+
+                    <div className={`rounded-lg p-3 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'} border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+                      <textarea
+                        value={commentText}
+                        onChange={e => setCommentText(e.target.value)}
+                        placeholder="Ajouter un commentaire..."
+                        maxLength={500}
+                        rows={2}
+                        className={`w-full px-3 py-2 text-sm rounded-lg border resize-none ${isDarkMode ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-200 text-gray-800 placeholder-gray-400'} focus:outline-none focus:ring-2 focus:ring-green-500`}
+                      />
+                      <div className="flex items-center justify-between mt-2">
+                        <span className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                          {commentText.length}/500
+                        </span>
+                        <button
+                          onClick={handleComment}
+                          disabled={submitting || !commentText.trim()}
+                          className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                            submitting || !commentText.trim()
+                              ? isDarkMode ? 'bg-gray-700 text-gray-500' : 'bg-gray-200 text-gray-400'
+                              : 'bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 shadow-sm'
+                          }`}
+                        >
+                          {submitting ? 'Envoi...' : 'Commenter'}
+                        </button>
                       </div>
                     </div>
-                  )}
+                  </div>
                 </div>
-              );
-            })}
+              </>
+            )}
           </div>
-        )}
+        ) : (
+          <>
+            <div className="mb-6 sm:mb-8">
+              <h1 className={`text-2xl sm:text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'} mb-2`}>
+                Signalements communautaires
+              </h1>
+              <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                Consultez les signalements de questions, votez et commentez de manière anonyme. Cliquez sur un signalement pour voir les détails et la comparaison des réponses.
+              </p>
+            </div>
 
-        <div className="mt-8 text-center">
-          <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-            {filteredReports.length} signalement{filteredReports.length !== 1 ? 's' : ''} affiché{filteredReports.length !== 1 ? 's' : ''}
-          </p>
-        </div>
+            <div className={`flex flex-col sm:flex-row gap-3 mb-6 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-4 shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+              <div className="flex gap-2 flex-1">
+                <select
+                  value={statusFilter}
+                  onChange={e => setStatusFilter(e.target.value as 'all' | 'pending' | 'resolved' | 'dismissed')}
+                  className={`flex-1 px-3 py-2 rounded-lg text-sm border ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-800'} focus:outline-none focus:ring-2 focus:ring-green-500`}
+                >
+                  <option value="all">Tous les statuts</option>
+                  <option value="pending">En attente</option>
+                  <option value="resolved">Résolus</option>
+                  <option value="dismissed">Rejetés</option>
+                </select>
+                <select
+                  value={moduleFilter === 'all' ? 'all' : String(moduleFilter)}
+                  onChange={e => setModuleFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+                  className={`flex-1 px-3 py-2 rounded-lg text-sm border ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-800'} focus:outline-none focus:ring-2 focus:ring-green-500`}
+                >
+                  <option value="all">Tous les modules</option>
+                  {getAuthenticatedModules().map(m => (
+                    <option key={m.id} value={String(m.id)}>{m.title}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setSortBy('recent')}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                    sortBy === 'recent'
+                      ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-sm'
+                      : isDarkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  Récents
+                </button>
+                <button
+                  onClick={() => setSortBy('votes')}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                    sortBy === 'votes'
+                      ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-sm'
+                      : isDarkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  Populaires
+                </button>
+              </div>
+            </div>
+
+            {loading ? (
+              <div className="text-center py-16">
+                <div className="w-12 h-12 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Chargement des signalements...</p>
+              </div>
+            ) : error ? (
+              <div className={`rounded-xl p-6 text-center ${isDarkMode ? 'bg-red-900/20 border border-red-800' : 'bg-red-50 border border-red-200'}`}>
+                <svg className="w-10 h-10 mx-auto mb-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className={`font-medium ${isDarkMode ? 'text-red-300' : 'text-red-700'}`}>{error}</p>
+                <button onClick={fetchReports} className="mt-3 px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                  Réessayer
+                </button>
+              </div>
+            ) : filteredReports.length === 0 ? (
+              <div className={`rounded-xl p-8 text-center ${isDarkMode ? 'bg-gray-800' : 'bg-white'} border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+                <svg className="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <p className={`font-medium mb-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Aucun signalement trouvé</p>
+                <p className={`text-sm ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                  {reports.length === 0 ? "Aucun signalement n'a été créé pour le moment." : 'Aucun signalement ne correspond à vos filtres.'}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {filteredReports.map(report => {
+                  const upvotes = Object.values(report.votes).filter(v => v === 1).length;
+                  const downvotes = Object.values(report.votes).filter(v => v === -1).length;
+                  const userVote = user ? (report.votes[user.id] || 0) : 0;
+                  const moduleName = MODULE_MAP.get(report.module_id) || `Module ${report.module_id}`;
+                  const origCount = (report.original_correct || []).length;
+                  const suggCorrect = (report.suggested_correct || []).filter(i => !(report.original_correct || []).includes(i)).length;
+                  const suggIncorrect = (report.suggested_incorrect || []).length;
+
+                  return (
+                    <button
+                      key={report.id}
+                      onClick={() => loadQuestionDetail(report)}
+                      className={`w-full text-left ${isDarkMode ? 'bg-gray-800 border-gray-700 hover:border-gray-500' : 'bg-white border-gray-100 hover:border-gray-300'} rounded-xl border shadow-sm overflow-hidden transition-all cursor-pointer`}
+                    >
+                      <div className="p-4 sm:p-5">
+                        <div className="flex items-start gap-3 sm:gap-4">
+                          <div className="flex flex-col items-center gap-0.5 flex-shrink-0 pt-0.5">
+                            <svg className={`w-5 h-5 ${userVote === 1 ? 'text-green-500' : isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} fill={userVote === 1 ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                            </svg>
+                            <span className={`text-sm font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                              {upvotes - downvotes}
+                            </span>
+                            <svg className={`w-5 h-5 ${userVote === -1 ? 'text-red-500' : isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} fill={userVote === -1 ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </div>
+
+                          <div className="flex-1 min-w-0">
+                            <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${getStatusColor(report.status)}`}>
+                                {getStatusLabel(report.status)}
+                              </span>
+                              <span className={`text-xs px-2 py-0.5 rounded-full ${isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-50 text-blue-700'}`}>
+                                {moduleName}
+                              </span>
+                              <span className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                                {timeAgo(report.created_at)}
+                              </span>
+                            </div>
+
+                            <p className={`text-sm ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} line-clamp-2 mb-1.5`}>
+                              {report.question_text || report.reason}
+                            </p>
+
+                            <div className="flex flex-wrap items-center gap-2">
+                              {origCount > 0 && (
+                                <span className={`text-xs px-1.5 py-0.5 rounded ${isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-50 text-blue-700'}`}>
+                                  Site : {report.original_options ? report.original_correct.map(i => String.fromCharCode(65 + i)).join(', ') : '?'}
+                                </span>
+                              )}
+                              {suggCorrect > 0 && (
+                                <span className={`text-xs px-1.5 py-0.5 rounded ${isDarkMode ? 'bg-green-900/30 text-green-300' : 'bg-green-50 text-green-700'}`}>
+                                  Suggéré +{suggCorrect}
+                                </span>
+                              )}
+                              {suggIncorrect > 0 && (
+                                <span className={`text-xs px-1.5 py-0.5 rounded ${isDarkMode ? 'bg-red-900/30 text-red-300' : 'bg-red-50 text-red-700'}`}>
+                                  Suggéré -{suggIncorrect}
+                                </span>
+                              )}
+                              <span className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                                {report.comments.length} commentaire{report.comments.length !== 1 ? 's' : ''}
+                              </span>
+                            </div>
+                          </div>
+
+                          <svg className={`w-5 h-5 flex-shrink-0 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            <div className="mt-8 text-center">
+              <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                {filteredReports.length} signalement{filteredReports.length !== 1 ? 's' : ''} affiché{filteredReports.length !== 1 ? 's' : ''}
+              </p>
+            </div>
+          </>
+        )}
       </main>
 
       <footer className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-t py-6 mt-8`}>
