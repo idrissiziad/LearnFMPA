@@ -62,11 +62,14 @@ function stripGdr(explanation: string): string {
   return explanation.replace(/\[GDR\]/gi, '').trim();
 }
 
+const ADMIN_EMAILS = ['idrissiziad7@gmail.com'];
+
 export default function ReportsPage() {
   const router = useRouter();
   const { theme } = useTheme();
   const { user, isLoading: authLoading } = useAuth();
   const isDarkMode = theme === 'dark';
+  const isAdmin = user ? ADMIN_EMAILS.includes(user.email.toLowerCase()) : false;
 
   const [reports, setReports] = useState<CommunityReport[]>([]);
   const [loading, setLoading] = useState(true);
@@ -364,6 +367,11 @@ export default function ReportsPage() {
                       <span className={`text-xs px-2 py-0.5 rounded-full ${isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-50 text-blue-700'}`}>
                         {MODULE_MAP.get(selectedReport.module_id) || `Module ${selectedReport.module_id}`}
                       </span>
+                      {isAdmin && (
+                        <span className={`text-xs px-2 py-0.5 rounded-full font-mono ${isDarkMode ? 'bg-rose-900/40 text-rose-300' : 'bg-rose-100 text-rose-700'}`}>
+                          M{selectedReport.module_id}:Q{selectedReport.question_id}
+                        </span>
+                      )}
                       {questionData?.year && (
                         <span className={`text-xs px-2 py-0.5 rounded-full ${isDarkMode ? 'bg-purple-900/30 text-purple-300' : 'bg-purple-50 text-purple-700'}`}>
                           {questionData.year}
@@ -428,6 +436,18 @@ export default function ReportsPage() {
                         {selectedReport.question_text}
                       </p>
                     </div>
+
+                    {isAdmin && (
+                      <div className={`flex items-center gap-2 mt-2 px-3 py-2 rounded-lg ${isDarkMode ? 'bg-rose-900/20 border border-rose-800/50' : 'bg-rose-50 border border-rose-200'}`}>
+                        <svg className="w-4 h-4 flex-shrink-0 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        <span className={`text-xs font-mono font-medium ${isDarkMode ? 'text-rose-300' : 'text-rose-700'}`}>
+                          Admin : module_id={selectedReport.module_id} question_id=&quot;{selectedReport.question_id}&quot;
+                        </span>
+                      </div>
+                    )}
 
                     {(() => {
                       const options = questionData?.options || selectedReport.original_options || [];
@@ -763,6 +783,11 @@ export default function ReportsPage() {
                               <span className={`text-xs px-2 py-0.5 rounded-full ${isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-50 text-blue-700'}`}>
                                 {moduleName}
                               </span>
+                              {isAdmin && (
+                                <span className={`text-xs px-2 py-0.5 rounded-full font-mono ${isDarkMode ? 'bg-rose-900/40 text-rose-300' : 'bg-rose-100 text-rose-700'}`}>
+                                  M{report.module_id}:Q{report.question_id}
+                                </span>
+                              )}
                               {reportYear && (
                                 <span className={`text-xs px-2 py-0.5 rounded-full ${isDarkMode ? 'bg-purple-900/30 text-purple-300' : 'bg-purple-50 text-purple-700'}`}>
                                   {reportYear}
