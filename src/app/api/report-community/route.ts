@@ -1,16 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAllReports, voteReport, addComment } from '@/lib/report-store';
+import { getAllReports, voteReport, addComment, Report, Comment } from '@/lib/report-store';
 import { validateSession } from '@/lib/session-store';
+import { loadUsers } from '@/lib/user-store';
 
-import { Report } from '@/lib/report-store';
+const ADMIN_EMAILS = ['idrissiziad7@gmail.com'];
 
-function anonymizeReport(report: Report) {
+async function getAdminNames(): Promise<Map<string, string>> {
+  const adminMap = new Map<string, string>();
+  try {
+    const usersData = await loadUsers();
+    for (const user of Object.values(usersData.users)) {
+      if (ADMIN_EMAILS.includes(user.email.toLowerCase())) {
+        adminMap.set(user.id, user.name);
+      }
+    }
+  } catch {}
+  return adminMap;
+}
+
+function anonymizeReport(report: Report, adminNames: Map<string, string>) {
   const { user_email, user_name, ...rest } = report;
+  const isAuthorAdmin = adminNames.has(report.user_id);
   return {
     ...rest,
-    comments: rest.comments.map((c) => ({
+    display_name: isAuthorAdmin ? adminNames.get(report.user_id)! : null,
+    comments: rest.comments.map((c: Comment) => ({
       id: c.id,
       user_id: c.user_id,
+      display_name: adminNames.has(c.user_id) ? adminNames.get(c.user_id)! : null,
       text: c.text,
       created_at: c.created_at,
     })),
@@ -33,13 +50,17 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Session expirée', code: 'SESSION_INVALID' }, { status: 401 });
     }
 
-    const allReports = await getAllReports();
+    const [allReports, adminNames] = await Promise.all([
+      getAllReports(),
+      getAdminNames(),
+    ]);
+
     const result = allReports.map(({ moduleId, reports }) => {
       const flatReports: ReturnType<typeof anonymizeReport>[] = [];
       for (const [questionId, questionReports] of Object.entries(reports)) {
         for (const report of questionReports) {
           flatReports.push({
-            ...anonymizeReport(report),
+            ...anonymizeReport(report, adminNames),
             question_id: questionId,
           });
         }
@@ -127,12 +148,14 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Rapport non trouvé' }, { status: 404 });
       }
 
+      const adminNames = await getAdminNames();
       const newComment = report.comments[report.comments.length - 1];
       return NextResponse.json({
         success: true,
         comment: {
           id: newComment.id,
           user_id: newComment.user_id,
+          display_name: adminNames.has(newComment.user_id) ? adminNames.get(newComment.user_id)! : null,
           text: newComment.text,
           created_at: newComment.created_at,
         },

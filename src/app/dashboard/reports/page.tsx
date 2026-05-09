@@ -11,6 +11,7 @@ import { modules, getModuleQuestions, Question } from '@/data/modules';
 interface Comment {
   id: string;
   user_id: string;
+  display_name: string | null;
   text: string;
   created_at: string;
 }
@@ -20,6 +21,7 @@ interface CommunityReport {
   module_id: number;
   question_id: string;
   user_id: string;
+  display_name: string | null;
   reason: string;
   question_text: string;
   suggested_correct: number[];
@@ -78,12 +80,28 @@ export default function ReportsPage() {
   const [commentText, setCommentText] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [voting, setVoting] = useState(false);
+  const [questionYears, setQuestionYears] = useState<Map<string, string>>(new Map());
 
   useEffect(() => {
     if (!authLoading && !user) {
       router.push('/login');
     }
   }, [user, authLoading, router]);
+
+  const loadQuestionYears = useCallback(async () => {
+    const yearMap = new Map<string, string>();
+    const moduleIds = new Set(reports.map(r => r.module_id));
+    const loadPromises = [...moduleIds].map(async (moduleId) => {
+      try {
+        const questions = await getModuleQuestions(moduleId);
+        for (const q of questions) {
+          if (q.year) yearMap.set(`${moduleId}_${q.id}`, q.year);
+        }
+      } catch {}
+    });
+    await Promise.all(loadPromises);
+    setQuestionYears(yearMap);
+  }, [reports]);
 
   const fetchReports = useCallback(async () => {
     if (!user) return;
@@ -118,6 +136,10 @@ export default function ReportsPage() {
   useEffect(() => {
     if (user) fetchReports();
   }, [user, fetchReports]);
+
+  useEffect(() => {
+    if (reports.length > 0) loadQuestionYears();
+  }, [reports, loadQuestionYears]);
 
   const loadQuestionDetail = useCallback(async (report: CommunityReport) => {
     setSelectedReport(report);
@@ -342,11 +364,21 @@ export default function ReportsPage() {
                       <span className={`text-xs px-2 py-0.5 rounded-full ${isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-50 text-blue-700'}`}>
                         {MODULE_MAP.get(selectedReport.module_id) || `Module ${selectedReport.module_id}`}
                       </span>
+                      {questionData?.year && (
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${isDarkMode ? 'bg-purple-900/30 text-purple-300' : 'bg-purple-50 text-purple-700'}`}>
+                          {questionData.year}
+                        </span>
+                      )}
+                      {(questionData?.chapter || selectedReport.question_text) && questionData?.chapter && (
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'}`}>
+                          {questionData.chapter}
+                        </span>
+                      )}
                       <span className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
                         {timeAgo(selectedReport.created_at)}
                       </span>
                       <span className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                        par {selectedReport.user_id.slice(0, 12)}...
+                        par {selectedReport.display_name || `${selectedReport.user_id.slice(0, 12)}...`}
                       </span>
                     </div>
                     <div className="flex items-center gap-4">
@@ -555,24 +587,27 @@ export default function ReportsPage() {
                         Aucun commentaire pour le moment. Soyez le premier !
                       </p>
                     )}
-                    {selectedReport.comments.map(comment => (
-                      <div key={comment.id} className={`rounded-lg p-3 ${isDarkMode ? 'bg-gray-750' : 'bg-gray-50'} border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
-                        <div className="flex items-center gap-2 mb-1.5">
-                          <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${isDarkMode ? 'bg-emerald-900/40 text-emerald-400' : 'bg-emerald-100 text-emerald-700'}`}>
-                            {comment.user_id.slice(0, 2).toUpperCase()}
-                          </div>
-                          <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                            {comment.user_id.slice(0, 12)}...
-                          </span>
-                          <span className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                            {timeAgo(comment.created_at)}
-                          </span>
-                        </div>
+                    {selectedReport.comments.map(comment => {
+                            const displayName = comment.display_name || `${comment.user_id.slice(0, 12)}...`;
+                            return (
+                          <div key={comment.id} className={`rounded-lg p-3 ${isDarkMode ? 'bg-gray-750' : 'bg-gray-50'} border ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+                            <div className="flex items-center gap-2 mb-1.5">
+                              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${comment.display_name ? (isDarkMode ? 'bg-green-900/40 text-green-400' : 'bg-green-100 text-green-700') : (isDarkMode ? 'bg-emerald-900/40 text-emerald-400' : 'bg-emerald-100 text-emerald-700')}`}>
+                                {comment.display_name ? comment.display_name.slice(0, 2).toUpperCase() : comment.user_id.slice(0, 2).toUpperCase()}
+                              </div>
+                              <span className={`text-sm font-medium ${comment.display_name ? (isDarkMode ? 'text-green-400' : 'text-green-700') : ''} ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                                {displayName}
+                              </span>
+                              <span className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
+                                {timeAgo(comment.created_at)}
+                              </span>
+                            </div>
                         <p className={`text-sm ml-9 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                           {comment.text}
                         </p>
                       </div>
-                    ))}
+                    );
+                    })}
 
                     <div className={`rounded-lg p-3 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'} border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                       <textarea
@@ -698,6 +733,7 @@ export default function ReportsPage() {
                   const origCount = (report.original_correct || []).length;
                   const suggCorrect = (report.suggested_correct || []).filter(i => !(report.original_correct || []).includes(i)).length;
                   const suggIncorrect = (report.suggested_incorrect || []).length;
+                  const reportYear = questionYears.get(`${report.module_id}_${report.question_id}`);
 
                   return (
                     <button
@@ -727,6 +763,11 @@ export default function ReportsPage() {
                               <span className={`text-xs px-2 py-0.5 rounded-full ${isDarkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-50 text-blue-700'}`}>
                                 {moduleName}
                               </span>
+                              {reportYear && (
+                                <span className={`text-xs px-2 py-0.5 rounded-full ${isDarkMode ? 'bg-purple-900/30 text-purple-300' : 'bg-purple-50 text-purple-700'}`}>
+                                  {reportYear}
+                                </span>
+                              )}
                               <span className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
                                 {timeAgo(report.created_at)}
                               </span>
