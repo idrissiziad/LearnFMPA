@@ -32,7 +32,8 @@ export default function ModulePage() {
   const { user, isLoading: authLoading, submitAnswer, getProgress, invalidateProgressCache, clearProgressAndStats, flushAnswers } = useAuth();
   const isDarkMode = theme === 'dark';
   const isFreeUser = user?.subscription_status === 'free';
-  const FREE_DAILY_LIMIT = 10;
+  const FREE_DAILY_LIMIT = 200;
+  const FREE_DISPLAY_LIMIT = 10;
   const FREE_DAILY_WINDOW_MS = 24 * 60 * 60 * 1000;
 
   const initialFreeAnswersCount = (() => {
@@ -1758,7 +1759,7 @@ const statTextColor = effectiveGdrMode && showAnswer && isCorrect && isSelected 
                 title="Explications disponibles avec la version complète"
                 message="Soutenez LearnFMPA pour accéder aux explications détaillées illimitées et au suivi de progression complet."
                 dailyCount={freeAnswersCount}
-                dailyLimit={FREE_DAILY_LIMIT}
+                dailyLimit={FREE_DISPLAY_LIMIT}
                 resetTime={user?.daily_answer_reset}
               />
             </div>
