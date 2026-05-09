@@ -97,6 +97,22 @@ function getDaysLeft(activatedAt: string | null, activationDays: number, subscri
   }
 }
 
+function getDisplayStatus(user: User): string {
+  if (user.subscription_status === 'paid') {
+    if (user.activated_at) {
+      const activatedDate = new Date(user.activated_at);
+      const now = new Date();
+      const daysSinceActivation = Math.floor((now.getTime() - activatedDate.getTime()) / (1000 * 60 * 60 * 24));
+      if (daysSinceActivation <= 30) {
+        return 'trial';
+      }
+    } else {
+      return 'trial';
+    }
+  }
+  return user.subscription_status;
+}
+
 function getExpiryDate(activatedAt: string | null, activationDays: number): string {
   if (!activatedAt) return 'N/A';
   try {
@@ -724,7 +740,8 @@ export default function AdminPage() {
     const matchesSearch = !searchQuery ||
       u.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       u.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesSub = filterSub === 'all' || u.subscription_status === filterSub;
+    const displayStatus = getDisplayStatus(u);
+    const matchesSub = filterSub === 'all' || displayStatus === filterSub;
     const matchesEdu = !filterEdu || u.email.endsWith('@edu.uiz.ac.ma');
     return matchesSearch && matchesSub && matchesEdu;
   });
@@ -764,10 +781,11 @@ export default function AdminPage() {
   const SubBadge = ({ status }: { status: string }) => {
     const colors: Record<string, string> = {
       paid: isDarkMode ? 'bg-green-900/40 text-green-300' : 'bg-green-100 text-green-700',
+      trial: isDarkMode ? 'bg-amber-900/40 text-amber-300' : 'bg-amber-100 text-amber-700',
       free: isDarkMode ? 'bg-blue-900/40 text-blue-300' : 'bg-blue-100 text-blue-700',
       inactive: isDarkMode ? 'bg-gray-700 text-gray-400' : 'bg-gray-200 text-gray-600',
     };
-    const labels: Record<string, string> = { paid: 'Paid', free: 'Free', inactive: 'Inactive' };
+    const labels: Record<string, string> = { paid: 'Paid', trial: 'Trial', free: 'Free', inactive: 'Inactive' };
     return (
       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${colors[status] || colors.inactive}`}>
         {labels[status] || status}
@@ -825,7 +843,7 @@ export default function AdminPage() {
             <div className={`rounded-xl border overflow-hidden mb-6 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
               <div className={`p-5 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
                 <div className="flex flex-wrap items-center gap-3 mb-4">
-                  <SubBadge status={selectedUser.subscription_status} />
+                  <SubBadge status={getDisplayStatus(selectedUser)} />
                   <span className={`text-xs px-2 py-0.5 rounded-full ${selectedUser.is_active ? (isDarkMode ? 'bg-green-900/40 text-green-300' : 'bg-green-100 text-green-700') : (isDarkMode ? 'bg-red-900/40 text-red-300' : 'bg-red-100 text-red-700')}`}>
                     {selectedUser.is_active ? 'Actif' : 'Inactif'}
                   </span>
@@ -1060,6 +1078,7 @@ export default function AdminPage() {
                     className={`px-3 py-2 rounded-lg text-sm border ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-800'} focus:outline-none focus:ring-2 focus:ring-green-500`}>
                     <option value="all">Tous les abonnements</option>
                     <option value="paid">Paid</option>
+                    <option value="trial">Trial</option>
                     <option value="free">Free</option>
                     <option value="inactive">Inactive</option>
                   </select>
@@ -1078,7 +1097,8 @@ export default function AdminPage() {
                   <span>Total: <strong>{users.length}</strong></span>
                   <span>Actifs aujourd&apos;hui: <strong>{activeToday}</strong></span>
                   <span>Actifs cette semaine: <strong>{activeThisWeek}</strong></span>
-                  <span>Paid: <strong>{users.filter(u => u.subscription_status === 'paid').length}</strong></span>
+                  <span>Paid: <strong>{users.filter(u => getDisplayStatus(u) === 'paid').length}</strong></span>
+                  <span>Trial: <strong>{users.filter(u => getDisplayStatus(u) === 'trial').length}</strong></span>
                   <span>Free: <strong>{users.filter(u => u.subscription_status === 'free').length}</strong></span>
                   <span>Inactive: <strong>{users.filter(u => u.subscription_status === 'inactive').length}</strong></span>
                 </div>
@@ -1116,7 +1136,7 @@ export default function AdminPage() {
                                 </div>
                               </td>
                               <td className={`px-4 py-3 hidden md:table-cell ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{u.name}</td>
-                              <td className="px-4 py-3"><SubBadge status={u.subscription_status} /></td>
+                              <td className="px-4 py-3"><SubBadge status={getDisplayStatus(u)} /></td>
                               <td className={`px-4 py-3 hidden lg:table-cell ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{getDaysLeft(u.activated_at, u.activation_days, u.subscription_status)}</td>
                               <td className="px-4 py-3 hidden sm:table-cell">
                                 <span className={`text-xs px-2 py-0.5 rounded-full ${u.is_active ? (isDarkMode ? 'bg-green-900/40 text-green-300' : 'bg-green-100 text-green-700') : (isDarkMode ? 'bg-red-900/40 text-red-300' : 'bg-red-100 text-red-700')}`}>
