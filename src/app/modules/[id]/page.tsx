@@ -1531,7 +1531,7 @@ export default function ModulePage() {
           </div>
 
           {currentQuestion?.questionImage && (() => {
-            const imagePaths = currentQuestion.questionImage.split(',').map(img => img.trim()).filter(img => img);
+            const imagePaths = (Array.isArray(currentQuestion.questionImage) ? currentQuestion.questionImage : currentQuestion.questionImage.split(',')).map(img => img.trim()).filter(img => img);
             if (imagePaths.length === 0) return null;
             return (
               <div className={`p-4 sm:p-5 ${isDarkMode ? 'bg-gray-750/50' : 'bg-gray-50/50'} border-b ${isDarkMode ? 'border-gray-700/50' : 'border-gray-100'}`}>
