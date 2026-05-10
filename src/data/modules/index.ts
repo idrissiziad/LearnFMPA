@@ -67,7 +67,7 @@ export interface JsonQuestion {
   YearAsked: string;
   Subtopic: string;
   QuestionText: string;
-  QuestionImage?: string;
+  QuestionImage?: string | string[];
   Choice_A_Text: string;
   Choice_A_isCorrect: boolean;
   Choice_A_Explanation: string;
@@ -705,7 +705,7 @@ export const getModuleQuestions = async (moduleId: number): Promise<Question[]> 
     return {
       id: index.toString(),
       question: q.QuestionText,
-      questionImage: q.QuestionImage,
+      questionImage: Array.isArray(q.QuestionImage) ? q.QuestionImage.join(',') : q.QuestionImage,
       options,
       correctAnswer: correctAnswers.length > 0 ? correctAnswers[0] : 0,
       explanation: q.OverallExplanation || '',
