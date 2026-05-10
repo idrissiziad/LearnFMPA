@@ -163,9 +163,25 @@ export default function ReportsPage() {
   const loadQuestionDetail = useCallback(async (report: CommunityReport) => {
     setSelectedReport(report);
     setCommentText('');
+    const findMatchingQuestion = (questions: Question[]): Question | null => {
+      const byId = questions.find(q => q.id === report.question_id) || null;
+      if (byId && report.question_text) {
+        const storedText = report.question_text.trim().substring(0, 60);
+        const liveText = byId.question.trim().substring(0, 60);
+        if (storedText === liveText) return byId;
+      } else if (byId) {
+        return byId;
+      }
+      if (report.question_text) {
+        const storedText = report.question_text.trim().substring(0, 60);
+        const byText = questions.find(q => q.question.trim().substring(0, 60) === storedText) || null;
+        if (byText) return byText;
+      }
+      return null;
+    };
     const cached = questionCacheRef.current.get(report.module_id);
     if (cached) {
-      const q = cached.find(q => q.id === report.question_id) || null;
+      const q = findMatchingQuestion(cached);
       setQuestionData(q);
       setLoadingQuestion(false);
     } else {
@@ -173,7 +189,7 @@ export default function ReportsPage() {
       try {
         const questions = await getModuleQuestions(report.module_id);
         questionCacheRef.current.set(report.module_id, questions);
-        const q = questions.find(q => q.id === report.question_id) || null;
+        const q = findMatchingQuestion(questions);
         setQuestionData(q);
       } catch {
         setQuestionData(null);
@@ -584,8 +600,9 @@ export default function ReportsPage() {
                     )}
 
                     {(() => {
-                      const options = questionData?.options || selectedReport.original_options || [];
-                      const explanations = questionData?.answerExplanations || [];
+                      const questionTextMatches = questionData && selectedReport.question_text && questionData.question.trim().substring(0, 60) === selectedReport.question_text.trim().substring(0, 60);
+                      const options = questionTextMatches ? (questionData?.options || selectedReport.original_options || []) : (selectedReport.original_options || questionData?.options || []);
+                      const explanations = questionTextMatches ? (questionData?.answerExplanations || []) : [];
                       const origCorrectSet = new Set(selectedReport.original_correct || []);
                       const suggestedCorrectSet = mergedSuggestions.correct;
                       const suggestedIncorrectSet = mergedSuggestions.incorrect;
