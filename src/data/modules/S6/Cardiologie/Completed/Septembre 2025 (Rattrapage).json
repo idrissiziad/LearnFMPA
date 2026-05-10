@@ -222,7 +222,8 @@
     {
         "YearAsked": "Septembre 2025 (Rattrapage)",
         "Subtopic": "Électrocardiogramme",
-        "QuestionText": "Quelle(s) anomalie(s) relevez-vous à partir de l'ECG de Mme Hafida ?",
+        "QuestionText": "Cas clinique : (les questions de 8 à 17 sont en rapport avec le cas clinique) Mme E. HAFIDA, 39 ans est admise aux urgences pour un déficit neurologique de l'hémicorps droit avec une participation faciale en rapport avec un accident vasculaire cérébrale ischémique fronto-pariétal. Dans ses facteurs de risque cardiovasculaires, vous relevez un tabagisme actif. Un diabète type 2 diagnostiqué depuis 2ans mis sous traitement oral. La patiente rapporte une notion de dyspnée d'effort jugée stade III de la NYHA depuis plus de 5 ans associée de temps en temps à des palpitations et des hémoptysies. A l'examen clinique la patiente est consciente, sa TA est de 103/78mmHg. Sa fréquence cardiaque est à 86 c/min, son poids est de 72 kg pour une taille de 178cm. L'auscultation cardiaque retrouve un souffle diastolique en précordial gauche. Elle a des œdèmes discrets en rétro malléolaire et une turgescence des veines jugulaires. Son ECG vous est fourni ainsi que sa radiographie thoracique. Quelle(s) anomalie(s) relevez-vous à partir de l'ECG de Mme Hafida ?",
+        "QuestionImage": [ "pathocardio1sep2025.avif", "pathocardio2sep2025.avif" ],
         "Choice_A_Text": "Un flutter atrial.",
         "Choice_A_isCorrect": false,
         "Choice_A_Explanation": "Le tracé ne montre pas d'ondes F en dents de scie régulières. (Source : Électrocardiogramme, Page 1919).",
