@@ -46,6 +46,6 @@ if __name__ == "__main__":
     # SETTINGS: Change these to match your setup
     # '.' means the current folder where the script is saved
     INPUT_DIR = '.' 
-    OUTPUT_FILE = 'Combined_Pharmacology_Database.json'
+    OUTPUT_FILE = 'Anatomo-pathologie 1.json'
     
     combine_json_files(INPUT_DIR, OUTPUT_FILE)
