@@ -161,7 +161,7 @@
         "Choice_B_Explanation": "Elle sert au diagnostic morphologique et non fonctionnel de la diurèse (Source : Troubles urinaires du bas appareil, Page Globale 1751).",
         "Choice_C_Text": "Mesure du résidu post-mictionnel.",
         "Choice_C_isCorrect": false,
-        "Choice_C_Explanation": "Elle évalue la qualité de la vidange, pas le volume total émis par jour (Source : Troubles urinaires du bas appareil, Page Globale 1750). [GDR]",
+        "Choice_C_Explanation": "Elle évalue la qualité de la vidange, pas le volume total émis par jour (Source : Troubles urinaires du bas appareil, Page Globale 1750). [GDR1]",
         "Choice_D_Text": "Calendrier mictionnel.",
         "Choice_D_isCorrect": true,
         "Choice_D_Explanation": "Le calendrier mictionnel permet de noter les volumes de chaque miction et la diurèse totale (Source : Troubles urinaires du bas appareil, Page Globale 1762).",
