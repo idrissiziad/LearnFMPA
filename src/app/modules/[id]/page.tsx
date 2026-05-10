@@ -1424,7 +1424,7 @@ export default function ModulePage() {
         <div data-tutorial="module-question" className={`${isDarkMode ? 'bg-gray-800/60' : 'bg-white/80'} backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl border ${isDarkMode ? 'border-gray-700/50' : 'border-gray-200/50'} overflow-hidden transition-all duration-300 ${isTransitioning ? 'opacity-0 scale-[0.98]' : 'opacity-100 scale-100'}`}>
           <div className={`p-3 sm:p-8 border-b ${isDarkMode ? 'border-gray-700/50' : 'border-gray-100'}`}>
             <div className="flex items-center justify-between mb-2 sm:mb-6">
-              <div className="flex items-center gap-2.5 sm:gap-4">
+              <div className="flex items-center gap-2.5 sm:gap-4 shrink-0">
                 <span className={`px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-xl text-sm sm:text-lg font-bold ${isDarkMode ? 'bg-gradient-to-r from-gray-700 to-gray-600 text-white' : 'bg-gradient-to-r from-gray-100 to-gray-50 text-gray-900'} shadow-sm`}>
                   {currentQuestionIndex + 1}/{activeQuestions.length}
                 </span>
@@ -1444,16 +1444,16 @@ export default function ModulePage() {
                   </span>
                 )}
               </div>
-              <div data-tutorial="module-report" className="flex items-center gap-2">
+              <div data-tutorial="module-report" className="flex items-center gap-1.5 sm:gap-2 min-w-0 shrink">
                 {currentQuestion?.chapter && (
-                  <span className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium truncate ${isDarkMode ? 'bg-gradient-to-r from-green-900/40 to-emerald-900/40 text-green-400' : 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-700'} shadow-sm`}>
+                  <span className={`px-2 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium max-w-[100px] sm:max-w-none truncate ${isDarkMode ? 'bg-gradient-to-r from-green-900/40 to-emerald-900/40 text-green-400' : 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-700'} shadow-sm`}>
                     {currentQuestion.chapter}
                   </span>
                 )}
                 {MODULE_IMAGE_CONFIGS[moduleId] && (
                   <button
                     onClick={() => { setImageViewerPage(1); setShowImageViewer(true); }}
-                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-1.5 ${isDarkMode ? 'bg-gradient-to-r from-blue-900/40 to-indigo-900/40 text-blue-400 hover:from-blue-900/60 hover:to-indigo-900/60' : 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 hover:from-blue-200 hover:to-indigo-200'} shadow-sm transition-colors`}
+                    className={`shrink-0 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-1.5 ${isDarkMode ? 'bg-gradient-to-r from-blue-900/40 to-indigo-900/40 text-blue-400 hover:from-blue-900/60 hover:to-indigo-900/60' : 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 hover:from-blue-200 hover:to-indigo-200'} shadow-sm transition-colors`}
                     title="Ouvrir le cours"
                   >
                     <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1470,7 +1470,7 @@ export default function ModulePage() {
                     setReportSubmitted(false);
                     setShowReportModal(true);
                   }}
-                  className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-1.5 ${isDarkMode ? 'bg-gradient-to-r from-red-900/40 to-orange-900/40 text-red-400 hover:from-red-900/60 hover:to-orange-900/60' : 'bg-gradient-to-r from-red-100 to-orange-100 text-red-600 hover:from-red-200 hover:to-orange-200'} shadow-sm transition-colors`}
+                  className={`shrink-0 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-1.5 ${isDarkMode ? 'bg-gradient-to-r from-red-900/40 to-orange-900/40 text-red-400 hover:from-red-900/60 hover:to-orange-900/60' : 'bg-gradient-to-r from-red-100 to-orange-100 text-red-600 hover:from-red-200 hover:to-orange-200'} shadow-sm transition-colors`}
                   title="Signaler cette question"
                 >
                   <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1481,7 +1481,7 @@ export default function ModulePage() {
                 {currentQuestion && pendingReportCount[currentQuestion.id] > 0 && (
                   <Link
                     href={`/dashboard/reports`}
-                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-1.5 ${isDarkMode ? 'bg-gradient-to-r from-amber-900/40 to-yellow-900/40 text-amber-400 hover:from-amber-900/60 hover:to-yellow-900/60' : 'bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-700 hover:from-amber-200 hover:to-yellow-200'} shadow-sm transition-colors`}
+                    className={`shrink-0 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-1.5 ${isDarkMode ? 'bg-gradient-to-r from-amber-900/40 to-yellow-900/40 text-amber-400 hover:from-amber-900/60 hover:to-yellow-900/60' : 'bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-700 hover:from-amber-200 hover:to-yellow-200'} shadow-sm transition-colors`}
                     title={`${pendingReportCount[currentQuestion.id]} signalement(s) en attente - Voir les détails`}
                   >
                     <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
