@@ -80,7 +80,7 @@ export default function ReportsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [sortBy, setSortBy] = useState<'recent' | 'votes'>('recent');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'resolved' | 'dismissed'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'resolved' | 'dismissed'>('pending');
   const [moduleFilter, setModuleFilter] = useState<number | 'all'>('all');
   const [selectedReport, setSelectedReport] = useState<CommunityReport | null>(null);
   const [questionData, setQuestionData] = useState<Question | null>(null);
