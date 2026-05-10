@@ -1,6 +1,6 @@
 [
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Troubles urinaires du bas appareil",
         "QuestionText": "Parmi les troubles suivants, lesquels sont des symptômes de la phase de remplissage vésical ?",
         "Choice_A_Text": "Pollakiurie.",
@@ -25,7 +25,7 @@
         "Choice_E_Image": "Sémiologie2-1738.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Troubles urinaires du bas appareil",
         "QuestionText": "Parmi les troubles suivants, lesquels sont des symptômes de la phase de vidange vésicale ?",
         "Choice_A_Text": "Pollakiurie.",
@@ -50,7 +50,7 @@
         "Choice_E_Image": "Sémiologie2-1738.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Troubles urinaires du bas appareil",
         "QuestionText": "À propos de la dysurie, quelles sont les propositions justes ?",
         "Choice_A_Text": "C'est une difficulté d'évacuation du contenu vésical dans un délai normal.",
@@ -58,10 +58,10 @@
         "Choice_A_Explanation": "La dysurie se définit par une évacuation vésicale lente ou difficile par rapport à la normale. (Source : Troubles urinaires du bas appareil, Page Globale 1741).",
         "Choice_B_Text": "Elle peut être liée à une diminution des forces expulsives détrusoriennes.",
         "Choice_B_isCorrect": true,
-        "Choice_B_Explanation": "Une hypotonie du muscle détrusor réduit la force d'expulsion, provoquant une dysurie. (Source : Troubles urinaires du bas appareil, Page Globale 1747). [GDR]",
+        "Choice_B_Explanation": "Une hypotonie du muscle détrusor réduit la force d'expulsion, provoquant une dysurie. (Source : Troubles urinaires du bas appareil, Page Globale 1747). [GDR1]",
         "Choice_C_Text": "Elle peut être liée à une augmentation des résistances cervico-urétrales.",
         "Choice_C_isCorrect": true,
-        "Choice_C_Explanation": "L'augmentation de la résistance à la sortie (ex: prostate, sténose) empêche l'écoulement fluide. (Source : Troubles urinaires du bas appareil, Page Globale 1747). [GDR]",
+        "Choice_C_Explanation": "L'augmentation de la résistance à la sortie (ex: prostate, sténose) empêche l'écoulement fluide. (Source : Troubles urinaires du bas appareil, Page Globale 1747). [GDR1]",
         "Choice_D_Text": "Elle est toujours secondaire à une obstruction.",
         "Choice_D_isCorrect": false,
         "Choice_D_Explanation": "La dysurie ne signifie pas toujours une obstruction, elle peut aussi être due à une vessie hypoactive. (Source : Troubles urinaires du bas appareil, Page Globale 1746).",
@@ -75,7 +75,7 @@
         "Choice_E_Image": "Sémiologie2-1741.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Troubles urinaires du bas appareil",
         "QuestionText": "Quelle(s) exploration(s) permet(tent) d’évaluer la qualité de la vidange vésicale ?",
         "Choice_A_Text": "Débimétrie.",
@@ -100,7 +100,7 @@
         "Choice_E_Image": "Sémiologie2-1752.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Troubles urinaires du bas appareil",
         "QuestionText": "Quelle exploration permet d’évaluer un retentissement d’un syndrome obstructif du bas appareil urinaire sur le haut appareil ?",
         "Choice_A_Text": "Débimétrie.",
@@ -125,7 +125,7 @@
         "Choice_E_Image": "Sémiologie2-1752.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Infections uro-génitales",
         "QuestionText": "Chez un patient qui présente une leucocyturie sans bactériurie à l'examen cytobactériologique des urines, quels sont les diagnostics les plus probables ?",
         "Choice_A_Text": "Colonisation urinaire.",
@@ -150,7 +150,7 @@
         "Choice_E_Image": "Sémiologie2-0556.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Hématurie",
         "QuestionText": "L’issue de sang du méat urétral en dehors des mictions correspond à :",
         "Choice_A_Text": "Écoulement urétral.",
@@ -175,7 +175,7 @@
         "Choice_E_Image": "Sémiologie2-0458.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Sémiologie néphrologique 2",
         "QuestionText": "Quelles sont les propositions exactes concernant la protéinurie ?",
         "Choice_A_Text": "Le dépistage positif par la bandelette nécessite une quantification.",
@@ -200,7 +200,7 @@
         "Choice_E_Image": "Sémiologie2-1545.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Sémiologie néphrologique 2",
         "QuestionText": "La protéinurie orthostatique :",
         "Choice_A_Text": "Persiste toute la vie.",
@@ -225,7 +225,7 @@
         "Choice_E_Image": "Sémiologie2-1544.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Sémiologie néphrologique 2",
         "QuestionText": "Parmi les éléments sémiologiques suivants, quel(s) est(sont) celui(ceux) qui oriente(nt) vers une origine néphrologique de l'hématurie ?",
         "Choice_A_Text": "Une douleur lombaire unilatérale.",
@@ -250,7 +250,7 @@
         "Choice_E_Image": "Sémiologie2-1509.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Sémiologie néphrologique 3",
         "QuestionText": "Quelle(s) est (sont) la (les) proposition(s) exacte(s) pour différencier une insuffisance rénale aiguë d’une insuffisance rénale chronique ?",
         "Choice_A_Text": "L’hypocalcémie.",
@@ -275,7 +275,7 @@
         "Choice_E_Image": "Sémiologie2-1577.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Sémiologie néphrologique 1",
         "QuestionText": "Il est vrai que les œdèmes d’origine rénale sont :",
         "Choice_A_Text": "Rouge.",
@@ -300,7 +300,7 @@
         "Choice_E_Image": "Sémiologie2-1493.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Algies pelviennes",
         "QuestionText": "Mme Z.R âgée de 34 ans, consulte pour des douleurs pelviennes évoluant depuis 24 heures, ces douleurs coïncidaient avec les menstruations, ces règles sont abondantes. Cette patiente présente :",
         "Choice_A_Text": "Des douleurs pelviennes chroniques.",
@@ -325,7 +325,7 @@
         "Choice_E_Image": "Sémiologie2-0004.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Algies pelviennes",
         "QuestionText": "Une douleur pelvienne aiguë chez une femme jeune, doit faire évoquer en premier (choix unique) :",
         "Choice_A_Text": "Une torsion d'annexe.",
@@ -350,7 +350,7 @@
         "Choice_E_Image": "Sémiologie2-0033.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Leucorrhées",
         "QuestionText": "Les Leucorrhées blanchâtres caillebottées, associées à un prurit vulvaire et dysurie. Ce tableau clinique est en faveur de :",
         "Choice_A_Text": "Leucorrhées physiologiques.",
@@ -375,7 +375,7 @@
         "Choice_E_Image": "Sémiologie2-0609.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Leucorrhées",
         "QuestionText": "Chez la femme, les facteurs favorisants les candidoses vaginales sont :",
         "Choice_A_Text": "L’hypertension artérielle.",
@@ -400,7 +400,7 @@
         "Choice_E_Image": "Sémiologie2-0608.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Examen clinique en gynécologie",
         "QuestionText": "L’examen clinique des seins, l’inspection :",
         "Choice_A_Text": "Permet de préciser la symétrie de volume.",
@@ -425,7 +425,7 @@
         "Choice_E_Image": "Sémiologie2-0294.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Algies pelviennes",
         "QuestionText": "Quelles sont les particularités des dysménorrhées primaires ?",
         "Choice_A_Text": "Surviennent à tout âge.",
@@ -450,7 +450,7 @@
         "Choice_E_Image": "Sémiologie2-0020.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Aménorrhées",
         "QuestionText": "Parmi les causes de l’aménorrhée secondaire on retrouve :",
         "Choice_A_Text": "Synéchie utérine (syndrome d’Asherman).",
@@ -475,7 +475,7 @@
         "Choice_E_Image": "Sémiologie2-0057.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Examen clinique en gynécologie",
         "QuestionText": "Un cycle menstruel normal se traduit par :",
         "Choice_A_Text": "Une durée du cycle de 24 à 38 jours.",
@@ -500,7 +500,7 @@
         "Choice_E_Image": "Sémiologie2-0251.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Céphalées",
         "QuestionText": "Quelles sont les propositions qui peuvent caractériser une céphalée nouvelle ?",
         "Choice_A_Text": "Le patient n’a jamais eu de céphalées auparavant.",
@@ -525,7 +525,7 @@
         "Choice_E_Image": "Sémiologie2-0189.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Rédiger l’observation d’un malade en neurologie",
         "QuestionText": "L’observation médicale en Neurologie :",
         "Choice_A_Text": "Est à rédiger à côté du patient.",
@@ -550,7 +550,7 @@
         "Choice_E_Image": "Sémiologie2-0693.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Sémiologie des fonctions cognitives",
         "QuestionText": "Lors d’une agnosie visuelle, le patient est incapable de :",
         "Choice_A_Text": "Comprendre le langage écrit, mais peut le produire.",
@@ -575,7 +575,7 @@
         "Choice_E_Image": "Sémiologie2-1348.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Céphalées",
         "QuestionText": "La migraine sans aura est caractérisée par :",
         "Choice_A_Text": "La présence d’au moins 5 crises.",
@@ -600,7 +600,7 @@
         "Choice_E_Image": "Sémiologie2-0193.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Crises épileptiques et épilepsies",
         "QuestionText": "Les crises focales simples avec signes moteurs comprennent :",
         "Choice_A_Text": "Les automatismes gestuels.",
@@ -625,7 +625,7 @@
         "Choice_E_Image": "Sémiologie2-0151.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Sémiologie des déficits moteurs",
         "QuestionText": "Un syndrome pyramidal est en phase spastique lorsqu'on a :",
         "Choice_A_Text": "Des réflexes ostéotendineux abolis.",
@@ -650,7 +650,7 @@
         "Choice_E_Image": "Sémiologie2-1276.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Sémiologie des déficits moteurs",
         "QuestionText": "La sémiologie du syndrome neurogène périphérique comporte ?",
         "Choice_A_Text": "Des réflexes ostéotendineux vifs.",
@@ -675,7 +675,7 @@
         "Choice_E_Image": "Sémiologie2-1285.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Sémiologie des déficits moteurs",
         "QuestionText": "La marche dans le syndrome myogène est ? (Une seule réponse est juste) :",
         "Choice_A_Text": "Dystonique.",
@@ -700,7 +700,7 @@
         "Choice_E_Image": "Sémiologie2-0933.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Nerfs crâniens",
         "QuestionText": "Concernant les voies optiques :",
         "Choice_A_Text": "Le nerf optique représente la 1ère paire crânienne.",
@@ -725,7 +725,7 @@
         "Choice_E_Image": "Sémiologie2-0643.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Syndrome cérebelleux",
         "QuestionText": "Un patient âgé de 72 ans, ayant comme antécédents une hypertension artérielle mal suivie, s’est présenté aux urgences pour un tableau brutal fait de troubles de la marche et de l’équilibre avec à l’examen neurologique : De bonnes forces musculaires, un élargissement du polygone de sustentation avec une marche ébrieuse et une hypermétrie à l’hémicorps gauche. Il s’agit (Une seule proposition est juste) :",
         "Choice_A_Text": "D'un syndrome pyramidal.",
@@ -750,7 +750,7 @@
         "Choice_E_Image": "Sémiologie2-0893.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Syndrome hallucinatoire",
         "QuestionText": "La dépersonnalisation est un syndrome clinique qui comprend :",
         "Choice_A_Text": "La désincarnation.",
@@ -775,7 +775,7 @@
         "Choice_E_Image": "Sémiologie2-0738.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Syndrome hallucinatoire",
         "QuestionText": "Parmi les propositions suivantes, quelles sont les hallucinations non psychotiques ?",
         "Choice_A_Text": "Hallucinations intrapsychiques.",
@@ -800,7 +800,7 @@
         "Choice_E_Image": "Sémiologie2-0816.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Syndrome délirant",
         "QuestionText": "Parmi les mécanismes de construction d’une idée délirante, on trouve :",
         "Choice_A_Text": "Le mécanisme imaginatif.",
@@ -825,7 +825,7 @@
         "Choice_E_Image": "Sémiologie2-0760.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Syndrome dépressif",
         "QuestionText": "Le syndrome dépressif inclut habituellement :",
         "Choice_A_Text": "La douleur morale.",
@@ -850,7 +850,7 @@
         "Choice_E_Image": "Sémiologie2-0784.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Syndrome anxieux",
         "QuestionText": "Le syndrome anxieux pourrait être dû à :",
         "Choice_A_Text": "Le trouble panique.",
@@ -875,7 +875,7 @@
         "Choice_E_Image": "Sémiologie2-0769.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Sémiologie métabolique",
         "QuestionText": "Le syndrome cardinal dans le diabète se manifeste par :",
         "Choice_A_Text": "Polyurie sans polydipsie.",
@@ -900,7 +900,7 @@
         "Choice_E_Image": "Sémiologie2-1408.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Sémiologie métabolique",
         "QuestionText": "Le diagnostic de diabète est porté devant :",
         "Choice_A_Text": "Glycémie à n’importe quel moment de la journée ≥ 2g/L.",
@@ -925,7 +925,7 @@
         "Choice_E_Image": "Sémiologie2-1405.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Sémiologie néphrologique 1",
         "QuestionText": "Un indice de masse corporelle entre 35 et 40kg/m2 signifie :",
         "Choice_A_Text": "Un surpoids.",
@@ -950,7 +950,7 @@
         "Choice_E_Image": "Sémiologie2-0263.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Sémiologie thyroïdienne",
         "QuestionText": "Un goitre homogène :",
         "Choice_A_Text": "Comporte des nodules ayant la même taille.",
@@ -975,7 +975,7 @@
         "Choice_E_Image": "Sémiologie2-1672.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Sémiologie thyroïdienne",
         "QuestionText": "La thyrotoxicose se manifeste par :",
         "Choice_A_Text": "Une tachycardie.",
@@ -1000,7 +1000,7 @@
         "Choice_E_Image": "Sémiologie2-1697.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Sémiologie hypothalamo-hypophysaire",
         "QuestionText": "L’hypopituitarisme se manifeste par :",
         "Choice_A_Text": "Une asthénie.",
@@ -1025,7 +1025,7 @@
         "Choice_E_Image": "Sémiologie2-1359.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Sémiologie surrénalienne",
         "QuestionText": "Le syndrome de cushing se manifeste par :",
         "Choice_A_Text": "Une obésité totale.",
@@ -1050,7 +1050,7 @@
         "Choice_E_Image": "Sémiologie2-1648.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Sémiologie dermatologie",
         "QuestionText": "Une ou plusieurs propositions concernant la plaque cutanée est (sont) correcte (s)",
         "Choice_A_Text": "Une lésion élémentaire secondaire.",
@@ -1075,7 +1075,7 @@
         "Choice_E_Image": "Sémiologie2-1057.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Sémiologie dermatologie",
         "QuestionText": "Concernant un exanthème roséoliforme :",
         "Choice_A_Text": "C’est un érythème généralisé.",
@@ -1100,7 +1100,7 @@
         "Choice_E_Image": "Sémiologie2-1043.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Sémiologie dermatologie",
         "QuestionText": "Quelles sont les situations dans lesquelles la lumière de wood est utilisée ?",
         "Choice_A_Text": "Macules achromiques.",
@@ -1125,7 +1125,7 @@
         "Choice_E_Image": "Sémiologie2-1236.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Sémiologie dermatologie",
         "QuestionText": "Concernant une glossite c’est une :",
         "Choice_A_Text": "Une inflammation de la langue.",
@@ -1150,7 +1150,7 @@
         "Choice_E_Image": "Sémiologie2-1160.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Sémiologie dermatologie",
         "QuestionText": "Les squames ichtyosiformes :",
         "Choice_A_Text": "Correspondent à une desquamation en lambeau.",
@@ -1175,7 +1175,7 @@
         "Choice_E_Image": "Sémiologie2-1119.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Sémiologie dermatologie",
         "QuestionText": "La couleur jaune des ongles correspond à :",
         "Choice_A_Text": "Une chromonychie.",
@@ -1200,7 +1200,7 @@
         "Choice_E_Image": "Sémiologie2-1199.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Sémiologie dermatologie",
         "QuestionText": "Une paronychie correspond à :",
         "Choice_A_Text": "Une hyperkératose sous-unguéale.",
@@ -1225,7 +1225,7 @@
         "Choice_E_Image": "Sémiologie2-1214.avif"
     },
     {
-        "YearAsked": "2024",
+        "YearAsked": "Juin 2024",
         "Subtopic": "Sémiologie dermatologie",
         "QuestionText": "Parmi les étiologies d’une gomme cutanée :",
         "Choice_A_Text": "Un pemphigus.",
