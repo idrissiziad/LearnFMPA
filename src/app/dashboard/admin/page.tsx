@@ -99,18 +99,11 @@ function getDaysLeft(activatedAt: string | null, activationDays: number, subscri
 
 function getDisplayStatus(user: User): string {
   if (user.subscription_status === 'paid') {
-    if (user.activated_at) {
-      const activatedDate = new Date(user.activated_at);
-      const now = new Date();
-      const daysSinceActivation = Math.floor((now.getTime() - activatedDate.getTime()) / (1000 * 60 * 60 * 24));
-      if (daysSinceActivation <= 30) {
-        return 'trial';
-      }
-    } else {
+    if (user.activated_at && user.activation_days <= 30) {
       return 'trial';
     }
   }
-  return user.subscription_status;
+  return user.subscription_status || 'free';
 }
 
 function getExpiryDate(activatedAt: string | null, activationDays: number): string {
