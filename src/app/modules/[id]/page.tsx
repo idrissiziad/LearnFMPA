@@ -131,6 +131,7 @@ export default function ModulePage() {
   const [reportSubmitted, setReportSubmitted] = useState(false);
   const [pendingReportCount, setPendingReportCount] = useState<{ [key: string]: number }>({});
   const [showModuleTutorial, setShowModuleTutorial] = useState(false);
+  const [showChapterName, setShowChapterName] = useState(false);
   const examTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const handleShowAnswerRef = useRef<() => void>(() => {});
 
@@ -527,6 +528,7 @@ export default function ModulePage() {
       setOriginalSelectedAnswers([]);
       setCollapsedChoices(new Set());
       setQuestionStats(null);
+      setShowChapterName(false);
     } else {
       setRandomizerEnabled(false);
       applyAnsweredQuestionsFilter();
@@ -547,6 +549,7 @@ export default function ModulePage() {
       setOriginalSelectedAnswers([]);
       setCollapsedChoices(new Set());
       setQuestionStats(null);
+      setShowChapterName(false);
       applyAnsweredQuestionsFilter();
       return;
     }
@@ -577,6 +580,7 @@ export default function ModulePage() {
     setOriginalSelectedAnswers([]);
     setCollapsedChoices(new Set());
     setQuestionStats(null);
+    setShowChapterName(false);
   };
 
   const handleToggleGdrMode = () => {
@@ -701,6 +705,7 @@ export default function ModulePage() {
     setIsCorrectlyAnswered(false);
     setOriginalSelectedAnswers([]);
     setCollapsedChoices(new Set());
+    setShowChapterName(false);
   };
 
   if (authLoading || !user) {
@@ -798,6 +803,7 @@ export default function ModulePage() {
           setOriginalSelectedAnswers([]);
           setCollapsedChoices(new Set());
           setQuestionStats(null);
+          setShowChapterName(false);
           setIsTransitioning(false);
         }, 150);
       } else {
@@ -884,6 +890,7 @@ export default function ModulePage() {
         setCollapsedChoices(new Set());
         setQuestionStats(null);
         setIsTransitioning(false);
+        setShowChapterName(false);
         const newQuestionKey = `${moduleId}_${currentQuestionIndex + 1}`;
         setStrikethroughOptions(prev => {
           const newStrikethrough = { ...prev };
@@ -910,6 +917,7 @@ export default function ModulePage() {
         setCollapsedChoices(new Set());
         setQuestionStats(null);
         setIsTransitioning(false);
+        setShowChapterName(false);
         const newQuestionKey = `${moduleId}_${currentQuestionIndex - 1}`;
         setStrikethroughOptions(prev => {
           const newStrikethrough = { ...prev };
@@ -1446,9 +1454,27 @@ export default function ModulePage() {
               </div>
               <div data-tutorial="module-report" className="flex items-center gap-1.5 sm:gap-2 min-w-0 shrink">
                 {currentQuestion?.chapter && (
-                  <span className={`px-2 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium max-w-[100px] sm:max-w-none truncate ${isDarkMode ? 'bg-gradient-to-r from-green-900/40 to-emerald-900/40 text-green-400' : 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-700'} shadow-sm`}>
-                    {currentQuestion.chapter}
-                  </span>
+                  showChapterName ? (
+                    <button
+                      onClick={() => setShowChapterName(false)}
+                      className={`px-2 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium truncate max-w-[140px] sm:max-w-xs ${isDarkMode ? 'bg-gradient-to-r from-green-900/40 to-emerald-900/40 text-green-400 hover:from-green-900/60 hover:to-emerald-900/60' : 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 hover:from-green-200 hover:to-emerald-200'} shadow-sm transition-colors`}
+                      title={currentQuestion.chapter}
+                    >
+                      {currentQuestion.chapter}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setShowChapterName(true)}
+                      className={`shrink-0 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-1.5 ${isDarkMode ? 'bg-gradient-to-r from-green-900/40 to-emerald-900/40 text-green-400 hover:from-green-900/60 hover:to-emerald-900/60' : 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 hover:from-green-200 hover:to-emerald-200'} shadow-sm transition-colors`}
+                      title="Afficher le chapitre"
+                    >
+                      <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                      <span className="hidden sm:inline">Chapitre</span>
+                    </button>
+                  )
                 )}
                 {MODULE_IMAGE_CONFIGS[moduleId] && (
                   <button
