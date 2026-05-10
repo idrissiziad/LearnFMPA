@@ -56,11 +56,15 @@ function timeAgo(dateStr: string): string {
 }
 
 function hasGdr(explanation: string): boolean {
-  return explanation.toUpperCase().includes('[GDR]');
+  return explanation.toUpperCase().includes('[GDR]') || explanation.toUpperCase().includes('[GDR1]');
+}
+
+function hasGdr1(explanation: string): boolean {
+  return explanation.toUpperCase().includes('[GDR1]');
 }
 
 function stripGdr(explanation: string): string {
-  return explanation.replace(/\[GDR\]/gi, '').trim();
+  return explanation.replace(/\[GDR1?\]/gi, '').trim();
 }
 
 const ADMIN_EMAILS = ['idrissiziad7@gmail.com'];
@@ -596,6 +600,7 @@ export default function ReportsPage() {
                             const isSuggestedIncorrect = suggestedIncorrectSet.has(idx);
                             const explanation = explanations[idx] || '';
                             const isGdr = hasGdr(explanation);
+                            const isGdr1 = hasGdr1(explanation);
                             const cleanExplanation = stripGdr(explanation);
 
                             let borderColor = isDarkMode ? 'border-gray-700' : 'border-gray-200';
@@ -627,9 +632,11 @@ export default function ReportsPage() {
                                   <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold ${
                                     isOriginalCorrect
                                       ? isDarkMode ? 'bg-blue-500/30 text-blue-300' : 'bg-blue-200 text-blue-800'
-                                      : isGdr
+                                      : isGdr && !isGdr1
                                         ? isDarkMode ? 'bg-green-500/30 text-green-300' : 'bg-green-200 text-green-800'
-                                        : isDarkMode ? 'bg-gray-700 text-gray-400' : 'bg-gray-200 text-gray-600'
+                                        : isGdr1
+                                          ? isDarkMode ? 'bg-amber-500/30 text-amber-300' : 'bg-amber-200 text-amber-800'
+                                          : isDarkMode ? 'bg-gray-700 text-gray-400' : 'bg-gray-200 text-gray-600'
                                   }`}>
                                     {letter}
                                   </div>
@@ -643,11 +650,16 @@ export default function ReportsPage() {
                                           Réponse du site
                                         </span>
                                       )}
-                                      {isGdr && (
-                                        <span className={`inline-flex items-center text-[10px] px-1.5 py-0.5 rounded-full font-medium ${isDarkMode ? 'bg-green-500/20 text-green-300' : 'bg-green-100 text-green-700'}`}>
-                                          GDR ✓
-                                        </span>
-                                      )}
+{isGdr && !isGdr1 && (
+                                          <span className={`inline-flex items-center text-[10px] px-1.5 py-0.5 rounded-full font-medium ${isDarkMode ? 'bg-green-500/20 text-green-300' : 'bg-green-100 text-green-700'}`}>
+                                            GDR ✓
+                                          </span>
+                                        )}
+                                        {isGdr1 && (
+                                          <span className={`inline-flex items-center text-[10px] px-1.5 py-0.5 rounded-full font-medium ${isDarkMode ? 'bg-amber-500/20 text-amber-300' : 'bg-amber-100 text-amber-700'}`}>
+                                            GDR
+                                          </span>
+                                        )}
                                       {isSuggestedCorrect && !isOriginalCorrect && (
                                         <span className={`inline-flex items-center text-[10px] px-1.5 py-0.5 rounded-full font-medium ${isDarkMode ? 'bg-emerald-500/20 text-emerald-300' : 'bg-emerald-100 text-emerald-700'}`}>
                                           Suggestion : correct
@@ -682,6 +694,10 @@ export default function ReportsPage() {
                             </div>
                             <div className="flex items-center gap-1.5">
                               <div className={`w-3 h-3 rounded ${isDarkMode ? 'bg-green-500/30' : 'bg-green-100'} border-2 ${isDarkMode ? 'border-green-500' : 'border-green-500'}`}></div>
+                              <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>GDR ✓ (Grille de réponse correcte)</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <div className={`w-3 h-3 rounded ${isDarkMode ? 'bg-amber-500/30' : 'bg-amber-100'} border-2 ${isDarkMode ? 'border-amber-500' : 'border-amber-500'}`}></div>
                               <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>GDR (Grille de réponse)</span>
                             </div>
                             <div className="flex items-center gap-1.5">

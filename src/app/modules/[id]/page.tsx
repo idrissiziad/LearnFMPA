@@ -321,7 +321,9 @@ export default function ModulePage() {
   const activeQuestions = examMode ? examQuestions : questions;
   const currentQuestion = activeQuestions[currentQuestionIndex];
   const currentQuestionHasGDR = !!(currentQuestion?.answerExplanations?.some(expl => expl?.includes('[GDR]')));
-  const effectiveGdrMode = gdrMode && currentQuestionHasGDR;
+  const currentQuestionHasGDR1 = !!(currentQuestion?.answerExplanations?.some(expl => expl?.includes('[GDR1]')));
+  const currentQuestionHasAnyGDR = currentQuestionHasGDR || currentQuestionHasGDR1;
+  const effectiveGdrMode = gdrMode && currentQuestionHasAnyGDR;
   const showSimpleResult = !effectiveGdrMode;
   
 
@@ -548,7 +550,7 @@ export default function ModulePage() {
       applyAnsweredQuestionsFilter();
       return;
     }
-    const gdrQuestions = allQuestions.filter(q => q.answerExplanations?.some(expl => expl?.includes('[GDR]')));
+    const gdrQuestions = allQuestions.filter(q => q.answerExplanations?.some(expl => expl?.includes('[GDR]') || expl?.includes('[GDR1]')));
     if (gdrQuestions.length === 0) {
       startExam(false);
     } else {
@@ -559,7 +561,7 @@ export default function ModulePage() {
   const startExam = (withGdr: boolean) => {
     setShowExamGdrPrompt(false);
     setGdrMode(withGdr);
-    const sourceQuestions = withGdr ? allQuestions.filter(q => q.answerExplanations?.some(expl => expl?.includes('[GDR]'))) : allQuestions;
+    const sourceQuestions = withGdr ? allQuestions.filter(q => q.answerExplanations?.some(expl => expl?.includes('[GDR]') || expl?.includes('[GDR1]'))) : allQuestions;
     const pool = sourceQuestions.length >= 50 ? shuffleArray(sourceQuestions).slice(0, 50) : shuffleArray(sourceQuestions);
     setExamQuestions(pool);
     setExamMode(true);
@@ -809,7 +811,9 @@ export default function ModulePage() {
     setOriginalSelectedAnswers(mappedSelectedAnswers);
 
     const correctAnswersSet = new Set(effectiveGdrMode
-      ? (currentQuestion.answerExplanations || []).reduce((acc: number[], expl: string, i: number) => expl && expl.includes('[GDR]') ? [...acc, i] : acc, [])
+      ? currentQuestionHasGDR1
+        ? currentQuestion.correctAnswers
+        : (currentQuestion.answerExplanations || []).reduce((acc: number[], expl: string, i: number) => expl && expl.includes('[GDR]') ? [...acc, i] : acc, [])
       : currentQuestion.correctAnswers
     );
     const selectedAnswersSet = new Set(mappedSelectedAnswers);
@@ -1246,10 +1250,10 @@ export default function ModulePage() {
               </button>
 {!examMode && (
                 <button
-                  onClick={currentQuestionHasGDR ? handleToggleGdrMode : undefined}
-                  disabled={!currentQuestionHasGDR}
-                  title={currentQuestionHasGDR ? "Mode GDR - Réponse du professeur" : "GDR non disponible pour cette question"}
-                  className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex-shrink-0 shadow-sm flex items-center gap-1 ${!currentQuestionHasGDR ? 'bg-gray-400/50 text-gray-400 cursor-not-allowed opacity-50' : gdrMode ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-green-500/25' : 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-red-500/25'}`}
+                  onClick={currentQuestionHasAnyGDR ? handleToggleGdrMode : undefined}
+                  disabled={!currentQuestionHasAnyGDR}
+                  title={currentQuestionHasAnyGDR ? "Mode GDR - Réponse du professeur" : "GDR non disponible pour cette question"}
+                  className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all flex-shrink-0 shadow-sm flex items-center gap-1 ${!currentQuestionHasAnyGDR ? 'bg-gray-400/50 text-gray-400 cursor-not-allowed opacity-50' : gdrMode ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-green-500/25' : 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-red-500/25'}`}
                 >
                   <span className="text-sm sm:text-base">📖</span>
                 </button>
@@ -1586,7 +1590,10 @@ export default function ModulePage() {
                 ? (currentQuestion?.answerExplanations && currentQuestion.answerExplanations[index])
                 : (shuffledAnswerExplanations[currentQuestionIndex] && shuffledAnswerExplanations[currentQuestionIndex][index]);
               const hasGDR = answerExplanation && answerExplanation.includes('[GDR]');
-              const isCorrect = effectiveGdrMode && showAnswer ? !!hasGDR : jsonIsCorrect;
+              const hasGDR1 = answerExplanation && answerExplanation.includes('[GDR1]');
+              const isCorrect = effectiveGdrMode && showAnswer
+                ? currentQuestionHasGDR1 ? jsonIsCorrect : !!hasGDR
+                : jsonIsCorrect;
               const isSelected = showAnswer
                 ? originalSelectedAnswers.includes(index)
                 : selectedAnswers.includes(index);
@@ -1718,11 +1725,16 @@ export default function ModulePage() {
                          </svg>
                        </div>
                      )}
-                     {!effectiveGdrMode && showAnswer && hasGDR && (
-                       <span className="flex-shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-300 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-700" title="Réponse du professeur">
-                         📖 GDR
-                       </span>
-                     )}
+{!effectiveGdrMode && showAnswer && hasGDR && (
+                        <span className="flex-shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold bg-green-100 text-green-800 border border-green-300 dark:bg-green-900/40 dark:text-green-300 dark:border-green-700" title="Grille de réponse correcte">
+                          📖 GDR ✓
+                        </span>
+                      )}
+                      {!effectiveGdrMode && showAnswer && hasGDR1 && (
+                        <span className="flex-shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-300 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-700" title="Grille de réponse">
+                          📖 GDR
+                        </span>
+                      )}
                     {showAnswer && (
                       <button onClick={toggleCollapse} className="flex-shrink-0 p-1 rounded-lg hover:bg-black/10 transition-colors">
                         <svg className={`w-5 h-5 transition-transform duration-200 ${isCollapsed ? '' : 'rotate-180'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1770,7 +1782,7 @@ const statTextColor = effectiveGdrMode && showAnswer && isCorrect && isSelected 
                   {!isCollapsed && showAnswer && answerExplanation && showExplanations && (
                     <div className={`px-4 sm:px-5 pb-4 sm:pb-5 pt-3 border-t ${effectiveGdrMode && showAnswer && isCorrect && isSelected ? 'border-white/20' : effectiveGdrMode && showAnswer && isCorrect && !isSelected ? 'border-green-500/40' : effectiveGdrMode && showAnswer && !isCorrect && isSelected ? 'border-white/20' : showCorrectFeedback ? 'border-white/20' : showMissedCorrectFeedback ? 'border-green-500/40' : showIncorrectFeedback ? 'border-white/20' : isDarkMode ? 'border-gray-600/50' : 'border-gray-100'}`}>
                       <p className={`text-xs sm:text-sm leading-relaxed ${effectiveGdrMode && showAnswer && isCorrect && isSelected ? 'text-white/90' : effectiveGdrMode && showAnswer && isCorrect && !isSelected ? (isDarkMode ? 'text-green-400/90' : 'text-green-700') : effectiveGdrMode && showAnswer && !isCorrect && isSelected ? 'text-white/90' : showCorrectFeedback ? 'text-white/90' : showMissedCorrectFeedback ? (isDarkMode ? 'text-green-400/90' : 'text-green-700') : showIncorrectFeedback ? 'text-white/90' : isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                        {answerExplanation.replace(/\s*\((?:[^()]|\([^()]*\))*\)\.?/g, '').replace(/\s*\[GDR\]/g, '')}
+                        {answerExplanation.replace(/\s*\((?:[^()]|\([^()]*\))*\)\.?/g, '').replace(/\s*\[GDR1?\]/g, '')}
                       </p>
                     </div>
                   )}
