@@ -1,0 +1,60 @@
+[
+    {
+        "YearAsked": "Octobre 2024",
+        "Subtopic": "Adénites",
+        "QuestionText": "Adénite suppurée : Causes courantes, caractéristiques morphologiques microscopiques de l'adénite suppurée, et colorations pouvant orienter vers l'agent causal.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'adénite suppurée est une inflammation aiguë causée principalement par le Staphylocoque et le Streptocoque (Source : Adénites, Page 11).",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Microscopiquement, on observe une infiltration par des polynucléaires neutrophiles (PNNs) et parfois des micro-abcès. Les colorations spéciales incluent le Gram pour les bactéries, le PAS et le Grocott pour les champignons (Source : Adénites, Page 12-13).",
+        "Choice_A_Image": "Anapath2-011.avif",
+        "Choice_B_Image": [
+            "Anapath2-012.avif",
+            "Anapath2-013.avif"
+        ]
+    },
+    {
+        "YearAsked": "Octobre 2024",
+        "Subtopic": "Gastrite",
+        "QuestionText": "Décrire les critères de la classification de Sydney de la gastrite chronique à Helicobacter pylori.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Le système de Sydney est une classification semi-quantitative évaluant l'état de la muqueuse gastrique (Source : Gastrite, Page 370).",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Les critères sont : l'infiltration inflammatoire (cellules mononucléées), l'activité inflammatoire (PNNs/cryptites), l'atrophie glandulaire, la métaplasie intestinale et la densité de la colonisation par H. pylori (Source : Gastrite, Page 370-371).",
+        "Choice_A_Image": "Anapath2-370.avif",
+        "Choice_B_Image": [
+            "Anapath2-370.avif",
+            "Anapath2-371.avif"
+        ]
+    },
+    {
+        "YearAsked": "Octobre 2024",
+        "Subtopic": "Cancers broncho-pulmonaires",
+        "QuestionText": "Décrire la prise en charge macroscopique d'une pièce de lobectomie pulmonaire.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "La prise en charge commence par le prélèvement des limites de section bronchiques et vasculaires (Source : Cancers broncho-pulmonaires, Page 209).",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Il faut mesurer la taille tumorale, préciser sa localisation (lobe, segment, proximale/périphérique), évaluer les rapports avec la plèvre et prélever les ganglions lymphatiques ainsi que le poumon non tumoral (Source : Cancers broncho-pulmonaires, Page 209).",
+        "Choice_A_Image": "Anapath2-209.avif",
+        "Choice_B_Image": "Anapath2-209.avif"
+    },
+    {
+        "YearAsked": "Octobre 2024",
+        "Subtopic": "Cancer de l'endomètre",
+        "QuestionText": "Le carcinome séreux de haut grade de l'ovaire : Caractéristiques histologiques et immunohistochimiques.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Bien que le texte traite du carcinome séreux de l'endomètre, ces tumeurs de haut grade partagent des caractéristiques morphologiques complexes comme des papilles et des massifs (Source : Cancer de l'endomètre, Page 62).",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Histologiquement, on note des atypies cytonucléaires majeures et des corps de psammome (33%). En IHC, le profil typique est P16+ intense et diffus, avec un profil P53 muté (Source : Cancer de l'endomètre, Page 62).",
+        "Choice_A_Image": "Anapath2-062.avif",
+        "Choice_B_Image": "Anapath2-062.avif"
+    }
+]

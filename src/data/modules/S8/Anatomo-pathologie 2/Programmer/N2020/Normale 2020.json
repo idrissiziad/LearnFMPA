@@ -1,0 +1,67 @@
+[
+    {
+        "YearAsked": "Normale 2020",
+        "Subtopic": "Gastrite",
+        "QuestionText": "Vous recevez un patient de 37 ans, avec un syndrome dyspepsique, qui a un compte rendu anatomopathologique d'une biopsie gastrique comme suit : Reçu 2 fragments de 0.2 à 0.4cm, inclus en totalité dans un bloc. Histologiquement, il s'agit d'une muqueuse antrale siège de lésion de gastrite légère, d'atrophie légère. HP ++. Absence de métaplasie intestinale ou de dysplasie. 1- Donnez le nom du système utilisé pour classer cette gastrite ? 2- Donnez les items manquants au niveau des espaces vides du compte rendu ? 3- Que pensez-vous du nombre de biopsies ? 4- Donnez les 2 complications majeures de cette gastrite ?",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'étudiant a compris les réponses attendues pour ce QROC sur la gastrite.",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "1. Le système de Sydney est utilisé pour classer les gastrites (Source : Gastrite, Page 363). 2. Les items manquants sont l'activité inflammatoire (PNN) et la densité de l'Helicobacter Pylori (Source : Gastrite, Page 370). 3. Le nombre de 2 biopsies est insuffisant car le système de Sydney en recommande au moins 5 (Source : Gastrite, Page 370). 4. Les complications majeures sont l'ulcère gastroduodénal et le cancer ou lymphome gastrique (Source : Gastrite, Page 371).",
+        "Choice_A_Image": "",
+        "Choice_B_Image": "Anapath2-363.avif"
+    },
+    {
+        "YearAsked": "Normale 2020",
+        "Subtopic": "Cancers colorectaux",
+        "QuestionText": "Patient de 50 ans qui se présente avec un syndrome occlusif, une coloscopie avec biopsie a été faite et montre une tumeur sigmoïdienne bourgeonnante, une iléostomie a été réalisée. La biopsie de la tumeur a montré un adénocarcinome infiltrant moyennement différencié : 1- Donnez les facteurs histopronostiques classiques pour le cancer du colon. 2- Nommez les trois principales voies de la carcinogenèse colorectale. Une colectomie a été réalisée chez ce patient et montre un adénocarcinome moyennement différencié de 4.5 cm qui infiltre la graisse péri-colique avec un stroma lymphoïde dense. 3- Quel syndrome suspectez-vous chez ce patient ? 4- Donnez le ou les méthodes pour le confirmer ? expliquez au moins une des méthodes. Une étude immunohistochimique sur cette tumeur a été faite et montre : Tissu sain : MLH1 : exprimé, PMS2 : exprimé, MSH2 et MSH6 : exprimés. Tissu tumoral : MLH1 : exprimé, MSH2 : non exprimé, PSM2 : exprimé, MSH6 ; exprimé. 5- Quelle est votre conclusion ? 6- Quelles sont les conséquences de votre conclusion ?",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'étudiant a compris les réponses attendues pour ce cas clinique sur le cancer colorectal.",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "1. Facteurs : stade TNM, différenciation, emboles, engainements (Source : Cancers colorectaux, Page 342). 2. Voies : LOH (instabilité chromosomique), MSI (microsatellitaire) et CIMP (épigénétique) (Source : Cancers colorectaux, Page 299). 3. Syndrome de Lynch suspecté (Source : Cancers colorectaux, Page 288). 4. Confirmation par IHC des protéines MMR ou PCR des microsatellites (Source : Cancers colorectaux, Page 303). 5. Perte d'expression de MSH2 confirmant le syndrome de Lynch (Source : Carcinogenèse colorectale, Page 358). 6. Conseil génétique et dépistage familial (Source : Carcinogenèse colorectale, Page 361).",
+        "Choice_A_Image": "",
+        "Choice_B_Image": "Anapath2-342.avif"
+    },
+    {
+        "YearAsked": "Normale 2020",
+        "Subtopic": "Cancer de prostate",
+        "QuestionText": "Cancer de la prostate : 1-nommez le système utilisé pour scorer histologiquement le cancer de la prostate ? 2- les Deux photos suivantes représentent le même champ tumoral à différents grandissement : donner le score ?",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'étudiant a compris les réponses attendues pour les questions sur le cancer de la prostate.",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "1. Le score de Gleason est utilisé pour scorer histologiquement le cancer de la prostate (Source : Cancer de prostate, Page 87). 2. Le score est la somme du grade primaire et secondaire (ici Grade 3 + Grade 4 par exemple selon l'architecture) (Source : Cancer de prostate, Page 95).",
+        "Choice_A_Image": "",
+        "Choice_B_Image": "Anapath2-087.avif"
+    },
+    {
+        "YearAsked": "Normale 2020",
+        "Subtopic": "Cancers broncho-pulmonaires",
+        "QuestionText": "Vous recevez une patiente de 45 ans, non tabagique, avec une tumeur sous pleurale dont la biopsie scano-guidée parle d'un Adénocarcinome moyennement différencié. Pour confirmer son origine primitive pulmonaire une étude immunohistochimique a été demandée : 1- Donnez les résultats de cette étude en cas d'origine pulmonaire de cet adénocarcinome. 2- Quelle est la mutation la plus fréquemment retrouvé dans ce cas ? 3- Expliquez en quelques mots la biopsie liquide.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'étudiant a compris les réponses attendues pour ce cas de pathologie pulmonaire.",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "1. Le profil IHC pour une origine pulmonaire est TTF1+ et Napsine A+ (Source : Cancers broncho-pulmonaires, Page 230). 2. La mutation EGFR est la plus fréquente chez les femmes non-tabagiques (Source : Cancers broncho-pulmonaires, Page 189). 3. La biopsie liquide étudie l'ADN tumoral circulant dans le sang pour guider les thérapies ciblées (Source : Cancers broncho-pulmonaires, Page 173).",
+        "Choice_A_Image": "",
+        "Choice_B_Image": "Anapath2-230.avif"
+    },
+    {
+        "YearAsked": "Normale 2020",
+        "Subtopic": "Cancer de l'estomac",
+        "QuestionText": "Donnez sous forme de tableau la Classification de vienne.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'étudiant a compris la classification demandée.",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Le texte ne fournit pas explicitement le tableau de Vienne, mais mentionne la classification OMS 2019 distinguant la néoplasie intraépithéliale de bas grade et de haut grade (Source : Cancer de l'estomac, Page 27).",
+        "Choice_A_Image": "",
+        "Choice_B_Image": "Anapath2-027.avif"
+    }
+]

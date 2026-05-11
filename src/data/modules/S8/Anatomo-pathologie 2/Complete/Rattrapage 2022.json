@@ -1,0 +1,54 @@
+[
+    {
+        "YearAsked": "2022",
+        "Subtopic": "Polype et polypose",
+        "QuestionText": "Renseignements cliniques : homme de 71 ans, épigastralgies chroniques et RGO chronique depuis 30 ans. Suivi pour des hémorroïdes depuis 20 ans avec constipation et rectorragies. Coloscopie : deux polypes sessiles au niveau du colon droit transverse / polype au niveau du colon gauche. FOGD : fundite congestive / antrite érythémateuse / bulbe ulcérative. Compte rendu de la BIOPSIE : On a reçu 6 fragments de 0.2 à 0.4 cm, inclus en totalité dans un bloc. Histologiquement, il s'agit d'une muqueuse colique siège d'une prolifération faite de glandes et de villosité, bordées par un épithélium cylindrique, pseudostratifié par endroit, sans perte de la mucosécrétion. Les noyaux sont hyperchromatiques, siège d'atypies cytonucléaires modérées, avec quelques figures de mitoses ne dépassant pas les 1/2 de la hauteur épithéliale. Le chorion est le siège d'un infiltrat inflammatoire modéré essentiellement mononucléé. CONCLUSION : Aspect histologique d'un (A)......(B). 1- Que pensez-vous de la qualité du prélèvement ? 2- Complétez la conclusion avec les items A et B. 3- Donnez sous forme de tableau la classification des dysplasies digestives utilisée. 4- Donnez la définition d'un polype cancérisé. 5- Quels sont les données minimales qui doivent figurer sur le compte rendu pour un adénome cancérisé ?",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'étudiant valide sa compréhension de l'analyse du cas clinique. (Source : Polype et polypose, Page Globale 486).",
+        "Choice_B_Text": "Je ne comprends pas?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "1: Qualité satisfaisante (6 fragments de 0.2-0.4 cm). 2: A=Adénome, B=tubulo-villeux en dysplasie de bas grade. 3: OMS (Bas vs Haut grade). 4: Adénome avec adénocarcinome franchissant la musculaire muqueuse. 5: Type, Grade, Marges, Emboles. (Source : Polype et polypose, Page Globale 476, 486, 492, 520, 521).",
+        "Choice_A_Image": "Anapath2-486.avif",
+        "Choice_B_Image": "Anapath2-476.avif"
+    },
+    {
+        "YearAsked": "2022",
+        "Subtopic": "Cancer de prostate",
+        "QuestionText": "Vous recevez un patient âgé de 67 ans, qui se plaint de dysurie. Il vient avec un compte rendu anatomo-pathologique de biopsies prostatiques (Image jointe montrant des structures glandulaires fusionnées et cribriformes). 1- Quelles sont les règles à respecter dans la réalisation des biopsies prostatiques ? 2- Donnez le score de Gleason ? expliquez. 3- Nommez le protocole utilisé en macroscopie pour la pièce de prostatectomie radicale ? 4- Quels sont les facteurs pronostics qui doivent figurer sur le compte rendu anatomo-pathologique ?",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'étudiant valide sa compréhension de l'analyse de la pathologie prostatique. (Source : Cancer de prostate, Page Globale 88).",
+        "Choice_B_Text": "Je ne comprends pas?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "1: Minimum 12 carottes avec repérage. 2: Grade 4 (glandes fusionnées/cribriformes). 3: Inclusion en totalité. 4: pTNM, Gleason/ISUP, marges, engainement péri-nerveux. (Source : Cancer de prostate, Page Globale 88, 94, 95, 96).",
+        "Choice_A_Image": "Anapath2-088.avif",
+        "Choice_B_Image": "Anapath2-088.avif"
+    },
+    {
+        "YearAsked": "2022",
+        "Subtopic": "Cancer du col de l'utérus",
+        "QuestionText": "Donnez la classification de Bethesda qui permet d'interpréter les frottis cervicaux vaginaux.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'étudiant valide sa connaissance du système de reporting standardisé en cytologie cervicale. (Source : Cancer du col de l'utérus, Page Globale 120).",
+        "Choice_B_Text": "Je ne comprends pas?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Bethesda 2014 inclut : NILM (normal), ASC-US/ASC-H (atypies), LSIL (bas grade), HSIL (haut grade) et carcinome épidermoïde. (Source : Cancer du col de l'utérus, Page Globale 120).",
+        "Choice_A_Image": "Anapath2-120.avif",
+        "Choice_B_Image": "Anapath2-120.avif"
+    },
+    {
+        "YearAsked": "2022",
+        "Subtopic": "Tumeurs du rein",
+        "QuestionText": "Donnez les types histologiques les plus fréquents des tumeurs du rein de l'adulte.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "L'étudiant identifie les formes majeures de carcinomes rénaux. (Source : Tumeurs du rein, Page Globale 607).",
+        "Choice_B_Text": "Je ne comprends pas?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Le carcinome à cellules claires est le plus fréquent (65-70%), suivi du carcinome papillaire et du carcinome chromophobe. (Source : Tumeurs du rein, Page Globale 607, 609).",
+        "Choice_A_Image": "Anapath2-607.avif",
+        "Choice_B_Image": "Anapath2-607.avif"
+    }
+]

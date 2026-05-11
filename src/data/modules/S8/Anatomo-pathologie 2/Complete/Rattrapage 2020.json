@@ -1,0 +1,57 @@
+[
+    {
+        "YearAsked": "Rattrapage 2020",
+        "Subtopic": "Polype et polypose",
+        "QuestionText": "Vous recevez un patient de 37 ans, avec un syndrome dyspeptique et une diarrhée. Une colposcopie a été faite et montre un polype qui a été réséqué. Le compte rendu anatomopathologique montre : Reçu 1 fragment de 1 cm, inclus en totalité dans un bloc. Histologiquement, il s'agit d'une muqueuse colique siège d'une prolifération faite de villosités et de glandes bordées par un épithélium cylindrique, pseudostratifié par endroit, sans perte de la mucosécrétion. Les noyaux sont hyperchromatiques, siège d'atypies cytonucléaires modérées, avec quelques figures de mitoses ne dépassant pas les 1/2 de la hauteur épithéliale. Le chorion est le siège d'un infiltrat inflammatoire modéré essentiellement mononucléé. ................... est saine. \n\n1- Donnez le type de polype ?\n2- Remplissez l'espace par l'item manquant ?\n3- Donnez le type de dysplasie ?\n4- Donnez la définition d'un polype cancérisé ? Quels sont les critères qui prédisent de la transformation maligne d'un polype ?",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Les réponses attendues sont : 1) Adénome tubulo-villeux ; 2) La base de résection ; 3) Dysplasie de bas grade (car la mucosécrétion est conservée et les mitoses sont basales) ; 4) Un polype cancérisé est un adénome dont le foyer carcinomateux franchit la musculaire muqueuse ; les critères prédictifs sont la taille > 10 mm, la multiplicité et la composante villeuse (Source : Polype et polypose, Page 476, 486, 491-492, 521).",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Le texte indique clairement une structure mixte (glandes et villosités) avec une mucosécrétion conservée, ce qui définit histologiquement un adénome tubulo-villeux en dysplasie de bas grade (Source : Polype et polypose, Page 486).",
+        "Choice_A_Image": "Anapath2-476.avif",
+        "Choice_B_Image": "Anapath2-486.avif"
+    },
+    {
+        "YearAsked": "Rattrapage 2020",
+        "Subtopic": "Cancers colorectaux",
+        "QuestionText": "Patient de 50 ans qui se présente avec un syndrome occlusif, une coloscopie avec biopsie a été faite et montre une tumeur sigmoïdienne bourgeonnante, une iléostomie a été réalisée. La biopsie de la tumeur a montré un adénocarcinome infiltrant moyennement différencié :\n\n1- Donnez les facteurs histopronostiques classiques pour le cancer du colon ?\n2- Nommez les trois principales voies de la carcinogenèse colorectale ?\n3- Expliquez par un algorithme comment détecter le syndrome de Lynch ?",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "1) Facteurs pronostiques : Stade pTNM, grade, emboles, engainements et marges ; 2) Voies : Instabilité chromosomique (LOH), microsatellitaire (MSI) et épigénétique (CIMP) ; 3) Lynch : Screening par IHC des protéines MMR, puis biologie moléculaire pour confirmer l'instabilité microsatellitaire (Source : Cancers colorectaux, Page 299, 303, 342-344).",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "L'adénocarcinome colorectal repose sur une stadification TNM rigoureuse et l'identification de voies génétiques spécifiques comme MSI ou LOH pour orienter le pronostic (Source : Cancers colorectaux, Page 296, 342).",
+        "Choice_A_Image": "Anapath2-299.avif",
+        "Choice_B_Image": "Anapath2-296.avif"
+    },
+    {
+        "YearAsked": "Rattrapage 2020",
+        "Subtopic": "Cancer de prostate",
+        "QuestionText": "Cancer de la prostate :\n\n1- Nommez le système utilisé pour scorer histologiquement le cancer de la prostate ?\n2- Les deux photos suivantes représentent le même champ tumoral à différents grandissements : donner le score ? expliquez ?",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Le système utilisé est le score de Gleason, calculé en additionnant le grade primaire et le grade secondaire (les plus représentés), allant de 6 à 10 (Source : Cancer de prostate, Page 94-95).",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Le score de Gleason évalue l'architecture tumorale (grade 3 : glandes séparées, grade 4 : glandes fusionnées/cribriformes, grade 5 : nappes) (Source : Cancer de prostate, Page 94).",
+        "Choice_A_Image": [
+            "Anapath2-094.avif",
+            "Anapath2-095.avif"
+        ],
+        "Choice_B_Image": "Anapath2-094.avif"
+    },
+    {
+        "YearAsked": "Rattrapage 2020",
+        "Subtopic": "Cancer du col de l'utérus",
+        "QuestionText": "Donnez sous forme de tableau la Classification de Bethesda du cancer du col utérin.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "La classification de Bethesda (2014) inclut : NILM (absence de lésion), ASC-US/ASC-H (atypies indéterminées), LSIL (lésion de bas grade/CIN1), HSIL (lésion de haut grade/CIN2-3), CE (carcinome épidermoïde) et les anomalies glandulaires AGC, AIS, ADK (Source : Cancer du col de l'utérus, Page 120).",
+        "Choice_B_Text": "Je ne comprends pas.",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Cette classification internationale standardise les résultats cytologiques pour orienter la prise en charge clinique et colposcopique (Source : Cancer du col de l'utérus, Page 120).",
+        "Choice_A_Image": "Anapath2-120.avif",
+        "Choice_B_Image": "Anapath2-120.avif"
+    }
+]

@@ -1,0 +1,50 @@
+[
+    {
+        "YearAsked": "Rattrapage 2021",
+        "Subtopic": "MICI",
+        "QuestionText": "Patient de 25 ans suivi pour spondyloarthrite (SPA) sous traitement depuis 2 ans et qui présente depuis quelques mois des troubles du transit avec alternance de diarrhée et de constipation. Le patient consulte pour une aggravation de sa symptomatologie avec apparition d’émissions glairo-sanglantes. Questions : A- Quel(s) est votre hypothèse diagnostic concernant cette symptomatologie digestive ? B- Quel est l’examen utile à demander chez ce patient ? C- Les examens radiologiques montrent un épaississement au niveau iléo-cécale, des biopsies sont faites et montrent 'une colite subaiguë avec présence de granulome épithélioïde'. Ce résultat réconforte votre hypothèse diagnostic ? pourquoi ? D- Quel est le (ou les) diagnostic différentiel ? E- Mettez sous forme de tableau les différentes caractéristiques qui permettent de différencier entre ces diagnostics évoqués.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Ce choix valide la compréhension de la prise en charge de cette pathologie inflammatoire chronique. (Source : MICI, Page Globale 435).",
+        "Choice_B_Text": "Je ne comprends pas ?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "L'hypothèse est la maladie de Crohn (MC) car elle est souvent associée à la SPA et touche préférentiellement l'iléon terminal ; l'examen clé est l'endoscopie avec biopsies. Le granulome épithélioïde est un signe histologique spécifique de la MC, confirmant le diagnostic. Les diagnostics différentiels incluent la RCH et les colites infectieuses. (Source : MICI, Page Globale 439-451).",
+        "Choice_A_Image": "Anapath2-435.avif",
+        "Choice_B_Image": [
+            "Anapath2-439.avif",
+            "Anapath2-451.avif"
+        ]
+    },
+    {
+        "YearAsked": "Rattrapage 2021",
+        "Subtopic": "Polype et polypose",
+        "QuestionText": "Donnez sous forme de tableaux les différentes caractéristiques des polypes simples épithéliaux.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Ce choix confirme la connaissance des différents types de polypes épithéliaux. (Source : Polype et polypose, Page Globale 474).",
+        "Choice_B_Text": "Je ne comprends pas ?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Les polypes adénomateux (tubuleux, villeux, tubulo-villeux) présentent une dysplasie épithéliale avec un risque de transformation maligne. Les polypes hyperplasiques sont généralement bénins avec un aspect dentelé des cryptes. Les polypes juvéniles sont des hamartomes kystiques fréquents chez l'enfant. (Source : Polype et polypose, Page Globale 476-497).",
+        "Choice_A_Image": "Anapath2-474.avif",
+        "Choice_B_Image": [
+            "Anapath2-476.avif",
+            "Anapath2-497.avif"
+        ]
+    },
+    {
+        "YearAsked": "Rattrapage 2021",
+        "Subtopic": "Cancer du sein",
+        "QuestionText": "Cas clinique 2 : Il s’agit d’une patiente âgée de 35 ans, nullipare, ayant une mère traitée pour un cancer du sein, et qui présente un nodule du sein gauche avec un aspect en peau d’orange. Questions : 1. Quels sont les facteurs de risque chez cette patiente ? 2. Quel est le bilan à lui demander ? 3. La biopsie du sein révèle un carcinome infiltrant de type non spécifique (ancien carcinome canalaire infiltrant). a. Quels sont les critères histologiques qu’il faut décrire dans le compte rendu ? b. Quels sont les marqueurs immunohistochimiques obligatoire à demander ? c. Sur le plan moléculaire, la patiente a un carcinome infiltrant de type luminal A. Expliquer de quoi il s’agit, quel est son pronostic et quelles sont les possibilités thérapeutiques.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Ce choix valide la maîtrise du diagnostic et de la classification moléculaire du cancer du sein. (Source : Cancer du sein, Page Globale 145).",
+        "Choice_B_Text": "Je ne comprends pas ?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Les facteurs de risque sont l'âge, la nulliparité et l'hérédité. Le bilan initial comprend la mammographie et l'échographie. Le compte rendu histologique doit préciser le grade de SBR, la taille, les emboles et les marges. L'IHC obligatoire inclut RE, RP, HER2 et Ki67. Le profil Luminal A (RE/RP+, HER2-, Ki67 bas) est de bon pronostic et relève de l'hormonothérapie. (Source : Cancer du sein, Page Globale 147-170).",
+        "Choice_A_Image": "Anapath2-145.avif",
+        "Choice_B_Image": [
+            "Anapath2-147.avif",
+            "Anapath2-170.avif"
+        ]
+    }
+]

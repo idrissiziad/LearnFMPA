@@ -1,0 +1,66 @@
+[
+    {
+        "YearAsked": "Normale 2021",
+        "Subtopic": "Polype et polypose",
+        "QuestionText": "Vous recevez ce compte rendu anatomopathologique d'une polypectomie colique : On a reçu un polype pédiculé mesurant 3.5x2.5x3 cm, inclus en totalité dans 5 blocs. Histologiquement, il s'agit d'une muqueuse colique siège d'une prolifération faite de glandes et de villosités bordées par un épithélium cylindrique cylindrique, pseudostratifié, avec une perte de la mucosécrétion de façon diffuse. Les noyaux sont hyperchromatiques, siège d'importantes atypies cytonucléaires, avec des figures de mitoses qui siègent sur toute la hauteur épithéliale. Le chorion est le siège d'un infiltrat inflammatoire modéré essentiellement mononucléée. Absence de foyer infiltrant. Résection complète. 1- Complétez les items A (Description microscopique) et B (Conclusion). 2- Donnez les autres types de polypes avec risque de dégénérescence.",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "C'est parfait, vous avez correctement identifié les caractéristiques d'un adénome tubulo-villeux en dysplasie de haut grade. (Source : Polype et polypose, Page Globale 486).",
+        "Choice_B_Text": "Je ne comprends pas ?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "L'item A décrit un adénome tubulo-villeux car on observe des glandes et des villosités. L'item B conclut à un adénome tubulo-villeux en dysplasie de haut grade car les mitoses occupent toute la hauteur et il y a perte de mucosécrétion. Les autres polypes à risque sont les adénomes plans et les lésions festonnées. (Source : Polype et polypose, Page Globale 476-486).",
+        "Choice_A_Image": "Anapath2-486.avif",
+        "Choice_B_Image": [
+            "Anapath2-476.avif",
+            "Anapath2-486.avif"
+        ]
+    },
+    {
+        "YearAsked": "Normale 2021",
+        "Subtopic": "Cancer du col de l'utérus",
+        "QuestionText": "Madame X âgée de 39 ans qui vient vous voir car le résultat de son FCV l'inquiète, il indique « LSIL ». 1- Que veut dire ce résultat ? Quels sont les signes cytologiques de cette lésion ? 2- Quelle est l'origine de cette lésion ? 3- Quels sont les autres facteurs de risque à rechercher chez cette dame ? 4- Que pourriez-vous proposer à cette dame ?",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Exactement, vous maîtrisez la prise en charge initiale des lésions de bas grade du col. (Source : Cancer du col de l'utérus, Page Globale 125).",
+        "Choice_B_Text": "Je ne comprends pas ?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "LSIL signifie Lésion Malpighienne Intra-épithéliale de Bas Grade, caractérisée par des koïlocytes (halo clair périnucléaire). L'origine est l'infection par l'HPV. Les facteurs de risque incluent le tabagisme et la précocité des rapports. On propose une colposcopie avec biopsie si nécessaire. (Source : Cancer du col de l'utérus, Page Globale 104-125).",
+        "Choice_A_Image": "Anapath2-125.avif",
+        "Choice_B_Image": [
+            "Anapath2-104.avif",
+            "Anapath2-125.avif"
+        ]
+    },
+    {
+        "YearAsked": "Normale 2021",
+        "Subtopic": "Cancer de prostate",
+        "QuestionText": "Vous recevez un patient âgé de 67 ans, qui se plaint de dysurie. Il vient avec un compte rendu anatomo-pathologique de biopsies prostatiques qui montre une image au microscope avec des massifs cribriformes. 1- Quelles sont les règles à respecter dans la réalisation des biopsies prostatiques ? 2- Donnez le score de Gleason ? 3- Est-ce qu'un score de gleason 3+4 est équivalent à un score de 4+3 ? Expliquez. 4- Nommez le protocole utilisé en macroscopie pour la pièce de prostatectomie radicale ? 5- Quels sont les facteurs pronostics qui doivent figurer sur le compte rendu anatomo-pathologique ?",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "C'est bien compris, le score de Gleason est l'élément pronostique majeur. (Source : Cancer de prostate, Page Globale 95).",
+        "Choice_B_Text": "Je ne comprends pas ?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Les biopsies doivent être multiples et cartographiées. Les massifs cribriformes correspondent au grade 4 de Gleason. Le 4+3 est plus agressif que le 3+4 car le grade 4 est majoritaire. La pièce de prostatectomie doit être incluse en totalité. Les facteurs pronostics incluent le grade, le stade pTNM et les marges. (Source : Cancer de prostate, Page Globale 88-95).",
+        "Choice_A_Image": "Anapath2-095.avif",
+        "Choice_B_Image": [
+            "Anapath2-088.avif",
+            "Anapath2-095.avif"
+        ]
+    },
+    {
+        "YearAsked": "Normale 2021",
+        "Subtopic": "Cancers broncho-pulmonaires",
+        "QuestionText": "Vous avez en consultation une patiente de 50 ans, avec un nodule pulmonaire périphérique sous pleurale à l'imagerie. Une biopsie scano-guidée a été réalisée, le compte rendu anatomopathologique parle d'un adénocarcinome moyennement différencié : 1- Quel le profil immunohistochimique de l'adénocarcinome pulmonaire primitif ? 2- Quels sont les tests moléculaires que vous allez demander chez cette patiente ? Pourquoi ?",
+        "Choice_A_Text": "Je comprends.",
+        "Choice_A_isCorrect": true,
+        "Choice_A_Explanation": "Parfait, vous avez intégré l'importance du théranostique en pathologie pulmonaire. (Source : Cancers broncho-pulmonaires, Page Globale 210).",
+        "Choice_B_Text": "Je ne comprends pas ?",
+        "Choice_B_isCorrect": false,
+        "Choice_B_Explanation": "Le profil IHC typique est TTF1+ et Napsine A+. On demande les tests moléculaires (EGFR, ALK, ROS1) car ils sont prédictifs de réponse aux thérapies ciblées. (Source : Cancers broncho-pulmonaires, Page Globale 210-262).",
+        "Choice_A_Image": "Anapath2-210.avif",
+        "Choice_B_Image": [
+            "Anapath2-210.avif",
+            "Anapath2-262.avif"
+        ]
+    }
+]
