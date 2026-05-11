@@ -232,6 +232,15 @@ export const modules: Module[] = [
     levels: ['2ème année', '4ème année'],
     gradient: 'from-indigo-400 to-indigo-600',
     json_filename: 'Anatomo-pathologie 2'
+  },
+  {
+    id: 13,
+    title: 'Parasitologie Mycologie Maladies Infectieuses',
+    subtitle: 'Parasitologie Mycologie Maladies Infectieuses',
+    description: '',
+    levels: ['2ème année', '3ème année'],
+    gradient: 'from-pink-400 to-pink-600',
+    json_filename: 'Parasitologie Mycologie Maladies Infectieuses'
   }
 ];
 
@@ -665,6 +674,40 @@ const getModuleRawJson = async (moduleId: number): Promise<JsonQuestion[]> => {
     case 12:
       const Anatomopathologie2Module = await import('./Anatomo-pathologie 2.json', { with: { type: 'json' } });
       jsonQuestions = (Anatomopathologie2Module.default as any[]).map((item: any) => ({
+        YearAsked: item.YearAsked || '',
+        Subtopic: item.Subtopic || '',
+        QuestionText: item.QuestionText || '',
+        QuestionImage: item.QuestionImage,
+        Choice_A_Text: item.Choice_A_Text || '',
+        Choice_A_isCorrect: !!item.Choice_A_isCorrect,
+        Choice_A_Explanation: item.Choice_A_Explanation || '',
+        Choice_A_Image: item.Choice_A_Image,
+        Choice_B_Text: item.Choice_B_Text || '',
+        Choice_B_isCorrect: !!item.Choice_B_isCorrect,
+        Choice_B_Explanation: item.Choice_B_Explanation || '',
+        Choice_B_Image: item.Choice_B_Image,
+        Choice_C_Text: item.Choice_C_Text || '',
+        Choice_C_isCorrect: !!item.Choice_C_isCorrect,
+        Choice_C_Explanation: item.Choice_C_Explanation || '',
+        Choice_C_Image: item.Choice_C_Image,
+        Choice_D_Text: item.Choice_D_Text || '',
+        Choice_D_isCorrect: !!item.Choice_D_isCorrect,
+        Choice_D_Explanation: item.Choice_D_Explanation || '',
+        Choice_D_Image: item.Choice_D_Image,
+        Choice_E_Text: item.Choice_E_Text || '',
+        Choice_E_isCorrect: !!item.Choice_E_isCorrect,
+        Choice_E_Explanation: item.Choice_E_Explanation || '',
+        Choice_E_Image: item.Choice_E_Image,
+        OverallExplanation: item.OverallExplanation || '',
+        IsChapterStart: item.IsChapterStart,
+        ChapterName: item.ChapterName,
+        ChapterColor: item.ChapterColor,
+        Confirmed: item.Confirmed,
+      }));
+      break;
+    case 13:
+      const ParasitologieMycologieMaladiesInfectieusesModule = await import('./Parasitologie Mycologie Maladies Infectieuses.json', { with: { type: 'json' } });
+      jsonQuestions = (ParasitologieMycologieMaladiesInfectieusesModule.default as any[]).map((item: any) => ({
         YearAsked: item.YearAsked || '',
         Subtopic: item.Subtopic || '',
         QuestionText: item.QuestionText || '',
