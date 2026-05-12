@@ -490,7 +490,7 @@
   {
     "YearAsked": "Mai 2022 (Normale)",
     "Subtopic": "Chimiothérapie",
-    "QuestionText": "Parmi ces propositions concernant des anti-cancéreux ayant une Interaction indirecte avec l'ADN le mécanisme d'action peut être une :",
+    "QuestionText": "Parmi ces propositions concernant des anti-cancéreux ayant une interaction indirecte avec l'ADN, le mécanisme d'action peut être une :",
     "Choice_A_Text": "Réaction chimique (agents alkylants).",
     "Choice_A_isCorrect": false,
     "Choice_A_Explanation": "C'est une interaction directe (Source : Chimiothérapie, Page Globale 150).",
@@ -502,7 +502,7 @@
     "Choice_C_Explanation": "C'est une interaction directe (Source : Chimiothérapie, Page Globale 150).",
     "Choice_D_Text": "Action Antimétabolite.",
     "Choice_D_isCorrect": true,
-    "Choice_D_Explanation": "Les antimétabolites agissent indirectement sur l'ADN (Source : Chimiothérapie, Page Globale 150). [GDR]",
+    "Choice_D_Explanation": "Les antimétabolites agissent indirectement sur l'ADN (Source : Chimiothérapie, Page Globale 150). [GDR1]",
     "Choice_E_Text": "Inhibition enzymatique (topoisomérases).",
     "Choice_E_isCorrect": true,
     "Choice_E_Explanation": "L'inhibition des topoisomérases est une interaction indirecte (Source : Chimiothérapie, Page Globale 150).",

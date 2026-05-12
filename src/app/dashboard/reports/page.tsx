@@ -603,7 +603,7 @@ export default function ReportsPage() {
                       const questionTextMatches = questionData && selectedReport.question_text && questionData.question.trim().substring(0, 60) === selectedReport.question_text.trim().substring(0, 60);
                       const options = questionTextMatches ? (questionData?.options || selectedReport.original_options || []) : (selectedReport.original_options || questionData?.options || []);
                       const explanations = questionTextMatches ? (questionData?.answerExplanations || []) : [];
-                      const origCorrectSet = new Set(selectedReport.original_correct || []);
+                      const origCorrectSet = new Set(questionTextMatches && questionData ? (questionData.correctAnswers || []) : (selectedReport.original_correct || []));
                       const suggestedCorrectSet = mergedSuggestions.correct;
                       const suggestedIncorrectSet = mergedSuggestions.incorrect;
 
@@ -668,10 +668,10 @@ export default function ReportsPage() {
                                         </span>
                                       )}
 {isGdr && !isGdr1 && (
-                                          <span className={`inline-flex items-center text-[10px] px-1.5 py-0.5 rounded-full font-medium ${isDarkMode ? 'bg-green-500/20 text-green-300' : 'bg-green-100 text-green-700'}`}>
-                                            GDR ✓
-                                          </span>
-                                        )}
+                                           <span className={`inline-flex items-center text-[10px] px-1.5 py-0.5 rounded-full font-medium ${isDarkMode ? 'bg-green-500/20 text-green-300' : 'bg-green-100 text-green-700'}`}>
+                                             GDR ✓
+                                           </span>
+                                         )}
                                         {isGdr1 && (
                                           <span className={`inline-flex items-center text-[10px] px-1.5 py-0.5 rounded-full font-medium ${isDarkMode ? 'bg-amber-500/20 text-amber-300' : 'bg-amber-100 text-amber-700'}`}>
                                             GDR
