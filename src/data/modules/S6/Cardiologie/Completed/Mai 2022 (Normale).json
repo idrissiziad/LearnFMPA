@@ -2,7 +2,7 @@
     {
         "YearAsked": "Mai 2022 (Normale)",
         "Subtopic": "Insuffisance mitrale",
-        "QuestionText": "Quelle est la valvulopathie à évoquer en premier devant cette auscultation cardiaque anormale ?",
+        "QuestionText": "Cas clinique nº 1 : Madame A. Rabiaa, 48 ans se présente en consultation pour une histoire de dyspnée d'effort d'aggravation rapidement progressive. Aujourd'hui elle n'est plus capable de monter au deuxième étage de sa maison. Elle ne prend aucun traitement actuellement, même si elle se dit porteuse d'une hypothyroïdie pour laquelle elle avait un traitement qu'elle a arrêté d'elle-même depuis 3 ans. Son examen clinique relève plusieurs signes d'hypothyroïdie, une tension artérielle de 115/69 mmHg, et une bradycardie à 59 bat/min, son poids est de 92 kg pour une taille de 168 cm. L'auscultation cardiaque retrouve un souffle systolique, apexien, coté 4/6ème, irradiant vers l'aisselle. L'auscultation pulmonaire retrouve des râles crépitants au niveau des bases pulmonaires, et le reste de l'examen clinique est sans particularités. Son ECG s'inscrit en rythme sinusal avec un bloc de branche gauche complet à 140ms. Quelle est la valvulopathie à évoquer en premier devant cette auscultation cardiaque anormale ?",
         "Choice_A_Text": "Maladie Mitrale.",
         "Choice_A_isCorrect": false,
         "Choice_A_Explanation": "La maladie mitrale associe sténose et insuffisance, or l'énoncé décrit uniquement un souffle systolique pur. (Source : Insuffisance mitrale, Page Globale 1063).",

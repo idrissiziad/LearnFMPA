@@ -360,7 +360,7 @@ export default function ReportsPage() {
     .filter(r => moduleFilter === 'all' || r.module_id === moduleFilter)
     .sort((a, b) => {
       if (sortBy === 'recent') {
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
       }
       const scoreA = Object.values(a.votes).reduce((s, v) => s + v, 0);
       const scoreB = Object.values(b.votes).reduce((s, v) => s + v, 0);
@@ -380,7 +380,7 @@ export default function ReportsPage() {
       groups.get(key)!.push(report);
     }
     for (const [, group] of groups) {
-      group.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      group.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
     }
     return groups;
   }, [filteredReports, questionYears]);
