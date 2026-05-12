@@ -150,7 +150,7 @@ export default function Dashboard() {
     }
 
     const moduleResults = results.filter(r => r.type === 'module');
-    const questionResults = results.filter(r => r.type === 'question').slice(0, 20);
+    const questionResults = results.filter(r => r.type === 'question').slice(0, 50);
     setSearchResults([...moduleResults, ...questionResults]);
     setShowResults(true);
     setIsSearching(false);
@@ -181,7 +181,7 @@ export default function Dashboard() {
     if (result.type === 'module') {
       router.push(`/modules/${result.moduleId}`);
     } else {
-      router.push(`/modules/${result.moduleId}?q=${result.questionIndex}`);
+      router.push(`/modules/${result.moduleId}?q=${result.questionId}`);
     }
     setSearchQuery('');
     setShowResults(false);
@@ -390,7 +390,7 @@ export default function Dashboard() {
                 </form>
 
                 {showResults && (
-                  <div className={`absolute left-0 right-0 mt-2 rounded-xl border overflow-hidden z-40 ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'} shadow-lg max-h-80 sm:max-h-96 overflow-y-auto`}>
+                  <div className={`absolute left-0 right-0 mt-2 rounded-xl border overflow-hidden z-40 ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-200'} shadow-lg max-h-[28rem] sm:max-h-[36rem] overflow-y-auto`}>
                     {isSearching ? (
                       <div className="p-4 text-center">
                         <div className="w-6 h-6 border-2 border-green-600 border-t-transparent rounded-full animate-spin mx-auto"></div>

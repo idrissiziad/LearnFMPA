@@ -163,15 +163,15 @@
         "Choice_C_isCorrect": true,
         "Choice_C_Explanation": "La plage des leucocytes permet d'identifier une réaction inflammatoire dans les urines. (Source : Sémiologie néphrologique 1, Page Globale 1503).",
         "Choice_D_Text": "Éliminer une infection urinaire chez la femme.",
-        "Choice_D_isCorrect": false,
-        "Choice_D_Explanation": "Elle a une mauvaise valeur prédictive négative et ne peut donc pas écarter formellement le diagnostic. (Source : Infections uro-génitales, Page Globale 553).",
+        "Choice_D_isCorrect": true,
+        "Choice_D_Explanation": "Chez la femme (hors grossesse ou fragilité particulière), la BU a une très haute Valeur Prédictive Négative (VPN), proche de 95-97 %. Si les leucocytes et les nitrites sont tous deux négatifs, on peut raisonnablement éliminer le diagnostic d'infection urinaire.",
         "Choice_E_Text": "Préciser le germe responsable d'une infection urinaire.",
         "Choice_E_isCorrect": false,
         "Choice_E_Explanation": "Seule la mise en culture lors de l'ECBU permet d'identifier l'espèce bactérienne. (Source : Infections uro-génitales, Page Globale 554).",
         "Choice_A_Image": "Sémiologie2-0553.avif",
         "Choice_B_Image": "Sémiologie2-1503.avif",
         "Choice_C_Image": "Sémiologie2-1503.avif",
-        "Choice_D_Image": "Sémiologie2-0553.avif",
+        "Choice_D_Image": "",
         "Choice_E_Image": "Sémiologie2-0554.avif"
     },
     {

@@ -311,9 +311,9 @@ export default function ModulePage() {
 
   useEffect(() => {
     if (questions.length > 0 && questionParam && !initialQuestionSet) {
-      const questionIndex = parseInt(questionParam, 10);
-      if (!isNaN(questionIndex) && questionIndex >= 0 && questionIndex < questions.length) {
-        setCurrentQuestionIndex(questionIndex);
+      const foundIndex = questions.findIndex(q => q.id === questionParam);
+      if (foundIndex >= 0) {
+        setCurrentQuestionIndex(foundIndex);
       }
       setInitialQuestionSet(true);
     }

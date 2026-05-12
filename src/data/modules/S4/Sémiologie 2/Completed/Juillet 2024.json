@@ -292,7 +292,7 @@
         "Choice_B_Explanation": "La diurèse normale moyenne est de 1,5 l /24h, pas 3,5. (Source : Sémiologie néphrologique 3, Page 1610)",
         "Choice_C_Text": "On parle d'oligurie si elle est inférieure à 100ml/j.",
         "Choice_C_isCorrect": true,
-        "Choice_C_Explanation": "L'oligurie correspond à moins de 500 ml/j, 100 ml est le seuil de l'anurie. (Source : Sémiologie néphrologique 3, Page 1615) [GDR]",
+        "Choice_C_Explanation": "L'oligurie correspond à moins de 500 ml/j, 100 ml est le seuil de l'anurie. (Source : Sémiologie néphrologique 3, Page 1615) [GDR1]",
         "Choice_D_Text": "On parle de polyurie si elle est supérieure à 3 l/j.",
         "Choice_D_isCorrect": false,
         "Choice_D_Explanation": "C'est une définition exacte de la polyurie. (Source : Sémiologie néphrologique 3, Page 1611)",
