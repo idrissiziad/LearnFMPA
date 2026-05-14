@@ -91,6 +91,8 @@ export default function ModulePage() {
   const [isCorrectlyAnswered, setIsCorrectlyAnswered] = useState(false);
   const [correctlyAnsweredQuestions, setCorrectlyAnsweredQuestions] = useState<{ [key: string]: boolean }>({});
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [isEditingQuestionNumber, setIsEditingQuestionNumber] = useState(false);
+  const [questionNumberInput, setQuestionNumberInput] = useState('');
   const [shuffledOptions, setShuffledOptions] = useState<string[][]>([]);
   const [optionMapping, setOptionMapping] = useState<number[][]>([]);
   const [shuffledCorrectAnswers, setShuffledCorrectAnswers] = useState<number[][]>([]);
@@ -1433,9 +1435,70 @@ export default function ModulePage() {
           <div className={`p-3 sm:p-8 border-b ${isDarkMode ? 'border-gray-700/50' : 'border-gray-100'}`}>
             <div className="flex items-center justify-between mb-2 sm:mb-6">
               <div className="flex items-center gap-2.5 sm:gap-4 shrink-0">
-                <span className={`px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-xl text-sm sm:text-lg font-bold ${isDarkMode ? 'bg-gradient-to-r from-gray-700 to-gray-600 text-white' : 'bg-gradient-to-r from-gray-100 to-gray-50 text-gray-900'} shadow-sm`}>
+                {isEditingQuestionNumber ? (
+                  <input
+                    type="number"
+                    min={1}
+                    max={activeQuestions.length}
+                    value={questionNumberInput}
+                    onChange={(e) => setQuestionNumberInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        const num = parseInt(questionNumberInput);
+                        if (num >= 1 && num <= activeQuestions.length) {
+                          setIsTransitioning(true);
+                          setTimeout(() => {
+                            setCurrentQuestionIndex(num - 1);
+                            setSelectedAnswers([]);
+                            setShowAnswer(false);
+                            setIsCorrectlyAnswered(false);
+                            setOriginalSelectedAnswers([]);
+                            setCollapsedChoices(new Set());
+                            setQuestionStats(null);
+                            setIsTransitioning(false);
+                            setShowChapterName(false);
+                          }, 150);
+                        }
+                        setIsEditingQuestionNumber(false);
+                        setQuestionNumberInput('');
+                      } else if (e.key === 'Escape') {
+                        setIsEditingQuestionNumber(false);
+                        setQuestionNumberInput('');
+                      }
+                    }}
+                    onBlur={() => {
+                      const num = parseInt(questionNumberInput);
+                      if (num >= 1 && num <= activeQuestions.length) {
+                        setIsTransitioning(true);
+                        setTimeout(() => {
+                          setCurrentQuestionIndex(num - 1);
+                          setSelectedAnswers([]);
+                          setShowAnswer(false);
+                          setIsCorrectlyAnswered(false);
+                          setOriginalSelectedAnswers([]);
+                          setCollapsedChoices(new Set());
+                          setQuestionStats(null);
+                          setIsTransitioning(false);
+                          setShowChapterName(false);
+                        }, 150);
+                      }
+                      setIsEditingQuestionNumber(false);
+                      setQuestionNumberInput('');
+                    }}
+                    autoFocus
+                    className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl text-sm sm:text-lg font-bold w-12 sm:w-16 text-center ${isDarkMode ? 'bg-gray-700 text-white border-gray-500' : 'bg-white text-gray-900 border-gray-300'} border outline-none`}
+                  />
+                ) : (
+                <button
+                  onClick={() => {
+                    setQuestionNumberInput(String(currentQuestionIndex + 1));
+                    setIsEditingQuestionNumber(true);
+                  }}
+                  className={`px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-xl text-sm sm:text-lg font-bold ${isDarkMode ? 'bg-gradient-to-r from-gray-700 to-gray-600 text-white hover:from-gray-600 hover:to-gray-500' : 'bg-gradient-to-r from-gray-100 to-gray-50 text-gray-900 hover:from-gray-200 hover:to-gray-100'} shadow-sm cursor-pointer transition-all`}
+                >
                   {currentQuestionIndex + 1}/{activeQuestions.length}
-                </span>
+                </button>
+                )}
                 {timerEnabled && !examMode && (
                   <span className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-sm sm:text-base font-bold flex items-center gap-1.5 ${timerSeconds <= 10 ? 'bg-gradient-to-r from-red-500 to-red-600 text-white animate-pulse shadow-lg shadow-red-500/25' : isDarkMode ? 'bg-gradient-to-r from-blue-700/60 to-blue-600/60 text-blue-200' : 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800'} shadow-sm`}>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1686,7 +1749,7 @@ export default function ModulePage() {
                     </div>
                     <div className={`flex-1 min-w-0 ${isStrikethrough ? 'line-through' : ''}`}>
                       <p className={`text-xs sm:text-base leading-relaxed break-words ${isCollapsed ? 'line-clamp-1' : ''}`}>{option}</p>
-                      {optionImage && MODULE_IMAGE_CONFIGS[moduleId] && (() => {
+                      {showAnswer && optionImage && MODULE_IMAGE_CONFIGS[moduleId] && (() => {
                         const imgStr = Array.isArray(optionImage) ? optionImage[0] : String(optionImage);
                         const imgPath = imgStr.split(',')[0].trim();
                         const pageNum = extractPageFromImagePath(imgPath);
