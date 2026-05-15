@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { modules, getModuleQuestions, getModuleChapters } from '@/data/modules';
+import { modules, getModuleQuestions, getModuleChapters, clearAllModuleCache } from '@/data/modules';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -19,10 +19,11 @@ const DEFAULT_YEARS = ['3ème année'];
 export default function ModulesPage() {
   const router = useRouter();
   const { theme } = useTheme();
-  const { user, isLoading: authLoading, logout, getAllProgress } = useAuth();
+  const { user, isLoading: authLoading, logout, getAllProgress, invalidateProgressCache, clearProgressAndStats } = useAuth();
   const isDarkMode = theme === 'dark';
   const [moduleStats, setModuleStats] = useState<Map<number, ModuleStats>>(new Map());
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const userYears = useMemo(() => user?.years || DEFAULT_YEARS, [user?.years]);
   const filteredModules = useMemo(() => modules.filter(m => m.levels.some(level => userYears.includes(level))), [userYears]);
@@ -72,6 +73,26 @@ export default function ModulesPage() {
 
   const handleLogout = () => {
     logout();
+  };
+
+  const handleRefreshContent = async () => {
+    setIsRefreshing(true);
+    clearAllModuleCache();
+    invalidateProgressCache();
+    clearProgressAndStats();
+    try {
+      const cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map(name => caches.delete(name)));
+    } catch {}
+    if ('serviceWorker' in navigator) {
+      try {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (const registration of registrations) {
+          await registration.unregister();
+        }
+      } catch {}
+    }
+    window.location.reload();
   };
 
   const getYearBadgeColor = (year: string) => {
@@ -128,6 +149,17 @@ export default function ModulesPage() {
             </nav>
 
             <div className="flex items-center space-x-4">
+              <button
+                onClick={handleRefreshContent}
+                disabled={isRefreshing}
+                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all ${isRefreshing ? 'animate-spin' : ''} ${isDarkMode ? 'bg-gray-700 text-green-400 hover:bg-gray-600' : 'bg-gray-200 text-green-600 hover:bg-gray-300'}`}
+                aria-label="Actualiser le contenu"
+                title="Actualiser le contenu"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+                </svg>
+              </button>
               <ThemeToggle />
               <button
                 onClick={handleLogout}
