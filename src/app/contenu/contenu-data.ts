@@ -31,7 +31,7 @@ export const yearData: YearData[] = [
   },
   {
     year: '2ème année',
-    totalQuestions: 2661,
+    totalQuestions: 3007,
     moduleCount: 7,
     modules: [
     { id: 1, title: 'Pharmacologie', questionCount: 612, chapterCount: 31, gradient: 'from-blue-400 to-blue-600' },
@@ -40,19 +40,19 @@ export const yearData: YearData[] = [
     { id: 5, title: 'Radiologie', questionCount: 451, chapterCount: 33, gradient: 'from-red-400 to-red-600' },
     { id: 6, title: 'Biochimie clinique', questionCount: 297, chapterCount: 22, gradient: 'from-yellow-400 to-yellow-600' },
     { id: 12, title: 'Anatomo-pathologie 2', questionCount: 287, chapterCount: 18, gradient: 'from-indigo-400 to-indigo-600' },
-    { id: 13, title: 'Parasitologie Mycologie Maladies Infectieuses', questionCount: 100, chapterCount: 19, gradient: 'from-pink-400 to-pink-600' }
+    { id: 13, title: 'Parasitologie Mycologie Maladies Infectieuses', questionCount: 446, chapterCount: 30, gradient: 'from-pink-400 to-pink-600' }
     ]
   },
   {
     year: '3ème année',
-    totalQuestions: 2244,
+    totalQuestions: 2590,
     moduleCount: 5,
     modules: [
     { id: 1, title: 'Pharmacologie', questionCount: 612, chapterCount: 31, gradient: 'from-blue-400 to-blue-600' },
     { id: 2, title: 'Cardiologie', questionCount: 815, chapterCount: 40, gradient: 'from-green-400 to-green-600' },
     { id: 3, title: 'Anatomo-pathologie 1', questionCount: 266, chapterCount: 20, gradient: 'from-purple-400 to-purple-600' },
     { id: 5, title: 'Radiologie', questionCount: 451, chapterCount: 33, gradient: 'from-red-400 to-red-600' },
-    { id: 13, title: 'Parasitologie Mycologie Maladies Infectieuses', questionCount: 100, chapterCount: 19, gradient: 'from-pink-400 to-pink-600' }
+    { id: 13, title: 'Parasitologie Mycologie Maladies Infectieuses', questionCount: 446, chapterCount: 30, gradient: 'from-pink-400 to-pink-600' }
     ]
   },
   {
@@ -65,6 +65,6 @@ export const yearData: YearData[] = [
   },
 ];
 
-export const totalQuestions = 5791;
+export const totalQuestions = 6137;
 export const totalModules = 13;
 export const totalYears = 4;
