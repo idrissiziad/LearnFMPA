@@ -163,9 +163,23 @@ export default function ReportsPage() {
 
   useEffect(() => {
     const paramModuleId = searchParams.get('module_id');
-    const paramQuestionId = searchParams.get('question_id');
-    if (paramModuleId && paramQuestionId && reports.length > 0 && !selectedReport) {
-      const match = reports.find(r => r.module_id === parseInt(paramModuleId) && r.question_id === paramQuestionId);
+    const paramQuestionText = searchParams.get('question_text');
+    if (paramModuleId && reports.length > 0 && !selectedReport) {
+      const decodedText = paramQuestionText ? decodeURIComponent(paramQuestionText).trim().substring(0, 80) : null;
+      let match: CommunityReport | undefined;
+      if (decodedText) {
+        match = reports.find(r => {
+          if (r.module_id !== parseInt(paramModuleId)) return false;
+          const rTextKey = (r.question_text || '').trim().substring(0, 80);
+          return rTextKey === decodedText;
+        });
+      }
+      if (!match) {
+        const paramQuestionId = searchParams.get('question_id');
+        if (paramQuestionId) {
+          match = reports.find(r => r.module_id === parseInt(paramModuleId) && r.question_id === paramQuestionId);
+        }
+      }
       if (match) loadQuestionDetail(match);
     }
   }, [searchParams, reports]);

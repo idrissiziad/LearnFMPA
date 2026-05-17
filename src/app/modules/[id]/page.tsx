@@ -298,7 +298,9 @@ export default function ModulePage() {
           if (moduleGroup.module_id === moduleId) {
             for (const report of moduleGroup.reports) {
               if (report.status === 'pending') {
-                counts[report.question_id] = (counts[report.question_id] || 0) + 1;
+                const textKey = (report.question_text || '').trim().substring(0, 80);
+                const key = textKey || report.question_id;
+                counts[key] = (counts[key] || 0) + 1;
               }
             }
           }
@@ -1617,19 +1619,23 @@ export default function ModulePage() {
                   </svg>
                   <span className="hidden sm:inline">Signaler</span>
                 </button>
-                {currentQuestion && pendingReportCount[currentQuestion.id] > 0 && (
+{currentQuestion && (() => {
+                    const textKey = currentQuestion.question.trim().substring(0, 80);
+                    const count = pendingReportCount[textKey] || pendingReportCount[currentQuestion.id] || 0;
+                    return count > 0 ? (
                   <Link
-                    href={`/dashboard/reports?module_id=${moduleId}&question_id=${currentQuestion.id}`}
+                    href={`/dashboard/reports?module_id=${moduleId}&question_id=${currentQuestion.id}&question_text=${encodeURIComponent(currentQuestion.question)}`}
                     className={`shrink-0 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-1.5 ${isDarkMode ? 'bg-gradient-to-r from-amber-900/40 to-yellow-900/40 text-amber-400 hover:from-amber-900/60 hover:to-yellow-900/60' : 'bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-700 hover:from-amber-200 hover:to-yellow-200'} shadow-sm transition-colors`}
-                    title={`${pendingReportCount[currentQuestion.id]} signalement(s) en attente - Voir les détails`}
+                    title={`${count} signalement(s) en attente - Voir les détails`}
                   >
                     <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 0 016 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
-                    <span className="hidden sm:inline">{pendingReportCount[currentQuestion.id]} signalement{pendingReportCount[currentQuestion.id] > 1 ? 's' : ''}</span>
+                    <span className="hidden sm:inline">{count} signalement{count > 1 ? 's' : ''}</span>
                   </Link>
-                )}
+                    ) : null;
+                  })()}
               </div>
             </div>
             <p className={`text-sm sm:text-lg sm:text-xl leading-relaxed ${isDarkMode ? 'text-gray-100' : 'text-gray-800'} font-medium`}>
@@ -2198,7 +2204,7 @@ className={`px-3 sm:px-6 py-2 sm:py-3.5 rounded-xl font-medium transition-all fl
                           });
                           if (res.ok) {
                             setReportSubmitted(true);
-                            router.push(`/dashboard/reports?module_id=${moduleId}&question_id=${currentQuestion.id}`);
+                            router.push(`/dashboard/reports?module_id=${moduleId}&question_id=${currentQuestion.id}&question_text=${encodeURIComponent(currentQuestion.question)}`);
                           }
                         } catch {
                         } finally {
