@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -71,6 +71,7 @@ const ADMIN_EMAILS = ['idrissiziad7@gmail.com'];
 
 export default function ReportsPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { theme } = useTheme();
   const { user, isLoading: authLoading } = useAuth();
   const isDarkMode = theme === 'dark';
@@ -159,6 +160,15 @@ export default function ReportsPage() {
   useEffect(() => {
     if (reports.length > 0) loadQuestionYears();
   }, [reports, loadQuestionYears]);
+
+  useEffect(() => {
+    const paramModuleId = searchParams.get('module_id');
+    const paramQuestionId = searchParams.get('question_id');
+    if (paramModuleId && paramQuestionId && reports.length > 0 && !selectedReport) {
+      const match = reports.find(r => r.module_id === parseInt(paramModuleId) && r.question_id === paramQuestionId);
+      if (match) loadQuestionDetail(match);
+    }
+  }, [searchParams, reports]);
 
   const loadQuestionDetail = useCallback(async (report: CommunityReport) => {
     setSelectedReport(report);
