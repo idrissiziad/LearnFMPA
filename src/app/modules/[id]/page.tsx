@@ -29,7 +29,7 @@ export default function ModulePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { theme } = useTheme();
-  const { user, isLoading: authLoading, submitAnswer, getProgress, invalidateProgressCache, clearProgressAndStats, flushAnswers } = useAuth();
+  const { user, isLoading: authLoading, submitAnswer, getProgress, invalidateProgressCache, clearProgressAndStats, flushAnswers, getQuestionStats } = useAuth();
   const isDarkMode = theme === 'dark';
   const isFreeUser = user?.subscription_status === 'free';
   const FREE_EXPLANATION_LIMIT = 200;
@@ -110,6 +110,17 @@ export default function ModulePage() {
     correct_answers: number;
     option_counts: { [optionIndex: string]: number };
   } | null>(null);
+  const [difficultyRating, setDifficultyRating] = useState<number | null>(null);
+
+  const getDifficultyStars = (stats: { total_answers: number; correct_answers: number } | null): number | null => {
+    if (!stats || stats.total_answers < 3) return null;
+    const successRate = stats.correct_answers / stats.total_answers;
+    if (successRate > 0.8) return 1;
+    if (successRate > 0.6) return 2;
+    if (successRate > 0.4) return 3;
+    if (successRate > 0.2) return 4;
+    return 5;
+  };
 
   const [timerEnabled, setTimerEnabled] = useState(false);
   const [timerSeconds, setTimerSeconds] = useState(60);
@@ -322,6 +333,23 @@ export default function ModulePage() {
 
   const activeQuestions = examMode ? examQuestions : questions;
   const currentQuestion = activeQuestions[currentQuestionIndex];
+
+  useEffect(() => {
+    if (!user || !currentQuestion || examMode) {
+      setDifficultyRating(null);
+      return;
+    }
+    let cancelled = false;
+    getQuestionStats(moduleId, currentQuestion.id).then(stats => {
+      if (cancelled) return;
+      const stars = getDifficultyStars(stats);
+      setDifficultyRating(stars);
+    }).catch(() => {
+      if (!cancelled) setDifficultyRating(null);
+    });
+    return () => { cancelled = true; };
+  }, [currentQuestion?.id, moduleId, user, examMode]);
+
   const currentQuestionHasGDR = !!(currentQuestion?.answerExplanations?.some(expl => expl?.includes('[GDR]')));
   const currentQuestionHasGDR1 = !!(currentQuestion?.answerExplanations?.some(expl => expl?.includes('[GDR1]')));
   const currentQuestionHasAnyGDR = currentQuestionHasGDR || currentQuestionHasGDR1;
@@ -529,6 +557,7 @@ export default function ModulePage() {
       setOriginalSelectedAnswers([]);
       setCollapsedChoices(new Set());
       setQuestionStats(null);
+    setDifficultyRating(null);
       setShowChapterName(false);
     } else {
       setRandomizerEnabled(false);
@@ -550,6 +579,7 @@ export default function ModulePage() {
       setOriginalSelectedAnswers([]);
       setCollapsedChoices(new Set());
       setQuestionStats(null);
+    setDifficultyRating(null);
       setShowChapterName(false);
       applyAnsweredQuestionsFilter();
       return;
@@ -581,6 +611,7 @@ export default function ModulePage() {
     setOriginalSelectedAnswers([]);
     setCollapsedChoices(new Set());
     setQuestionStats(null);
+    setDifficultyRating(null);
     setShowChapterName(false);
   };
 
@@ -804,6 +835,7 @@ export default function ModulePage() {
           setOriginalSelectedAnswers([]);
           setCollapsedChoices(new Set());
           setQuestionStats(null);
+    setDifficultyRating(null);
           setShowChapterName(false);
           setIsTransitioning(false);
         }, 150);
@@ -866,8 +898,10 @@ export default function ModulePage() {
           const flushResult = await flushAnswers();
           if (flushResult?.statistics) {
             setQuestionStats(flushResult.statistics);
+            setDifficultyRating(getDifficultyStars(flushResult.statistics));
           } else {
             setQuestionStats(null);
+            setDifficultyRating(null);
           }
         }
       }
@@ -888,6 +922,7 @@ export default function ModulePage() {
         setOriginalSelectedAnswers([]);
         setCollapsedChoices(new Set());
         setQuestionStats(null);
+    setDifficultyRating(null);
         setIsTransitioning(false);
         setShowChapterName(false);
         const newQuestionKey = `${moduleId}_${currentQuestionIndex + 1}`;
@@ -915,6 +950,7 @@ export default function ModulePage() {
         setOriginalSelectedAnswers([]);
         setCollapsedChoices(new Set());
         setQuestionStats(null);
+    setDifficultyRating(null);
         setIsTransitioning(false);
         setShowChapterName(false);
         const newQuestionKey = `${moduleId}_${currentQuestionIndex - 1}`;
@@ -1452,6 +1488,7 @@ export default function ModulePage() {
                             setOriginalSelectedAnswers([]);
                             setCollapsedChoices(new Set());
                             setQuestionStats(null);
+    setDifficultyRating(null);
                             setIsTransitioning(false);
                             setShowChapterName(false);
                           }, 150);
@@ -1475,6 +1512,7 @@ export default function ModulePage() {
                           setOriginalSelectedAnswers([]);
                           setCollapsedChoices(new Set());
                           setQuestionStats(null);
+    setDifficultyRating(null);
                           setIsTransitioning(false);
                           setShowChapterName(false);
                         }, 150);
@@ -1509,6 +1547,21 @@ export default function ModulePage() {
                     <svg className="w-3 h-3 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
+                  </span>
+                )}
+                {difficultyRating !== null && !examMode && (
+                  <span className={`shrink-0 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-0.5 ${
+                    difficultyRating <= 2
+                      ? isDarkMode ? 'bg-green-900/40 text-green-400' : 'bg-green-100 text-green-700'
+                      : difficultyRating === 3
+                        ? isDarkMode ? 'bg-amber-900/40 text-amber-400' : 'bg-amber-100 text-amber-700'
+                        : isDarkMode ? 'bg-red-900/40 text-red-400' : 'bg-red-100 text-red-700'
+                  }`} title={`Difficulté: ${difficultyRating}/5 étoiles`}>
+                    {[1, 2, 3, 4, 5].map(star => (
+                      <svg key={star} className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${star <= difficultyRating ? '' : isDarkMode ? 'text-gray-600' : 'text-gray-300'}`} fill={star <= difficultyRating ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={star <= difficultyRating ? 1 : 1.5} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                      </svg>
+                    ))}
                   </span>
                 )}
               </div>
