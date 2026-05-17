@@ -32,8 +32,7 @@ export default function ModulePage() {
   const { user, isLoading: authLoading, submitAnswer, getProgress, invalidateProgressCache, clearProgressAndStats, flushAnswers } = useAuth();
   const isDarkMode = theme === 'dark';
   const isFreeUser = user?.subscription_status === 'free';
-  const FREE_DAILY_LIMIT = 200;
-  const FREE_DISPLAY_LIMIT = 10;
+  const FREE_EXPLANATION_LIMIT = 200;
   const FREE_DAILY_WINDOW_MS = 24 * 60 * 60 * 1000;
 
   const initialFreeAnswersCount = (() => {
@@ -59,7 +58,7 @@ export default function ModulePage() {
   })();
 
   const [freeAnswersCount, setFreeAnswersCount] = useState(initialFreeAnswersCount);
-  const showExplanations = !isFreeUser || freeAnswersCount <= FREE_DAILY_LIMIT;
+  const showExplanations = !isFreeUser || freeAnswersCount <= FREE_EXPLANATION_LIMIT;
 
   const updateFreeAnswerCache = useCallback((count: number) => {
     if (!user) return;
@@ -851,9 +850,7 @@ export default function ModulePage() {
       if (isFreeUser) {
         if (user) {
           const newCount = freeAnswersCount + 1;
-          if (newCount <= FREE_DAILY_LIMIT) {
-            submitAnswer(moduleId, currentQuestion.id.toString(), isCorrect, mappedSelectedAnswers);
-          }
+          submitAnswer(moduleId, currentQuestion.id.toString(), isCorrect, mappedSelectedAnswers);
           setFreeAnswersCount(newCount);
           updateFreeAnswerCache(newCount);
         }
@@ -1901,7 +1898,7 @@ const statTextColor = effectiveGdrMode && showAnswer && isCorrect && isSelected 
                 title="Explications disponibles avec la version complète"
                 message="Soutenez LearnFMPA pour accéder aux explications détaillées illimitées et au suivi de progression complet."
                 dailyCount={freeAnswersCount}
-                dailyLimit={FREE_DISPLAY_LIMIT}
+                dailyLimit={FREE_EXPLANATION_LIMIT}
                 resetTime={user?.daily_answer_reset}
               />
             </div>

@@ -54,6 +54,9 @@ const PROGRESS_CACHE_TTL = 300000;
 const FLUSH_INTERVAL = 3000;
 const STATS_CACHE_TTL = 120000;
 const FREE_FLUSH_INTERVAL = 10000;
+const FREE_EXPLANATION_LIMIT = 200;
+const FREE_BATCH_SIZE = 10;
+const FREE_BATCH_SAFETY_TIMEOUT = 120000;
 const LOCAL_PROGRESS_KEY = 'learnfmpa_progress_cache';
 const LOCAL_STATS_KEY = 'learnfmpa_stats_cache';
 
@@ -436,8 +439,21 @@ const userInfo = {
     };
 
     pendingAnswersRef.current.push(answer);
-    scheduleFlush();
-  }, [user, scheduleFlush]);
+
+    const isFreeUser = user.subscription_status === 'free';
+    const currentEstimate = (user.daily_answer_count || 0) + pendingAnswersRef.current.length;
+    const isPastExplanationLimit = isFreeUser && currentEstimate > FREE_EXPLANATION_LIMIT;
+
+    if (isPastExplanationLimit) {
+      if (pendingAnswersRef.current.length >= FREE_BATCH_SIZE) {
+        flushPendingAnswers();
+      } else if (!flushTimerRef.current) {
+        flushTimerRef.current = setTimeout(flushPendingAnswers, FREE_BATCH_SAFETY_TIMEOUT);
+      }
+    } else {
+      scheduleFlush();
+    }
+  }, [user, flushPendingAnswers, scheduleFlush]);
 
   const getProgress = useCallback(async (moduleId: number) => {
     if (!user) return {};

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { loadUserProgress, saveUserProgress, loadQuestionStats, saveQuestionStats, loadUsers, saveUsers, isTrialExpired } from '@/lib/user-store';
 import { requireAuth } from '@/lib/auth';
 
-const FREE_DAILY_LIMIT = 10;
+const FREE_EXPLANATION_LIMIT = 200;
 const FREE_DAILY_WINDOW_MS = 24 * 60 * 60 * 1000;
 
 export async function POST(request: NextRequest) {
@@ -52,7 +52,8 @@ export async function POST(request: NextRequest) {
     await saveUsers(usersData);
 
     const isPaid = subscriptionStatus === 'paid';
-    const freeLimitReached = !isPaid && dailyAnswerCount > FREE_DAILY_LIMIT;
+    const freeLimitReached = !isPaid && dailyAnswerCount > FREE_EXPLANATION_LIMIT;
+    const explanationsVisible = isPaid || dailyAnswerCount <= FREE_EXPLANATION_LIMIT;
 
     let progress: any = {};
     let lastStats: any = null;
@@ -92,9 +93,9 @@ export async function POST(request: NextRequest) {
       statistics: isPaid ? lastStats : null,
       progress: isPaid ? progress : {},
       free_limit_reached: freeLimitReached,
-      explanations_visible: isPaid || dailyAnswerCount <= FREE_DAILY_LIMIT,
+      explanations_visible: explanationsVisible,
+      explanation_limit: FREE_EXPLANATION_LIMIT,
       daily_answer_count: dailyAnswerCount,
-      daily_limit: FREE_DAILY_LIMIT,
       daily_answer_reset: usersData.users[user_id].daily_answer_reset || null,
     });
   } catch (error) {
