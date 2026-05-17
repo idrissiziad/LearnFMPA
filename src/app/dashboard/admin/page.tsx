@@ -295,6 +295,15 @@ export default function AdminPage() {
   const [emailConfirmed, setEmailConfirmed] = useState(false);
   const [emailBodyCopied, setEmailBodyCopied] = useState(false);
 
+  const [batchQueue, setBatchQueue] = useState<{ email: string; name: string }[]>([]);
+  const [batchPaid, setBatchPaid] = useState(false);
+  const [batchDays, setBatchDays] = useState(7);
+  const [batchIndex, setBatchIndex] = useState(0);
+  const [batchTotal, setBatchTotal] = useState(0);
+  const [batchSucceeded, setBatchSucceeded] = useState(0);
+  const [batchFailed, setBatchFailed] = useState(0);
+  const [batchActive, setBatchActive] = useState(false);
+
   const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
@@ -462,50 +471,100 @@ export default function AdminPage() {
   }
 
   async function handleBatchActivate(paid: boolean, days: number) {
+    const inactiveEdu = users.filter(u => !u.is_active && u.email.endsWith('@edu.uiz.ac.ma'));
+    if (inactiveEdu.length === 0) {
+      showMsg('Aucun compte edu inactif trouvé', true);
+      return;
+    }
+    setBatchQueue(inactiveEdu.map(u => ({ email: u.email, name: u.name })));
+    setBatchPaid(paid);
+    setBatchDays(days);
+    setBatchIndex(0);
+    setBatchTotal(inactiveEdu.length);
+    setBatchSucceeded(0);
+    setBatchFailed(0);
+    setBatchActive(true);
+    setEditModal(null);
+    await processBatchUser(inactiveEdu[0], 0, inactiveEdu.length, paid, days, 0, 0);
+  }
+
+  async function processBatchUser(
+    user: { email: string; name: string },
+    idx: number,
+    total: number,
+    paid: boolean,
+    days: number,
+    prevSucceeded: number,
+    prevFailed: number
+  ) {
     try {
       setActionLoading(true);
-      const inactiveEdu = users.filter(u => !u.is_active && u.email.endsWith('@edu.uiz.ac.ma'));
-      if (inactiveEdu.length === 0) {
-        showMsg('Aucun compte edu inactif trouvé', true);
+      const activateRes = await adminPost('users', { action: 'activate', email: user.email });
+      if (!activateRes.success) {
+        const newFailed = prevFailed + 1;
+        setBatchFailed(newFailed);
+        setBatchIndex(idx + 1);
+        advanceBatch(idx + 1, total, paid, days, prevSucceeded, newFailed);
         return;
       }
-      let succeeded = 0;
-      let failed = 0;
-      const results: { email: string; name: string; password: string }[] = [];
-      for (const u of inactiveEdu) {
-        const res = await adminPost('users', { action: 'activate', email: u.email });
-        if (!res.success) { failed++; continue; }
-        if (days !== 7) {
-          await adminPost('users', { action: 'update_user', email: u.email, activation_days: days });
-        }
-        const pwd = generateTempPassword();
-        const resetRes = await adminPost('users', { action: 'reset_password', email: u.email, new_password: pwd });
-        if (!resetRes.success) { failed++; continue; }
-        if (paid) {
-          await adminPost('users', { action: 'update_user', email: u.email, subscription_status: 'paid' });
-        }
-        results.push({ email: u.email, name: u.name, password: pwd });
-        succeeded++;
+      if (days !== 7) {
+        await adminPost('users', { action: 'update_user', email: user.email, activation_days: days });
       }
-      if (results.length > 0) {
-        const last = results[results.length - 1];
-        const draft = generateActivationEmail(last.name, last.email, last.password, paid, days);
-        const allLines = results.map(r => `${r.email} — Mot de passe : ${r.password}`).join('\n');
-        draft.body = `RÉSULTATS D'ACTIVATION EN LOT (${succeeded} réussi(s), ${failed} échoué(s))\n${'='.repeat(50)}\n\n${allLines}\n\n${'='.repeat(50)}\n\n--- Ci-dessous, un modèle d'email pour le dernier utilisateur ---\n\n${draft.body}`;
-        draft.subject = `Activation en lot — ${succeeded} compte(s) activé(s)`;
-        draft.name = `${succeeded} utilisateurs`;
-        setEmailDraft(draft);
-        setEmailConfirmed(false);
-        setEmailBodyCopied(false);
-      } else {
-        showMsg(`Aucune activation réussie (${failed} échoué(s))`, true);
+      const tempPwd = generateTempPassword();
+      const resetRes = await adminPost('users', { action: 'reset_password', email: user.email, new_password: tempPwd });
+      if (!resetRes.success) {
+        const newFailed = prevFailed + 1;
+        setBatchFailed(newFailed);
+        setBatchIndex(idx + 1);
+        advanceBatch(idx + 1, total, paid, days, prevSucceeded, newFailed);
+        return;
       }
+      if (paid) {
+        await adminPost('users', { action: 'update_user', email: user.email, subscription_status: 'paid' });
+      }
+      const newSucceeded = prevSucceeded + 1;
+      setBatchSucceeded(newSucceeded);
+      const draft = generateActivationEmail(user.name, user.email, tempPwd, paid, days);
+      draft.subject = `[${idx + 1}/${total}] ${draft.subject}`;
+      setEmailDraft(draft);
+      setEmailConfirmed(false);
+      setEmailBodyCopied(false);
       fetchUsers();
     } catch {
-      showMsg('Erreur de connexion', true);
+      setBatchFailed(prevFailed + 1);
+      setBatchIndex(idx + 1);
+      advanceBatch(idx + 1, total, paid, days, prevSucceeded, prevFailed + 1);
     } finally {
       setActionLoading(false);
-      setEditModal(null);
+    }
+  }
+
+  function advanceBatch(nextIdx: number, total: number, paid: boolean, days: number, succeeded: number, failed: number) {
+    const queue = batchQueue;
+    if (nextIdx >= total || nextIdx >= queue.length) {
+      setBatchActive(false);
+      showMsg(`Activation en lot terminée : ${succeeded} réussi(s), ${failed} échoué(s)`);
+      return;
+    }
+    processBatchUser(queue[nextIdx], nextIdx, total, paid, days, succeeded, failed);
+  }
+
+  function handleBatchNext() {
+    setEmailDraft(null);
+    setEmailConfirmed(false);
+    const nextIdx = batchIndex;
+    setBatchIndex(nextIdx + 1);
+    advanceBatch(nextIdx, batchTotal, batchPaid, batchDays, batchSucceeded, batchFailed);
+  }
+
+  function handleEmailDraftClose() {
+    if (batchActive && batchIndex < batchTotal) {
+      handleBatchNext();
+    } else {
+      setEmailDraft(null);
+      if (batchActive) {
+        setBatchActive(false);
+      }
     }
   }
 
@@ -1472,7 +1531,7 @@ export default function AdminPage() {
                 {editModal.type === 'batchActivate' && (
                   <div className="space-y-3">
                     <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                      Tous les comptes @edu.uiz.ac.ma inactifs seront activés avec un mot de passe temporaire.
+                      Chaque compte @edu.uiz.ac.ma inactif sera activé un par un. Vous pourrez confirmer l&apos;envoi de l&apos;email pour chaque utilisateur avant de passer au suivant.
                     </p>
                     <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                       Comptes inactifs edu trouvés: <strong>{users.filter(u => !u.is_active && u.email.endsWith('@edu.uiz.ac.ma')).length}</strong>
@@ -1497,7 +1556,7 @@ export default function AdminPage() {
                     </label>
                     <button onClick={() => handleBatchActivate(editPaid, editDays)} disabled={actionLoading}
                       className="w-full py-2.5 rounded-lg text-sm font-medium bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 shadow-sm disabled:opacity-50">
-                      {actionLoading ? 'Activation...' : 'Activer tous les comptes edu inactifs'}
+                      {actionLoading ? 'Démarrage...' : 'Commencer l\'activation séquentielle'}
                     </button>
                   </div>
                 )}
@@ -1556,7 +1615,7 @@ export default function AdminPage() {
         )}
 
         {emailDraft && (
-          <div className="fixed inset-0 z-[60] flex items-start justify-center p-4 pt-8 overflow-y-auto bg-black/50" onClick={() => { if (emailConfirmed) { setEmailDraft(null); } }}>
+          <div className="fixed inset-0 z-[60] flex items-start justify-center p-4 pt-8 overflow-y-auto bg-black/50" onClick={() => { if (emailConfirmed) { handleEmailDraftClose(); } }}>
             <div className={`w-full max-w-2xl rounded-xl shadow-2xl ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'} mb-8`} onClick={e => e.stopPropagation()}>
               <div className={`p-5 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
                 <div className="flex items-center gap-3 mb-3">
@@ -1570,6 +1629,21 @@ export default function AdminPage() {
                     <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Pour : {emailDraft.to}</p>
                   </div>
                 </div>
+                {batchActive && (
+                  <div className={`flex items-center gap-2 px-3 py-2 rounded-lg mb-2 ${isDarkMode ? 'bg-blue-900/30 border border-blue-700/50' : 'bg-blue-50 border border-blue-200'}`}>
+                    <span className={`text-sm font-medium ${isDarkMode ? 'text-blue-300' : 'text-blue-700'}`}>
+                      Activation en lot — {batchIndex} / {batchTotal}
+                    </span>
+                    <div className="flex-1">
+                      <div className={`h-2 rounded-full ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                        <div className="h-2 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all" style={{ width: `${batchTotal > 0 ? ((batchIndex) / batchTotal) * 100 : 0}%` }} />
+                      </div>
+                    </div>
+                    <span className={`text-xs ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                      {batchSucceeded} ✓ {batchFailed > 0 ? `| ${batchFailed} ✗` : ''}
+                    </span>
+                  </div>
+                )}
                 <div className={`flex items-center gap-2 px-3 py-2 rounded-lg ${isDarkMode ? 'bg-yellow-900/20 border border-yellow-800/50' : 'bg-amber-50 border border-amber-200'}`}>
                   <svg className={`w-5 h-5 flex-shrink-0 ${isDarkMode ? 'text-yellow-400' : 'text-amber-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 16.5c-.77.833.192 2.5 1.732 2.5z" />
@@ -1630,15 +1704,22 @@ export default function AdminPage() {
                   </span>
                 </label>
                 <div className="flex gap-2 mt-4 justify-end">
-                  <button onClick={() => setEmailDraft(null)}
+                  <button onClick={() => handleEmailDraftClose()}
                     className={`px-4 py-2 rounded-lg text-sm ${isDarkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-800'} transition-colors`}>
-                    Fermer sans confirmer
+                    {batchActive && batchIndex < batchTotal ? 'Passer (sans confirmer)' : 'Fermer sans confirmer'}
                   </button>
-                  <button onClick={() => { setEmailDraft(null); showMsg('Email enregistré comme envoyé'); }}
-                    disabled={!emailConfirmed}
-                    className="px-4 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed transition-all">
-                    ✓ Confirmer l&apos;envoi
-                  </button>
+                  {batchActive && batchIndex < batchTotal ? (
+                    <button onClick={() => handleBatchNext()} disabled={!emailConfirmed}
+                      className="px-4 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                      ✓ Confirmer et passer au suivant
+                    </button>
+                  ) : (
+                    <button onClick={() => { setEmailDraft(null); showMsg('Email enregistré comme envoyé'); }}
+                      disabled={!emailConfirmed}
+                      className="px-4 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                      ✓ Confirmer l&apos;envoi
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

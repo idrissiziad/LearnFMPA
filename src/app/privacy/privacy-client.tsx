@@ -33,7 +33,7 @@ const sections = [
   },
   {
     title: '7. Vos droits',
-    content: `Conformément à la législation en vigueur, vous disposez d'un droit d'accès, de rectification et de suppression de vos données personnelles. Pour exercer ces droits, veuillez nous contacter via la page de contact. Vous pouvez également demander la suppression anticipée de votre compte et de vos données à tout moment.`,
+    content: `Conformément à la législation en vigueur, vous disposez d'un droit d'accès, de rectification et de suppression de vos données personnelles. Vous pouvez supprimer votre compte à tout moment directement depuis votre tableau de bord (Dashboard). Vous pouvez également nous contacter via la page de contact pour exercer ces droits ou demander la suppression anticipée de vos données.`,
   },
   {
     title: '8. Modifications de la politique',
