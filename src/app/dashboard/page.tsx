@@ -248,6 +248,15 @@ export default function Dashboard() {
             </nav>
 
             <div className="flex items-center space-x-2 sm:space-x-3">
+              <Link
+                href="/dashboard/profile"
+                className={`flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-lg transition-all ${isDarkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-green-400' : 'bg-gray-100 text-gray-600 hover:bg-green-50 hover:text-green-600'}`}
+                title="Profil"
+              >
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </Link>
               <button
                 onClick={() => setShowTutorial(true)}
                 className={`flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-lg transition-all ${isDarkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-green-400' : 'bg-gray-100 text-gray-600 hover:bg-green-50 hover:text-green-600'}`}
@@ -267,6 +276,15 @@ export default function Dashboard() {
                 </svg>
                 <span className="hidden lg:inline">Déconnexion</span>
               </button>
+              <Link
+                href="/dashboard/profile"
+                className="md:hidden flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 text-white"
+                title="Profil"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </Link>
               <Link
                 href="/dashboard/reports"
                 className="md:hidden flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-r from-orange-500 to-amber-600 text-white"
@@ -526,6 +544,27 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <svg className={`w-5 h-5 ${isDarkMode ? 'text-gray-500 group-hover:text-gray-400' : 'text-gray-400 group-hover:text-purple-600'} transition-colors`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+              <Link
+                href="/dashboard/profile"
+                className={`flex items-center justify-between p-3 rounded-xl ${isDarkMode ? 'bg-gray-700/50 hover:bg-gray-700' : 'bg-gray-50 hover:bg-blue-50'} transition-all cursor-pointer group`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg shadow-blue-500/25">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Profil</p>
+                    <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      Voir votre profil
+                    </span>
+                  </div>
+                </div>
+                <svg className={`w-5 h-5 ${isDarkMode ? 'text-gray-500 group-hover:text-gray-400' : 'text-gray-400 group-hover:text-blue-600'} transition-colors`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </Link>
