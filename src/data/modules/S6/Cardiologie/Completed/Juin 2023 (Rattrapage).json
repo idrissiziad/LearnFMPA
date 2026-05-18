@@ -210,14 +210,14 @@
         "Choice_B_isCorrect": true,
         "Choice_B_Explanation": "C'est l'agent étiologique exclusif du RAA suite à une angine. (Source : Rhumatisme articulaire aigu, Page Globale 1168).",
         "Choice_C_Text": "Une réaction inflammatoire suppurative et auto-immune tardive.",
-        "Choice_C_isCorrect": true,
+        "Choice_C_isCorrect": false,
         "Choice_C_Explanation": "Le RAA est une réponse inflammatoire non suppurative et auto-immune tardive. (Source : Rhumatisme articulaire aigu, Page Globale 1168).",
         "Choice_D_Text": "Une affection qui peut être responsable de séquelles neurologiques définitives.",
-        "Choice_D_isCorrect": true,
+        "Choice_D_isCorrect": false,
         "Choice_D_Explanation": "Bien que la chorée de Sydenham soit transitoire, le texte mentionne l'implication du système nerveux central. (Source : Rhumatisme articulaire aigu, Page Globale 1168).",
         "Choice_E_Text": "D'aucune de ces propositions.",
         "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "Les propositions B, C et D contiennent des éléments de définition corrects. (Source : Rhumatisme articulaire aigu, Page Globale 1168). [GDR]"
+        "Choice_E_Explanation": "La proposition B contient la définition correcte. (Source : Rhumatisme articulaire aigu, Page Globale 1168). [GDR1]"
     },
     {
         "YearAsked": "Juin 2023 (Rattrapage)",
@@ -285,7 +285,7 @@
         "QuestionText": "A propos de l'insuffisance mitrale aigue :",
         "Choice_A_Text": "Est toujours symptomatique.",
         "Choice_A_isCorrect": true,
-        "Choice_A_Explanation": "L'IM aiguë entraîne une surcharge volumétrique brutale de l'oreillette gauche non dilatée, provoquant un OAP immédiat. (Source : Insuffisance mitrale, Page Globale 1067). [GDR]",
+        "Choice_A_Explanation": "L'IM aiguë entraîne une surcharge volumétrique brutale de l'oreillette gauche non dilatée, provoquant un OAP immédiat. (Source : Insuffisance mitrale, Page Globale 1067). [GDR1]",
         "Choice_B_Text": "Ne s'accompagne jamais d'une augmentation des pressions télédiastoliques du ventricule gauche.",
         "Choice_B_isCorrect": false,
         "Choice_B_Explanation": "Elle entraîne au contraire une augmentation brutale de la PTD VG. (Source : Insuffisance mitrale, Page Globale 1067).",

@@ -66,6 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const statsCacheRef = useRef<Map<string, { stats: QuestionStats; timestamp: number }>>(new Map());
   const pendingAnswersRef = useRef<any[]>([]);
   const flushPromiseRef = useRef<Promise<FlushResult | null> | null>(null);
+  const flushFnRef = useRef<(() => Promise<FlushResult | null>) | null>(null);
   const progressFetchRef = useRef<Promise<any> | null>(null);
 
   const getAuthHeaders = useCallback(() => {
@@ -187,11 +188,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         pendingAnswersRef.current = [];
         const token = localStorage.getItem('learnfmpa_token');
         if (user?.id && token) {
-          const blob = new Blob(
-            [JSON.stringify({ user_id: user.id, answers })],
-            { type: 'application/json' }
-          );
-          navigator.sendBeacon(`${API_BASE}/answer`, blob);
+          fetch(`${API_BASE}/answer`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({ user_id: user.id, answers }),
+            keepalive: true,
+          }).catch(() => {});
         }
       }
     };
@@ -280,11 +285,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return null;
       } finally {
         flushPromiseRef.current = null;
+        if (pendingAnswersRef.current.length > 0) {
+          flushFnRef.current?.();
+        }
       }
     })();
 
     return flushPromiseRef.current;
   }, [user, getAuthHeaders, handleUnauthorized, saveStatsToStorage, saveProgressToStorage]);
+
+  flushFnRef.current = flushPendingAnswers;
 
   const login = async (email: string, password: string) => {
     try {

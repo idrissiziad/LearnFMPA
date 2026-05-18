@@ -1,6 +1,6 @@
 [
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "IAMI",
         "QuestionText": "L’ischémie aiguë des membres inférieurs est caractérisée par :",
         "Choice_A_Text": "La latence clinique.",
@@ -25,7 +25,7 @@
         "Choice_E_Image": "cardiologie-0811.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "IAMI",
         "QuestionText": "La Thrombose artérielle aiguë in situ :",
         "Choice_A_Text": "Peut survenir sur une artère saine.",
@@ -50,7 +50,7 @@
         "Choice_E_Image": "cardiologie-0823.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "IAMI",
         "QuestionText": "Le diagnostic positif de l’ischémie aiguë des membres inférieurs :",
         "Choice_A_Text": "Est souvent clinique.",
@@ -75,7 +75,7 @@
         "Choice_E_Image": "cardiologie-0811.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "IAMI",
         "QuestionText": "Dans la forme non sensitivo-motrice de l’ischémie aiguë des membres inférieurs on retrouve les signes cliniques locaux suivants :",
         "Choice_A_Text": "La douleur.",
@@ -100,7 +100,7 @@
         "Choice_E_Image": "cardiologie-0825.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Varices des membres inférieurs",
         "QuestionText": "Les varices des membres inférieurs sont caractérisées par :",
         "Choice_A_Text": "La présence de dilatations, tortueuses, permanentes des veines superficielles entravant le retour veineux.",
@@ -125,7 +125,7 @@
         "Choice_E_Image": "cardiologie-1741.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Varices des membres inférieurs",
         "QuestionText": "Parmi les complications chroniques des varices des membres inférieurs on retrouve :",
         "Choice_A_Text": "La Lipodermatosclérose.",
@@ -150,7 +150,7 @@
         "Choice_E_Image": "cardiologie-1760.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Varices des membres inférieurs",
         "QuestionText": "Parmi les techniques chirurgicales du traitement des varices des membres inférieurs on retrouve :",
         "Choice_A_Text": "La crossectomie avec stripping et phlébectomie.",
@@ -175,7 +175,7 @@
         "Choice_E_Image": "cardiologie-1739.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Coarctation de l’aorte",
         "QuestionText": "La coarctation de l’aorte est une pathologie qui associe :",
         "Choice_A_Text": "Une hypertension au niveau de l’hémicorps supérieur.",
@@ -200,7 +200,7 @@
         "Choice_E_Image": "cardiologie-0400.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Coarctation de l’aorte",
         "QuestionText": "Le traitement de la coarctation de l’aorte peut être :",
         "Choice_A_Text": "Chirurgical.",
@@ -225,7 +225,7 @@
         "Choice_E_Image": "cardiologie-0419.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Chirurgie valvulaire",
         "QuestionText": "Parmi les composants de la Circulation Extracorporelle, on distingue :",
         "Choice_A_Text": "L’oxygénateur.",
@@ -250,7 +250,7 @@
         "Choice_E_Image": "cardiologie-0333.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "AAA",
         "QuestionText": "L’anévrysme de l’aorte abdominale (AAA) sous rénale est défini par :",
         "Choice_A_Text": "Simple ectasie de l’aorte.",
@@ -275,7 +275,7 @@
         "Choice_E_Image": "cardiologie-0004.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "AAA",
         "QuestionText": "Les examens radiologiques diagnostiques à demander en cas d’un Anévrysme de l’aorte abdominale :",
         "Choice_A_Text": "Echographie abdominale.",
@@ -300,7 +300,7 @@
         "Choice_E_Image": "cardiologie-0017.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "AAA",
         "QuestionText": "Le traitement de l’anévrysme de l’aorte abdominale peut se faire par les techniques suivantes :",
         "Choice_A_Text": "Stenting de l’artère fémorale.",
@@ -325,7 +325,7 @@
         "Choice_E_Image": "cardiologie-0030.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "AOMI",
         "QuestionText": "A propos de l’artériopathie oblitérante des membres inférieurs :",
         "Choice_A_Text": "Le tabagisme chronique est un facteur de risque mineur.",
@@ -350,7 +350,7 @@
         "Choice_E_Image": "cardiologie-0066.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "AOMI",
         "QuestionText": "Patients âgé de 60 ans, tabagique chronique et hypertendu présentant une claudication intermittente des deux membres inférieurs avec à l’examen l’absence des deux pouls fémoraux :",
         "Choice_A_Text": "Il s’agit d’une artériopathie fémoro-jambière.",
@@ -375,7 +375,7 @@
         "Choice_E_Image": "cardiologie-0081.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Dissection aortique aigue",
         "QuestionText": "Le type « A » de la classification de Standford des dissections aigues de l’aorte correspond à la :",
         "Choice_A_Text": "Dissection qui ne touche pas l’aorte ascendante.",
@@ -400,7 +400,7 @@
         "Choice_E_Image": "cardiologie-0448.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Chirurgie valvulaire",
         "QuestionText": "Un patient âgé de 80 ans qui nécessite un remplacement valvulaire aortique, quelle prothèse vous lui proposeriez en premier lieu ?",
         "Choice_A_Text": "Une prothèse valvulaire mécanique à disque.",
@@ -425,7 +425,7 @@
         "Choice_E_Image": "cardiologie-0364.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Chirurgie valvulaire",
         "QuestionText": "Les trois complications redoutables de la prothèse valvulaire mécanique sont :",
         "Choice_A_Text": "L’acidose métabolique.",
@@ -450,7 +450,7 @@
         "Choice_E_Image": "cardiologie-0385.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Chirurgie coronaire",
         "QuestionText": "Le principe du pontage coronaire est :",
         "Choice_A_Text": "De reséquer l’artère coronaire obstruée.",
@@ -475,7 +475,7 @@
         "Choice_E_Image": "cardiologie-0296.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Tamponnade",
         "QuestionText": "La tamponnade :",
         "Choice_A_Text": "Constitue une urgence purement médicale.",
@@ -500,7 +500,7 @@
         "Choice_E_Image": "cardiologie-1424.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Insuffisance aortique",
         "QuestionText": "Quelle est la valvulopathie à évoquer en premier devant ce tableau (Cas Clinique Ahmed B.) ?",
         "Choice_A_Text": "Insuffisance Mitrale.",
@@ -525,7 +525,7 @@
         "Choice_E_Image": "cardiologie-0933.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Insuffisance cardiaque de l'adulte",
         "QuestionText": "Quels sont les signes d’insuffisance ventriculaire gauche parmi ceux que rapporte le patient ?",
         "Choice_A_Text": "La fièvre.",
@@ -550,7 +550,7 @@
         "Choice_E_Image": "cardiologie-0921.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Insuffisance aortique",
         "QuestionText": "Quels sont cliniquement les signes de sévérité de cette valvulopathie ?",
         "Choice_A_Text": "Élargissement de la pression artérielle différentielle avec une PAD < 50mmHg.",
@@ -575,7 +575,7 @@
         "Choice_E_Image": "cardiologie-0923.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Insuffisance aortique",
         "QuestionText": "Parmi les paramètres échocardiographiques suivants quels sont ceux qui permettent une quantification de cette valvulopathie ?",
         "Choice_A_Text": "Le volume régurgitant (VR).",
@@ -600,7 +600,7 @@
         "Choice_E_Image": "cardiologie-0927.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Insuffisance aortique",
         "QuestionText": "Parmi les propositions suivantes quelle est celle qui signe que cette valvulopathie est sévère échocardiographiquement ?",
         "Choice_A_Text": "La SOR retrouvée est > 60 mm².",
@@ -625,7 +625,7 @@
         "Choice_E_Image": "cardiologie-0929.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Insuffisance aortique",
         "QuestionText": "Cette valvulopathie est responsable de :",
         "Choice_A_Text": "Une surcharge Barométrique (de pression).",
@@ -650,7 +650,7 @@
         "Choice_E_Image": "cardiologie-0915.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Endocardite infectieuse",
         "QuestionText": "Quelle est l’étiologie la plus probable de cette valvulopathie chez ce patient ?",
         "Choice_A_Text": "Ischémique.",
@@ -675,7 +675,7 @@
         "Choice_E_Image": "cardiologie-1177.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Insuffisance aortique",
         "QuestionText": "Le tableau clinique et paraclinique de cette valvulopathie dans sa forme aigue est souvent caractérisé par :",
         "Choice_A_Text": "Un Œdème aigu pulmonaire.",
@@ -700,7 +700,7 @@
         "Choice_E_Image": "cardiologie-0934.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Rhumatisme articulaire aigu",
         "QuestionText": "A propos du rhumatisme articulaire aigu :",
         "Choice_A_Text": "Est une réponse inflammatoire, suppurative due au streptocoque béta hémolytique de type A.",
@@ -717,7 +717,7 @@
         "Choice_D_Explanation": "Le seuil significatif est généralement ≥ 200 UI/ml. (Source : Rhumatisme articulaire aigu, Page Globale 1188).",
         "Choice_E_Text": "La chorée de Sydenham est un critère majeur parmi les critères diagnostiques de JONES modifiés.",
         "Choice_E_isCorrect": true,
-        "Choice_E_Explanation": "La chorée fait partie des 5 critères majeurs de Jones. (Source : Rhumatisme articulaire aigu, Page Globale 1190). [GDR]",
+        "Choice_E_Explanation": "La chorée fait partie des 5 critères majeurs de Jones. (Source : Rhumatisme articulaire aigu, Page Globale 1190). [GDR1]",
         "Choice_A_Image": "cardiologie-1168.avif",
         "Choice_B_Image": "cardiologie-1179.avif",
         "Choice_C_Image": "cardiologie-1190.avif",
@@ -725,7 +725,7 @@
         "Choice_E_Image": "cardiologie-1190.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Rhumatisme articulaire aigu",
         "QuestionText": "La cardite rhumatismale peut réaliser une pancardite, elle peut être caractérisée par :",
         "Choice_A_Text": "Une endocardite rhumatismale septique.",
@@ -750,7 +750,7 @@
         "Choice_E_Image": "cardiologie-1180.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Insuffisance mitrale",
         "QuestionText": "A propos de l’insuffisance mitrale chronique :",
         "Choice_A_Text": "C’est une valvulopathie fuyante en systole.",
@@ -758,7 +758,7 @@
         "Choice_A_Explanation": "L'IM est définie par le reflux du VG vers l'OG durant la systole ventriculaire. (Source : Insuffisance mitrale, Page Globale 1059).",
         "Choice_B_Text": "C’est une valvulopathie fuyante en diastole.",
         "Choice_B_isCorrect": false,
-        "Choice_B_Explanation": "C’est le ventricule qui se remplit en diastole ; la fuite mitrale est systolique. (Source : Insuffisance mitrale, Page Globale 1059). [GDR]",
+        "Choice_B_Explanation": "C’est le ventricule qui se remplit en diastole ; la fuite mitrale est systolique. (Source : Insuffisance mitrale, Page Globale 1059). [GDR1]",
         "Choice_C_Text": "Entraine une dilatation du ventricule Gauche.",
         "Choice_C_isCorrect": true,
         "Choice_C_Explanation": "La surcharge volumétrique diastolique (reflux + remplissage normal) mène à la dilatation du VG. (Source : Insuffisance mitrale, Page Globale 1066).",
@@ -775,7 +775,7 @@
         "Choice_E_Image": "cardiologie-1080.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Rétrecissement aortique",
         "QuestionText": "A propos du Rétrécissement aortique :",
         "Choice_A_Text": "Peut entrainer une dilatation de l’aorte ascendante.",
@@ -800,7 +800,7 @@
         "Choice_E_Image": "cardiologie-1234.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Thrombose & Embolie",
         "QuestionText": "Une femme de 45 ans obèse, suivie pour cancer du sein sous traitement se présente aux urgences pour Dyspnée d’apparition brutale et d’une hémoptysie, on suspecte une embolie pulmonaire, sa probabilité clinique, en calculant le score de Wells, est jugée intermédiaire :",
         "Choice_A_Text": "L’angioscanner est le premier examen à demander pour confirmer une embolie pulmonaire.",
@@ -825,7 +825,7 @@
         "Choice_E_Image": "cardiologie-1452.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Rétrecissement mitral",
         "QuestionText": "Le rétrécissement mitral est un obstacle diastolique, il peut se compliquer de :",
         "Choice_A_Text": "Mort subite.",
@@ -850,7 +850,7 @@
         "Choice_E_Image": "cardiologie-1279.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Insuffisance cardiaque de l'adulte",
         "QuestionText": "Quels sont parmi les signes suivants les signes cliniques typiques d’insuffisance cardiaque :",
         "Choice_A_Text": "Dyspnée.",
@@ -875,7 +875,7 @@
         "Choice_E_Image": "cardiologie-0981.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Hypertension pulmonaire",
         "QuestionText": "L’Hypertension pulmonaire (HTP) est définie hémodynamiquement par une :",
         "Choice_A_Text": "Pression artérielle pulmonaire moyenne (PAPm) ≥ 15 mmHg au repos.",
@@ -900,7 +900,7 @@
         "Choice_E_Image": "cardiologie-0768.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Hypertension artérielle",
         "QuestionText": "L’hypertension artérielle systémique est définie par l’OMS comme une :",
         "Choice_A_Text": "Pression artérielle systolique PAS ≥ 140 mmHg.",
@@ -925,7 +925,7 @@
         "Choice_E_Image": "cardiologie-0711.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Hypertension artérielle",
         "QuestionText": "Parmi les étiologies de l’HTA secondaire on peut énumérer :",
         "Choice_A_Text": "La coarctation de l’aorte.",
@@ -950,12 +950,12 @@
         "Choice_E_Image": "cardiologie-0744.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Péricardites aigues",
         "QuestionText": "A propos de la douleur thoracique dans les péricardites aigues :",
         "Choice_A_Text": "Elle est insensible à la trinitrine.",
         "Choice_A_isCorrect": true,
-        "Choice_A_Explanation": "Contrairement à l'angor, elle ne cède pas sous dérivés nitrés. (Source : Péricardites aigues, Page Globale 1120). [GDR]",
+        "Choice_A_Explanation": "Contrairement à l'angor, elle ne cède pas sous dérivés nitrés. (Source : Péricardites aigues, Page Globale 1120). [GDR1]",
         "Choice_B_Text": "Peut mimer un syndrome coronarien aigu.",
         "Choice_B_isCorrect": true,
         "Choice_B_Explanation": "Par son siège et son intensité, elle peut prêter à confusion avec un IDM. (Source : Péricardites aigues, Page Globale 1134).",
@@ -964,10 +964,10 @@
         "Choice_C_Explanation": "La position assise penchée en avant ('en prière mahométane') soulage la douleur. (Source : Péricardites aigues, Page Globale 1120).",
         "Choice_D_Text": "Diminue à l’inspiration profonde.",
         "Choice_D_isCorrect": false,
-        "Choice_D_Explanation": "Elle augmente au contraire à l'inspiration profonde. (Source : Péricardites aigues, Page Globale 1120). [GDR]",
+        "Choice_D_Explanation": "Elle augmente au contraire à l'inspiration profonde. (Source : Péricardites aigues, Page Globale 1120). [GDR1]",
         "Choice_E_Text": "Est rythmée par les repas.",
         "Choice_E_isCorrect": false,
-        "Choice_E_Explanation": "Elle n’est pas liée à l’alimentation, contrairement à certaines douleurs digestives. (Source : Péricardites aigues, Page Globale 1120). [GDR]",
+        "Choice_E_Explanation": "Elle n’est pas liée à l’alimentation, contrairement à certaines douleurs digestives. (Source : Péricardites aigues, Page Globale 1120). [GDR1]",
         "Choice_A_Image": "cardiologie-1120.avif",
         "Choice_B_Image": "cardiologie-1134.avif",
         "Choice_C_Image": "cardiologie-1120.avif",
@@ -975,7 +975,7 @@
         "Choice_E_Image": "cardiologie-1120.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Cardiomyopathie",
         "QuestionText": "La cardiomyopathie hypertrophique est caractérisée par :",
         "Choice_A_Text": "Une dilatation cavitaire quasi-constante.",
@@ -1000,7 +1000,7 @@
         "Choice_E_Image": "cardiologie-0200.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Coarctation de l’aorte",
         "QuestionText": "La Tétralogie de Fallot se caractérise par (non inclus dans les sources spécifiques Fallot mais mentionnée en association) :",
         "Choice_A_Text": "Une communication interventriculaire.",
@@ -1025,7 +1025,7 @@
         "Choice_E_Image": "cardiologie-0399.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Hypertension pulmonaire",
         "QuestionText": "Parmi les cardiopathies non cyanogènes :",
         "Choice_A_Text": "Communication inter auriculaire.",
@@ -1050,7 +1050,7 @@
         "Choice_E_Image": "cardiologie-0778.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Hypertension pulmonaire",
         "QuestionText": "La communication inter auriculaire est caractérisée par :",
         "Choice_A_Text": "Il est responsable d’un shunt gauche-droite.",
@@ -1075,7 +1075,7 @@
         "Choice_E_Image": "cardiologie-0778.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Électrocardiogramme",
         "QuestionText": "Parmi les critères de bonne qualité d’un ECG :",
         "Choice_A_Text": "Tracé lisse non parasité.",
@@ -1100,7 +1100,7 @@
         "Choice_E_Image": "cardiologie-1879.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Endocardite infectieuse",
         "QuestionText": "Concernant les lésions qui caractérisent l’endocardite infectieuse :",
         "Choice_A_Text": "Elles peuvent survenir sur des valves déjà altérées.",
@@ -1125,7 +1125,7 @@
         "Choice_E_Image": "cardiologie-0644.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Endocardite infectieuse",
         "QuestionText": "Parmi les critères majeurs pour le diagnostic d’une endocardite infectieuse (EI) selon Duke et Li, on note :",
         "Choice_A_Text": "Deux hémocultures positives à des bactéries successibles de causer une EI.",
@@ -1150,7 +1150,7 @@
         "Choice_E_Image": "cardiologie-0660.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Endocardite infectieuse",
         "QuestionText": "Une endocardite infectieuse doit être soupçonnée :",
         "Choice_A_Text": "En présence d’une hémiplégie fébrile chez un sujet de 65 ans.",
@@ -1175,7 +1175,7 @@
         "Choice_E_Image": "cardiologie-0662.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Endocardite infectieuse",
         "QuestionText": "Chez un sujet suspect d’endocardite bactérienne, tous les signes suivants sont évocateurs, sauf un. Lequel ?",
         "Choice_A_Text": "Une splénomégalie.",
@@ -1200,7 +1200,7 @@
         "Choice_E_Image": "cardiologie-0631.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Infarctus du myocarde",
         "QuestionText": "Les caractères sémiologiques de la douleur de l’infarctus du myocarde sont bien connus. Une des propositions ci-dessous est fausse. Laquelle ?",
         "Choice_A_Text": "Douleur intense.",
@@ -1225,7 +1225,7 @@
         "Choice_E_Image": "cardiologie-0878.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Infarctus du myocarde",
         "QuestionText": "Quelles sont les deux complications majeures de la maladie athéroscléreuse ?",
         "Choice_A_Text": "Valvulopathie.",
@@ -1250,7 +1250,7 @@
         "Choice_E_Image": "cardiologie-0852.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Infarctus du myocarde",
         "QuestionText": "Un infarctus de localisation antéro-septale se traduit sur l'ECG par une onde Q et des troubles de la repolarisation :",
         "Choice_A_Text": "D2-D3-VF.",
@@ -1275,7 +1275,7 @@
         "Choice_E_Image": "cardiologie-0883.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Troubles du rythme cardiaque",
         "QuestionText": "La fibrillation auriculaire :",
         "Choice_A_Text": "Peut avoir un rythme ventriculaire régulier lorsqu’elle s’associe un BAV complet.",
@@ -1300,7 +1300,7 @@
         "Choice_E_Image": "cardiologie-1666.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Troubles du rythme cardiaque",
         "QuestionText": "Le flutter auriculaire :",
         "Choice_A_Text": "Se définit par une disparition de l’onde P remplacée par l’onde F.",
@@ -1325,7 +1325,7 @@
         "Choice_E_Image": "cardiologie-1655.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Troubles de conduction",
         "QuestionText": "Le diagnostic électrocardiographique du bloc auriculo-ventriculaire complet repose sur :",
         "Choice_A_Text": "Dissociation auriculo-ventriculaire.",
@@ -1350,7 +1350,7 @@
         "Choice_E_Image": "cardiologie-1650.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Echographie transthoracique",
         "QuestionText": "Lors d’une Echocardiographie trans-thoracique, les fenêtres d’exploration possibles sont :",
         "Choice_A_Text": "Apicale.",
@@ -1375,7 +1375,7 @@
         "Choice_E_Image": "cardiologie-0535.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Infarctus du myocarde",
         "QuestionText": "Quelles sont les étiologies des syndromes coronaires sans sus décalage du segment ST (NSTEMI) ?",
         "Choice_A_Text": "Syndrome de rupture de plaque athéromateuse.",
@@ -1400,7 +1400,7 @@
         "Choice_E_Image": "cardiologie-0901.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Infarctus du myocarde",
         "QuestionText": "L’électrocardiogramme dans un SCA sans sus ST peut objectiver :",
         "Choice_A_Text": "Un sous-décalage du segment ST dans le territoire de l’ischémie.",
@@ -1425,7 +1425,7 @@
         "Choice_E_Image": "cardiologie-0858.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Echographie transoesophagienne",
         "QuestionText": "Quelles sont les complications possibles lors d’un examen par Echographie Trans-Oesophagienne (ETO) :",
         "Choice_A_Text": "Spasme laryngé.",
@@ -1450,7 +1450,7 @@
         "Choice_E_Image": "cardiologie-0483.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Syncope",
         "QuestionText": "La syncope se définit par :",
         "Choice_A_Text": "Perte de connaissance brutale.",
@@ -1475,7 +1475,7 @@
         "Choice_E_Image": "cardiologie-1306.avif"
     },
     {
-        "YearAsked": "Juillet 2020 (Rattrapage)",
+        "YearAsked": "Juillet 2020 (Normale)",
         "Subtopic": "Syncope",
         "QuestionText": "Parmi les étiologies d’une syncope d’origine cardiaque :",
         "Choice_A_Text": "Le rétrécissement aortique.",
