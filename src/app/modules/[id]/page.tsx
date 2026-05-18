@@ -993,12 +993,20 @@ export default function ModulePage() {
     }
     if (user) {
       try {
+        await flushAnswers();
         clearProgressAndStats();
         const token = localStorage.getItem('learnfmpa_token');
-        await fetch(`/api/progress?user_id=${user.id}&module_id=${moduleId}`, {
+        const response = await fetch(`/api/progress?user_id=${user.id}&module_id=${moduleId}`, {
           method: 'DELETE',
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
         });
+        if (!response.ok) {
+          console.error('Failed to reset server progress:', response.status, await response.text());
+        }
+        invalidateProgressCache();
       } catch (e) {
         console.error('Failed to reset server progress:', e);
       }
@@ -1006,6 +1014,7 @@ export default function ModulePage() {
     setScore(0);
     setAnsweredQuestions(new Set());
     setShowResetConfirm(false);
+    setQuestionStats(null);
     applyAnsweredQuestionsFilter({});
   };
 
