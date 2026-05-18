@@ -51,12 +51,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const API_BASE = '/api';
 const PROGRESS_CACHE_TTL = 300000;
-const FLUSH_INTERVAL = 3000;
 const STATS_CACHE_TTL = 120000;
-const FREE_FLUSH_INTERVAL = 10000;
 const FREE_EXPLANATION_LIMIT = 200;
-const FREE_BATCH_SIZE = 10;
-const FREE_BATCH_SAFETY_TIMEOUT = 120000;
+const BATCH_SIZE = 20;
 const LOCAL_PROGRESS_KEY = 'learnfmpa_progress_cache';
 const LOCAL_STATS_KEY = 'learnfmpa_stats_cache';
 
@@ -69,7 +66,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const progressCacheRef = useRef<{ data: any | null; timestamp: number }>({ data: null, timestamp: 0 });
   const statsCacheRef = useRef<Map<string, { stats: QuestionStats; timestamp: number }>>(new Map());
   const pendingAnswersRef = useRef<any[]>([]);
-  const flushTimerRef = useRef<NodeJS.Timeout | null>(null);
   const flushPromiseRef = useRef<Promise<FlushResult | null> | null>(null);
   const progressFetchRef = useRef<Promise<any> | null>(null);
 
@@ -204,9 +200,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
-      if (flushTimerRef.current) {
-        clearTimeout(flushTimerRef.current);
-      }
     };
   }, [user]);
 
@@ -217,11 +210,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const answersToFlush = [...pendingAnswersRef.current];
     pendingAnswersRef.current = [];
-
-    if (flushTimerRef.current) {
-      clearTimeout(flushTimerRef.current);
-      flushTimerRef.current = null;
-    }
 
     const currentAnswers = answersToFlush;
 
@@ -298,14 +286,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return flushPromiseRef.current;
   }, [user, getAuthHeaders, handleUnauthorized, saveStatsToStorage, saveProgressToStorage]);
-
-  const scheduleFlush = useCallback(() => {
-    if (flushTimerRef.current) {
-      clearTimeout(flushTimerRef.current);
-    }
-    const interval = user?.subscription_status === 'free' ? FREE_FLUSH_INTERVAL : FLUSH_INTERVAL;
-    flushTimerRef.current = setTimeout(flushPendingAnswers, interval);
-  }, [flushPendingAnswers, user]);
 
   const login = async (email: string, password: string) => {
     try {
@@ -440,20 +420,10 @@ const userInfo = {
 
     pendingAnswersRef.current.push(answer);
 
-    const isFreeUser = user.subscription_status === 'free';
-    const currentEstimate = (user.daily_answer_count || 0) + pendingAnswersRef.current.length;
-    const isPastExplanationLimit = isFreeUser && currentEstimate > FREE_EXPLANATION_LIMIT;
-
-    if (isPastExplanationLimit) {
-      if (pendingAnswersRef.current.length >= FREE_BATCH_SIZE) {
-        flushPendingAnswers();
-      } else if (!flushTimerRef.current) {
-        flushTimerRef.current = setTimeout(flushPendingAnswers, FREE_BATCH_SAFETY_TIMEOUT);
-      }
-    } else {
-      scheduleFlush();
+    if (pendingAnswersRef.current.length >= BATCH_SIZE) {
+      flushPendingAnswers();
     }
-  }, [user, flushPendingAnswers, scheduleFlush]);
+  }, [user, flushPendingAnswers]);
 
   const getProgress = useCallback(async (moduleId: number) => {
     if (!user) return {};

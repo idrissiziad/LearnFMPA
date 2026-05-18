@@ -344,10 +344,14 @@ export default function ModulePage() {
     let cancelled = false;
     getQuestionStats(moduleId, currentQuestion.id).then(stats => {
       if (cancelled) return;
+      setQuestionStats(stats);
       const stars = getDifficultyStars(stats);
       setDifficultyRating(stars);
     }).catch(() => {
-      if (!cancelled) setDifficultyRating(null);
+      if (!cancelled) {
+        setQuestionStats(null);
+        setDifficultyRating(null);
+      }
     });
     return () => { cancelled = true; };
   }, [currentQuestion?.id, moduleId, user, examMode]);
@@ -897,14 +901,6 @@ export default function ModulePage() {
         
         if (user) {
           submitAnswer(moduleId, currentQuestion.id.toString(), isCorrect, mappedSelectedAnswers);
-          const flushResult = await flushAnswers();
-          if (flushResult?.statistics) {
-            setQuestionStats(flushResult.statistics);
-            setDifficultyRating(getDifficultyStars(flushResult.statistics));
-          } else {
-            setQuestionStats(null);
-            setDifficultyRating(null);
-          }
         }
       }
     }
