@@ -180,6 +180,29 @@ export async function isOptedOut(email: string): Promise<boolean> {
   return optOuts.includes(email.toLowerCase().trim());
 }
 
+export async function getDailyAnswerCount(userId: string): Promise<{ count: number; resetTime: string | null; subscriptionStatus?: string }> {
+  try {
+    const client = await getRedis();
+    const data = await client.get(`daily_count:${userId}`);
+    if (data) {
+      return JSON.parse(data);
+    }
+    return { count: 0, resetTime: null };
+  } catch (error) {
+    console.error('Redis get daily count error:', error);
+    return { count: 0, resetTime: null };
+  }
+}
+
+export async function setDailyAnswerCount(userId: string, count: number, resetTime: string, subscriptionStatus?: string): Promise<void> {
+  try {
+    const client = await getRedis();
+    await client.set(`daily_count:${userId}`, JSON.stringify({ count, resetTime, subscriptionStatus }));
+  } catch (error) {
+    console.error('Redis set daily count error:', error);
+  }
+}
+
 export async function recordAnswerStat(
   moduleId: number,
   questionId: string,

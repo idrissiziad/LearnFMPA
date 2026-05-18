@@ -52,8 +52,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const API_BASE = '/api';
 const PROGRESS_CACHE_TTL = 300000;
 const STATS_CACHE_TTL = 120000;
-const FREE_EXPLANATION_LIMIT = 200;
-const BATCH_SIZE = 20;
+const FREE_BATCH_SIZE = 20;
 const LOCAL_PROGRESS_KEY = 'learnfmpa_progress_cache';
 const LOCAL_STATS_KEY = 'learnfmpa_stats_cache';
 
@@ -420,7 +419,10 @@ const userInfo = {
 
     pendingAnswersRef.current.push(answer);
 
-    if (pendingAnswersRef.current.length >= BATCH_SIZE) {
+    const isPaid = user.subscription_status === 'paid';
+    if (isPaid) {
+      flushPendingAnswers();
+    } else if (pendingAnswersRef.current.length >= FREE_BATCH_SIZE) {
       flushPendingAnswers();
     }
   }, [user, flushPendingAnswers]);

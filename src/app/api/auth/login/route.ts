@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { loadUsers, saveUsers, User, isTrialExpired } from '@/lib/user-store';
+import { loadUsers, saveUsers, User, isTrialExpired, getDailyAnswerCount } from '@/lib/user-store';
 import { createSession } from '@/lib/session-store';
 
 function hashPassword(password: string): string {
@@ -132,6 +132,18 @@ export async function POST(request: NextRequest) {
     if (effectiveStatus !== 'paid' && shouldResetDailyCount(usersData.users[foundUserId!])) {
       usersData.users[foundUserId!].daily_answer_count = 0;
       usersData.users[foundUserId!].daily_answer_reset = null;
+    }
+
+    const dailyData = await getDailyAnswerCount(foundUserId!);
+    if (dailyData.resetTime) {
+      const resetMs = new Date(dailyData.resetTime).getTime();
+      if (Date.now() - resetMs >= FREE_DAILY_WINDOW_MS) {
+        usersData.users[foundUserId!].daily_answer_count = 0;
+        usersData.users[foundUserId!].daily_answer_reset = null;
+      } else {
+        usersData.users[foundUserId!].daily_answer_count = dailyData.count;
+        usersData.users[foundUserId!].daily_answer_reset = dailyData.resetTime;
+      }
     }
 
     await saveUsers(usersData);
