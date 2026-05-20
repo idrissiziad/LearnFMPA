@@ -29,7 +29,7 @@ export default function ModulePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { theme } = useTheme();
-  const { user, isLoading: authLoading, submitAnswer, getProgress, invalidateProgressCache, clearProgressAndStats, flushAnswers, getQuestionStats } = useAuth();
+  const { user, isLoading: authLoading, submitAnswer, getProgress, invalidateProgressCache, clearProgressAndStats, flushAnswers, getModuleStats, getQuestionStats } = useAuth();
   const isDarkMode = theme === 'dark';
   const isFreeUser = user?.subscription_status === 'free';
   const FREE_EXPLANATION_LIMIT = 200;
@@ -199,6 +199,12 @@ export default function ModulePage() {
       flushAnswers();
     };
   }, [flushAnswers]);
+
+  useEffect(() => {
+    if (user && moduleId && !isFreeUser) {
+      getModuleStats(moduleId).catch(() => {});
+    }
+  }, [user, moduleId, isFreeUser, getModuleStats]);
 
   useEffect(() => {
     if (moduleId) {

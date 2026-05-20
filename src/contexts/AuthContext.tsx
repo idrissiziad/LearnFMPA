@@ -40,6 +40,7 @@ interface AuthContextType {
   submitAnswer: (moduleId: number, questionId: string, isCorrect: boolean, selectedOptions: number[]) => void;
   getProgress: (moduleId: number) => Promise<{ [key: string]: any }>;
   getAllProgress: () => Promise<{ [key: string]: any }>;
+  getModuleStats: (moduleId: number) => Promise<Record<string, QuestionStats> | null>;
   getQuestionStats: (moduleId: number, questionId: string) => Promise<QuestionStats | null>;
   invalidateProgressCache: () => void;
   clearProgressAndStats: () => void;
@@ -53,6 +54,7 @@ const API_BASE = '/api';
 const PROGRESS_CACHE_TTL = 300000;
 const STATS_CACHE_TTL = 120000;
 const FREE_BATCH_SIZE = 20;
+const PAID_FLUSH_DELAY = 3000;
 const LOCAL_PROGRESS_KEY = 'learnfmpa_progress_cache';
 const LOCAL_STATS_KEY = 'learnfmpa_stats_cache';
 
@@ -68,6 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const flushPromiseRef = useRef<Promise<FlushResult | null> | null>(null);
   const flushFnRef = useRef<(() => Promise<FlushResult | null>) | null>(null);
   const progressFetchRef = useRef<Promise<any> | null>(null);
+  const paidFlushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const getAuthHeaders = useCallback(() => {
     const token = localStorage.getItem('learnfmpa_token');
@@ -183,6 +186,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const handleBeforeUnload = () => {
+      if (paidFlushTimerRef.current) {
+        clearTimeout(paidFlushTimerRef.current);
+        paidFlushTimerRef.current = null;
+      }
       if (pendingAnswersRef.current.length > 0) {
         const answers = [...pendingAnswersRef.current];
         pendingAnswersRef.current = [];
@@ -431,7 +438,13 @@ const userInfo = {
 
     const isPaid = user.subscription_status === 'paid';
     if (isPaid) {
-      flushPendingAnswers();
+      if (paidFlushTimerRef.current) {
+        clearTimeout(paidFlushTimerRef.current);
+      }
+      paidFlushTimerRef.current = setTimeout(() => {
+        paidFlushTimerRef.current = null;
+        flushPendingAnswers();
+      }, PAID_FLUSH_DELAY);
     } else if (pendingAnswersRef.current.length >= FREE_BATCH_SIZE) {
       flushPendingAnswers();
     }
@@ -543,6 +556,45 @@ const userInfo = {
     return progressFetchRef.current;
   }, [user, getAuthHeaders, handleUnauthorized, loadProgressFromStorage, saveProgressToStorage]);
 
+  const getModuleStats = useCallback(async (moduleId: number): Promise<Record<string, QuestionStats> | null> => {
+    const moduleKey = `module_${moduleId}`;
+    const moduleCache = statsCacheRef.current.get(moduleKey);
+    if (moduleCache && Date.now() - moduleCache.timestamp < STATS_CACHE_TTL) {
+      return moduleCache.stats as unknown as Record<string, QuestionStats>;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE}/statistics?module_id=${moduleId}`, {
+        headers: getAuthHeaders(),
+      });
+
+      if (response.status === 401) {
+        handleUnauthorized();
+        if (moduleCache) return moduleCache.stats as unknown as Record<string, QuestionStats>;
+        return null;
+      }
+
+      const data = await response.json();
+
+      if (data.success && data.statistics) {
+        const allStats = data.statistics;
+        const moduleStats: Record<string, QuestionStats> = {};
+        Object.entries(allStats).forEach(([qId, qStats]: [string, any]) => {
+          const statsKey = `${moduleId}_${qId}`;
+          statsCacheRef.current.set(statsKey, { stats: qStats, timestamp: Date.now() });
+          moduleStats[qId] = qStats;
+        });
+        statsCacheRef.current.set(moduleKey, { stats: moduleStats as unknown as QuestionStats, timestamp: Date.now() });
+        saveStatsToStorage();
+        return moduleStats;
+      }
+      return null;
+    } catch (error) {
+      if (moduleCache) return moduleCache.stats as unknown as Record<string, QuestionStats>;
+      return null;
+    }
+  }, [getAuthHeaders, handleUnauthorized, saveStatsToStorage]);
+
   const getQuestionStats = useCallback(async (moduleId: number, questionId: string): Promise<QuestionStats | null> => {
     const statsKey = `${moduleId}_${questionId}`;
     const cached = statsCacheRef.current.get(statsKey);
@@ -550,31 +602,28 @@ const userInfo = {
       return cached.stats;
     }
 
+    const moduleKey = `module_${moduleId}`;
+    const moduleCache = statsCacheRef.current.get(moduleKey);
+    if (moduleCache && Date.now() - moduleCache.timestamp < STATS_CACHE_TTL) {
+      const moduleStats = moduleCache.stats as unknown as Record<string, QuestionStats>;
+      const qStats = moduleStats[questionId];
+      if (qStats) {
+        statsCacheRef.current.set(statsKey, { stats: qStats, timestamp: Date.now() });
+        return qStats;
+      }
+    }
+
     try {
-      const response = await fetch(`${API_BASE}/statistics?module_id=${moduleId}&question_id=${questionId}`, {
-        headers: getAuthHeaders(),
-        cache: 'no-store',
-      });
-
-      if (response.status === 401) {
-        handleUnauthorized();
-        if (cached) return cached.stats;
-        return null;
+      const moduleStats = await getModuleStats(moduleId);
+      if (moduleStats) {
+        return moduleStats[questionId] || null;
       }
-
-      const data = await response.json();
-
-      if (data.success && data.statistics) {
-        statsCacheRef.current.set(statsKey, { stats: data.statistics, timestamp: Date.now() });
-        saveStatsToStorage();
-        return data.statistics;
-      }
-      return null;
+      return cached?.stats || null;
     } catch (error) {
       if (cached) return cached.stats;
       return null;
     }
-  }, [getAuthHeaders, handleUnauthorized, saveStatsToStorage]);
+  }, [getModuleStats]);
 
   const flushAnswers = useCallback(async (): Promise<FlushResult | null> => {
     return flushPendingAnswers();
@@ -590,6 +639,7 @@ const userInfo = {
       submitAnswer,
       getProgress,
       getAllProgress,
+      getModuleStats,
       getQuestionStats,
       invalidateProgressCache,
       clearProgressAndStats,
